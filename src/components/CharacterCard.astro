@@ -1,0 +1,265 @@
+---
+/**
+ * CharacterCard.astro - Big5キャラ16動物 統合表示カード
+ *
+ * CharacterDisplay（アイコン単体）を内包し、OCEAN高低・N気分メーターを
+ * 組み合わせたフル表示カード。
+ *
+ * ===== SVG差し替えガイド =====
+ * 現在: 絵文字ダミー
+ * 本番: src/assets/characters/{characterId}.svg を配置し、
+ *       CharacterDisplay.astro の TODO 箇所を差し替えるだけで自動反映。
+ * characterId 命名規則: "o-high_c-low_e-high_a-high" 等（4軸×high/low）
+ * ===========================
+ *
+ * Props:
+ *   characterId  - Big5 4軸組み合わせID（CharacterDisplay に委譲）
+ *   name         - キャラ名（例: "フクロウ博士"）
+ *   emojiDummy   - 暫定絵文字（SVG差し替えまで）
+ *   oceanLevels  - OCEAN 4軸の高低（N は nMood で管理）
+ *   nMood        - N因子スコア 0〜100（Big5MoodMeter に委譲）
+ *   variant      - 'lite'（無料・ぼかし）/ 'full'（PASS以上）
+ *   showDetail   - 詳細テキストを表示するか（PASS以上）
+ *   href         - キャラ詳細ページへのリンク（任意）
+ */
+import CharacterDisplay from './CharacterDisplay.astro';
+import Big5MoodMeter from './Big5MoodMeter.astro';
+
+interface OceanLevel {
+  factor: 'O' | 'C' | 'E' | 'A';
+  level: 'high' | 'low';
+}
+
+interface Props {
+  characterId: string;
+  name: string;
+  emojiDummy?: string;
+  oceanLevels?: OceanLevel[];
+  nMood?: number;
+  variant?: 'lite' | 'full';
+  showDetail?: boolean;
+  href?: string;
+}
+
+const {
+  characterId,
+  name,
+  emojiDummy = '🦊',
+  oceanLevels = [],
+  nMood = 50,
+  variant = 'lite',
+  showDetail = false,
+  href,
+} = Astro.props;
+
+// OCEAN 4軸のラベル定義
+const FACTOR_CONFIG: Record<string, { label: string; highDesc: string; lowDesc: string; color: string }> = {
+  O: { label: '開放性',  highDesc: '好奇心旺盛',   lowDesc: '慎重・現実的', color: 'var(--sn-scene-school)' },
+  C: { label: '誠実性',  highDesc: '計画的・几帳面', lowDesc: '柔軟・自由',   color: 'var(--sn-scene-work)' },
+  E: { label: '外向性',  highDesc: '活発・社交的',   lowDesc: '内向・熟考',   color: 'var(--sn-scene-friend)' },
+  A: { label: '協調性',  highDesc: '共感・協力的',   lowDesc: '独立・直接的', color: 'var(--sn-scene-love)' },
+};
+---
+
+<article
+  class={`cc-card ${variant === 'full' ? 'cc-card--full' : 'cc-card--lite'}`}
+  aria-label={`${name}のキャラクターカード`}
+>
+  <!-- キャラアイコン -->
+  <div class="cc-icon-wrap">
+    <CharacterDisplay
+      characterId={characterId}
+      characterName={name}
+      emojiDummy={emojiDummy}
+      size="lg"
+      variant={variant}
+    />
+  </div>
+
+  <!-- キャラ名 -->
+  <h3 class="cc-name">{name}</h3>
+
+  <!-- OCEAN 高低バッジ -->
+  {oceanLevels.length > 0 && (
+    <div class="cc-ocean" aria-label="OCEAN 特性">
+      {oceanLevels.map((ol) => {
+        const config = FACTOR_CONFIG[ol.factor];
+        if (!config) return null;
+        return (
+          <div class="cc-ocean-item" style={`--item-color: ${config.color}`}>
+            <span class="cc-ocean-factor">{ol.factor}</span>
+            <span class="cc-ocean-label">{config.label}</span>
+            <span class={`cc-ocean-level ${ol.level === 'high' ? 'cc-ocean-level--high' : 'cc-ocean-level--low'}`}>
+              {ol.level === 'high' ? '高' : '低'}
+            </span>
+            {showDetail && (
+              <span class="cc-ocean-desc">
+                {ol.level === 'high' ? config.highDesc : config.lowDesc}
+              </span>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  )}
+
+  <!-- N因子気分メーター -->
+  <div class="cc-mood">
+    <Big5MoodMeter
+      nScore={nMood}
+      variant={variant === 'full' ? 'full' : 'mini'}
+    />
+  </div>
+
+  <!-- 詳細リンク or PASSロック -->
+  {variant === 'full' && href ? (
+    <a href={href} class="cc-link btn btn-primary btn-sm" aria-label={`${name}の詳細を見る`}>
+      詳細を見る →
+    </a>
+  ) : variant === 'lite' ? (
+    <a href="/pro/" class="cc-lock-cta" aria-label="¥390 PASSでキャラ詳細を解放">
+      <span aria-hidden="true">🔓</span>
+      ¥390 PASSでキャラ詳細を解放
+    </a>
+  ) : null}
+</article>
+
+<style>
+  .cc-card {
+    background: var(--sn-bg-white);
+    border-radius: var(--sn-radius-lg);
+    box-shadow: var(--sn-shadow);
+    padding: var(--sn-space-5);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--sn-space-4);
+    border: 1px solid var(--sn-border);
+    transition:
+      transform var(--sn-dur-fast) var(--sn-ease),
+      box-shadow var(--sn-dur-fast) var(--sn-ease);
+    text-align: center;
+  }
+
+  .cc-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--sn-shadow-md);
+  }
+
+  .cc-card--lite {
+    border-top: 3px solid var(--sn-primary-light);
+  }
+
+  .cc-card--full {
+    border-top: 3px solid var(--sn-primary);
+  }
+
+  .cc-icon-wrap {
+    display: flex;
+    justify-content: center;
+  }
+
+  .cc-name {
+    font-family: var(--sn-font-rounded);
+    font-size: var(--sn-text-xl);
+    font-weight: 900;
+    color: var(--sn-text);
+    margin: 0;
+    line-height: var(--sn-leading-tight);
+  }
+
+  /* OCEAN バッジ */
+  .cc-ocean {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sn-space-2);
+    justify-content: center;
+    width: 100%;
+  }
+
+  .cc-ocean-item {
+    display: flex;
+    align-items: center;
+    gap: var(--sn-space-1);
+    padding: var(--sn-space-1) var(--sn-space-3);
+    background: color-mix(in srgb, var(--item-color) 8%, var(--sn-bg-white));
+    border: 1px solid color-mix(in srgb, var(--item-color) 20%, transparent);
+    border-radius: var(--sn-radius-pill);
+  }
+
+  .cc-ocean-factor {
+    font-family: var(--sn-font-mono);
+    font-size: var(--sn-text-sm);
+    font-weight: 900;
+    color: var(--item-color);
+    min-width: 16px;
+  }
+
+  .cc-ocean-label {
+    font-size: var(--sn-text-xs);
+    color: var(--sn-text-soft);
+  }
+
+  .cc-ocean-level {
+    font-size: var(--sn-text-xs);
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: var(--sn-radius-pill);
+  }
+
+  .cc-ocean-level--high {
+    background: color-mix(in srgb, var(--item-color) 15%, transparent);
+    color: var(--item-color);
+  }
+
+  .cc-ocean-level--low {
+    background: var(--sn-bg-soft);
+    color: var(--sn-muted);
+  }
+
+  .cc-ocean-desc {
+    font-size: var(--sn-text-xs);
+    color: var(--sn-muted);
+    margin-left: var(--sn-space-1);
+  }
+
+  /* 気分メーター */
+  .cc-mood {
+    width: 100%;
+  }
+
+  /* リンク・CTA */
+  .cc-link {
+    text-decoration: none;
+    width: 100%;
+    justify-content: center;
+  }
+
+  .cc-lock-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sn-space-2);
+    font-size: var(--sn-text-sm);
+    font-weight: 700;
+    color: var(--sn-pass-color);
+    text-decoration: none;
+    padding: var(--sn-space-2) var(--sn-space-4);
+    border: 1px solid var(--sn-pass-color);
+    border-radius: var(--sn-radius-pill);
+    min-height: var(--sn-tap-min);
+    transition:
+      background var(--sn-dur-fast) var(--sn-ease),
+      color var(--sn-dur-fast) var(--sn-ease);
+  }
+
+  .cc-lock-cta:hover {
+    background: var(--sn-pass-color);
+    color: #fff;
+    text-decoration: none;
+  }
+
+  .cc-lock-cta:focus-visible {
+    outline: 2px solid var(--sn-pass-color);
+    outline-offset: 2px;
+  }
+</style>

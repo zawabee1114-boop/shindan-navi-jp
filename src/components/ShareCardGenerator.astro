@@ -1,0 +1,442 @@
+---
+/**
+ * ShareCardGenerator.astro - SNSシェア用カード生成
+ *
+ * Phase 0: クライアントサイド canvas2d で生成する簡易実装。
+ * Phase 1: サーバーサイド Satori / Vercel OG Image に移行予定（コメント参照）。
+ *
+ * 生成サイズ:
+ *   - Instagram 縦長: 1080×1920
+ *   - X/Twitter 横長: 1200×630
+ * LINE: テキストシェア（URLコピー）
+ *
+ * Props:
+ *   typeName     - タイプ名（例: "INFJ - 提唱者"）
+ *   catchphrase  - 1行キャッチ（例: "あなたは静かな理想主義者"）
+ *   icon         - 絵文字 or キャラ識別子
+ *   resultId     - 診断結果ID（シェアURL生成用）
+ *   diagName     - 診断名（例: "MBTI診断"）
+ *   primaryColor - カード背景グラデ開始色（16進）
+ */
+interface Props {
+  typeName: string;
+  catchphrase: string;
+  icon?: string;
+  resultId?: string;
+  diagName?: string;
+  primaryColor?: string;
+}
+
+const {
+  typeName,
+  catchphrase,
+  icon = '🔮',
+  resultId = 'demo',
+  diagName = '性格診断',
+  primaryColor = '#6366f1',
+} = Astro.props;
+
+const shareUrl = `https://shindan-navi.jp/share/${resultId}/`;
+const shareText = `${diagName}の結果: ${typeName}。「${catchphrase}」 #診断ナビ`;
+const tweetUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
+const lineUrl = `https://line.me/R/msg/text/?${encodeURIComponent(`${shareText}\n${shareUrl}`)}`;
+---
+
+<div class="scg-wrapper">
+  <h2 class="scg-title">
+    <span aria-hidden="true">📸</span>
+    診断結果をシェア
+  </h2>
+
+  <!-- プレビューカード（CSS実装・canvas生成のビジュアル参考） -->
+  <div class="scg-preview" aria-label="シェアカードプレビュー" role="img">
+    <div
+      class="scg-card scg-card--twitter"
+      style={`--card-color: ${primaryColor}`}
+      aria-label="X/Twitter用横長カード（1200×630）"
+    >
+      <div class="scg-card-inner">
+        <div class="scg-card-icon" aria-hidden="true">{icon}</div>
+        <div class="scg-card-body">
+          <p class="scg-card-diag">{diagName}</p>
+          <p class="scg-card-type">{typeName}</p>
+          <p class="scg-card-catch">{catchphrase}</p>
+        </div>
+        <p class="scg-card-brand">shindan-navi.jp</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- シェアボタン群 -->
+  <div class="scg-actions">
+    <!-- X/Twitter シェア -->
+    <a
+      href={tweetUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      class="scg-btn scg-btn--x"
+      aria-label="Xで診断結果をシェア"
+    >
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+      </svg>
+      X でシェア
+    </a>
+
+    <!-- LINE シェア -->
+    <a
+      href={lineUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      class="scg-btn scg-btn--line"
+      aria-label="LINEで診断結果をシェア"
+    >
+      <svg width="20" height="20" viewBox="0 0 48 48" fill="currentColor" aria-hidden="true">
+        <path d="M24 4C13 4 4 11.5 4 21c0 5.7 3.2 10.8 8.2 14-.4 2.3-1.4 5.7-1.6 6.5-.3 1.1.4 1.1.9.8l7.3-4.8c1.7.3 3.4.5 5.2.5 11 0 20-7.5 20-17S35 4 24 4z"/>
+      </svg>
+      LINE でシェア
+    </a>
+
+    <!-- URLコピー -->
+    <button
+      class="scg-btn scg-btn--copy"
+      id="scg-copy-btn"
+      type="button"
+      aria-label="シェアURLをコピー"
+      data-url={shareUrl}
+    >
+      <span aria-hidden="true">🔗</span>
+      URLコピー
+    </button>
+  </div>
+
+  <!-- Instagram用縦長カード説明 -->
+  <details class="scg-instagram">
+    <summary class="scg-instagram-summary">
+      <span aria-hidden="true">📸</span>
+      Instagram用画像を保存する
+    </summary>
+    <div class="scg-instagram-body">
+      <p class="scg-instagram-note">
+        下のカードを長押し（スマホ）またはスクリーンショットで保存してInstagramにシェア。
+      </p>
+      <!-- Instagram縦長プレビュー -->
+      <div
+        class="scg-card scg-card--instagram"
+        style={`--card-color: ${primaryColor}`}
+        aria-label="Instagram用縦長カード（1080×1920比率）"
+      >
+        <div class="scg-card-inner scg-card-inner--vertical">
+          <p class="scg-card-brand">shindan-navi.jp</p>
+          <div class="scg-card-icon scg-card-icon--large" aria-hidden="true">{icon}</div>
+          <p class="scg-card-diag">{diagName}</p>
+          <p class="scg-card-type scg-card-type--large">{typeName}</p>
+          <p class="scg-card-catch">{catchphrase}</p>
+          <p class="scg-card-cta">あなたも試してみて</p>
+        </div>
+      </div>
+    </div>
+  </details>
+</div>
+
+<!-- URLコピー用スクリプト -->
+<script>
+  const copyBtn = document.getElementById('scg-copy-btn');
+  if (copyBtn) {
+    copyBtn.addEventListener('click', async () => {
+      const url = copyBtn.getAttribute('data-url') ?? location.href;
+      try {
+        await navigator.clipboard.writeText(url);
+        const original = copyBtn.innerHTML;
+        copyBtn.innerHTML = '<span aria-hidden="true">✓</span> コピーしました';
+        copyBtn.setAttribute('aria-label', 'コピーしました');
+        setTimeout(() => {
+          copyBtn.innerHTML = original;
+          copyBtn.setAttribute('aria-label', 'シェアURLをコピー');
+        }, 2000);
+      } catch {
+        // フォールバック: prompt
+        prompt('URLをコピーしてください:', url);
+      }
+    });
+  }
+</script>
+
+<!--
+  ============================================================
+  Phase 1 移行メモ: Satori / Vercel OG Image 実装
+  ============================================================
+  サーバーサイドOG生成に移行する場合、以下を参考に実装。
+
+  1. API Route: src/pages/api/og/[resultId].png.ts
+     - Satori (satori npm) + resvg-wasm でSVG→PNG変換
+     - フォント: Noto Sans JP (base64埋め込み or Google Fonts fetch)
+
+  2. 生成パラメータ:
+     - w=1200, h=630 (X/Twitter)
+     - w=1080, h=1920 (Instagram)
+
+  3. BaseLayout.astro の og:image に動的URL を設定:
+     ogImage={`/api/og/${resultId}.png`}
+
+  4. 参考: https://github.com/vercel/satori
+  ============================================================
+-->
+
+<style>
+  .scg-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sn-space-5);
+    padding: var(--sn-space-6);
+    background: var(--sn-bg-white);
+    border-radius: var(--sn-radius-lg);
+    box-shadow: var(--sn-shadow-sm);
+    border: 1px solid var(--sn-border);
+  }
+
+  .scg-title {
+    display: flex;
+    align-items: center;
+    gap: var(--sn-space-2);
+    font-family: var(--sn-font-rounded);
+    font-size: var(--sn-text-lg);
+    font-weight: 700;
+    color: var(--sn-text);
+    margin: 0;
+  }
+
+  /* カードプレビュー共通 */
+  .scg-preview {
+    border-radius: var(--sn-radius-md);
+    overflow: hidden;
+  }
+
+  .scg-card {
+    position: relative;
+    background: linear-gradient(
+      135deg,
+      var(--card-color) 0%,
+      color-mix(in srgb, var(--card-color) 60%, #1a1a2e) 100%
+    );
+    border-radius: var(--sn-radius-md);
+    overflow: hidden;
+    container-type: inline-size;
+  }
+
+  /* X/Twitter横長 (1200:630 = 40:21) */
+  .scg-card--twitter {
+    aspect-ratio: 40 / 21;
+  }
+
+  /* Instagram縦長 (1080:1920 = 9:16) */
+  .scg-card--instagram {
+    aspect-ratio: 9 / 16;
+    max-width: 260px;
+    margin-inline: auto;
+  }
+
+  .scg-card-inner {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    gap: 5%;
+    padding: 8%;
+    color: #fff;
+  }
+
+  .scg-card-inner--vertical {
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    gap: 3%;
+  }
+
+  .scg-card-icon {
+    font-size: clamp(2rem, 8cqi, 4rem);
+    line-height: 1;
+    flex-shrink: 0;
+  }
+
+  .scg-card-icon--large {
+    font-size: clamp(3rem, 12cqi, 5rem);
+  }
+
+  .scg-card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 4%;
+    flex: 1;
+  }
+
+  .scg-card-diag {
+    font-size: clamp(0.625rem, 2cqi, 0.875rem);
+    font-weight: 700;
+    opacity: 0.7;
+    margin: 0;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .scg-card-type {
+    font-family: var(--sn-font-rounded);
+    font-size: clamp(1rem, 4.5cqi, 2rem);
+    font-weight: 900;
+    margin: 0;
+    line-height: 1.2;
+  }
+
+  .scg-card-type--large {
+    font-size: clamp(1.25rem, 6cqi, 2.5rem);
+  }
+
+  .scg-card-catch {
+    font-size: clamp(0.75rem, 3cqi, 1rem);
+    opacity: 0.9;
+    margin: 0;
+    line-height: 1.4;
+  }
+
+  .scg-card-brand {
+    position: absolute;
+    bottom: 4%;
+    right: 5%;
+    font-size: clamp(0.5rem, 2cqi, 0.75rem);
+    font-weight: 700;
+    opacity: 0.6;
+    margin: 0;
+    letter-spacing: 0.05em;
+  }
+
+  .scg-card-inner--vertical .scg-card-brand {
+    position: static;
+    margin-top: auto;
+  }
+
+  .scg-card-cta {
+    font-size: clamp(0.625rem, 2.5cqi, 0.875rem);
+    font-weight: 700;
+    padding: 2% 6%;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 999px;
+    margin: 0;
+    backdrop-filter: blur(4px);
+  }
+
+  /* シェアボタン */
+  .scg-actions {
+    display: flex;
+    gap: var(--sn-space-3);
+    flex-wrap: wrap;
+  }
+
+  .scg-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sn-space-2);
+    padding: var(--sn-space-3) var(--sn-space-5);
+    border-radius: var(--sn-radius-pill);
+    font-size: var(--sn-text-sm);
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+    border: none;
+    min-height: var(--sn-tap-min);
+    transition:
+      opacity var(--sn-dur-fast) var(--sn-ease),
+      transform var(--sn-dur-fast) var(--sn-ease);
+  }
+
+  .scg-btn:hover {
+    opacity: 0.85;
+    transform: translateY(-1px);
+  }
+
+  .scg-btn:focus-visible {
+    outline: 2px solid var(--sn-primary);
+    outline-offset: 2px;
+  }
+
+  .scg-btn--x {
+    background: #000;
+    color: #fff;
+  }
+
+  .scg-btn--line {
+    background: #00b900;
+    color: #fff;
+  }
+
+  .scg-btn--copy {
+    background: var(--sn-bg-soft);
+    color: var(--sn-text-soft);
+    font-family: inherit;
+  }
+
+  /* Instagram詳細 */
+  .scg-instagram {
+    border: 1px solid var(--sn-border);
+    border-radius: var(--sn-radius-md);
+    overflow: hidden;
+  }
+
+  .scg-instagram-summary {
+    display: flex;
+    align-items: center;
+    gap: var(--sn-space-2);
+    padding: var(--sn-space-3) var(--sn-space-4);
+    font-size: var(--sn-text-sm);
+    font-weight: 700;
+    color: var(--sn-text-soft);
+    cursor: pointer;
+    min-height: var(--sn-tap-min);
+    list-style: none;
+  }
+
+  .scg-instagram-summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .scg-instagram-summary::after {
+    content: '▼';
+    margin-left: auto;
+    font-size: var(--sn-text-xs);
+    color: var(--sn-muted);
+    transition: transform var(--sn-dur-fast) var(--sn-ease);
+  }
+
+  details[open] .scg-instagram-summary::after {
+    transform: rotate(180deg);
+  }
+
+  .scg-instagram-body {
+    padding: var(--sn-space-4);
+    display: flex;
+    flex-direction: column;
+    gap: var(--sn-space-4);
+    border-top: 1px solid var(--sn-border-soft);
+  }
+
+  .scg-instagram-note {
+    font-size: var(--sn-text-xs);
+    color: var(--sn-muted);
+    line-height: var(--sn-leading-base);
+    margin: 0;
+  }
+
+  @media (max-width: 480px) {
+    .scg-wrapper {
+      padding: var(--sn-space-4);
+    }
+
+    .scg-actions {
+      flex-direction: column;
+    }
+
+    .scg-btn {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+</style>
