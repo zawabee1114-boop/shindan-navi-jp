@@ -1,0 +1,14 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Container from '../components/Container.astro';
+---
+<BaseLayout title="ページが見つかりません - 診断ナビ" description="404エラー" noindex={true}>
+  <Container size="narrow">
+    <div style="padding-block:6rem; text-align:center;">
+      <p style="font-size:4rem; margin-bottom:1rem;">🔍</p>
+      <h1 style="font-family:var(--sn-font-rounded); font-size:2rem; font-weight:900; margin-bottom:1rem;">ページが見つかりません</h1>
+      <p style="color:var(--sn-muted); margin-bottom:2rem;">お探しのページは存在しないか、移動した可能性があります。</p>
+      <a href="/" class="btn btn-primary">トップページに戻る</a>
+    </div>
+  </Container>
+</BaseLayout>

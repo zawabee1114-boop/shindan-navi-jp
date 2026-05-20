@@ -1,0 +1,194 @@
+---
+/**
+ * RecommendationList.astro - 推奨リスト表示
+ * 診断結果後の「次におすすめの診断」「関連コンテンツ」表示に使用。
+ */
+interface RecommendationItem {
+  title: string;
+  description: string;
+  href: string;
+  icon?: string;
+  badge?: string;
+  isNew?: boolean;
+}
+
+interface Props {
+  /** セクションタイトル */
+  heading?: string;
+  /** 推奨アイテム一覧 */
+  items: RecommendationItem[];
+  /** 表示列数（デフォルト: 1列） */
+  columns?: 1 | 2 | 3;
+  /** コンパクト表示 */
+  compact?: boolean;
+}
+
+const {
+  heading = 'あなたにおすすめ',
+  items,
+  columns = 1,
+  compact = false,
+} = Astro.props;
+---
+
+<section class={`recommendation-section recommendation-section--col${columns} ${compact ? 'recommendation-section--compact' : ''}`} aria-labelledby="rec-heading">
+  {heading && (
+    <h2 id="rec-heading" class="rec-heading">
+      <span aria-hidden="true">✨</span>
+      {heading}
+    </h2>
+  )}
+
+  <ul class="rec-list">
+    {items.map((item) => (
+      <li class="rec-item">
+        <a href={item.href} class="rec-link">
+          {item.icon && (
+            <span class="rec-icon" aria-hidden="true">{item.icon}</span>
+          )}
+          <div class="rec-content">
+            <div class="rec-title-row">
+              <span class="rec-title">{item.title}</span>
+              {item.badge && (
+                <span class="badge badge-primary">{item.badge}</span>
+              )}
+              {item.isNew && (
+                <span class="badge badge-new">NEW</span>
+              )}
+            </div>
+            {!compact && (
+              <p class="rec-description">{item.description}</p>
+            )}
+          </div>
+          <span class="rec-arrow" aria-hidden="true">→</span>
+        </a>
+      </li>
+    ))}
+  </ul>
+</section>
+
+<style>
+  .recommendation-section {
+    background: var(--sn-bg-white);
+    border-radius: var(--sn-radius);
+    padding: var(--sn-space-6);
+    box-shadow: var(--sn-shadow-sm);
+  }
+
+  .rec-heading {
+    display: flex;
+    align-items: center;
+    gap: var(--sn-space-2);
+    font-family: var(--sn-font-rounded);
+    font-size: var(--sn-text-lg);
+    font-weight: 700;
+    color: var(--sn-text);
+    margin-bottom: var(--sn-space-4);
+  }
+
+  .rec-list {
+    list-style: none;
+    display: grid;
+    gap: var(--sn-space-2);
+  }
+
+  .recommendation-section--col2 .rec-list {
+    grid-template-columns: repeat(1, 1fr);
+  }
+
+  @media (min-width: 640px) {
+    .recommendation-section--col2 .rec-list {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .recommendation-section--col3 .rec-list {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 900px) {
+    .recommendation-section--col3 .rec-list {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .rec-link {
+    display: flex;
+    align-items: center;
+    gap: var(--sn-space-3);
+    padding: var(--sn-space-4);
+    background: var(--sn-bg-soft);
+    border-radius: var(--sn-radius-md);
+    border: 1px solid var(--sn-border);
+    text-decoration: none;
+    transition:
+      background-color var(--sn-dur-fast) var(--sn-ease),
+      border-color var(--sn-dur-fast) var(--sn-ease),
+      transform var(--sn-dur-fast) var(--sn-ease-bounce);
+    min-height: var(--sn-tap-min);
+  }
+
+  .rec-link:hover {
+    background: var(--sn-primary-bg);
+    border-color: var(--sn-primary-light);
+    transform: scale(1.01);
+    text-decoration: none;
+  }
+
+  .rec-icon {
+    font-size: var(--sn-text-xl);
+    flex-shrink: 0;
+    width: 36px;
+    text-align: center;
+  }
+
+  .rec-content {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .rec-title-row {
+    display: flex;
+    align-items: center;
+    gap: var(--sn-space-2);
+    flex-wrap: wrap;
+    margin-bottom: var(--sn-space-1);
+  }
+
+  .rec-title {
+    font-size: var(--sn-text-base);
+    font-weight: 700;
+    color: var(--sn-text);
+    line-height: var(--sn-leading-tight);
+  }
+
+  .rec-description {
+    font-size: var(--sn-text-sm);
+    color: var(--sn-muted);
+    line-height: var(--sn-leading-base);
+    margin: 0;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+
+  .rec-arrow {
+    font-size: var(--sn-text-lg);
+    color: var(--sn-primary);
+    flex-shrink: 0;
+    transition: transform var(--sn-dur-fast) var(--sn-ease);
+  }
+
+  .rec-link:hover .rec-arrow {
+    transform: translateX(4px);
+  }
+
+  /* コンパクト */
+  .recommendation-section--compact {
+    padding: var(--sn-space-4);
+  }
+
+  .recommendation-section--compact .rec-link {
+    padding: var(--sn-space-3);
+  }
+</style>
