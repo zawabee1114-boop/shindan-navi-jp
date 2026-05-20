@@ -1,0 +1,479 @@
+---
+/**
+ * 血液型相性診断ツール ページ
+ * KW: 血液型相性診断（VOL: 関連KW / SD: 15）
+ * 学術根拠:
+ *   - 古川竹二 (1927) 「血液型による気質の研究」心理学研究
+ *   - 能見正比古 (1971) 『血液型でわかる相性』青春出版社
+ *   - Sakamoto A, Yamazaki K (2004) International Journal of Psychology 39(4)
+ *   - 日本心理学会 公式見解（2014）
+ * 確認日: 2026-05-20
+ *
+ * SEO/AIO対応:
+ * - JSON-LD: WebApplication + BreadcrumbList + HowTo
+ * - React Island: BloodCompatTool（client:load）
+ * - URL パラメータ連動（?t1=A&t2=B）
+ * - YMYL回避: 医学的診断・治療表記ゼロ
+ * - disclaimer 必須表示
+ */
+import BaseLayout from '../../../../layouts/BaseLayout.astro';
+import Container from '../../../../components/Container.astro';
+import BloodCompatTool from '../../../../components/BloodCompatTool';
+import { meta } from '../../../../data/diagnoses/blood-compat/meta';
+
+const SITE_URL = 'https://shindan-navi.jp';
+const PAGE_URL = `${SITE_URL}/diagnosis/blood-compat/tool/`;
+
+const pageTitle = '血液型相性診断ツール【A・B・O・AB 選ぶだけ即表示】｜診断ナビ';
+const pageDescription =
+  '血液型を2つ選ぶだけで相性スコア・仕事相性・恋愛相性・友人相性・成長ポイントを即表示。古川竹二（1927）・能見正比古（1971）の研究と日本の血液型性格分類文化をもとにした相性分析ツール。無料・登録不要。';
+
+// JSON-LD: WebApplication
+const jsonLdWebApp = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  '@id': `${PAGE_URL}#webapp`,
+  name: '血液型相性診断ツール【A・B・O・AB 選ぶだけ即表示】',
+  url: PAGE_URL,
+  applicationCategory: 'EducationalApplication',
+  operatingSystem: 'Web',
+  description: pageDescription,
+  offers: {
+    '@type': 'Offer',
+    price: '0',
+    priceCurrency: 'JPY',
+    availability: 'https://schema.org/InStock',
+  },
+  author: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+    name: '診断ナビ',
+    url: SITE_URL,
+  },
+  publisher: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+  },
+};
+
+// JSON-LD: BreadcrumbList
+const jsonLdBreadcrumb = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  '@id': `${PAGE_URL}#breadcrumb`,
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'ホーム', item: SITE_URL },
+    { '@type': 'ListItem', position: 2, name: '診断一覧', item: `${SITE_URL}/diagnosis/` },
+    {
+      '@type': 'ListItem',
+      position: 3,
+      name: '血液型相性診断',
+      item: `${SITE_URL}/diagnosis/blood-compat/`,
+    },
+    { '@type': 'ListItem', position: 4, name: '血液型相性診断ツール', item: PAGE_URL },
+  ],
+};
+
+// JSON-LD: HowTo（使い方）
+const jsonLdHowTo = {
+  '@context': 'https://schema.org',
+  '@type': 'HowTo',
+  '@id': `${PAGE_URL}#howto`,
+  name: '血液型相性診断ツールの使い方',
+  description: '2つの血液型を選んで相性スコアを確認する方法。',
+  totalTime: 'PT1M',
+  step: [
+    {
+      '@type': 'HowToStep',
+      name: 'タイプ1（自分の血液型）を選択',
+      text: 'ドロップダウンからあなたの血液型（A・B・O・AB）を選びます。',
+      position: 1,
+    },
+    {
+      '@type': 'HowToStep',
+      name: 'タイプ2（相手の血液型）を選択',
+      text: '相手の血液型をドロップダウンから選びます。',
+      position: 2,
+    },
+    {
+      '@type': 'HowToStep',
+      name: '「相性を見る」をタップ',
+      text: 'ボタンをタップすると、相性スコア・カテゴリ・仕事相性・恋愛相性・友人相性・成長ポイントが即表示されます。',
+      position: 3,
+    },
+    {
+      '@type': 'HowToStep',
+      name: 'URLをシェア',
+      text: 'X（旧Twitter）・LINE・URLコピーで結果を友人にシェアできます。URLには選択した血液型が含まれるため、同じ結果を即座に再現できます。',
+      position: 4,
+    },
+  ],
+};
+
+const jsonLdAll = [jsonLdWebApp, jsonLdBreadcrumb, jsonLdHowTo];
+---
+
+<BaseLayout
+  title={pageTitle}
+  description={pageDescription}
+  canonical={PAGE_URL}
+  jsonLd={jsonLdAll}
+  ogType="website"
+  publishDate={meta.publishedAt}
+  lastUpdated={meta.updatedAt}
+  breadcrumbs={[
+    { name: '診断一覧', url: '/diagnosis/' },
+    { name: '血液型相性診断', url: '/diagnosis/blood-compat/' },
+    { name: '相性診断ツール', url: '/diagnosis/blood-compat/tool/' },
+  ]}
+>
+  {/* ========== ヒーロー ========== */}
+  <section class="bct-hero" aria-labelledby="bct-hero-h1">
+    <Container>
+      <div class="bct-hero-inner">
+        <div class="bct-hero-badge">無料 / 登録不要 / 即表示</div>
+        <h1 id="bct-hero-h1" class="bct-hero-h1">
+          血液型相性診断ツール
+        </h1>
+        <p class="bct-hero-catch">
+          2つの血液型を選んで「相性を見る」を押すだけ。
+          スコア・仕事・恋愛・友人相性を即表示します。
+        </p>
+        <p class="bct-hero-sub">
+          <time datetime={meta.updatedAt}>{meta.updatedAt}</time> 時点の情報
+        </p>
+      </div>
+    </Container>
+  </section>
+
+  <Container>
+    {/* ========== AIOブロック ========== */}
+    <div class="bct-aio-block" role="note" aria-label="このページでわかること">
+      <p class="bct-aio-title">このページでわかること</p>
+      <ul class="bct-aio-list">
+        <li>A・B・O・AB型の全10ペアの相性スコア（0〜100点）</li>
+        <li>仕事・恋愛・友人関係ごとの相性の特徴</li>
+        <li>お互いから学べること（成長ポイント）とコミュニケーションのヒント</li>
+        <li>結果URLをシェアして友人・パートナーと確認できる</li>
+      </ul>
+    </div>
+
+    {/* ========== ツール本体 ========== */}
+    <section class="bct-section" aria-labelledby="bct-tool-h2">
+      <h2 id="bct-tool-h2" class="bct-h2">相性診断ツール</h2>
+      <BloodCompatTool client:load />
+    </section>
+
+    {/* ========== 使い方ガイド ========== */}
+    <section class="bct-section" aria-labelledby="bct-howto-h2">
+      <h2 id="bct-howto-h2" class="bct-h2">ツールの使い方</h2>
+      <ol class="bct-howto-list">
+        <li class="bct-howto-item">
+          <div class="bct-howto-num" aria-hidden="true">1</div>
+          <div class="bct-howto-body">
+            <strong>自分の血液型を選ぶ</strong>
+            <p>「あなたの血液型（タイプ1）」のドロップダウンから A・B・O・AB を選択します。</p>
+          </div>
+        </li>
+        <li class="bct-howto-item">
+          <div class="bct-howto-num" aria-hidden="true">2</div>
+          <div class="bct-howto-body">
+            <strong>相手の血液型を選ぶ</strong>
+            <p>「相手の血液型（タイプ2）」のドロップダウンから相手の血液型を選択します。</p>
+          </div>
+        </li>
+        <li class="bct-howto-item">
+          <div class="bct-howto-num" aria-hidden="true">3</div>
+          <div class="bct-howto-body">
+            <strong>「相性を見る」をタップ</strong>
+            <p>ボタンをタップすると、スコア・相性カテゴリ・仕事・恋愛・友人相性・成長ポイントが即座に表示されます。</p>
+          </div>
+        </li>
+        <li class="bct-howto-item">
+          <div class="bct-howto-num" aria-hidden="true">4</div>
+          <div class="bct-howto-body">
+            <strong>シェアして友人と確認</strong>
+            <p>X・LINE・URLコピーで結果を共有できます。URLに選択した血液型が含まれるため、相手も同じ結果をすぐに確認できます。</p>
+          </div>
+        </li>
+      </ol>
+    </section>
+
+    {/* ========== 相性スコアの見方 ========== */}
+    <section class="bct-section" aria-labelledby="bct-guide-h2">
+      <h2 id="bct-guide-h2" class="bct-h2">血液型相性の見方・活用ポイント</h2>
+      <div class="bct-guide-grid">
+        <div class="bct-guide-card">
+          <div class="bct-guide-icon" aria-hidden="true">📊</div>
+          <h3 class="bct-guide-title">スコアは「傾向の強さ」</h3>
+          <p class="bct-guide-body">
+            スコアが高い・低いは「相性の優劣」ではありません。
+            日本の血液型性格分類文化に基づく「傾向の強さ」を示す参考値です。
+            スコアが低くても、実際の関係は対話と理解で深まります。
+          </p>
+        </div>
+        <div class="bct-guide-card">
+          <div class="bct-guide-icon" aria-hidden="true">🌱</div>
+          <h3 class="bct-guide-title">「学び合いペア」を前向きに活用</h3>
+          <p class="bct-guide-body">
+            スコアが中程度のペアを「学び合いペア」と表示しています。
+            違いが大きいほど、お互いから学べることも多いです。
+            成長ポイントとコミュニケーションのヒントを参考に活用してください。
+          </p>
+        </div>
+        <div class="bct-guide-card">
+          <div class="bct-guide-icon" aria-hidden="true">💡</div>
+          <h3 class="bct-guide-title">対話のきっかけに使う</h3>
+          <p class="bct-guide-body">
+            血液型相性は「ふたりで話すきっかけ」として活用するのが最も効果的です。
+            「こんな傾向があるみたいだけど、あなたはどう？」という対話が
+            実際の相互理解を深めます。
+          </p>
+        </div>
+        <div class="bct-guide-card">
+          <div class="bct-guide-icon" aria-hidden="true">⚠️</div>
+          <h3 class="bct-guide-title">決定的な判断基準には使わない</h3>
+          <p class="bct-guide-body">
+            日本心理学会（2014年）は血液型と性格の統計的相関は限定的と明言しています。
+            採用・結婚・友人の選別などの重要な判断を血液型だけで行うことは推奨しません。
+          </p>
+        </div>
+      </div>
+    </section>
+
+    {/* ========== 関連ナビ ========== */}
+    <section class="bct-section" aria-labelledby="bct-nav-h2">
+      <h2 id="bct-nav-h2" class="bct-h2">関連ページ</h2>
+      <div class="bct-nav-grid">
+        <a href="/diagnosis/blood-compat/" class="bct-nav-card">
+          <div class="bct-nav-icon" aria-hidden="true">📖</div>
+          <div>
+            <strong class="bct-nav-title">血液型相性診断 メインページ</strong>
+            <p class="bct-nav-desc">4タイプ詳細・相性ランキング・文化的位置付けの解説</p>
+          </div>
+        </a>
+        <a href="/diagnosis/blood-compat/table/" class="bct-nav-card">
+          <div class="bct-nav-icon" aria-hidden="true">📊</div>
+          <div>
+            <strong class="bct-nav-title">4×4 相性表ビジュアル</strong>
+            <p class="bct-nav-desc">全16パターンを一覧できるマトリクス</p>
+          </div>
+        </a>
+        <a href="/diagnosis/mbti-compat/tool/" class="bct-nav-card">
+          <div class="bct-nav-icon" aria-hidden="true">🧠</div>
+          <div>
+            <strong class="bct-nav-title">MBTI相性診断ツール</strong>
+            <p class="bct-nav-desc">16タイプ性格分類の相性を分析（心理学的根拠あり）</p>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    {/* ========== 免責事項・参考文献 ========== */}
+    <section class="bct-section" aria-labelledby="bct-disclaimer-h2">
+      <h2 id="bct-disclaimer-h2" class="bct-h2">免責事項と参考文献</h2>
+      <div class="bct-disclaimer-box" role="note" aria-label="免責事項">
+        <p class="bct-disclaimer-text">{meta.disclaimer}</p>
+      </div>
+      <div class="bct-ref-box">
+        <h3 class="bct-ref-title">参考文献</h3>
+        <ul class="bct-ref-list">
+          {meta.references.map((ref) => (
+            <li class="bct-ref-item">
+              {ref.author}（{ref.year}）「{ref.title}」{ref.publisher}
+              {ref.url && (
+                <a href={ref.url} target="_blank" rel="noopener noreferrer" class="bct-ref-link">
+                  [公式ページ]
+                </a>
+              )}
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  </Container>
+</BaseLayout>
+
+<style>
+  :root {
+    --bct-primary: #e84393;
+    --bct-text: var(--sn-text, #1f2937);
+    --bct-muted: var(--sn-muted, #6b7280);
+    --bct-border: var(--sn-border, #e5e7eb);
+    --bct-surface: var(--sn-surface, #f9fafb);
+    --bct-radius: 12px;
+  }
+
+  .bct-hero {
+    background: linear-gradient(135deg, #fdf2f8 0%, #fce7f3 50%, #f9fafb 100%);
+    padding: 2.5rem 0 1.5rem;
+    border-bottom: 1px solid var(--bct-border);
+  }
+  .bct-hero-inner { text-align: center; }
+  .bct-hero-badge {
+    display: inline-block;
+    background: rgba(232, 67, 147, 0.1);
+    color: var(--bct-primary);
+    border: 1px solid rgba(232, 67, 147, 0.3);
+    border-radius: 999px;
+    padding: 0.3rem 1rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-bottom: 0.8rem;
+  }
+  .bct-hero-h1 {
+    font-size: clamp(1.4rem, 4vw, 2rem);
+    font-weight: 800;
+    color: var(--bct-text);
+    margin: 0 0 0.6rem;
+  }
+  .bct-hero-catch {
+    font-size: 0.97rem;
+    color: var(--bct-muted);
+    line-height: 1.8;
+    margin: 0 0 0.6rem;
+  }
+  .bct-hero-sub { font-size: 0.8rem; color: var(--bct-muted); margin: 0; }
+
+  .bct-section { margin: 2.5rem 0; }
+  .bct-h2 {
+    font-size: clamp(1.1rem, 2.5vw, 1.35rem);
+    font-weight: 800;
+    color: var(--bct-text);
+    margin: 0 0 1rem;
+    padding-bottom: 0.4rem;
+    border-bottom: 2px solid var(--bct-primary);
+  }
+
+  .bct-aio-block {
+    background: #fdf2f8;
+    border: 1px solid rgba(232, 67, 147, 0.2);
+    border-radius: var(--bct-radius);
+    padding: 1rem 1.3rem;
+    margin: 1.5rem 0 2rem;
+  }
+  .bct-aio-title {
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: var(--bct-primary);
+    margin: 0 0 0.5rem;
+  }
+  .bct-aio-list {
+    margin: 0;
+    padding-left: 1.3rem;
+    font-size: 0.9rem;
+    line-height: 1.7;
+    color: var(--bct-text);
+  }
+
+  .bct-howto-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+  .bct-howto-item {
+    display: flex;
+    gap: 0.8rem;
+    align-items: flex-start;
+    background: #fff;
+    border: 1px solid var(--bct-border);
+    border-radius: var(--bct-radius);
+    padding: 1rem 1.2rem;
+  }
+  .bct-howto-num {
+    width: 32px;
+    height: 32px;
+    background: var(--bct-primary);
+    color: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+  }
+  .bct-howto-body { flex: 1; }
+  .bct-howto-body strong {
+    display: block;
+    font-weight: 700;
+    margin-bottom: 0.3rem;
+    font-size: 0.97rem;
+  }
+  .bct-howto-body p {
+    font-size: 0.9rem;
+    line-height: 1.65;
+    color: var(--bct-muted);
+    margin: 0;
+  }
+
+  .bct-guide-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 0.8rem;
+  }
+  .bct-guide-card {
+    background: #fff;
+    border: 1px solid var(--bct-border);
+    border-radius: var(--bct-radius);
+    padding: 1rem;
+  }
+  .bct-guide-icon { font-size: 1.4rem; margin-bottom: 0.4rem; }
+  .bct-guide-title { font-size: 0.92rem; font-weight: 700; margin: 0 0 0.4rem; }
+  .bct-guide-body { font-size: 0.87rem; line-height: 1.65; color: var(--bct-text); margin: 0; }
+
+  .bct-nav-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 0.8rem;
+  }
+  .bct-nav-card {
+    display: flex;
+    gap: 0.8rem;
+    align-items: flex-start;
+    background: #fff;
+    border: 1.5px solid var(--bct-border);
+    border-radius: var(--bct-radius);
+    padding: 1rem;
+    text-decoration: none;
+    color: var(--bct-text);
+    transition: border-color 0.15s;
+  }
+  .bct-nav-card:hover { border-color: var(--bct-primary); }
+  .bct-nav-icon { font-size: 1.5rem; flex-shrink: 0; }
+  .bct-nav-title { display: block; font-size: 0.9rem; font-weight: 700; margin-bottom: 0.2rem; }
+  .bct-nav-desc { font-size: 0.82rem; color: var(--bct-muted); margin: 0; line-height: 1.5; }
+
+  .bct-disclaimer-box {
+    background: #fefce8;
+    border: 1px solid #fde68a;
+    border-radius: 8px;
+    padding: 0.8rem 1rem;
+    margin-bottom: 1rem;
+  }
+  .bct-disclaimer-text {
+    font-size: 0.85rem;
+    color: #92400e;
+    line-height: 1.7;
+    margin: 0;
+  }
+  .bct-ref-box {
+    background: var(--bct-surface);
+    border: 1px solid var(--bct-border);
+    border-radius: var(--bct-radius);
+    padding: 1rem 1.2rem;
+  }
+  .bct-ref-title { font-size: 0.9rem; font-weight: 700; margin: 0 0 0.5rem; }
+  .bct-ref-list {
+    margin: 0;
+    padding-left: 1.3rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+  .bct-ref-item { font-size: 0.82rem; line-height: 1.65; color: var(--bct-muted); }
+  .bct-ref-link { color: var(--bct-primary); margin-left: 0.3rem; }
+</style>
