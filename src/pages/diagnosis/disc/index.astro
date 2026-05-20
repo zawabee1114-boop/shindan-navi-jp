@@ -1,20 +1,1244 @@
 ---
 /**
- * 診断ページ スタブ（Phase 0）
- * content-writer が本文を執筆する。
- * ui-ux-designer が診断フローコンポーネントを実装する。
+ * DiSC診断 ランディングページ
+ * KW: DiSC診断（VOL2,900/SD11/CPC¥191・Phase 1第7優先）
+ * 学術根拠: Marston (1928) + Clarke (1956) + Wiley DiSC公式 (2024)
+ * 確認日: 2026-05-20
+ *
+ * SEO/AIO対応:
+ * - JSON-LD: WebApplication + Quiz + FAQPage + BreadcrumbList + citation
+ * - AIOブロック: 「このページでわかること」
+ * - YMYL回避: 医学的診断ゼロ。採用・評価への使用推奨なし明記
+ * - DiSC®はWiley社の登録商標。商標表記を冒頭・footnoteで明記
+ * - 4タイプ（D/i/S/C）のビジネス活用特化
  */
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Container from '../../../components/Container.astro';
-const diagName = 'この診断';
+import DiagnosisFlow from '../../../components/DiagnosisFlow';
+import { meta } from '../../../data/diagnoses/disc/meta';
+import { questions } from '../../../data/diagnoses/disc/questions';
+import { calculateResultTypeId } from '../../../data/diagnoses/disc/results';
+
+const SITE_URL = 'https://shindan-navi.jp';
+const PAGE_URL = `${SITE_URL}/diagnosis/disc/`;
+
+// DiagnosisFlow に渡す questions を diagnosis.ts の Question 型に変換
+const flowQuestions = questions.map((q) => ({
+  id: String(q.id),
+  text: q.text,
+}));
+
+// JSON-LD: WebApplication
+const jsonLdWebApp = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  '@id': `${PAGE_URL}#webapp`,
+  name: 'DiSC診断【無料・3分・28問・公式根拠付】',
+  url: PAGE_URL,
+  applicationCategory: 'EducationalApplication',
+  operatingSystem: 'Web',
+  description:
+    'Marston (1928) のDiSC理論に基づく無料診断。28問に答えるだけでD（主導型）・i（感化型）・S（安定型）・C（慎重型）の4タイプを判定。リーダーシップ・チームビルディング・職場コミュニケーションへの活用方法がわかります。',
+  offers: {
+    '@type': 'Offer',
+    price: '0',
+    priceCurrency: 'JPY',
+    availability: 'https://schema.org/InStock',
+  },
+  author: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+    name: '診断ナビ',
+    url: SITE_URL,
+  },
+  publisher: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+  },
+};
+
+// JSON-LD: Quiz（citation に学術文献を配置）
+const jsonLdQuiz = {
+  '@context': 'https://schema.org',
+  '@type': 'Quiz',
+  '@id': `${PAGE_URL}#quiz`,
+  name: 'DiSC診断（28問）',
+  url: PAGE_URL,
+  about: {
+    '@type': 'Thing',
+    name: 'DiSC理論（Dominance / influence / Steadiness / Conscientiousness）',
+    description: 'Marston (1928) が提唱したDiSC行動スタイル4次元モデル',
+    sameAs: 'https://www.discprofile.com/what-is-disc/overview',
+  },
+  educationalLevel: 'HighSchool',
+  numberOfQuestions: meta.questionCount,
+  assesses: 'DiSCタイプ・職場での行動スタイル・リーダーシップ・チームビルディング',
+  dateCreated: meta.publishedAt,
+  dateModified: meta.updatedAt,
+  inLanguage: 'ja',
+  citation: meta.references.map((ref) => ({
+    '@type': 'CreativeWork',
+    name: ref.title,
+    author: ref.author,
+    datePublished: String(ref.year),
+    url: ref.url,
+  })),
+};
+
+// FAQ 8問（DiSC特有・ビジネス・採用注意含む）
+const faqs = [
+  {
+    question: 'DiSC診断に科学的根拠はありますか？',
+    answer:
+      'DiSC理論はWilliam Moulton Marston（1928）の著書「Emotions of Normal People」を起源とし、Walter Clarke（1956）、John Geier（1970年代）を経てWiley社が現代版として整備した行動スタイルモデルです（https://www.discprofile.com/what-is-disc/history-of-disc、2026-05-20確認）。本診断はDiSC理論に基づく自己理解ツールであり、Wiley社の公式アセスメントとは別のものです。',
+  },
+  {
+    question: 'MBTIとDiSCの違いは何ですか？',
+    answer:
+      'MBTIは「どのように世界を認識し判断するか」（内向/外向・感覚/直感・思考/感情・判断/知覚）の16タイプ分類です。DiSCは「職場・対人関係での行動スタイル」（D/i/S/C）に特化した4タイプモデルです。DiSCはビジネス文脈・チームビルディング・リーダーシップ開発での活用を想定して設計されています。',
+  },
+  {
+    question: '公式DiSC（Wiley社）との違いは何ですか？',
+    answer:
+      'Wiley社の公式DiSC®アセスメント（https://www.discprofile.com/ ）は有料の認定プログラムで、より詳細な研究データと解釈レポートが含まれます。本診断はDiSC理論の学術的知見に基づく無料の自己理解ツールであり、Wiley社の製品ではありません。職場での本格導入にはWiley社の認定プログラムをご検討ください。',
+  },
+  {
+    question: 'DiSCの4タイプの組み合わせはありますか？',
+    answer:
+      '実際のDiSCプロファイルでは4タイプが複合することが多く、Wiley社の研究では12の複合スタイルが定義されています。本診断では最もスコアの高いタイプを「主タイプ」として判定します。複合スタイルの詳細分析はWiley社の公式アセスメントで確認できます。',
+  },
+  {
+    question: '仕事でDiSCを活用する方法は？',
+    answer:
+      'DiSCは主に3つの場面で活用されます。①チームビルディング（メンバー相互の行動スタイル理解）、②1on1・コーチング（上司と部下の対話スタイルの最適化）、③リーダーシップ開発（自分の強みと盲点の把握）です。職場研修でのDiSC活用は多くの企業で実績があります。',
+  },
+  {
+    question: '診断結果は変わることがありますか？',
+    answer:
+      'DiSCの行動スタイルはある程度安定していますが、役割・環境・ストレス状況によって変化することがあります。同じ人でも「職場での自分」と「プライベートの自分」でスコアが異なることがあります。本診断は何回でも受けられます。',
+  },
+  {
+    question: 'リーダーに向いているタイプは何ですか？',
+    answer:
+      'DiSCではどのタイプもリーダーになれると考えます。D型は推進力・決断力で牽引するリーダー、i型は共感・巻き込み力で人をまとめるリーダー、S型は安定・信頼で長期的に支えるリーダー、C型は専門性・分析力で判断の質を高めるリーダーとして活躍します。リーダーシップスタイルが異なるだけです。',
+  },
+  {
+    question: 'DiSCで採用や人事評価をしていいですか？',
+    answer:
+      'DiSCを採用・評価・昇進の基準に使うことは推奨しません。行動スタイルの好みは多様であり、特定のタイプを「優れている」とすることは公平採用の観点から問題になる可能性があります。Wiley社も「DiSCは採用選考ツールではない」と明記しています（https://www.discprofile.com/what-is-disc/overview、2026-05-20確認）。本診断は自己理解・チームコミュニケーション改善の目的でご活用ください。',
+  },
+];
+
+const jsonLdFAQ = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  '@id': `${PAGE_URL}#faq`,
+  mainEntity: faqs.map(({ question, answer }) => ({
+    '@type': 'Question',
+    name: question,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: answer,
+    },
+  })),
+};
+
+// JSON-LD: BreadcrumbList
+const jsonLdBreadcrumb = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'ホーム', item: SITE_URL },
+    { '@type': 'ListItem', position: 2, name: '診断一覧', item: `${SITE_URL}/diagnosis/` },
+    { '@type': 'ListItem', position: 3, name: 'DiSC診断', item: PAGE_URL },
+  ],
+};
+
+const jsonLdAll = [jsonLdWebApp, jsonLdQuiz, jsonLdFAQ, jsonLdBreadcrumb];
+
+// 4タイプカード用データ
+const typeCards = [
+  {
+    id: 'D',
+    name: '主導型',
+    nameEn: 'Dominance',
+    catchphrase: '結果を出すために動く、スピードと実行力の牽引者',
+    icon: '🦁',
+    color: '#dc2626',
+  },
+  {
+    id: 'i',
+    name: '感化型',
+    nameEn: 'influence',
+    catchphrase: '人を巻き込み、場を明るくする生まれながらのムードメーカー',
+    icon: '🌟',
+    color: '#d97706',
+  },
+  {
+    id: 'S',
+    name: '安定型',
+    nameEn: 'Steadiness',
+    catchphrase: 'チームの土台を支える、忍耐と協調の縁の下の力持ち',
+    icon: '🌿',
+    color: '#16a34a',
+  },
+  {
+    id: 'C',
+    name: '慎重型',
+    nameEn: 'Conscientiousness',
+    catchphrase: '正確性とデータで判断する、品質と根拠の専門家',
+    icon: '🔬',
+    color: '#2563eb',
+  },
+];
+
+// ビジネス活用シーン
+const businessUses = [
+  {
+    icon: '👥',
+    title: 'チームビルディング研修',
+    desc: 'メンバー全員がDiSCタイプを把握することで、「なぜあの人と噛み合わないか」が客観的に見えてきます。スタイルの違いを「個性」として活かすチーム文化の構築に活用できます。',
+  },
+  {
+    icon: '💼',
+    title: '営業職の自己分析',
+    desc: 'D型は結果重視の強引さ、i型は共感力・関係構築、S型は誠実なフォロー、C型はデータ提示・専門的提案と、それぞれ異なる営業スタイルの強みがあります。自分のスタイルを知ることで顧客対応が変わります。',
+  },
+  {
+    icon: '🎯',
+    title: 'リーダーシップ開発',
+    desc: '「どのタイプのリーダーが正解か」はありません。D型・i型・S型・C型それぞれのリーダーシップスタイルを理解することで、自分の強みを伸ばしながら盲点を補完する戦略が立てられます。',
+  },
+  {
+    icon: '🤝',
+    title: '1on1ミーティングの質向上',
+    desc: '上司と部下のDiSCタイプが異なる場合、コミュニケーションのすれ違いが起きやすくなります。相手のスタイルに合わせた対話設計（フィードバックの伝え方・意思決定のタイミング）に活用できます。',
+  },
+];
 ---
-<BaseLayout title={`${diagName} - 診断ナビ`} description="診断説明（content-writerが執筆）">
+
+<BaseLayout
+  title={meta.title}
+  description={meta.description}
+  canonical={PAGE_URL}
+  jsonLd={jsonLdAll}
+  ogType="website"
+  publishDate={meta.publishedAt}
+  lastUpdated={meta.updatedAt}
+  breadcrumbs={[
+    { name: '診断一覧', url: '/diagnosis/' },
+    { name: 'DiSC診断', url: '/diagnosis/disc/' },
+  ]}
+>
+  {/* ========== ヒーローセクション ========== */}
+  <section class="disc-hero" aria-labelledby="disc-hero-h1">
+    <Container>
+      <div class="disc-hero-inner">
+        <div class="disc-hero-badge">Marston (1928) DiSC理論に基づく | DiSC&#174;はWiley社の登録商標</div>
+        <h1 id="disc-hero-h1" class="disc-hero-h1">
+          DiSC診断<br />
+          <span class="disc-hero-meta">【無料・3分・28問・公式根拠付】</span>
+        </h1>
+        <p class="disc-hero-catch">
+          あなたの職場での行動スタイルはどのタイプ？<br />
+          D（主導型）・i（感化型）・S（安定型）・C（慎重型）から分析
+        </p>
+        <div class="disc-hero-stats">
+          <span class="disc-stat"><strong>28</strong>問</span>
+          <span class="disc-stat-sep">・</span>
+          <span class="disc-stat">約<strong>3</strong>分</span>
+          <span class="disc-stat-sep">・</span>
+          <span class="disc-stat"><strong>4</strong>タイプ</span>
+          <span class="disc-stat-sep">・</span>
+          <span class="disc-stat">無料</span>
+        </div>
+        <a href="#diagnosis-flow" class="disc-cta-btn">
+          <span>診断スタート</span>
+          <span class="disc-cta-arrow" aria-hidden="true">↓</span>
+        </a>
+        <p class="disc-hero-sub">登録不要・所要時間3分・途中保存OK</p>
+      </div>
+    </Container>
+  </section>
+
   <Container>
-    <div style="padding-block: 4rem; text-align: center;">
-      <p style="font-size: 3rem; margin-bottom: 1rem;">🔮</p>
-      <h1 style="font-family: var(--sn-font-rounded); font-size: 1.5rem; margin-bottom: 1rem;">診断準備中</h1>
-      <p style="color: var(--sn-muted);">Phase 1 にてコンテンツ・診断フローを実装します</p>
-      <a href="/diagnosis/" style="display:inline-block; margin-top:2rem; color:var(--sn-primary);">← 診断一覧に戻る</a>
+    {/* ========== AIOブロック（このページでわかること） ========== */}
+    <div class="disc-aio-block" role="note" aria-label="このページでわかること">
+      <p class="disc-aio-title">このページでわかること</p>
+      <ul class="disc-aio-list">
+        <li>28問・5段階リッカートで測るDiSCの4タイプ（Marston 1928年・Wiley DiSC公式系譜）</li>
+        <li>タイプ別の仕事スタイル・コミュニケーション傾向・向いている職種（5項目）・他タイプとの相性</li>
+        <li>チームビルディング・リーダーシップ・1on1での実践的な活用方法</li>
+      </ul>
+      <p class="disc-aio-updated">
+        <time datetime={meta.updatedAt}>{meta.updatedAt}</time> 時点の情報。
+        <a href="https://www.discprofile.com/what-is-disc/overview" target="_blank" rel="noopener noreferrer">
+          Wiley DiSC公式
+        </a>
+        を確認済。
+      </p>
     </div>
+
+    {/* ========== DiSC診断とは ========== */}
+    <section class="disc-section" aria-labelledby="disc-what-h2">
+      <h2 id="disc-what-h2" class="disc-h2">DiSC診断とは</h2>
+      <p class="disc-lead">
+        DiSC診断は、心理学者 William Moulton Marston が 1928年に著書
+        「Emotions of Normal People」で提唱した行動スタイル理論をもとにした自己理解ツールです。
+        その後 Walter Clarke（1956年）、John Geier（1970年代）を経て、
+        Wiley 社が「Everything DiSC&#174;」として現代版に整備し、世界中のビジネス研修で活用されています
+        （<a href="https://www.discprofile.com/what-is-disc/history-of-disc" target="_blank" rel="noopener noreferrer">DiSC公式・歴史ページ</a>、2026-05-20確認）。
+      </p>
+      <p class="disc-body">
+        「DiSC&#174;」はWiley社の登録商標です。
+        本診断はDiSC理論の学術的知見に基づく自己理解ツールであり、Wiley社の公式アセスメントとは別のものです。
+        職場での本格導入・認定プログラムについては
+        <a href="https://www.discprofile.com/" target="_blank" rel="noopener noreferrer">Wiley DiSC公式サイト</a>
+        をご確認ください。
+      </p>
+      <div class="disc-info-table-wrap">
+        <table class="disc-info-table">
+          <caption class="disc-table-caption">DiSC診断の概要（2026-05-20時点）</caption>
+          <tbody>
+            <tr>
+              <th scope="row">理論の根拠</th>
+              <td>Marston WM (1928) + Clarke WV (1956) + Wiley DiSC公式系譜</td>
+            </tr>
+            <tr>
+              <th scope="row">問題数</th>
+              <td>28問（各タイプ7問 × 4タイプ）</td>
+            </tr>
+            <tr>
+              <th scope="row">回答方式</th>
+              <td>5段階リッカートスケール（1=全く当てはまらない〜5=とても当てはまる）</td>
+            </tr>
+            <tr>
+              <th scope="row">所要時間</th>
+              <td>約3分</td>
+            </tr>
+            <tr>
+              <th scope="row">結果タイプ数</th>
+              <td>4タイプ（D：主導型・i：感化型・S：安定型・C：慎重型）</td>
+            </tr>
+            <tr>
+              <th scope="row">主な活用場面</th>
+              <td>リーダーシップ研修・チームビルディング・1on1・営業スタイル分析</td>
+            </tr>
+            <tr>
+              <th scope="row">注意事項</th>
+              <td>採用・評価への使用は推奨しません。自己理解・チームコミュニケーション改善に活用してください。</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    {/* ========== 4タイプ紹介 ========== */}
+    <section class="disc-section" aria-labelledby="disc-types-h2">
+      <h2 id="disc-types-h2" class="disc-h2">4つのDiSCタイプ</h2>
+      <p class="disc-lead">
+        DiSCは「どのタイプが優れているか」ではなく、それぞれの行動スタイルの傾向と強みを理解するモデルです。
+        Marston（1928）は環境への反応パターンをD・i・S・Cの4軸で分類しました。
+      </p>
+      <div class="disc-types-grid">
+        {typeCards.map((tc) => (
+          <article class="disc-type-card" style={`--type-color: ${tc.color}`}>
+            <div class="disc-type-icon" aria-hidden="true">{tc.icon}</div>
+            <h3 class="disc-type-name">{tc.name}</h3>
+            <p class="disc-type-name-en">{tc.nameEn}</p>
+            <p class="disc-type-desc">{tc.catchphrase}</p>
+            <a href={`/diagnosis/disc/result/${tc.id}/`} class="disc-type-link">
+              {tc.name}の詳細を見る
+              <span aria-hidden="true">→</span>
+            </a>
+          </article>
+        ))}
+      </div>
+
+      {/* DiSC 4タイプ概念図（課題/人間志向 × 疑問/主張志向の軸） */}
+      <div class="disc-chart-figure" role="figure" aria-labelledby="disc-chart-caption">
+        <div class="disc-chart-visual" aria-hidden="true">
+          <div class="disc-chart-axis disc-chart-axis--x">
+            <span class="disc-axis-label disc-axis-label--left">疑問・分析志向<br/>（問う）</span>
+            <div class="disc-axis-line disc-axis-line--h"></div>
+            <span class="disc-axis-label disc-axis-label--right">主張・行動志向<br/>（動く）</span>
+          </div>
+          <div class="disc-chart-axis disc-chart-axis--y">
+            <span class="disc-axis-label disc-axis-label--top">課題志向<br/>（タスク優先）</span>
+            <div class="disc-axis-line disc-axis-line--v"></div>
+            <span class="disc-axis-label disc-axis-label--bottom">人間志向<br/>（関係優先）</span>
+          </div>
+          <div class="disc-chart-quadrant disc-chart-quadrant--tl">
+            <span class="disc-quad-icon">🦁</span>
+            <span class="disc-quad-name">D（主導型）</span>
+          </div>
+          <div class="disc-chart-quadrant disc-chart-quadrant--tr">
+            <span class="disc-quad-icon">🌟</span>
+            <span class="disc-quad-name">i（感化型）</span>
+          </div>
+          <div class="disc-chart-quadrant disc-chart-quadrant--bl">
+            <span class="disc-quad-icon">🔬</span>
+            <span class="disc-quad-name">C（慎重型）</span>
+          </div>
+          <div class="disc-chart-quadrant disc-chart-quadrant--br">
+            <span class="disc-quad-icon">🌿</span>
+            <span class="disc-quad-name">S（安定型）</span>
+          </div>
+        </div>
+        <p id="disc-chart-caption" class="disc-chart-caption">
+          【図1】DiSC 4タイプの配置軸（課題/人間志向 × 疑問/主張志向）。
+          Marston (1928) の理論をもとにWiley DiSCが整備した概念図を参考に作成。
+          詳細は <a href="https://www.discprofile.com/what-is-disc/overview" target="_blank" rel="noopener noreferrer">Wiley DiSC公式</a>（2026-05-20確認）。
+        </p>
+      </div>
+    </section>
+
+    {/* ========== ビジネス活用シーン（重要セクション） ========== */}
+    <section class="disc-section" aria-labelledby="disc-biz-h2">
+      <h2 id="disc-biz-h2" class="disc-h2">DiSCのビジネス活用シーン</h2>
+      <p class="disc-lead">
+        DiSCは世界中のリーダーシップ研修・チームビルディングで活用されています。
+        以下の4つのシーンで自己理解と組織改善に役立てられます。
+      </p>
+      <div class="disc-biz-grid">
+        {businessUses.map((use) => (
+          <div class="disc-biz-card">
+            <div class="disc-biz-icon" aria-hidden="true">{use.icon}</div>
+            <h3 class="disc-biz-title">{use.title}</h3>
+            <p class="disc-biz-desc">{use.desc}</p>
+          </div>
+        ))}
+      </div>
+      <div class="disc-biz-caution">
+        <p class="disc-biz-caution-text">
+          <strong>採用・評価への使用について：</strong>
+          DiSCを採用選考・人事評価・昇進判断の基準として使用することは推奨しません。
+          行動スタイルの多様性は組織の強みであり、特定タイプを「採用基準」にすることは公平採用の観点から問題になる可能性があります。
+          Wiley社も採用への使用を明示的に非推奨としています（<a href="https://www.discprofile.com/what-is-disc/overview" target="_blank" rel="noopener noreferrer">Wiley DiSC公式</a>、2026-05-20確認）。
+        </p>
+      </div>
+    </section>
+
+    {/* ========== 使い方 ========== */}
+    <section class="disc-section" aria-labelledby="disc-how-h2">
+      <h2 id="disc-how-h2" class="disc-h2">使い方（3ステップ）</h2>
+      <ol class="disc-steps">
+        <li class="disc-step">
+          <div class="disc-step-num" aria-hidden="true">1</div>
+          <div class="disc-step-body">
+            <h3 class="disc-step-title">「診断スタート」をタップ</h3>
+            <p class="disc-step-desc">
+              登録・インストール不要。ブラウザですぐ始められます。
+              途中で閉じても24時間以内なら再開できます。
+            </p>
+          </div>
+        </li>
+        <li class="disc-step">
+          <div class="disc-step-num" aria-hidden="true">2</div>
+          <div class="disc-step-body">
+            <h3 class="disc-step-title">28問に回答する（約3分）</h3>
+            <p class="disc-step-desc">
+              各質問に「1（全く当てはまらない）〜5（とても当てはまる）」で答えます。
+              「職場・仕事での自分」を意識しながら正直に答えると精度が上がります。
+            </p>
+          </div>
+        </li>
+        <li class="disc-step">
+          <div class="disc-step-num" aria-hidden="true">3</div>
+          <div class="disc-step-body">
+            <h3 class="disc-step-title">タイプ別の仕事スタイル・向いている職種を確認</h3>
+            <p class="disc-step-desc">
+              4タイプのうち最もスコアが高いものが「あなたのタイプ」として表示されます。
+              仕事スタイル・コミュニケーション傾向・向いている職種の詳細は無料で確認できます。
+            </p>
+          </div>
+        </li>
+      </ol>
+    </section>
+
+    {/* ========== 診断フロー（React島） ========== */}
+    <section class="disc-section disc-section--flow" id="diagnosis-flow" aria-labelledby="disc-flow-h2">
+      <h2 id="disc-flow-h2" class="disc-h2 disc-h2--center">診断を始める</h2>
+      <p class="disc-flow-lead">
+        全28問・約3分。「職場での自分」を意識しながら答えてください。
+      </p>
+      <div class="disc-flow-wrapper">
+        <DiagnosisFlow
+          client:load
+          diagnosisId="disc"
+          questions={flowQuestions}
+          resultPath={(typeId: string) => `/diagnosis/disc/result/${typeId}/`}
+          calculateResult={calculateResultTypeId}
+        />
+      </div>
+    </section>
+
+    {/* ========== 精度・科学的根拠 ========== */}
+    <section class="disc-section" aria-labelledby="disc-science-h2">
+      <h2 id="disc-science-h2" class="disc-h2">診断の根拠・参考文献</h2>
+      <p class="disc-lead">
+        本診断はDiSC理論の学術的知見をもとに設計した自己理解ツールです。
+        傾向把握のための参考情報であり、医学的・臨床的な診断ではありません。
+      </p>
+      <div class="disc-science-grid">
+        <div class="disc-science-card">
+          <div class="disc-science-icon" aria-hidden="true">📚</div>
+          <h3 class="disc-science-title">主要参考文献・公式情報</h3>
+          <ul class="disc-ref-list">
+            {meta.references.map((ref) => (
+              <li class="disc-ref-item">
+                <a href={ref.url} target="_blank" rel="noopener noreferrer" class="disc-ref-link">
+                  {ref.author} ({ref.year}). {ref.title}.
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div class="disc-science-card">
+          <div class="disc-science-icon" aria-hidden="true">⚠️</div>
+          <h3 class="disc-science-title">ご注意（採用・評価）</h3>
+          <p class="disc-science-body">
+            本診断を採用選考・人事評価・昇進判断の基準として使用することは推奨しません。
+            DiSCは自己理解とコミュニケーション改善のためのツールです。
+            Wiley社も採用への使用を非推奨としています（<a href="https://www.discprofile.com/what-is-disc/overview" target="_blank" rel="noopener noreferrer">Wiley公式</a>）。
+          </p>
+        </div>
+        <div class="disc-science-card">
+          <div class="disc-science-icon" aria-hidden="true">🔄</div>
+          <h3 class="disc-science-title">更新・鮮度管理</h3>
+          <p class="disc-science-body">
+            理論・公式情報は定期的に確認しています。
+            最終確認日: <time datetime={meta.updatedAt}>{meta.updatedAt}</time>。
+            情報の誤りを見つけた場合は
+            <a href="/contact/">お問い合わせ</a>
+            からご連絡ください。
+          </p>
+        </div>
+      </div>
+    </section>
+
+    {/* ========== 他の診断との比較 ========== */}
+    <section class="disc-section" aria-labelledby="disc-compare-h2">
+      <h2 id="disc-compare-h2" class="disc-h2">他の診断との違い</h2>
+      <div class="disc-compare-table-wrap">
+        <table class="disc-compare-table">
+          <caption class="disc-table-caption">DiSC診断と主要診断の比較（{meta.updatedAt}時点）</caption>
+          <thead>
+            <tr>
+              <th scope="col">診断名</th>
+              <th scope="col">測定軸</th>
+              <th scope="col">問題数</th>
+              <th scope="col">強み</th>
+              <th scope="col">主な用途</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">DiSC診断（本ページ）</th>
+              <td>行動スタイル4軸</td>
+              <td>28問</td>
+              <td>職場・ビジネス行動の理解</td>
+              <td>リーダーシップ・チームビルディング</td>
+            </tr>
+            <tr>
+              <th scope="row"><a href="/diagnosis/mbti/">MBTI診断</a></th>
+              <td>性格4軸（16タイプ）</td>
+              <td>-</td>
+              <td>性格・認知スタイルの理解</td>
+              <td>人間関係・コミュニケーション</td>
+            </tr>
+            <tr>
+              <th scope="row"><a href="/diagnosis/perfectionism/">完璧主義診断</a></th>
+              <td>完璧主義4次元</td>
+              <td>28問</td>
+              <td>行動パターンの自己理解</td>
+              <td>消耗しない向き合い方の発見</td>
+            </tr>
+            <tr>
+              <th scope="row"><a href="/diagnosis/multi-int/">多重知能テスト</a></th>
+              <td>8つの知能領域</td>
+              <td>64問</td>
+              <td>学習・仕事の強み発見</td>
+              <td>学習スタイル・職種選択</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="disc-compare-note">
+        <strong>おすすめの組み合わせ:</strong>
+        DiSC診断（職場の行動スタイル）× 完璧主義診断（仕事への向き合い方）× MBTI（性格の軸）を
+        組み合わせると、自己理解が格段に深まります。
+        <a href="/diagnosis/">他の診断を見る →</a>
+      </p>
+    </section>
+
+    {/* ========== 関連診断 ========== */}
+    <section class="disc-section" aria-labelledby="disc-related-h2">
+      <h2 id="disc-related-h2" class="disc-h2">関連診断</h2>
+      <ul class="disc-related-list">
+        <li class="disc-related-item">
+          <a href="/diagnosis/mbti/" class="disc-related-link">
+            <span class="disc-related-icon" aria-hidden="true">🧠</span>
+            <span class="disc-related-body">
+              <span class="disc-related-title">MBTI（16タイプ）診断</span>
+              <span class="disc-related-desc">性格・コミュニケーションスタイルを4軸で分析</span>
+            </span>
+          </a>
+        </li>
+        <li class="disc-related-item">
+          <a href="/diagnosis/perfectionism/" class="disc-related-link">
+            <span class="disc-related-icon" aria-hidden="true">🔱</span>
+            <span class="disc-related-body">
+              <span class="disc-related-title">完璧主義診断</span>
+              <span class="disc-related-desc">Hewitt & Flett (1991) 理論に基づく4タイプ診断</span>
+            </span>
+          </a>
+        </li>
+        <li class="disc-related-item">
+          <a href="/diagnosis/multi-int/" class="disc-related-link">
+            <span class="disc-related-icon" aria-hidden="true">🦉</span>
+            <span class="disc-related-body">
+              <span class="disc-related-title">多重知能テスト</span>
+              <span class="disc-related-desc">8つの知能から「強みのかたち」を64問で発見</span>
+            </span>
+          </a>
+        </li>
+        <li class="disc-related-item">
+          <a href="/diagnosis/ketsuekigata/" class="disc-related-link">
+            <span class="disc-related-icon" aria-hidden="true">🩸</span>
+            <span class="disc-related-body">
+              <span class="disc-related-title">血液型性格診断</span>
+              <span class="disc-related-desc">日本の血液型性格論をBig5心理学で再解釈</span>
+            </span>
+          </a>
+        </li>
+      </ul>
+    </section>
+
+    {/* ========== FAQ ========== */}
+    <section class="disc-section" aria-labelledby="disc-faq-h2">
+      <h2 id="disc-faq-h2" class="disc-h2">よくある質問</h2>
+      <dl class="disc-faq-list">
+        {faqs.map(({ question, answer }) => (
+          <div class="disc-faq-item">
+            <dt class="disc-faq-q">{question}</dt>
+            <dd class="disc-faq-a">{answer}</dd>
+          </div>
+        ))}
+      </dl>
+    </section>
+
+    {/* ========== 商標フッターノート ========== */}
+    <p class="disc-trademark-note">
+      DiSC&#174; はJohn Wiley &amp; Sons, Inc. の登録商標です。
+      本診断は Wiley 社の公式アセスメントではなく、DiSC理論に基づく独立した自己理解ツールです。
+      公式 DiSC アセスメントについては
+      <a href="https://www.discprofile.com/" target="_blank" rel="noopener noreferrer">discprofile.com</a>
+      をご確認ください。
+    </p>
   </Container>
 </BaseLayout>
+
+<style>
+/* ========== ヒーロー ========== */
+.disc-hero {
+  background: linear-gradient(135deg, #1d4ed8 0%, #7c3aed 100%);
+  color: #fff;
+  padding-block: 3.5rem 4rem;
+  text-align: center;
+}
+.disc-hero-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+.disc-hero-badge {
+  display: inline-block;
+  background: rgba(255 255 255 / 0.2);
+  border: 1px solid rgba(255 255 255 / 0.4);
+  border-radius: 2rem;
+  padding: 0.25rem 1rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+}
+.disc-hero-h1 {
+  font-size: clamp(1.75rem, 5vw, 2.5rem);
+  font-family: var(--sn-font-rounded, sans-serif);
+  font-weight: 700;
+  line-height: 1.3;
+  margin: 0;
+}
+.disc-hero-meta {
+  display: block;
+  font-size: clamp(1rem, 3vw, 1.4rem);
+  opacity: 0.9;
+}
+.disc-hero-catch {
+  font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+  opacity: 0.92;
+  line-height: 1.7;
+  margin: 0;
+}
+.disc-hero-stats {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  font-size: 0.9rem;
+  opacity: 0.85;
+}
+.disc-stat strong {
+  font-size: 1.4em;
+  font-weight: 700;
+}
+.disc-stat-sep {
+  color: rgba(255 255 255 / 0.5);
+}
+.disc-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #fff;
+  color: #1d4ed8;
+  font-weight: 700;
+  font-size: 1.1rem;
+  padding: 0.85rem 2.5rem;
+  border-radius: 3rem;
+  text-decoration: none;
+  transition: transform 0.15s, box-shadow 0.15s;
+  margin-top: 0.5rem;
+}
+.disc-cta-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0 0 0 / 0.2);
+}
+.disc-cta-arrow {
+  font-size: 1.2em;
+}
+.disc-hero-sub {
+  font-size: 0.8rem;
+  opacity: 0.7;
+  margin: 0;
+}
+
+/* ========== AIOブロック ========== */
+.disc-aio-block {
+  background: #eff6ff;
+  border-left: 4px solid #1d4ed8;
+  border-radius: 0 0.5rem 0.5rem 0;
+  padding: 1.25rem 1.5rem;
+  margin-block: 2rem;
+}
+.disc-aio-title {
+  font-weight: 700;
+  margin: 0 0 0.5rem;
+  font-size: 0.9rem;
+  color: #1d4ed8;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.disc-aio-list {
+  margin: 0 0 0.75rem;
+  padding-left: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.disc-aio-list li {
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+.disc-aio-updated {
+  font-size: 0.75rem;
+  color: var(--sn-muted, #6b7280);
+  margin: 0;
+}
+
+/* ========== セクション共通 ========== */
+.disc-section {
+  margin-block: 3rem;
+}
+.disc-section--flow {
+  background: #f0f4ff;
+  padding: 2rem 1.5rem;
+  border-radius: 1rem;
+  margin-inline: -1rem;
+}
+.disc-h2 {
+  font-size: clamp(1.3rem, 4vw, 1.75rem);
+  font-family: var(--sn-font-rounded, sans-serif);
+  font-weight: 700;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #1d4ed8;
+}
+.disc-h2--center {
+  text-align: center;
+  border-bottom: none;
+}
+.disc-lead {
+  font-size: 1rem;
+  line-height: 1.8;
+  margin-bottom: 1rem;
+  color: #374151;
+}
+.disc-body {
+  font-size: 0.95rem;
+  line-height: 1.8;
+  margin-bottom: 1rem;
+  color: #374151;
+}
+.disc-flow-lead {
+  text-align: center;
+  color: var(--sn-muted, #6b7280);
+  font-size: 0.9rem;
+  margin-bottom: 1.5rem;
+}
+.disc-flow-wrapper {
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+/* ========== 情報テーブル ========== */
+.disc-info-table-wrap {
+  overflow-x: auto;
+  margin-top: 1.5rem;
+}
+.disc-info-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+.disc-info-table th,
+.disc-info-table td {
+  padding: 0.6rem 1rem;
+  border: 1px solid #e5e7eb;
+  text-align: left;
+  line-height: 1.5;
+}
+.disc-info-table th {
+  background: #f3f4f6;
+  font-weight: 600;
+  white-space: nowrap;
+  width: 9rem;
+}
+.disc-table-caption {
+  font-size: 0.8rem;
+  color: var(--sn-muted, #6b7280);
+  text-align: left;
+  padding: 0.25rem 0 0.5rem;
+}
+
+/* ========== 4タイプグリッド ========== */
+.disc-types-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1rem;
+  margin-block: 1.5rem;
+}
+.disc-type-card {
+  border: 2px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  transition: box-shadow 0.15s, transform 0.15s;
+  border-top: 4px solid var(--type-color, #1d4ed8);
+}
+.disc-type-card:hover {
+  box-shadow: 0 4px 16px rgba(0 0 0 / 0.1);
+  transform: translateY(-2px);
+}
+.disc-type-icon {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+.disc-type-name {
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin: 0 0 0.2rem;
+  color: var(--type-color, #1d4ed8);
+}
+.disc-type-name-en {
+  font-size: 0.7rem;
+  color: var(--sn-muted, #6b7280);
+  margin: 0 0 0.5rem;
+}
+.disc-type-desc {
+  font-size: 0.83rem;
+  line-height: 1.6;
+  color: #4b5563;
+  margin: 0 0 0.75rem;
+}
+.disc-type-link {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--type-color, #1d4ed8);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+.disc-type-link:hover {
+  text-decoration: underline;
+}
+
+/* ========== DiSC概念図 ========== */
+.disc-chart-figure {
+  margin-block: 2rem;
+  text-align: center;
+}
+.disc-chart-visual {
+  position: relative;
+  display: inline-block;
+  width: 280px;
+  height: 280px;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  margin-bottom: 1rem;
+}
+.disc-chart-axis {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.disc-chart-axis--x {
+  top: 50%;
+  left: 0;
+  right: 0;
+  transform: translateY(-50%);
+  padding-inline: 4px;
+}
+.disc-chart-axis--y {
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  transform: translateX(-50%);
+  flex-direction: column;
+  padding-block: 4px;
+}
+.disc-axis-line--h {
+  flex: 1;
+  height: 1px;
+  background: #d1d5db;
+  margin-inline: 4px;
+}
+.disc-axis-line--v {
+  flex: 1;
+  width: 1px;
+  background: #d1d5db;
+  margin-block: 4px;
+}
+.disc-axis-label {
+  font-size: 0.58rem;
+  color: #9ca3af;
+  font-weight: 600;
+  text-align: center;
+  line-height: 1.3;
+  white-space: nowrap;
+}
+.disc-chart-quadrant {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+}
+.disc-chart-quadrant--tl { top: 10%; left: 8%; }
+.disc-chart-quadrant--tr { top: 10%; right: 8%; }
+.disc-chart-quadrant--bl { bottom: 10%; left: 8%; }
+.disc-chart-quadrant--br { bottom: 10%; right: 8%; }
+.disc-quad-icon { font-size: 1.5rem; }
+.disc-quad-name {
+  font-size: 0.62rem;
+  font-weight: 700;
+  color: #374151;
+  white-space: nowrap;
+}
+.disc-chart-caption {
+  font-size: 0.8rem;
+  color: var(--sn-muted, #6b7280);
+  max-width: 500px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+/* ========== ビジネス活用グリッド ========== */
+.disc-biz-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1rem;
+  margin-block: 1.5rem;
+}
+.disc-biz-card {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+}
+.disc-biz-icon {
+  font-size: 1.75rem;
+  margin-bottom: 0.5rem;
+}
+.disc-biz-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem;
+}
+.disc-biz-desc {
+  font-size: 0.85rem;
+  line-height: 1.7;
+  color: #4b5563;
+  margin: 0;
+}
+.disc-biz-caution {
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  border-radius: 0.75rem;
+  padding: 1rem 1.25rem;
+  margin-top: 1rem;
+}
+.disc-biz-caution-text {
+  font-size: 0.85rem;
+  line-height: 1.7;
+  color: #92400e;
+  margin: 0;
+}
+
+/* ========== ステップ ========== */
+.disc-steps {
+  list-style: none;
+  padding: 0;
+  margin: 1.5rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+.disc-step {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+.disc-step-num {
+  flex-shrink: 0;
+  width: 2.5rem;
+  height: 2.5rem;
+  background: #1d4ed8;
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+.disc-step-title {
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 0 0 0.25rem;
+}
+.disc-step-desc {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: #4b5563;
+  margin: 0;
+}
+
+/* ========== 科学的根拠 ========== */
+.disc-science-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+.disc-science-card {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+}
+.disc-science-icon {
+  font-size: 1.75rem;
+  margin-bottom: 0.5rem;
+}
+.disc-science-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem;
+}
+.disc-science-body {
+  font-size: 0.85rem;
+  line-height: 1.7;
+  color: #4b5563;
+  margin: 0;
+}
+.disc-ref-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.disc-ref-item {
+  font-size: 0.78rem;
+  line-height: 1.5;
+}
+.disc-ref-link {
+  color: #1d4ed8;
+  text-decoration: none;
+  word-break: break-word;
+}
+.disc-ref-link:hover {
+  text-decoration: underline;
+}
+
+/* ========== 比較テーブル ========== */
+.disc-compare-table-wrap {
+  overflow-x: auto;
+  margin-block: 1.5rem;
+}
+.disc-compare-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+.disc-compare-table th,
+.disc-compare-table td {
+  padding: 0.6rem 0.8rem;
+  border: 1px solid #e5e7eb;
+  text-align: left;
+  line-height: 1.5;
+}
+.disc-compare-table thead th {
+  background: #1d4ed8;
+  color: #fff;
+  font-weight: 600;
+}
+.disc-compare-table tbody tr:first-child td,
+.disc-compare-table tbody tr:first-child th {
+  background: #eff6ff;
+  font-weight: 600;
+}
+.disc-compare-table tbody tr:nth-child(even) {
+  background: #f9fafb;
+}
+.disc-compare-note {
+  font-size: 0.875rem;
+  color: #4b5563;
+  line-height: 1.6;
+  margin-top: 1rem;
+}
+
+/* ========== 関連リンク ========== */
+.disc-related-list {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.disc-related-link {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.disc-related-link:hover {
+  border-color: #1d4ed8;
+  box-shadow: 0 2px 8px rgba(29 78 216 / 0.1);
+}
+.disc-related-icon {
+  font-size: 1.75rem;
+  flex-shrink: 0;
+}
+.disc-related-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+.disc-related-title {
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+.disc-related-desc {
+  font-size: 0.8rem;
+  color: var(--sn-muted, #6b7280);
+}
+
+/* ========== FAQ ========== */
+.disc-faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+.disc-faq-item {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+.disc-faq-q {
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 1rem 1.25rem;
+  background: #f9fafb;
+  margin: 0;
+  display: block;
+}
+.disc-faq-q::before {
+  content: 'Q. ';
+  color: #1d4ed8;
+}
+.disc-faq-a {
+  font-size: 0.9rem;
+  line-height: 1.7;
+  padding: 1rem 1.25rem;
+  margin: 0;
+  color: #4b5563;
+}
+.disc-faq-a::before {
+  content: 'A. ';
+  font-weight: 700;
+  color: #16a34a;
+}
+
+/* ========== 商標ノート ========== */
+.disc-trademark-note {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  border-top: 1px solid #e5e7eb;
+  padding-top: 1.5rem;
+  margin-top: 2rem;
+  line-height: 1.6;
+}
+
+/* ========== レスポンシブ ========== */
+@media (max-width: 640px) {
+  .disc-types-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .disc-biz-grid {
+    grid-template-columns: 1fr;
+  }
+  .disc-science-grid {
+    grid-template-columns: 1fr;
+  }
+  .disc-section--flow {
+    margin-inline: -0.5rem;
+    padding: 1.5rem 1rem;
+  }
+  .disc-chart-visual {
+    width: 240px;
+    height: 240px;
+  }
+}
+</style>
