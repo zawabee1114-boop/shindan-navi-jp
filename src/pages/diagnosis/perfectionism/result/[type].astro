@@ -1,0 +1,888 @@
+---
+/**
+ * 完璧主義診断 結果ページ（動的ルート）
+ * 4タイプ分の結果ページを静的生成する
+ *
+ * URL: /diagnosis/perfectionism/result/{typeId}/
+ * タイプID: thorough / particular / procrastinating / expecting
+ *
+ * SEO/AIO:
+ * - JSON-LD: Article + FAQPage + BreadcrumbList
+ * - タイプ別メタタイトル・ディスクリプション
+ * - CBTセルフケアTips（完璧主義特有・各タイプ5項目）
+ * - 思考傾向グラフ（Big5非開示・ユーザー向け「特性レーダー」表記）
+ * - ¥390 PASS 誘導CTA
+ * - YMYL回避: 医学的判断ゼロ
+ *
+ * 確認日: 2026-05-20
+ */
+import ResultLayout from '../../../../layouts/ResultLayout.astro';
+import Container from '../../../../components/Container.astro';
+import { types } from '../../../../data/diagnoses/perfectionism/types';
+import { meta } from '../../../../data/diagnoses/perfectionism/meta';
+import type { PerfectionismType } from '../../../../data/diagnoses/perfectionism/questions';
+
+export function getStaticPaths() {
+  return Object.keys(types).map((typeId) => ({
+    params: { type: typeId },
+    props: { typeId: typeId as PerfectionismType, typeData: types[typeId as PerfectionismType] },
+  }));
+}
+
+const { typeId, typeData } = Astro.props;
+
+const SITE_URL = 'https://shindan-navi.jp';
+const PAGE_URL = `${SITE_URL}/diagnosis/perfectionism/result/${typeId}/`;
+
+// タイプ別キャラクター絵文字
+const typeEmoji: Record<PerfectionismType, string> = {
+  thorough: '🔱',
+  particular: '⚙️',
+  procrastinating: '⏳',
+  expecting: '🌟',
+};
+
+// 思考傾向グラフ用ラベル（Big5/OCEAN/ビッグファイブ表記禁止）
+const radarLabels = [
+  { key: 'O', label: '好奇心・探求' },
+  { key: 'C', label: '計画性・丁寧さ' },
+  { key: 'E', label: '行動力・積極性' },
+  { key: 'A', label: '共感力・協調性' },
+  { key: 'N', label: '感情の繊細さ' },
+] as const;
+
+// FAQs（タイプ別・完璧主義特有）
+const faqs = [
+  {
+    question: `${typeData.name}はどんな仕事が向いていますか？`,
+    answer: typeData.workCompatibility,
+  },
+  {
+    question: `${typeData.name}の恋愛傾向は？`,
+    answer: typeData.loveCompatibility,
+  },
+  {
+    question: `${typeData.name}の強みを活かすには？`,
+    answer: typeData.strengths.slice(0, 3).join('。また、') + '。',
+  },
+  {
+    question: `${typeData.name}が消耗しないためのコツは？`,
+    answer: typeData.cbtTips[0] + ' ' + typeData.cbtTips[1],
+  },
+  {
+    question: '他の完璧主義タイプとの相性は？',
+    answer:
+      `完璧主義の4タイプはそれぞれ異なる傾向を持ちます。${typeData.name}は、相手の「完璧主義の動機」を理解することで関係が安定しやすくなります。詳しくは各タイプの結果ページ（徹底型・こだわり型・先延ばし型・期待型）をご覧ください。`,
+  },
+];
+
+// JSON-LD: Article
+const jsonLdArticle = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  '@id': `${PAGE_URL}#article`,
+  headline: `${typeData.name}（${typeData.nameEn}）の特徴・仕事・恋愛・CBTセルフケア完全ガイド`,
+  url: PAGE_URL,
+  description: `${typeData.description.slice(0, 100).replace(/\n/g, '')}`,
+  datePublished: meta.publishedAt,
+  dateModified: meta.updatedAt,
+  author: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+    name: '診断ナビ',
+    url: SITE_URL,
+  },
+  publisher: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+    name: '診断ナビ',
+    url: SITE_URL,
+  },
+  about: {
+    '@type': 'Thing',
+    name: '完璧主義（Perfectionism）心理学',
+    sameAs: 'https://doi.org/10.1037/0022-3514.60.3.456',
+  },
+};
+
+// JSON-LD: FAQPage
+const jsonLdFAQ = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  '@id': `${PAGE_URL}#faq`,
+  mainEntity: faqs.map(({ question, answer }) => ({
+    '@type': 'Question',
+    name: question,
+    acceptedAnswer: { '@type': 'Answer', text: answer },
+  })),
+};
+
+// JSON-LD: BreadcrumbList
+const jsonLdBreadcrumb = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'ホーム', item: SITE_URL },
+    { '@type': 'ListItem', position: 2, name: '診断一覧', item: `${SITE_URL}/diagnosis/` },
+    { '@type': 'ListItem', position: 3, name: '完璧主義診断', item: `${SITE_URL}/diagnosis/perfectionism/` },
+    { '@type': 'ListItem', position: 4, name: typeData.name, item: PAGE_URL },
+  ],
+};
+
+const jsonLdAll = [jsonLdArticle, jsonLdFAQ, jsonLdBreadcrumb];
+
+// 関連診断
+const relatedDiagnoses = [
+  { title: '多重知能テスト', href: '/diagnosis/multi-int/', icon: '🦉', badge: '人気' },
+  { title: 'MBTI診断', href: '/diagnosis/mbti/', icon: '🧠' },
+  { title: 'DiSC診断', href: '/diagnosis/disc/', icon: '💼' },
+  { title: '血液型性格診断', href: '/diagnosis/ketsuekigata/', icon: '🩸' },
+];
+
+// description: 改行を除去してslice
+const descriptionClean = typeData.description.replace(/\n+/g, ' ').trim();
+---
+
+<ResultLayout
+  diagnosisId="perfectionism"
+  typeId={typeId}
+  typeName={typeData.name}
+  diagnosisName="完璧主義診断"
+  characterEmoji={typeEmoji[typeId]}
+  characterName={typeData.nameEn}
+  tagline={typeData.catchphrase}
+  shareUrl={PAGE_URL}
+  pageTitle={`${typeData.name}【完璧主義診断】特徴・仕事・恋愛・CBTセルフケア | 診断ナビ`}
+  pageDescription={`完璧主義診断の結果は「${typeData.name}」。${typeData.catchphrase} 仕事スタイル・恋愛傾向・CBTセルフケアTips5選を詳しく解説。`}
+  relatedDiagnoses={relatedDiagnoses}
+  jsonLd={jsonLdAll}
+>
+  {/* ========== 概要タブ ========== */}
+  <Fragment slot="overview">
+    <div class="pfr-overview">
+      <div class="pfr-aio-block">
+        <p class="pfr-aio-title">このページでわかること</p>
+        <ul class="pfr-aio-list">
+          <li>{typeData.name}（{typeData.nameEn}）の傾向・特徴・強み・注意点</li>
+          <li>仕事スタイル・恋愛傾向・CBTセルフケアTips 5選</li>
+          <li>他タイプとの関係・統合プロファイルへの連携</li>
+        </ul>
+      </div>
+
+      <div class="pfr-description">
+        {descriptionClean.split('。').filter(s => s.trim()).map((sentence) => (
+          <p class="pfr-body">{sentence.trim()}。</p>
+        ))}
+      </div>
+
+      <div class="pfr-characteristics">
+        <h3 class="pfr-h3">このタイプの5つの特徴</h3>
+        <ul class="pfr-char-list">
+          {typeData.characteristics.map((char) => (
+            <li class="pfr-char-item">
+              <span class="pfr-char-icon" aria-hidden="true">◆</span>
+              <span>{char}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div class="pfr-theory-note">
+        <p>
+          この診断結果は Hewitt &amp; Flett (1991)「多次元完璧主義尺度」
+          （<a href="https://doi.org/10.1037/0022-3514.60.3.456" target="_blank" rel="noopener noreferrer">doi:10.1037/0022-3514.60.3.456</a>、2026-05-20確認）
+          に基づく傾向把握のための参考情報です。
+          医学的・臨床的な診断ではありません。
+        </p>
+      </div>
+
+      <div class="pfr-freshness">
+        <time datetime={meta.updatedAt}>{meta.updatedAt}</time> 時点の情報。
+        月1回以上の鮮度確認を実施しています。
+      </div>
+    </div>
+  </Fragment>
+
+  {/* ========== 強みタブ ========== */}
+  <Fragment slot="strengths">
+    <div class="pfr-strengths">
+      <h3 class="pfr-section-h3">{typeData.name}の4つの強み</h3>
+      <ul class="pfr-strength-list">
+        {typeData.strengths.map((s) => (
+          <li class="pfr-strength-item">
+            <span class="pfr-strength-icon" aria-hidden="true">✅</span>
+            <span>{s}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </Fragment>
+
+  {/* ========== 注意点タブ ========== */}
+  <Fragment slot="weaknesses">
+    <div class="pfr-weaknesses">
+      <h3 class="pfr-section-h3">向き合い方のヒントになる4つの傾向</h3>
+      <ul class="pfr-weakness-list">
+        {typeData.weaknesses.map((w) => (
+          <li class="pfr-weakness-item">
+            <span class="pfr-weakness-icon" aria-hidden="true">⚡</span>
+            <span>{w}</span>
+          </li>
+        ))}
+      </ul>
+      <div class="pfr-weakness-note">
+        注意点は「直すべき欠点」ではなく、「強みと表裏一体の傾向」です。
+        向き合い方のヒントは下の「成長」タブをご覧ください。
+      </div>
+    </div>
+  </Fragment>
+
+  {/* ========== 仕事タブ（PASS壁に任せる + 一部無料プレビュー） ========== */}
+  <Fragment slot="work">
+    <div class="pfr-work">
+      <div class="pfr-pass-preview">
+        <h3 class="pfr-section-h3">{typeData.name}の仕事・職場スタイル</h3>
+        <div class="pfr-work-free">
+          <p class="pfr-body">{typeData.workCompatibility}</p>
+        </div>
+        <div class="pfr-pass-cta">
+          <p class="pfr-pass-desc">
+            向いている職種リスト・ストレス源・職場での活かし方の詳細は
+            ¥390 PASSで確認できます。
+          </p>
+          <a href="/pass/" class="pfr-pass-btn">
+            <span>¥390 PASSで仕事レポートを読む</span>
+            <span aria-hidden="true">→</span>
+          </a>
+          <p class="pfr-pass-sub">買切 / 全診断に使用可 / 登録不要</p>
+        </div>
+      </div>
+    </div>
+  </Fragment>
+
+  {/* ========== 恋愛タブ ========== */}
+  <Fragment slot="love">
+    <div class="pfr-love">
+      <div class="pfr-pass-preview">
+        <h3 class="pfr-section-h3">{typeData.name}の恋愛傾向</h3>
+        <div class="pfr-love-free">
+          <p class="pfr-body">{typeData.loveCompatibility}</p>
+        </div>
+        <div class="pfr-pass-cta">
+          <p class="pfr-pass-desc">
+            相性タイプ・アプローチ法・関係が安定する条件の詳細は¥390 PASSで確認できます。
+          </p>
+          <a href="/pass/" class="pfr-pass-btn">
+            <span>¥390 PASSで恋愛レポートを読む</span>
+            <span aria-hidden="true">→</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </Fragment>
+
+  {/* ========== 友人タブ（PASS壁） ========== */}
+  <Fragment slot="friend">
+    <div class="pfr-friend">
+      <div class="pfr-pass-preview">
+        <h3 class="pfr-section-h3">{typeData.name}の友人関係</h3>
+        <div class="pfr-pass-cta">
+          <p class="pfr-pass-desc">
+            友人関係での{typeData.name}の強み・注意点・長続きする友人タイプは¥390 PASSで確認できます。
+          </p>
+          <a href="/pass/" class="pfr-pass-btn">
+            <span>¥390 PASSで友人レポートを読む</span>
+            <span aria-hidden="true">→</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </Fragment>
+
+  {/* ========== 家族タブ（PASS壁） ========== */}
+  <Fragment slot="family">
+    <div class="pfr-family">
+      <div class="pfr-pass-preview">
+        <h3 class="pfr-section-h3">{typeData.name}の家族関係</h3>
+        <div class="pfr-pass-cta">
+          <p class="pfr-pass-desc">
+            親子・夫婦・パートナーとの関係での{typeData.name}の傾向詳細は¥390 PASSで確認できます。
+          </p>
+          <a href="/pass/" class="pfr-pass-btn">
+            <span>¥390 PASSで家族レポートを読む</span>
+            <span aria-hidden="true">→</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </Fragment>
+
+  {/* ========== 学校タブ（PASS壁） ========== */}
+  <Fragment slot="school">
+    <div class="pfr-school">
+      <div class="pfr-pass-preview">
+        <h3 class="pfr-section-h3">{typeData.name}の学習スタイル</h3>
+        <div class="pfr-pass-cta">
+          <p class="pfr-pass-desc">
+            {typeData.name}に合った学習法・得意分野・進路ヒントは¥390 PASSで確認できます。
+          </p>
+          <a href="/pass/" class="pfr-pass-btn">
+            <span>¥390 PASSで学習レポートを読む</span>
+            <span aria-hidden="true">→</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </Fragment>
+
+  {/* ========== キャラクター類型タブ（有名人タブを代用） ========== */}
+  <Fragment slot="celebrity">
+    <div class="pfr-celebrity">
+      <h3 class="pfr-section-h3">{typeData.name}のキャラクター類型</h3>
+      <p class="pfr-celebrity-note">
+        以下は{typeData.name}の傾向が見える行動パターンを持つ人物像です（架空の類型・特定個人ではありません）。
+      </p>
+      <ul class="pfr-famous-list">
+        {typeData.famousExamples.map((example) => (
+          <li class="pfr-famous-item">
+            <div class="pfr-famous-note">{example}</div>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </Fragment>
+
+  {/* ========== 成長タブ（CBTセルフケアTips） ========== */}
+  <Fragment slot="growth">
+    <div class="pfr-growth">
+      <h3 class="pfr-section-h3">{typeData.name}のCBTセルフケアTips 5選</h3>
+      <p class="pfr-cbt-note">
+        認知行動療法（CBT）のセルフヘルプ的なアプローチから、{typeData.name}が
+        消耗せずに力を発揮するための実践ヒントです。
+        専門的なカウンセリングの代替ではありません。
+      </p>
+      <ol class="pfr-cbt-list">
+        {typeData.cbtTips.map((tip, i) => (
+          <li class="pfr-cbt-item">
+            <div class="pfr-cbt-num" aria-hidden="true">{i + 1}</div>
+            <p class="pfr-cbt-body">{tip}</p>
+          </li>
+        ))}
+      </ol>
+      <div class="pfr-pass-cta">
+        <p class="pfr-pass-desc">
+          週次実践プラン・過去の自分と比較したいなら統合プロファイル（/pro）をご利用ください。
+        </p>
+        <a href="/pro/" class="pfr-pass-btn">
+          <span>統合プロファイルで過去と比較する</span>
+          <span aria-hidden="true">→</span>
+        </a>
+        <p class="pfr-pass-sub">AIプロンプトカード付き・複数診断の統合管理</p>
+      </div>
+    </div>
+  </Fragment>
+</ResultLayout>
+
+{/* ========== 結果ページ追加コンテンツ（ResultLayout外） ========== */}
+<Container>
+  {/* ========== もう一度診断する ========== */}
+  <section class="pfr-retake-section">
+    <h2 class="pfr-retake-h2">診断をやり直す</h2>
+    <p class="pfr-retake-desc">
+      回答を変えると違うタイプになる場合があります。
+      時期が変わっても再挑戦して、傾向の変化を確認できます。
+    </p>
+    <a href="/diagnosis/perfectionism/" class="pfr-retake-btn">
+      もう一度完璧主義診断をする
+    </a>
+  </section>
+
+  {/* ========== 思考傾向グラフ（Big5非開示・特性レーダー表記） ========== */}
+  <section class="pfr-radar-section" aria-labelledby="pfr-radar-h2">
+    <h2 id="pfr-radar-h2" class="pfr-radar-h2">思考傾向グラフ</h2>
+    <p class="pfr-radar-note">
+      {typeData.name}の研究傾向値をグラフ化したものです。
+      個人差があります（参考値）。
+    </p>
+    <div class="pfr-radar-bars" role="list" aria-label="思考傾向グラフ">
+      {radarLabels.map(({ key, label }) => {
+        const score = typeData.big5[key as keyof typeof typeData.big5];
+        return (
+          <div class="pfr-radar-row" role="listitem">
+            <span class="pfr-radar-label">{label}</span>
+            <div class="pfr-radar-bar-bg" role="meter" aria-valuenow={score} aria-valuemin={0} aria-valuemax={100} aria-label={`${label}: ${score}%`}>
+              <div class="pfr-radar-bar-fill" style={`width: ${score}%`}></div>
+            </div>
+            <span class="pfr-radar-val">{score}</span>
+          </div>
+        );
+      })}
+    </div>
+  </section>
+
+  {/* ========== 他タイプと比べる ========== */}
+  <section class="pfr-other-types-section" aria-labelledby="pfr-other-h2">
+    <h2 id="pfr-other-h2" class="pfr-other-h2">他の完璧主義タイプを見る</h2>
+    <div class="pfr-other-types-grid">
+      {Object.entries(types)
+        .filter(([id]) => id !== typeId)
+        .map(([id, data]) => (
+          <a href={`/diagnosis/perfectionism/result/${id}/`} class="pfr-other-type-card">
+            <span class="pfr-other-icon" aria-hidden="true">{typeEmoji[id as PerfectionismType]}</span>
+            <span class="pfr-other-name">{data.name}</span>
+            <span class="pfr-other-catch">{data.catchphrase.slice(0, 22)}...</span>
+          </a>
+        ))
+      }
+    </div>
+  </section>
+
+  {/* ========== FAQ ========== */}
+  <section class="pfr-faq-section" aria-labelledby="pfr-faq-h2">
+    <h2 id="pfr-faq-h2" class="pfr-faq-h2">よくある質問</h2>
+    <dl class="pfr-faq-list">
+      {faqs.map(({ question, answer }) => (
+        <div class="pfr-faq-item">
+          <dt class="pfr-faq-q">{question}</dt>
+          <dd class="pfr-faq-a">{answer}</dd>
+        </div>
+      ))}
+    </dl>
+  </section>
+</Container>
+
+<style>
+/* ========== 概要 ========== */
+.pfr-aio-block {
+  background: #f0f4ff;
+  border-left: 4px solid var(--sn-primary);
+  border-radius: 0 0.5rem 0.5rem 0;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.25rem;
+}
+.pfr-aio-title {
+  font-weight: 700;
+  font-size: 0.8rem;
+  color: var(--sn-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0 0 0.5rem;
+}
+.pfr-aio-list {
+  margin: 0;
+  padding-left: 1.5rem;
+  font-size: 0.85rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+.pfr-body {
+  font-size: 0.95rem;
+  line-height: 1.8;
+  color: #374151;
+  margin: 0 0 0.75rem;
+}
+.pfr-description {
+  margin-bottom: 1.5rem;
+}
+.pfr-characteristics {
+  margin-top: 1.5rem;
+}
+.pfr-h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 0 0 0.75rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+.pfr-char-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+.pfr-char-item {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+.pfr-char-icon {
+  flex-shrink: 0;
+  color: var(--sn-primary);
+  font-size: 0.7em;
+  margin-top: 0.35em;
+}
+.pfr-theory-note {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+  font-size: 0.8rem;
+  color: #6b7280;
+  line-height: 1.6;
+  margin-top: 1.5rem;
+}
+.pfr-theory-note p {
+  margin: 0;
+}
+.pfr-freshness {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  margin-top: 0.75rem;
+}
+
+/* ========== 強み ========== */
+.pfr-section-h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 0 0 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+.pfr-strength-list,
+.pfr-weakness-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.pfr-strength-item,
+.pfr-weakness-item {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+.pfr-strength-icon,
+.pfr-weakness-icon {
+  flex-shrink: 0;
+  font-size: 1.1em;
+}
+.pfr-weakness-note {
+  margin-top: 1.25rem;
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+  font-size: 0.85rem;
+  color: #92400e;
+  line-height: 1.6;
+}
+
+/* ========== PASSプレビュー ========== */
+.pfr-pass-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.pfr-pass-cta {
+  background: linear-gradient(135deg, #6366f1 0%, #7c3aed 100%);
+  color: #fff;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+.pfr-pass-desc {
+  font-size: 0.875rem;
+  opacity: 0.9;
+  line-height: 1.6;
+  margin: 0;
+}
+.pfr-pass-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #fff;
+  color: var(--sn-primary);
+  font-weight: 700;
+  font-size: 1rem;
+  padding: 0.75rem 1.75rem;
+  border-radius: 3rem;
+  text-decoration: none;
+  transition: transform 0.15s;
+}
+.pfr-pass-btn:hover {
+  transform: translateY(-1px);
+}
+.pfr-pass-sub {
+  font-size: 0.75rem;
+  opacity: 0.75;
+  margin: 0;
+}
+
+/* ========== キャラクター類型 ========== */
+.pfr-celebrity-note {
+  font-size: 0.8rem;
+  color: #6b7280;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+}
+.pfr-famous-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.pfr-famous-item {
+  padding: 0.75rem 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  background: #fafafa;
+}
+.pfr-famous-note {
+  font-size: 0.88rem;
+  color: #4b5563;
+  line-height: 1.6;
+}
+
+/* ========== CBTセルフケア ========== */
+.pfr-cbt-note {
+  font-size: 0.82rem;
+  color: #6b7280;
+  line-height: 1.6;
+  margin-bottom: 1.25rem;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+}
+.pfr-cbt-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  counter-reset: cbt-counter;
+}
+.pfr-cbt-item {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+.pfr-cbt-num {
+  flex-shrink: 0;
+  width: 2rem;
+  height: 2rem;
+  background: var(--sn-primary);
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+.pfr-cbt-body {
+  font-size: 0.9rem;
+  line-height: 1.7;
+  color: #374151;
+  margin: 0;
+}
+
+/* ========== もう一度 ========== */
+.pfr-retake-section {
+  text-align: center;
+  padding: 2rem 1rem;
+  border-top: 1px solid #e5e7eb;
+  margin-top: 2rem;
+}
+.pfr-retake-h2 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+.pfr-retake-desc {
+  font-size: 0.9rem;
+  color: #6b7280;
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}
+.pfr-retake-btn {
+  display: inline-block;
+  background: var(--sn-primary);
+  color: #fff;
+  font-weight: 700;
+  padding: 0.75rem 2rem;
+  border-radius: 3rem;
+  text-decoration: none;
+  font-size: 0.95rem;
+  transition: opacity 0.15s;
+}
+.pfr-retake-btn:hover {
+  opacity: 0.88;
+}
+
+/* ========== 思考傾向グラフ ========== */
+.pfr-radar-section {
+  padding: 2rem 1rem;
+  border-top: 1px solid #e5e7eb;
+}
+.pfr-radar-h2 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+.pfr-radar-note {
+  font-size: 0.8rem;
+  color: #6b7280;
+  margin-bottom: 1.25rem;
+  line-height: 1.5;
+}
+.pfr-radar-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.pfr-radar-row {
+  display: grid;
+  grid-template-columns: 8rem 1fr 2.5rem;
+  align-items: center;
+  gap: 0.75rem;
+}
+.pfr-radar-label {
+  font-size: 0.85rem;
+  color: #374151;
+  white-space: nowrap;
+}
+.pfr-radar-bar-bg {
+  background: #e5e7eb;
+  border-radius: 1rem;
+  height: 0.625rem;
+  overflow: hidden;
+}
+.pfr-radar-bar-fill {
+  background: var(--sn-primary);
+  height: 100%;
+  border-radius: 1rem;
+  transition: width 0.5s ease;
+}
+.pfr-radar-val {
+  font-size: 0.8rem;
+  color: #6b7280;
+  text-align: right;
+}
+
+/* ========== 他タイプ ========== */
+.pfr-other-types-section {
+  padding: 2rem 1rem;
+  border-top: 1px solid #e5e7eb;
+}
+.pfr-other-h2 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+.pfr-other-types-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 0.75rem;
+}
+.pfr-other-type-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
+  text-align: center;
+}
+.pfr-other-type-card:hover {
+  border-color: var(--sn-primary);
+  box-shadow: 0 2px 8px rgba(99 102 241 / 0.1);
+  transform: translateY(-2px);
+}
+.pfr-other-icon {
+  font-size: 1.75rem;
+}
+.pfr-other-name {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--sn-primary);
+}
+.pfr-other-catch {
+  font-size: 0.72rem;
+  color: #6b7280;
+  line-height: 1.4;
+}
+
+/* ========== FAQ ========== */
+.pfr-faq-section {
+  padding: 2rem 1rem;
+  border-top: 1px solid #e5e7eb;
+}
+.pfr-faq-h2 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 1.25rem;
+}
+.pfr-faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.pfr-faq-item {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+.pfr-faq-q {
+  font-weight: 700;
+  font-size: 0.9rem;
+  padding: 0.875rem 1.25rem;
+  background: #f9fafb;
+  margin: 0;
+  display: block;
+}
+.pfr-faq-q::before {
+  content: 'Q. ';
+  color: var(--sn-primary);
+}
+.pfr-faq-a {
+  font-size: 0.875rem;
+  line-height: 1.7;
+  padding: 0.875rem 1.25rem;
+  margin: 0;
+  color: #4b5563;
+}
+.pfr-faq-a::before {
+  content: 'A. ';
+  font-weight: 700;
+  color: #16a34a;
+}
+
+/* ========== レスポンシブ ========== */
+@media (max-width: 480px) {
+  .pfr-radar-row {
+    grid-template-columns: 6rem 1fr 2rem;
+  }
+  .pfr-radar-label {
+    font-size: 0.75rem;
+  }
+  .pfr-other-types-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+</style>
