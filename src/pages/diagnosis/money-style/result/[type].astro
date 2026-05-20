@@ -1,0 +1,1045 @@
+---
+/**
+ * 金銭感覚診断 結果ページ（動的ルート）
+ * 4タイプ分の結果ページを静的生成する
+ *
+ * URL: /diagnosis/money-style/result/{typeId}/
+ * タイプID: avoidance / worship / status / vigilance
+ *
+ * SEO/AIO:
+ * - JSON-LD: WebApplication + Article + BreadcrumbList
+ * - タイプ別メタタイトル・ディスクリプション
+ * - 3タイプとの相性ランキング（スコア順）
+ * - 消費パターン・貯蓄パターンセクション
+ * - パートナーシップでの相性傾向
+ * - キャリア・仕事への影響
+ * - self-care セクション（このタイプが大切にすべきこと）
+ * - YMYL回避: 投資推奨・金融商品比較・税務助言 絶対NG
+ * - LGBTQ+配慮: 「パートナー」表現
+ * - 「守銭奴」「ケチ」等スティグマ表現NG
+ *
+ * 確認日: 2026-05-21
+ */
+import ResultLayout from '../../../../layouts/ResultLayout.astro';
+import Container from '../../../../components/Container.astro';
+import { types, getOtherTypes } from '../../../../data/diagnoses/money-style/types';
+import { meta } from '../../../../data/diagnoses/money-style/meta';
+import { getAllPairsForType } from '../../../../data/diagnoses/money-style/compatibility';
+import type { MoneyType } from '../../../../data/diagnoses/money-style/questions';
+
+export function getStaticPaths() {
+  return Object.keys(types).map((typeId) => ({
+    params: { type: typeId },
+    props: {
+      typeId: typeId as MoneyType,
+      typeData: types[typeId as MoneyType],
+    },
+  }));
+}
+
+const { typeId, typeData } = Astro.props;
+
+const SITE_URL = 'https://shindan-navi.jp';
+const PAGE_URL = `${SITE_URL}/diagnosis/money-style/result/${typeId}/`;
+
+// 3タイプとの相性ランキング（スコア降順）
+const compatibilityRanking = getAllPairsForType(typeId);
+
+// タイプ別テーマカラー
+const typeColor: Record<MoneyType, string> = {
+  avoidance: '#16a34a',
+  worship: '#d97706',
+  status: '#7c3aed',
+  vigilance: '#2563eb',
+};
+
+// 相性カテゴリの色
+const categoryColor: Record<string, string> = {
+  '非常に高い相性': '#16a34a',
+  '良い相性': '#2563eb',
+  '補完し合える関係': '#d97706',
+  '対話が必要なペア': '#7c3aed',
+  '学び合いペア': '#dc2626',
+};
+
+// FAQs（タイプ別）
+const faqs = [
+  {
+    question: `${typeData.japaneseName}の金銭感覚の特徴は？`,
+    answer: typeData.characteristics.slice(0, 3).join('。') + '。',
+  },
+  {
+    question: `${typeData.japaneseName}はどんな強みがありますか？`,
+    answer: typeData.strengths.join('。また、') + '。',
+  },
+  {
+    question: `${typeData.japaneseName}が気をつけたい金銭パターンは？`,
+    answer:
+      typeData.weaknesses[0] +
+      '。' +
+      typeData.weaknesses[1] +
+      '。ただし、これらは弱点ではなく傾向の特徴です。自分のパターンを知ることが改善の第一歩になります。',
+  },
+  {
+    question: `${typeData.japaneseName}と最も相性の良い金銭感覚タイプは？`,
+    answer:
+      compatibilityRanking.length > 0
+        ? `${types[compatibilityRanking[0].typeId].japaneseName}との相性が最も高い傾向があります（スコア: ${compatibilityRanking[0].compatibility.score}/100）。${compatibilityRanking[0].compatibility.oneLineSummary}`
+        : '相性は個人差があります。対話を重ねることが最も重要です。',
+  },
+  {
+    question: `${typeData.japaneseName}のキャリアへの影響は？`,
+    answer: typeData.careerImplication,
+  },
+];
+
+// JSON-LD: WebApplication
+const jsonLdWebApp = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  '@id': `${PAGE_URL}#webapp`,
+  name: `金銭感覚診断 結果：${typeData.japaneseName}（${typeData.nameEn}）`,
+  url: PAGE_URL,
+  applicationCategory: 'EducationalApplication',
+  operatingSystem: 'Web',
+  description: `金銭感覚診断の結果は「${typeData.japaneseName}」。${typeData.catchphrase}`,
+  author: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+    name: '診断ナビ',
+    url: SITE_URL,
+  },
+};
+
+// JSON-LD: Article
+const jsonLdArticle = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  '@id': `${PAGE_URL}#article`,
+  headline: `${typeData.japaneseName}（${typeData.nameEn}）の金銭感覚・消費傾向・相性ランキング完全ガイド`,
+  url: PAGE_URL,
+  description: `金銭感覚診断の結果「${typeData.japaneseName}」の消費パターン・貯蓄傾向・強み・気をつけたい点・3タイプとの相性ランキングを詳しく解説。Klontz et al.（2011）マネースクリプト理論に基づく自己理解ガイド。`,
+  datePublished: meta.publishedAt,
+  dateModified: meta.updatedAt,
+  author: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+    name: '診断ナビ',
+    url: SITE_URL,
+  },
+  publisher: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+    name: '診断ナビ',
+    url: SITE_URL,
+  },
+  about: {
+    '@type': 'Thing',
+    name: `${typeData.japaneseName} マネースクリプト`,
+    sameAs: 'https://doi.org/10.4148/jft.v2i1.451',
+  },
+  citation: [
+    {
+      '@type': 'CreativeWork',
+      name: 'Money beliefs and financial behaviors: Development of the Klontz Money Script Inventory',
+      author: 'Klontz BT, Britt SL, Mentzer J, Klontz T',
+      datePublished: '2011',
+      url: 'https://doi.org/10.4148/jft.v2i1.451',
+    },
+    {
+      '@type': 'CreativeWork',
+      name: 'Many sides of the coin: The psychology of money usage',
+      author: 'Furnham A',
+      datePublished: '1984',
+    },
+  ],
+};
+
+// JSON-LD: BreadcrumbList
+const jsonLdBreadcrumb = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'ホーム', item: SITE_URL },
+    { '@type': 'ListItem', position: 2, name: '診断一覧', item: `${SITE_URL}/diagnosis/` },
+    { '@type': 'ListItem', position: 3, name: '金銭感覚診断', item: `${SITE_URL}/diagnosis/money-style/` },
+    { '@type': 'ListItem', position: 4, name: typeData.japaneseName, item: PAGE_URL },
+  ],
+};
+
+// JSON-LD: FAQPage
+const jsonLdFAQ = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  '@id': `${PAGE_URL}#faq`,
+  mainEntity: faqs.map(({ question, answer }) => ({
+    '@type': 'Question',
+    name: question,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: answer,
+    },
+  })),
+};
+
+const jsonLdAll = [jsonLdWebApp, jsonLdArticle, jsonLdBreadcrumb, jsonLdFAQ];
+
+// 関連診断
+const relatedDiagnoses = [
+  { title: '恋愛スタイル診断', href: '/diagnosis/love-style/', icon: '💕', badge: 'おすすめ' },
+  { title: 'DiSC診断', href: '/diagnosis/disc/', icon: '💼' },
+  { title: '完璧主義診断', href: '/diagnosis/perfectionism/', icon: '🔱' },
+  { title: '多重知能テスト', href: '/diagnosis/multi-int/', icon: '🦉' },
+];
+
+// description の改行を除去
+const descriptionClean = typeData.description.replace(/\n+/g, ' ').trim();
+---
+
+<ResultLayout
+  diagnosisId="money-style"
+  typeId={typeId}
+  typeName={typeData.japaneseName}
+  diagnosisName="金銭感覚診断"
+  characterEmoji={typeData.emoji}
+  characterName={typeData.nameEn}
+  tagline={typeData.catchphrase}
+  shareUrl={PAGE_URL}
+  pageTitle={`${typeData.japaneseName}【金銭感覚診断】消費傾向・強み・相性ランキング | 診断ナビ`}
+  pageDescription={`金銭感覚診断の結果は「${typeData.japaneseName}（${typeData.nameEn}）」。${typeData.catchphrase} 消費パターン・貯蓄傾向・強み・気をつけたい点・3タイプとの相性ランキングを詳しく解説。Klontz et al.（2011）マネースクリプト理論に基づく自己理解ガイド。`}
+  relatedDiagnoses={relatedDiagnoses}
+  jsonLd={jsonLdAll}
+>
+  {/* ========== 概要タブ ========== */}
+  <Fragment slot="overview">
+    <div class="msr-overview">
+      <div class="msr-aio-block">
+        <p class="msr-aio-title">このページでわかること</p>
+        <ul class="msr-aio-list">
+          <li>{typeData.japaneseName}（{typeData.nameEn}）の金銭感覚・消費傾向・貯蓄パターン・特徴・強み・気をつけたい点</li>
+          <li>他3タイプとの相性ランキング（スコア順・Klontz et al. 2011年理論に基づく）</li>
+          <li>パートナーシップでの相性傾向・キャリアへの影響・このタイプが大切にすべきこと（self-care）</li>
+        </ul>
+      </div>
+
+      <div class="msr-description">
+        {descriptionClean.split('。').filter(s => s.trim()).map((sentence) => (
+          <p class="msr-body">{sentence.trim()}。</p>
+        ))}
+      </div>
+
+      <div class="msr-characteristics">
+        <h3 class="msr-h3">このタイプの5つの特徴</h3>
+        <ul class="msr-char-list">
+          {typeData.characteristics.map((char) => (
+            <li class="msr-char-item">
+              <span class="msr-char-icon" aria-hidden="true" style={`color: ${typeColor[typeId]}`}>◆</span>
+              <span>{char}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div class="msr-theory-note">
+        <p>
+          この診断結果はKlontz BT et al.（2011）「Money beliefs and financial behaviors: Development of the Klontz Money Script Inventory」
+          （<a href="https://doi.org/10.4148/jft.v2i1.451" target="_blank" rel="noopener noreferrer">Journal of Financial Therapy, DOI確認済</a>）
+          に基づく金銭感覚傾向把握のための参考情報です。
+          医学的・臨床的な診断ではありません。投資推奨・金融商品比較・税務助言は含みません。
+        </p>
+      </div>
+
+      <div class="msr-freshness">
+        <time datetime={meta.updatedAt}>{meta.updatedAt}</time> 時点の情報。
+        月1回以上の鮮度確認を実施しています。
+      </div>
+    </div>
+  </Fragment>
+
+  {/* ========== 強みタブ ========== */}
+  <Fragment slot="strengths">
+    <div class="msr-strengths">
+      <h3 class="msr-section-h3">{typeData.japaneseName}の4つの強み</h3>
+      <ul class="msr-strength-list">
+        {typeData.strengths.map((s) => (
+          <li class="msr-strength-item">
+            <span class="msr-strength-icon" aria-hidden="true">✅</span>
+            <span>{s}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </Fragment>
+
+  {/* ========== 注意点タブ ========== */}
+  <Fragment slot="weaknesses">
+    <div class="msr-weaknesses">
+      <h3 class="msr-section-h3">気をつけたい傾向</h3>
+      <ul class="msr-weakness-list">
+        {typeData.weaknesses.map((w) => (
+          <li class="msr-weakness-item">
+            <span class="msr-weakness-icon" aria-hidden="true">⚡</span>
+            <span>{w}</span>
+          </li>
+        ))}
+      </ul>
+      <div class="msr-weakness-note">
+        これらは「弱点」ではなく「傾向の特徴」です。
+        自分のパターンを理解することが、健全な金銭感覚を育てる第一歩になります。
+      </div>
+    </div>
+  </Fragment>
+
+  {/* ========== 仕事タブ（消費・貯蓄・キャリア） ========== */}
+  <Fragment slot="work">
+    <div class="msr-work">
+      {/* 消費パターン */}
+      <div class="msr-pattern-block">
+        <h3 class="msr-section-h3">消費パターン</h3>
+        <p class="msr-body">{typeData.spendingPattern}</p>
+      </div>
+
+      {/* 貯蓄パターン */}
+      <div class="msr-pattern-block" style="margin-top: 1.5rem;">
+        <h3 class="msr-section-h3">貯蓄パターン</h3>
+        <p class="msr-body">{typeData.savingPattern}</p>
+      </div>
+
+      {/* キャリア・仕事への影響 */}
+      <div class="msr-pattern-block" style="margin-top: 1.5rem;">
+        <h3 class="msr-section-h3">キャリア・仕事への影響</h3>
+        <p class="msr-body">{typeData.careerImplication}</p>
+        <div class="msr-career-note">
+          <p>
+            本診断はキャリア設計の参考情報です。
+            具体的な転職・昇進・収入向上については、専門家（キャリアカウンセラー等）にご相談ください。
+          </p>
+        </div>
+      </div>
+    </div>
+  </Fragment>
+
+  {/* ========== 恋愛タブ（相性ランキング・パートナーシップ・self-care） ========== */}
+  <Fragment slot="love">
+    <div class="msr-love">
+      {/* 相性ランキング */}
+      <h3 class="msr-section-h3">3タイプとの相性ランキング</h3>
+      <p class="msr-love-note">
+        Klontz et al.（2011）理論に基づく傾向値です。個人差があり、対話と相互理解が最も重要です。
+        「スコアが低い = うまくいかない」ではありません。
+      </p>
+      <div class="msr-compat-list">
+        {compatibilityRanking.map((item, index) => {
+          const otherType = types[item.typeId];
+          const catColor = categoryColor[item.compatibility.category] ?? '#6b7280';
+          return (
+            <div class="msr-compat-item">
+              <div class="msr-compat-rank" aria-hidden="true">{index + 1}</div>
+              <div class="msr-compat-body">
+                <div class="msr-compat-header">
+                  <span class="msr-compat-emoji">{otherType.emoji}</span>
+                  <span class="msr-compat-name">{otherType.japaneseName}</span>
+                  <span class="msr-compat-score" style={`color: ${catColor}`}>
+                    {item.compatibility.score}/100
+                  </span>
+                  <span class="msr-compat-category" style={`background: ${catColor}15; color: ${catColor}; border-color: ${catColor}40`}>
+                    {item.compatibility.category}
+                  </span>
+                </div>
+                <p class="msr-compat-summary">{item.compatibility.oneLineSummary}</p>
+                <p class="msr-compat-detail">{item.compatibility.detailDescription}</p>
+                <div class="msr-compat-sub">
+                  <div class="msr-compat-sub-item">
+                    <span class="msr-compat-sub-label">金銭管理の相性</span>
+                    <span class="msr-compat-sub-text">{item.compatibility.moneyManagement}</span>
+                  </div>
+                  <div class="msr-compat-sub-item">
+                    <span class="msr-compat-sub-label">衝突しやすい点</span>
+                    <span class="msr-compat-sub-text">{item.compatibility.conflictArea}</span>
+                  </div>
+                  <div class="msr-compat-sub-item">
+                    <span class="msr-compat-sub-label">成長の機会</span>
+                    <span class="msr-compat-sub-text">{item.compatibility.growthPotential}</span>
+                  </div>
+                  <div class="msr-compat-sub-item">
+                    <span class="msr-compat-sub-label">カップルへのアドバイス</span>
+                    <span class="msr-compat-sub-text">{item.compatibility.adviceForCouple}</span>
+                  </div>
+                </div>
+                <a href={`/diagnosis/money-style/result/${item.typeId}/`} class="msr-compat-link">
+                  {otherType.japaneseName}の詳細を見る →
+                </a>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* パートナーシップでの相性傾向 */}
+      <div class="msr-partner-block" style="margin-top: 2rem;">
+        <h3 class="msr-section-h3">パートナーシップでの相性傾向</h3>
+        <p class="msr-body">{typeData.partnerCompatibility}</p>
+        <div class="msr-partner-tips">
+          <h4 class="msr-h4">結婚・同棲前に話し合うと良いこと</h4>
+          <ul class="msr-partner-list">
+            <li>毎月の家計分担の方法・共同口座の有無</li>
+            <li>貯蓄目標と緊急資金の考え方</li>
+            <li>大きな支出をする際の決め方のルール</li>
+            <li>将来のライフイベント（住宅・教育費・老後）への備え</li>
+          </ul>
+        </div>
+        <div class="msr-partner-note">
+          <p>
+            本診断の相性情報は傾向値です。
+            パートナーとの金銭感覚のすり合わせに困難を感じる場合は、
+            ファイナンシャルプランナー（FP）等の専門家への共同相談を検討してください。
+          </p>
+        </div>
+      </div>
+    </div>
+  </Fragment>
+
+  {/* ========== 友人タブ（パートナーシップの補足） ========== */}
+  <Fragment slot="friend">
+    <div class="msr-friend">
+      <h3 class="msr-section-h3">友人・職場での金銭感覚</h3>
+      <p class="msr-body">
+        金銭感覚は友人・職場の対人関係にも影響することがあります。
+        {typeData.japaneseName}の特徴は次の通りです。
+      </p>
+      <ul class="msr-friend-list">
+        {typeData.characteristics.slice(0, 3).map((c) => (
+          <li class="msr-friend-item">
+            <span class="msr-friend-icon" aria-hidden="true" style={`color: ${typeColor[typeId]}`}>◆</span>
+            <span>{c}</span>
+          </li>
+        ))}
+      </ul>
+      <div class="msr-friend-note">
+        <p>
+          職場での金銭感覚の影響（給与交渉・経費精算・チームの予算意識など）については、
+          DiSC診断などのキャリア系診断と組み合わせるとより深い自己理解が得られます。
+        </p>
+        <a href="/diagnosis/disc/" class="msr-friend-link">DiSC診断を受ける →</a>
+      </div>
+    </div>
+  </Fragment>
+
+  {/* ========== 家族タブ ========== */}
+  <Fragment slot="family">
+    <div class="msr-family">
+      <h3 class="msr-section-h3">{typeData.japaneseName}と家族の金銭感覚</h3>
+      <p class="msr-body">
+        {typeData.japaneseName}の金銭感覚は、家庭内のお金の話し合い・子どもへのお金の教育・
+        親との関係においても現れることがあります。
+      </p>
+      <p class="msr-body">
+        {typeData.characteristics[0]}という傾向が、家族内での金銭管理のスタイルに影響することがあります。
+      </p>
+      <div class="msr-pass-cta">
+        <p class="msr-pass-desc">
+          家族の金銭感覚について詳しく知りたい場合は、家族全員でそれぞれ診断を受けてみましょう。
+        </p>
+        <a href="/diagnosis/money-style/" class="msr-pass-btn">
+          <span>金銭感覚診断トップへ</span>
+          <span aria-hidden="true">→</span>
+        </a>
+      </div>
+    </div>
+  </Fragment>
+
+  {/* ========== 学校タブ ========== */}
+  <Fragment slot="school">
+    <div class="msr-school">
+      <h3 class="msr-section-h3">{typeData.japaneseName}のお金の学び方</h3>
+      <p class="msr-body">
+        金銭感覚は学ぶことで変えることができます。
+        Klontz et al.（2011）は「マネースクリプトへの気づきが財務行動の改善の第一歩」であることを示しています。
+      </p>
+      <div class="msr-learning-block">
+        <h4 class="msr-h4">{typeData.japaneseName}におすすめの学び方</h4>
+        <ul class="msr-learning-list">
+          <li>自分の金銭感覚パターンを日記・メモで記録する</li>
+          <li>家計簿アプリ（Money Forward・Zaimなど）で収支を可視化する</li>
+          <li>ファイナンシャルプランナー（FP）に1度相談してみる</li>
+          <li>パートナーとお互いの診断結果を共有し話し合う</li>
+        </ul>
+      </div>
+      <div class="msr-school-note">
+        <p>
+          本診断は金融教育の参考情報です。
+          具体的な資産形成・節税については必ず専門家にご相談ください。
+        </p>
+      </div>
+    </div>
+  </Fragment>
+
+  {/* ========== 有名人タブ ========== */}
+  <Fragment slot="celebrity">
+    <div class="msr-celebrity">
+      <h3 class="msr-section-h3">{typeData.japaneseName}の行動類型</h3>
+      <p class="msr-body">
+        {typeData.japaneseName}（{typeData.nameEn}）は、Klontz et al.（2011）のKMSIにおいて、
+        次のような行動的・心理的特徴を持つ傾向があるとされています。
+      </p>
+      <ul class="msr-celeb-list">
+        {typeData.characteristics.map((c) => (
+          <li class="msr-celeb-item">
+            <span class="msr-celeb-icon" aria-hidden="true" style={`color: ${typeColor[typeId]}`}>→</span>
+            <span>{c}</span>
+          </li>
+        ))}
+      </ul>
+      <div class="msr-celeb-note">
+        <p>
+          特定の個人をタイプに当てはめる診断は、プライバシーへの配慮から掲載を控えています。
+          ご自身の傾向の理解にご活用ください。
+        </p>
+      </div>
+    </div>
+  </Fragment>
+
+  {/* ========== 成長タブ（self-care） ========== */}
+  <Fragment slot="growth">
+    <div class="msr-growth">
+      <h3 class="msr-section-h3">{typeData.japaneseName}が大切にすべきこと（self-care）</h3>
+      <p class="msr-growth-note">
+        金銭感覚の傾向を理解した上で、自分らしく健全な金銭との関係を育てるためのガイドラインです。
+        専門的なカウンセリング・金融アドバイスの代替ではありません。
+      </p>
+      <div class="msr-selfcare-block">
+        <p class="msr-body">{typeData.selfCare}</p>
+      </div>
+
+      <h3 class="msr-section-h3" style="margin-top: 1.5rem;">実践ヒント（4ステップ）</h3>
+      <ul class="msr-tips-list">
+        <li class="msr-tips-item">
+          <div class="msr-tips-num" style={`background: ${typeColor[typeId]}`} aria-hidden="true">1</div>
+          <p class="msr-tips-body">
+            自分が「{typeData.japaneseName}」であることを言語化しておく。
+            「私のお金への傾向は{typeData.catchphrase}という特徴があります」と自覚することが、
+            パートナーや家族との対話のきっかけになります。
+          </p>
+        </li>
+        <li class="msr-tips-item">
+          <div class="msr-tips-num" style={`background: ${typeColor[typeId]}`} aria-hidden="true">2</div>
+          <p class="msr-tips-body">
+            パートナーの金銭感覚タイプを確認する。
+            お互いのタイプを知ることで「なぜお金の話でぶつかるのか」の原因が見えやすくなります。
+            この診断はパートナーとの対話のきっかけとして活用してください。
+          </p>
+        </li>
+        <li class="msr-tips-item">
+          <div class="msr-tips-num" style={`background: ${typeColor[typeId]}`} aria-hidden="true">3</div>
+          <p class="msr-tips-body">
+            「{typeData.strengths[0]}」という強みを意識的に活かす場面を増やす。
+            強みを自覚した上で日常に活かすことで、金銭管理の満足度が高まります。
+          </p>
+        </li>
+        <li class="msr-tips-item">
+          <div class="msr-tips-num" style={`background: ${typeColor[typeId]}`} aria-hidden="true">4</div>
+          <p class="msr-tips-body">
+            具体的な資産形成・家計改善についてはファイナンシャルプランナー（FP）等の専門家に相談する。
+            本診断は金融アドバイスではなく、自己理解の参考ツールです。
+            専門家のサポートと組み合わせることで、より実践的な改善につながります。
+          </p>
+        </li>
+      </ul>
+
+      <div class="msr-pass-cta">
+        <p class="msr-pass-desc">
+          他の診断と組み合わせた総合的な自己理解は関連診断ページで確認できます。
+        </p>
+        <a href="/diagnosis/" class="msr-pass-btn">
+          <span>診断一覧を見る</span>
+          <span aria-hidden="true">→</span>
+        </a>
+      </div>
+    </div>
+  </Fragment>
+
+  {/* ========== FAQ ========== */}
+  <Fragment slot="faq">
+    <div class="msr-faq">
+      <dl class="msr-faq-list">
+        {faqs.map((faq) => (
+          <div class="msr-faq-item">
+            <dt class="msr-faq-q">
+              <span class="msr-faq-q-icon" aria-hidden="true">Q</span>
+              {faq.question}
+            </dt>
+            <dd class="msr-faq-a">
+              <span class="msr-faq-a-icon" aria-hidden="true">A</span>
+              {faq.answer}
+            </dd>
+          </div>
+        ))}
+      </dl>
+    </div>
+  </Fragment>
+</ResultLayout>
+
+<style>
+  /* ========== 共通 ========== */
+  .msr-body {
+    font-size: 0.9rem;
+    line-height: 1.8;
+    color: #374151;
+    margin-bottom: 0.75rem;
+  }
+  .msr-body a { color: #2563eb; }
+  .msr-h3 {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #1e3a5f;
+    margin-bottom: 0.75rem;
+  }
+  .msr-h4 {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #1e3a5f;
+    margin-bottom: 0.5rem;
+  }
+  .msr-section-h3 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #1e3a5f;
+    margin-bottom: 1rem;
+    border-left: 4px solid #2563eb;
+    padding-left: 0.75rem;
+  }
+
+  /* ========== AIOブロック ========== */
+  .msr-aio-block {
+    background: #eff6ff;
+    border-left: 4px solid #2563eb;
+    border-radius: 0 0.5rem 0.5rem 0;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  .msr-aio-title {
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: #1e40af;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .msr-aio-list {
+    margin: 0;
+    padding: 0 0 0 1.25rem;
+    list-style: disc;
+    font-size: 0.88rem;
+    line-height: 1.8;
+    color: #1e3a5f;
+  }
+
+  /* ========== 特徴リスト ========== */
+  .msr-char-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+  .msr-char-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    font-size: 0.88rem;
+    line-height: 1.7;
+    color: #374151;
+  }
+  .msr-char-icon { flex-shrink: 0; font-size: 0.7rem; margin-top: 0.4rem; }
+
+  /* ========== 理論注記・鮮度 ========== */
+  .msr-theory-note {
+    background: #fffbeb;
+    border: 1px solid #f59e0b;
+    border-radius: 0.5rem;
+    padding: 1rem 1.25rem;
+    font-size: 0.82rem;
+    line-height: 1.7;
+    color: #78350f;
+    margin-top: 1.5rem;
+  }
+  .msr-theory-note a { color: #b45309; }
+  .msr-freshness {
+    font-size: 0.78rem;
+    color: #6b7280;
+    margin-top: 0.75rem;
+  }
+
+  /* ========== 強み ========== */
+  .msr-strength-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  .msr-strength-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    line-height: 1.7;
+    color: #374151;
+  }
+  .msr-strength-icon { flex-shrink: 0; }
+
+  /* ========== 注意点 ========== */
+  .msr-weakness-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  .msr-weakness-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    line-height: 1.7;
+    color: #374151;
+  }
+  .msr-weakness-icon { flex-shrink: 0; }
+  .msr-weakness-note {
+    background: #f3f4f6;
+    border-radius: 0.5rem;
+    padding: 0.75rem 1rem;
+    font-size: 0.82rem;
+    color: #6b7280;
+    margin-top: 1rem;
+  }
+
+  /* ========== 仕事（消費・貯蓄・キャリア） ========== */
+  .msr-pattern-block { }
+  .msr-career-note {
+    background: #fffbeb;
+    border: 1px solid #f59e0b;
+    border-radius: 0.5rem;
+    padding: 0.75rem 1rem;
+    font-size: 0.82rem;
+    color: #78350f;
+    margin-top: 0.75rem;
+  }
+
+  /* ========== 相性ランキング ========== */
+  .msr-love-note {
+    font-size: 0.82rem;
+    color: #6b7280;
+    margin-bottom: 1.25rem;
+    line-height: 1.6;
+  }
+  .msr-compat-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+  .msr-compat-item {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.75rem;
+    padding: 1.25rem;
+  }
+  .msr-compat-rank {
+    flex-shrink: 0;
+    width: 2rem;
+    height: 2rem;
+    background: #1e3a5f;
+    color: #fff;
+    font-weight: 800;
+    font-size: 0.9rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .msr-compat-body { flex: 1; min-width: 0; }
+  .msr-compat-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.5rem;
+  }
+  .msr-compat-emoji { font-size: 1.25rem; }
+  .msr-compat-name { font-size: 1rem; font-weight: 700; color: #1e3a5f; }
+  .msr-compat-score { font-size: 0.9rem; font-weight: 700; }
+  .msr-compat-category {
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 0.2rem 0.5rem;
+    border-radius: 999px;
+    border: 1px solid;
+  }
+  .msr-compat-summary {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 0.5rem;
+  }
+  .msr-compat-detail {
+    font-size: 0.85rem;
+    line-height: 1.7;
+    color: #374151;
+    margin-bottom: 0.75rem;
+    white-space: pre-line;
+  }
+  .msr-compat-sub {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+  }
+  .msr-compat-sub-item { display: flex; flex-direction: column; gap: 0.15rem; }
+  .msr-compat-sub-label {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+  .msr-compat-sub-text { font-size: 0.85rem; line-height: 1.6; color: #374151; }
+  .msr-compat-link {
+    font-size: 0.82rem;
+    color: #2563eb;
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .msr-compat-link:hover { text-decoration: underline; }
+
+  /* ========== パートナーシップ ========== */
+  .msr-partner-tips {
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    border-radius: 0.5rem;
+    padding: 1rem 1.25rem;
+    margin-top: 1rem;
+  }
+  .msr-partner-list {
+    list-style: disc;
+    padding-left: 1.25rem;
+    margin: 0.5rem 0 0;
+    font-size: 0.85rem;
+    line-height: 1.8;
+    color: #374151;
+  }
+  .msr-partner-note {
+    background: #fffbeb;
+    border: 1px solid #f59e0b;
+    border-radius: 0.5rem;
+    padding: 0.75rem 1rem;
+    font-size: 0.82rem;
+    color: #78350f;
+    margin-top: 1rem;
+  }
+
+  /* ========== 友人 ========== */
+  .msr-friend-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .msr-friend-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    font-size: 0.88rem;
+    line-height: 1.7;
+    color: #374151;
+  }
+  .msr-friend-icon { flex-shrink: 0; font-size: 0.7rem; margin-top: 0.35rem; }
+  .msr-friend-note {
+    background: #f9fafb;
+    border-radius: 0.5rem;
+    padding: 0.75rem 1rem;
+    font-size: 0.85rem;
+    color: #374151;
+  }
+  .msr-friend-link { color: #2563eb; font-weight: 600; text-decoration: none; }
+  .msr-friend-link:hover { text-decoration: underline; }
+
+  /* ========== 学び方 ========== */
+  .msr-learning-block {
+    background: #eff6ff;
+    border-radius: 0.5rem;
+    padding: 1rem 1.25rem;
+    margin: 0.75rem 0;
+  }
+  .msr-learning-list {
+    list-style: disc;
+    padding-left: 1.25rem;
+    margin: 0.5rem 0 0;
+    font-size: 0.85rem;
+    line-height: 1.8;
+    color: #374151;
+  }
+  .msr-school-note {
+    font-size: 0.82rem;
+    color: #6b7280;
+    margin-top: 0.75rem;
+    line-height: 1.6;
+  }
+
+  /* ========== 有名人 ========== */
+  .msr-celeb-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .msr-celeb-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    font-size: 0.88rem;
+    line-height: 1.7;
+    color: #374151;
+  }
+  .msr-celeb-icon { flex-shrink: 0; font-weight: 700; }
+  .msr-celeb-note {
+    background: #f9fafb;
+    border-radius: 0.5rem;
+    padding: 0.75rem 1rem;
+    font-size: 0.82rem;
+    color: #6b7280;
+    line-height: 1.6;
+  }
+
+  /* ========== Self-care / Growth ========== */
+  .msr-growth-note {
+    background: #fffbeb;
+    border: 1px solid #f59e0b;
+    border-radius: 0.5rem;
+    padding: 0.75rem 1rem;
+    font-size: 0.82rem;
+    color: #78350f;
+    margin-bottom: 1rem;
+  }
+  .msr-selfcare-block {
+    background: #f0fdf4;
+    border-left: 4px solid #16a34a;
+    border-radius: 0 0.5rem 0.5rem 0;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.5rem;
+  }
+  .msr-tips-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .msr-tips-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  .msr-tips-num {
+    flex-shrink: 0;
+    width: 2rem;
+    height: 2rem;
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.9rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .msr-tips-body { font-size: 0.88rem; line-height: 1.8; color: #374151; margin: 0; }
+
+  /* ========== CTA ========== */
+  .msr-pass-cta {
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.75rem;
+    padding: 1.25rem;
+    text-align: center;
+    margin-top: 1.5rem;
+  }
+  .msr-pass-desc { font-size: 0.88rem; color: #374151; margin-bottom: 0.75rem; }
+  .msr-pass-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: #2563eb;
+    color: #fff;
+    font-size: 0.9rem;
+    font-weight: 600;
+    padding: 0.6rem 1.5rem;
+    border-radius: 999px;
+    text-decoration: none;
+    transition: opacity 0.15s;
+  }
+  .msr-pass-btn:hover { opacity: 0.85; }
+
+  /* ========== FAQ ========== */
+  .msr-faq-list { display: flex; flex-direction: column; gap: 1.25rem; }
+  .msr-faq-item {
+    border: 1px solid #e5e7eb;
+    border-radius: 0.75rem;
+    overflow: hidden;
+  }
+  .msr-faq-q {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 1rem 1.25rem;
+    background: #f3f4f6;
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: #1e3a5f;
+    margin: 0;
+  }
+  .msr-faq-q-icon {
+    flex-shrink: 0;
+    width: 1.5rem;
+    height: 1.5rem;
+    background: #2563eb;
+    color: #fff;
+    font-size: 0.75rem;
+    font-weight: 800;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .msr-faq-a {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 1rem 1.25rem;
+    font-size: 0.88rem;
+    line-height: 1.8;
+    color: #374151;
+    margin: 0;
+  }
+  .msr-faq-a-icon {
+    flex-shrink: 0;
+    width: 1.5rem;
+    height: 1.5rem;
+    background: #16a34a;
+    color: #fff;
+    font-size: 0.75rem;
+    font-weight: 800;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+</style>
