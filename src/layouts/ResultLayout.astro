@@ -1,0 +1,839 @@
+---
+/**
+ * ResultLayout.astro - 診断結果ページ共通レイアウト
+ *
+ * 8診断の全結果ページで使う共通レイアウト。
+ * - ヒーロー: キャラ + タイプ名 + キャッチコピー + シェアボタン
+ * - タブUI: 概要 / 強み / 弱み / 仕事 / 恋愛 / 友人 / 家族 / 学校 / 有名人 / 成長
+ * - 詳細版（¥390 PASS）誘導CTA
+ * - 「統合プロファイル」CTA
+ * - 関連診断リンク
+ * - SNSシェア（Instagram / X / LINE）
+ *
+ * 使い方:
+ * <ResultLayout
+ *   diagnosisId="mbti"
+ *   typeId="ENFP"
+ *   typeName="運動家"
+ *   characterEmoji="🦊"
+ *   tagline="自由に飛び回る直感派の理想主義者"
+ *   isPaid={false}
+ *   shareUrl="https://shindan-navi.jp/diagnosis/mbti/result/enfp/"
+ *   relatedDiagnoses={[...]}
+ * >
+ *   <Fragment slot="overview">...</Fragment>
+ *   ...
+ * </ResultLayout>
+ */
+
+import BaseLayout from './BaseLayout.astro';
+import ShareButtons from '../components/ShareButtons.astro';
+import Container from '../components/Container.astro';
+
+interface RelatedDiagnosis {
+  title: string;
+  href: string;
+  icon: string;
+  badge?: string;
+}
+
+interface Props {
+  /** 診断ID（例: 'mbti'）*/
+  diagnosisId: string;
+  /** タイプ識別子（例: 'ENFP'・URLセーフ）*/
+  typeId: string;
+  /** タイプ表示名（例: '運動家'）*/
+  typeName: string;
+  /** 診断表示名（例: 'MBTI'）*/
+  diagnosisName: string;
+  /** キャラクター絵文字（本番SVG差し替え前提）*/
+  characterEmoji?: string;
+  /** キャラクター名（動物）*/
+  characterName?: string;
+  /** キャッチコピー */
+  tagline: string;
+  /** 課金済みか */
+  isPaid?: boolean;
+  /** シェア用URL */
+  shareUrl: string;
+  /** ページタイトル（省略時は自動生成）*/
+  pageTitle?: string;
+  /** メタディスクリプション */
+  pageDescription?: string;
+  /** 関連診断リンク */
+  relatedDiagnoses?: RelatedDiagnosis[];
+  /** 診断一覧への戻りリンク */
+  diagnosisListHref?: string;
+  /** 構造化データ（ページ別）*/
+  jsonLd?: object | object[];
+}
+
+const {
+  diagnosisId,
+  typeId,
+  typeName,
+  diagnosisName,
+  characterEmoji = '🔮',
+  characterName,
+  tagline,
+  isPaid = false,
+  shareUrl,
+  pageTitle,
+  pageDescription,
+  relatedDiagnoses = [],
+  diagnosisListHref = '/diagnosis/',
+  jsonLd,
+} = Astro.props;
+
+const autoTitle = pageTitle ?? `${typeName}（${typeId}）- ${diagnosisName}の診断結果 | 診断ナビ`;
+const autoDesc = pageDescription
+  ?? `${diagnosisName}の結果は「${typeName}」です。${tagline} 仕事・恋愛・友人・家族・学校の5軸で詳しく解説します。`;
+
+const shareText = `私の${diagnosisName}は「${typeName}」でした！${tagline} あなたも診断してみて #診断ナビ`;
+
+/** タブ定義（全10タブ） */
+const tabs = [
+  { id: 'overview', label: '概要', icon: '📋', slot: 'overview', freeAccess: true },
+  { id: 'strengths', label: '強み', icon: '💪', slot: 'strengths', freeAccess: true },
+  { id: 'weaknesses', label: '注意点', icon: '⚡', slot: 'weaknesses', freeAccess: true },
+  { id: 'work', label: '仕事', icon: '💼', slot: 'work', freeAccess: false },
+  { id: 'love', label: '恋愛', icon: '💕', slot: 'love', freeAccess: false },
+  { id: 'friend', label: '友人', icon: '👥', slot: 'friend', freeAccess: false },
+  { id: 'family', label: '家族', icon: '🏠', slot: 'family', freeAccess: false },
+  { id: 'school', label: '学校', icon: '📚', slot: 'school', freeAccess: false },
+  { id: 'celebrity', label: '有名人', icon: '⭐', slot: 'celebrity', freeAccess: true },
+  { id: 'growth', label: '成長', icon: '🌱', slot: 'growth', freeAccess: false },
+];
+---
+
+<BaseLayout
+  title={autoTitle}
+  description={autoDesc}
+  canonical={shareUrl}
+  jsonLd={jsonLd}
+  ogType="article"
+  breadcrumbs={[
+    { name: '診断一覧', url: diagnosisListHref },
+    { name: `${diagnosisName} 結果`, url: shareUrl },
+  ]}
+>
+  <div class="rl-page">
+    {/* ---- ヒーローセクション ---- */}
+    <section class="rl-hero" aria-labelledby="result-type-name">
+      <Container>
+        <div class="rl-hero-inner">
+          {/* キャラクターアイコン */}
+          <div class="rl-character" aria-label={characterName ?? typeName} role="img">
+            <span class="rl-character-emoji" aria-hidden="true">{characterEmoji}</span>
+          </div>
+
+          {/* タイプ情報 */}
+          <div class="rl-hero-info">
+            <p class="rl-diagnosis-badge">
+              <span aria-hidden="true">📊</span>
+              {diagnosisName} 診断結果
+            </p>
+            <h1 id="result-type-name" class="rl-type-name">
+              {typeName}
+              {typeId !== typeName && (
+                <span class="rl-type-id">（{typeId}）</span>
+              )}
+            </h1>
+            {characterName && (
+              <p class="rl-character-name">{characterName}タイプ</p>
+            )}
+            <p class="rl-tagline">{tagline}</p>
+          </div>
+        </div>
+
+        {/* シェアボタン（ヒーロー直下） */}
+        <div class="rl-hero-share">
+          <p class="rl-share-label">
+            <span aria-hidden="true">🔗</span>
+            友達にもシェアして相性を調べよう
+          </p>
+          <ShareButtons
+            url={shareUrl}
+            text={shareText}
+            hashtags={['診断ナビ', diagnosisId]}
+            size="md"
+            showLabel={false}
+          />
+        </div>
+      </Container>
+    </section>
+
+    {/* ---- タブナビゲーション ---- */}
+    <div class="rl-tab-nav-wrapper" role="navigation" aria-label="結果セクション">
+      <div class="rl-tab-nav" role="tablist" id="result-tabs">
+        {tabs.map((tab) => (
+          <button
+            type="button"
+            role="tab"
+            class="rl-tab-btn"
+            data-tab={tab.id}
+            data-free={tab.freeAccess}
+            aria-selected="false"
+            aria-controls={`panel-${tab.id}`}
+            id={`tab-${tab.id}`}
+          >
+            <span aria-hidden="true">{tab.icon}</span>
+            <span class="rl-tab-label">{tab.label}</span>
+            {!tab.freeAccess && !isPaid && (
+              <span class="rl-tab-lock" aria-label="PASSが必要">🔒</span>
+            )}
+          </button>
+        ))}
+      </div>
+    </div>
+
+    {/* ---- タブパネル ---- */}
+    <div class="rl-panels">
+      <Container class="container--content">
+
+        {/* 概要 */}
+        <div role="tabpanel" id="panel-overview" aria-labelledby="tab-overview" class="rl-panel" data-panel="overview">
+          <slot name="overview">
+            <p class="rl-slot-placeholder">（概要コンテンツは content-writer が執筆予定）</p>
+          </slot>
+        </div>
+
+        {/* 強み */}
+        <div role="tabpanel" id="panel-strengths" aria-labelledby="tab-strengths" class="rl-panel rl-panel--hidden" data-panel="strengths">
+          <slot name="strengths">
+            <p class="rl-slot-placeholder">（強みコンテンツは content-writer が執筆予定）</p>
+          </slot>
+        </div>
+
+        {/* 注意点 */}
+        <div role="tabpanel" id="panel-weaknesses" aria-labelledby="tab-weaknesses" class="rl-panel rl-panel--hidden" data-panel="weaknesses">
+          <slot name="weaknesses">
+            <p class="rl-slot-placeholder">（注意点コンテンツは content-writer が執筆予定）</p>
+          </slot>
+        </div>
+
+        {/* 仕事（有料） */}
+        <div role="tabpanel" id="panel-work" aria-labelledby="tab-work" class="rl-panel rl-panel--hidden" data-panel="work" data-paid-required={!isPaid}>
+          {isPaid ? (
+            <slot name="work">
+              <p class="rl-slot-placeholder">（仕事軸コンテンツは content-writer が執筆予定）</p>
+            </slot>
+          ) : (
+            <div class="rl-paywall">
+              <PassCta typeName={typeName} diagnosisName={diagnosisName} scene="仕事" />
+            </div>
+          )}
+        </div>
+
+        {/* 恋愛（有料） */}
+        <div role="tabpanel" id="panel-love" aria-labelledby="tab-love" class="rl-panel rl-panel--hidden" data-panel="love" data-paid-required={!isPaid}>
+          {isPaid ? (
+            <slot name="love">
+              <p class="rl-slot-placeholder">（恋愛軸コンテンツは content-writer が執筆予定）</p>
+            </slot>
+          ) : (
+            <div class="rl-paywall">
+              <PassCta typeName={typeName} diagnosisName={diagnosisName} scene="恋愛" />
+            </div>
+          )}
+        </div>
+
+        {/* 友人（有料） */}
+        <div role="tabpanel" id="panel-friend" aria-labelledby="tab-friend" class="rl-panel rl-panel--hidden" data-panel="friend" data-paid-required={!isPaid}>
+          {isPaid ? (
+            <slot name="friend">
+              <p class="rl-slot-placeholder">（友人軸コンテンツは content-writer が執筆予定）</p>
+            </slot>
+          ) : (
+            <div class="rl-paywall">
+              <PassCta typeName={typeName} diagnosisName={diagnosisName} scene="友人" />
+            </div>
+          )}
+        </div>
+
+        {/* 家族（有料） */}
+        <div role="tabpanel" id="panel-family" aria-labelledby="tab-family" class="rl-panel rl-panel--hidden" data-panel="family" data-paid-required={!isPaid}>
+          {isPaid ? (
+            <slot name="family">
+              <p class="rl-slot-placeholder">（家族軸コンテンツは content-writer が執筆予定）</p>
+            </slot>
+          ) : (
+            <div class="rl-paywall">
+              <PassCta typeName={typeName} diagnosisName={diagnosisName} scene="家族" />
+            </div>
+          )}
+        </div>
+
+        {/* 学校（有料） */}
+        <div role="tabpanel" id="panel-school" aria-labelledby="tab-school" class="rl-panel rl-panel--hidden" data-panel="school" data-paid-required={!isPaid}>
+          {isPaid ? (
+            <slot name="school">
+              <p class="rl-slot-placeholder">（学校軸コンテンツは content-writer が執筆予定）</p>
+            </slot>
+          ) : (
+            <div class="rl-paywall">
+              <PassCta typeName={typeName} diagnosisName={diagnosisName} scene="学校・学習" />
+            </div>
+          )}
+        </div>
+
+        {/* 有名人 */}
+        <div role="tabpanel" id="panel-celebrity" aria-labelledby="tab-celebrity" class="rl-panel rl-panel--hidden" data-panel="celebrity">
+          <slot name="celebrity">
+            <p class="rl-slot-placeholder">（有名人コンテンツは content-writer が執筆予定）</p>
+          </slot>
+        </div>
+
+        {/* 成長（有料） */}
+        <div role="tabpanel" id="panel-growth" aria-labelledby="tab-growth" class="rl-panel rl-panel--hidden" data-panel="growth" data-paid-required={!isPaid}>
+          {isPaid ? (
+            <slot name="growth">
+              <p class="rl-slot-placeholder">（成長コンテンツは content-writer が執筆予定）</p>
+            </slot>
+          ) : (
+            <div class="rl-paywall">
+              <PassCta typeName={typeName} diagnosisName={diagnosisName} scene="成長・自己実現" />
+            </div>
+          )}
+        </div>
+
+      </Container>
+    </div>
+
+    {/* ---- PASS 誘導CTA（有料未加入ユーザー向け）---- */}
+    {!isPaid && (
+      <section class="rl-cta-section" aria-labelledby="pass-cta-heading">
+        <Container class="container--narrow">
+          <div class="rl-cta-card">
+            <p class="rl-cta-icon" aria-hidden="true">🔓</p>
+            <h2 id="pass-cta-heading" class="rl-cta-title">
+              {typeName}の全詳細を読む
+            </h2>
+            <p class="rl-cta-desc">
+              仕事・恋愛・友人・家族・学校の5軸で{typeName}を徹底解説。
+              AIプロンプトカード・有名人リスト・成長ロードマップ付き。
+            </p>
+            <ul class="rl-cta-features" aria-label="PASSの特典">
+              <li>5軸詳細レポート（各2,000字以上）</li>
+              <li>相性計算機の詳細ロック解除</li>
+              <li>AIプロンプトカード（ChatGPT/Claude用）</li>
+              <li>8診断統合プロファイル</li>
+              <li>有効期間: 1年間（更新可）</li>
+            </ul>
+            <a href="/pro/" class="btn btn-primary btn-lg rl-cta-btn">
+              <span class="badge badge-pass">¥390</span>
+              詳細版を見る（PASS）
+            </a>
+            <p class="rl-cta-note">
+              月額ではなく1回払い・全診断の詳細に使えます
+            </p>
+          </div>
+        </Container>
+      </section>
+    )}
+
+    {/* ---- 統合プロファイルCTA ---- */}
+    <section class="rl-profile-cta" aria-labelledby="profile-cta-heading">
+      <Container class="container--narrow">
+        <div class="rl-profile-card">
+          <p aria-hidden="true" class="rl-profile-icon">🧬</p>
+          <h2 id="profile-cta-heading" class="rl-profile-title">
+            他の診断も受けて統合プロファイルを作ろう
+          </h2>
+          <p class="rl-profile-desc">
+            複数の診断を受けるほど、あなたの行動パターンが深く分かります。
+            8診断を統合した「あなただけのプロファイル」が完成します。
+          </p>
+          <a href="/diagnosis/" class="btn btn-secondary rl-profile-btn">
+            <span aria-hidden="true">🔮</span>
+            他の診断を受ける
+          </a>
+        </div>
+      </Container>
+    </section>
+
+    {/* ---- 関連診断リンク ---- */}
+    {relatedDiagnoses.length > 0 && (
+      <section class="rl-related" aria-labelledby="related-heading">
+        <Container>
+          <h2 id="related-heading" class="rl-related-title">
+            関連する診断
+          </h2>
+          <div class="rl-related-grid">
+            {relatedDiagnoses.map((d) => (
+              <a href={d.href} class="rl-related-card">
+                <span class="rl-related-icon" aria-hidden="true">{d.icon}</span>
+                <span class="rl-related-name">{d.title}</span>
+                {d.badge && (
+                  <span class="badge badge-primary">{d.badge}</span>
+                )}
+              </a>
+            ))}
+          </div>
+        </Container>
+      </section>
+    )}
+
+    {/* ---- 再シェアCTA ---- */}
+    <section class="rl-bottom-share">
+      <Container class="container--narrow">
+        <p class="rl-bottom-share-title">結果をシェアして友達と比べよう</p>
+        <ShareButtons
+          url={shareUrl}
+          text={shareText}
+          hashtags={['診断ナビ', diagnosisId]}
+          size="lg"
+          showLabel={false}
+        />
+        <a href={diagnosisListHref} class="rl-back-link">
+          <span aria-hidden="true">←</span>
+          診断一覧に戻る
+        </a>
+      </Container>
+    </section>
+  </div>
+</BaseLayout>
+
+{/* PassCta はインラインコンポーネントとして定義 */}
+---
+
+<style>
+  /* ---- ページ全体 ---- */
+  .rl-page {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sn-space-12);
+    padding-bottom: var(--sn-space-16);
+  }
+
+  /* ---- ヒーロー ---- */
+  .rl-hero {
+    background: linear-gradient(135deg, var(--sn-primary-bg) 0%, var(--sn-secondary-bg) 100%);
+    padding-block: var(--sn-space-10) var(--sn-space-8);
+  }
+
+  .rl-hero-inner {
+    display: flex;
+    gap: var(--sn-space-6);
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: var(--sn-space-6);
+  }
+
+  .rl-character {
+    width: 120px;
+    height: 120px;
+    background: var(--sn-bg-white);
+    border-radius: var(--sn-radius-xl);
+    box-shadow: var(--sn-shadow-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .rl-character-emoji {
+    font-size: 4rem;
+    line-height: 1;
+  }
+
+  .rl-hero-info {
+    flex: 1;
+    min-width: 220px;
+  }
+
+  .rl-diagnosis-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sn-space-1);
+    font-size: var(--sn-text-sm);
+    color: var(--sn-muted);
+    margin-bottom: var(--sn-space-2);
+  }
+
+  .rl-type-name {
+    font-family: var(--sn-font-rounded);
+    font-size: var(--sn-text-3xl);
+    font-weight: 900;
+    color: var(--sn-primary);
+    line-height: 1.2;
+    margin-bottom: var(--sn-space-1);
+  }
+
+  .rl-type-id {
+    font-size: var(--sn-text-xl);
+    font-weight: 700;
+    color: var(--sn-muted);
+  }
+
+  .rl-character-name {
+    font-size: var(--sn-text-lg);
+    font-weight: 700;
+    color: var(--sn-secondary);
+    margin-bottom: var(--sn-space-2);
+  }
+
+  .rl-tagline {
+    font-size: var(--sn-text-base);
+    color: var(--sn-text-soft);
+    line-height: var(--sn-leading-base);
+  }
+
+  .rl-hero-share {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--sn-space-3);
+  }
+
+  .rl-share-label {
+    display: flex;
+    align-items: center;
+    gap: var(--sn-space-2);
+    font-size: var(--sn-text-sm);
+    color: var(--sn-muted);
+    font-weight: 500;
+  }
+
+  /* ---- タブナビゲーション ---- */
+  .rl-tab-nav-wrapper {
+    position: sticky;
+    top: var(--sn-header-h);
+    background: var(--sn-bg-white);
+    border-bottom: 1px solid var(--sn-border);
+    z-index: 20;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .rl-tab-nav-wrapper::-webkit-scrollbar { display: none; }
+
+  .rl-tab-nav {
+    display: flex;
+    min-width: max-content;
+    padding-inline: var(--sn-space-4);
+  }
+
+  .rl-tab-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sn-space-1);
+    padding: var(--sn-space-3) var(--sn-space-4);
+    font-size: var(--sn-text-sm);
+    font-weight: 700;
+    color: var(--sn-muted);
+    background: none;
+    border: none;
+    border-bottom: 3px solid transparent;
+    cursor: pointer;
+    white-space: nowrap;
+    transition:
+      color var(--sn-dur-fast) var(--sn-ease),
+      border-color var(--sn-dur-fast) var(--sn-ease);
+    min-height: var(--sn-tap-min);
+    font-family: var(--sn-font-rounded);
+  }
+
+  .rl-tab-btn:hover {
+    color: var(--sn-primary);
+  }
+
+  .rl-tab-btn[aria-selected="true"] {
+    color: var(--sn-primary);
+    border-bottom-color: var(--sn-primary);
+  }
+
+  .rl-tab-label { line-height: 1; }
+
+  .rl-tab-lock {
+    font-size: var(--sn-text-xs);
+    opacity: 0.6;
+  }
+
+  /* ---- パネル ---- */
+  .rl-panels {
+    min-height: 300px;
+  }
+
+  .rl-panel {
+    animation: rl-fadeIn 200ms var(--sn-ease-out) both;
+  }
+
+  .rl-panel--hidden {
+    display: none;
+  }
+
+  @keyframes rl-fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .rl-slot-placeholder {
+    color: var(--sn-muted);
+    font-size: var(--sn-text-sm);
+    text-align: center;
+    padding-block: var(--sn-space-8);
+  }
+
+  /* ---- ペイウォール ---- */
+  .rl-paywall {
+    padding-block: var(--sn-space-6);
+  }
+
+  /* ---- PASS CTA ---- */
+  .rl-cta-section {
+    background: var(--sn-primary-bg);
+    padding-block: var(--sn-space-12);
+  }
+
+  .rl-cta-card {
+    background: var(--sn-bg-white);
+    border-radius: var(--sn-radius-xl);
+    padding: var(--sn-space-8);
+    text-align: center;
+    box-shadow: var(--sn-shadow-md);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--sn-space-4);
+  }
+
+  .rl-cta-icon {
+    font-size: 3rem;
+    margin: 0;
+  }
+
+  .rl-cta-title {
+    font-family: var(--sn-font-rounded);
+    font-size: var(--sn-text-2xl);
+    font-weight: 900;
+    color: var(--sn-text);
+    margin: 0;
+  }
+
+  .rl-cta-desc {
+    font-size: var(--sn-text-base);
+    color: var(--sn-text-soft);
+    line-height: var(--sn-leading-base);
+    margin: 0;
+  }
+
+  .rl-cta-features {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: var(--sn-space-2);
+    text-align: left;
+    align-self: stretch;
+  }
+
+  .rl-cta-features li {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--sn-space-2);
+    font-size: var(--sn-text-sm);
+    color: var(--sn-text-soft);
+  }
+
+  .rl-cta-features li::before {
+    content: '✓';
+    color: var(--sn-success);
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .rl-cta-btn {
+    gap: var(--sn-space-3);
+  }
+
+  .rl-cta-note {
+    font-size: var(--sn-text-xs);
+    color: var(--sn-muted);
+    margin: 0;
+  }
+
+  /* ---- 統合プロファイル ---- */
+  .rl-profile-cta { padding-block: var(--sn-space-8); }
+
+  .rl-profile-card {
+    background: linear-gradient(135deg, var(--sn-primary-bg) 0%, var(--sn-secondary-bg) 100%);
+    border-radius: var(--sn-radius-xl);
+    padding: var(--sn-space-8);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--sn-space-4);
+  }
+
+  .rl-profile-icon {
+    font-size: 3rem;
+    margin: 0;
+  }
+
+  .rl-profile-title {
+    font-family: var(--sn-font-rounded);
+    font-size: var(--sn-text-xl);
+    font-weight: 900;
+    color: var(--sn-text);
+    margin: 0;
+  }
+
+  .rl-profile-desc {
+    font-size: var(--sn-text-sm);
+    color: var(--sn-muted);
+    line-height: var(--sn-leading-base);
+    margin: 0;
+    max-width: 440px;
+  }
+
+  .rl-profile-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sn-space-2);
+  }
+
+  /* ---- 関連診断 ---- */
+  .rl-related { padding-block: var(--sn-space-8); }
+
+  .rl-related-title {
+    font-family: var(--sn-font-rounded);
+    font-size: var(--sn-text-xl);
+    font-weight: 700;
+    color: var(--sn-text);
+    margin-bottom: var(--sn-space-5);
+    text-align: center;
+  }
+
+  .rl-related-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: var(--sn-space-3);
+  }
+
+  .rl-related-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--sn-space-2);
+    padding: var(--sn-space-4);
+    background: var(--sn-bg-white);
+    border: 1px solid var(--sn-border);
+    border-radius: var(--sn-radius);
+    text-decoration: none;
+    transition:
+      border-color var(--sn-dur-fast) var(--sn-ease),
+      box-shadow var(--sn-dur-fast) var(--sn-ease),
+      transform var(--sn-dur-fast) var(--sn-ease-bounce);
+    min-height: var(--sn-tap-min);
+  }
+
+  .rl-related-card:hover {
+    border-color: var(--sn-primary-light);
+    box-shadow: var(--sn-shadow);
+    transform: translateY(-2px);
+    text-decoration: none;
+  }
+
+  .rl-related-icon {
+    font-size: var(--sn-text-2xl);
+  }
+
+  .rl-related-name {
+    font-size: var(--sn-text-sm);
+    font-weight: 700;
+    color: var(--sn-text);
+    text-align: center;
+  }
+
+  /* ---- ボトムシェア ---- */
+  .rl-bottom-share {
+    padding-block: var(--sn-space-8);
+    border-top: 1px solid var(--sn-border);
+    text-align: center;
+  }
+
+  .rl-bottom-share-title {
+    font-family: var(--sn-font-rounded);
+    font-size: var(--sn-text-lg);
+    font-weight: 700;
+    color: var(--sn-text);
+    margin-bottom: var(--sn-space-4);
+  }
+
+  .rl-back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sn-space-2);
+    margin-top: var(--sn-space-6);
+    font-size: var(--sn-text-sm);
+    color: var(--sn-muted);
+    text-decoration: none;
+    transition: color var(--sn-dur-fast) var(--sn-ease);
+  }
+  .rl-back-link:hover {
+    color: var(--sn-primary);
+    text-decoration: none;
+  }
+</style>
+
+{/* タブ切り替えスクリプト */}
+<script is:inline>
+  (function () {
+    var tabs = document.querySelectorAll('[role="tab"]');
+    var panels = document.querySelectorAll('[role="tabpanel"]');
+
+    function activateTab(tabEl) {
+      // 全タブを非アクティブに
+      tabs.forEach(function (t) {
+        t.setAttribute('aria-selected', 'false');
+      });
+      // 全パネルを非表示
+      panels.forEach(function (p) {
+        p.classList.add('rl-panel--hidden');
+      });
+
+      // 選択タブをアクティブに
+      tabEl.setAttribute('aria-selected', 'true');
+      var panelId = tabEl.getAttribute('aria-controls');
+      var panel = document.getElementById(panelId);
+      if (panel) {
+        panel.classList.remove('rl-panel--hidden');
+      }
+    }
+
+    // 最初のタブを初期化
+    if (tabs.length > 0) {
+      activateTab(tabs[0]);
+    }
+
+    // タブクリックイベント
+    tabs.forEach(function (tab) {
+      tab.addEventListener('click', function () {
+        activateTab(tab);
+        // タブがビューポートに入るようにスクロール
+        tab.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+      });
+
+      // キーボード操作（矢印キー）
+      tab.addEventListener('keydown', function (e) {
+        var currentIndex = Array.from(tabs).indexOf(tab);
+        var nextIndex = -1;
+        if (e.key === 'ArrowRight') {
+          nextIndex = (currentIndex + 1) % tabs.length;
+        } else if (e.key === 'ArrowLeft') {
+          nextIndex = (currentIndex - 1 + tabs.length) % tabs.length;
+        } else if (e.key === 'Home') {
+          nextIndex = 0;
+        } else if (e.key === 'End') {
+          nextIndex = tabs.length - 1;
+        }
+        if (nextIndex >= 0) {
+          e.preventDefault();
+          tabs[nextIndex].focus();
+          activateTab(tabs[nextIndex]);
+        }
+      });
+    });
+  })();
+</script>
