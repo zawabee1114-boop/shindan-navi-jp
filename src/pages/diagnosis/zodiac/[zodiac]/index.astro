@@ -1,0 +1,460 @@
+---
+/**
+ * 星座性格診断 12星座別 動的ページ
+ * KW例: 牡羊座 性格 / 獅子座 性格 / 乙女座 性格 など
+ * 学術根拠:
+ *   - Carlson S (1985) Nature 318, 419-425
+ *   - Hartmann P et al. (2006) Personality and Individual Differences 40(7)
+ * 確認日: 2026-05-21
+ */
+import BaseLayout from '../../../../layouts/BaseLayout.astro';
+import Container from '../../../../components/Container.astro';
+import { ZODIAC_TYPES } from '../../../../data/diagnoses/zodiac/meta';
+import { meta } from '../../../../data/diagnoses/zodiac/meta';
+import { typesDetail } from '../../../../data/diagnoses/zodiac/types-detail';
+import {
+  getAllPairsForZodiac,
+  getBestMatches,
+  getChallengeMatches,
+  getCategoryLabel,
+  getCategoryColor,
+} from '../../../../data/diagnoses/zodiac/results';
+import { elementsData, modalitiesData } from '../../../../data/diagnoses/zodiac/elements-modality';
+import type { ZodiacType } from '../../../../data/diagnoses/zodiac/meta';
+
+export function getStaticPaths() {
+  return ZODIAC_TYPES.map((zodiac) => ({
+    params: { zodiac },
+  }));
+}
+
+const { zodiac } = Astro.params as { zodiac: ZodiacType };
+const detail = typesDetail[zodiac];
+const elementInfo = elementsData[detail.element];
+const modalityInfo = modalitiesData[detail.modality];
+
+const SITE_URL = 'https://shindan-navi.jp';
+const PAGE_URL = `${SITE_URL}/diagnosis/zodiac/${zodiac}/`;
+
+// 全ペアデータ（自分自身を除く11ペア + 自分自身 = 12ペアから自分以外11件）
+const allPairs = getAllPairsForZodiac(zodiac).filter((p) => {
+  const other = p.type1 === zodiac ? p.type2 : p.type1;
+  return other !== zodiac;
+});
+const sortedByScore = [...allPairs].sort((a, b) => b.score - a.score);
+const bestMatches = getBestMatches(zodiac, 3);
+const challengeMatches = getChallengeMatches(zodiac, 3);
+
+// エレメント別カラー
+const ELEMENT_COLORS: Record<string, { bg: string; border: string; text: string }> = {
+  fire:  { bg: '#FEF2F2', border: '#FCA5A5', text: '#991B1B' },
+  earth: { bg: '#F5F5F4', border: '#A8A29E', text: '#44403C' },
+  air:   { bg: '#EFF6FF', border: '#93C5FD', text: '#1E40AF' },
+  water: { bg: '#ECFEFF', border: '#67E8F9', text: '#164E63' },
+};
+const colors = ELEMENT_COLORS[detail.element];
+
+// カテゴリ背景色
+const CATEGORY_BG: Record<string, string> = {
+  soulmate: '#F5F3FF',
+  good:     '#ECFDF5',
+  neutral:  '#EFF6FF',
+  tough:    '#FFFBEB',
+  opposite: '#FFF1F2',
+};
+
+// ページtitle/description
+const pageTitle = `【${detail.japaneseName}】性格特性 完全ガイド｜全11星座との相性付 | 診断ナビ`;
+const pageDesc = `${detail.japaneseName}（${detail.dateRange}）の伝統的な性格特性・強み・弱み・仕事スタイル・恋愛傾向を解説。全11星座との相性ランキングも完全収録。科学的位置付け（Carlson 1985 Nature）も明示した信頼できるガイド。`;
+
+// FAQ（3問）
+const faqs = [
+  {
+    question: `${detail.japaneseName}の性格特性で最も代表的なものは何ですか？`,
+    answer: `西洋占星術の伝統的分類では、${detail.japaneseName}の代表的な特性として「${detail.characteristics.join('」「')}」が挙げられます。これらは文化的な性格分類の傾向であり、科学的に確認された特性ではありません（Carlson 1985 Nature）。`,
+  },
+  {
+    question: `${detail.japaneseName}と最も相性が良いとされる星座はどれですか？`,
+    answer: `本サイトのスコアでは、${bestMatches.map((p) => {
+      const other = p.type1 === zodiac ? p.type2 : p.type1;
+      return `${typesDetail[other].japaneseName}（${p.score}点）`;
+    }).join('・')}が上位3位です。ただしこれは西洋占星術の伝統的分類に基づく傾向値であり、実際の相性は個人の性格・価値観・コミュニケーション方法によって大きく変わります。`,
+  },
+  {
+    question: `${detail.japaneseName}の性格を就職・転職の判断に使っていいですか？`,
+    answer: `推奨しません。科学的根拠のない星座分類で就職・転職を判断することは、適切な選択の機会を逃すリスクがあります。本サイトは自己理解のヒントとして提供しており、重要な人生の決断には使えません。就職では実際のスキル・価値観・職場環境への適合性を基準にしてください。`,
+  },
+];
+
+// JSON-LD: Article
+const jsonLdArticle = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  '@id': `${PAGE_URL}#article`,
+  headline: pageTitle,
+  description: pageDesc,
+  url: PAGE_URL,
+  datePublished: meta.publishedAt,
+  dateModified: meta.updatedAt,
+  inLanguage: 'ja',
+  mainEntityOfPage: {
+    '@type': 'WebPage',
+    '@id': PAGE_URL,
+  },
+  citation: meta.references.map((ref) => ({
+    '@type': 'CreativeWork',
+    name: ref.title,
+    author: ref.author,
+    datePublished: String(ref.year),
+    url: ref.url,
+  })),
+};
+
+// JSON-LD: FAQPage
+const jsonLdFaq = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  '@id': `${PAGE_URL}#faq`,
+  mainEntity: faqs.map((faq) => ({
+    '@type': 'Question',
+    name: faq.question,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: faq.answer,
+    },
+  })),
+};
+
+// JSON-LD: BreadcrumbList
+const jsonLdBreadcrumb = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  '@id': `${PAGE_URL}#breadcrumb`,
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'ホーム', item: SITE_URL + '/' },
+    { '@type': 'ListItem', position: 2, name: '診断一覧', item: SITE_URL + '/diagnosis/' },
+    { '@type': 'ListItem', position: 3, name: '星座性格診断', item: SITE_URL + '/diagnosis/zodiac/' },
+    { '@type': 'ListItem', position: 4, name: detail.japaneseName, item: PAGE_URL },
+  ],
+};
+---
+
+<BaseLayout title={pageTitle} description={pageDesc}>
+  <Fragment slot="head">
+    <link rel="canonical" href={PAGE_URL} />
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLdArticle)} />
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLdFaq)} />
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLdBreadcrumb)} />
+  </Fragment>
+
+  <Container>
+    <!-- パンくず -->
+    <nav aria-label="パンくずリスト" style="padding-block: 0.75rem; font-size: 0.85rem; color: var(--sn-muted);">
+      <a href="/" style="color: var(--sn-primary);">ホーム</a>
+      <span aria-hidden="true"> › </span>
+      <a href="/diagnosis/" style="color: var(--sn-primary);">診断一覧</a>
+      <span aria-hidden="true"> › </span>
+      <a href="/diagnosis/zodiac/" style="color: var(--sn-primary);">星座性格診断</a>
+      <span aria-hidden="true"> › </span>
+      <span aria-current="page">{detail.japaneseName}</span>
+    </nav>
+
+    <!-- ヘッダーカード -->
+    <div
+      style={`background: ${colors.bg}; border: 2px solid ${colors.border}; border-radius: 1rem; padding: 1.5rem; margin-bottom: 2rem;`}
+    >
+      <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap;">
+        <span style="font-size: 3.5rem; line-height: 1;">{detail.symbol}</span>
+        <div>
+          <h1 style={`font-size: clamp(1.5rem, 4vw, 2rem); font-weight: 800; color: ${colors.text}; margin: 0 0 0.25rem;`}>
+            【{detail.japaneseName}】性格特性 完全ガイド
+          </h1>
+          <p style={`font-size: 0.9rem; color: ${colors.text}; opacity: 0.8; margin: 0;`}>
+            {detail.englishName} ｜ {detail.dateRange} ｜ エレメント: {
+              detail.element === 'fire' ? '🔥 火' :
+              detail.element === 'earth' ? '🌍 地' :
+              detail.element === 'air' ? '💨 風' : '💧 水'
+            } ｜ 守護星: {detail.rulingPlanet}
+          </p>
+        </div>
+      </div>
+      <p style={`font-size: 1rem; font-weight: 600; color: ${colors.text}; margin: 0;`}>
+        {detail.catchphrase}
+      </p>
+    </div>
+
+    <!-- 鮮度バッジ -->
+    <p style="font-size: 0.8rem; color: var(--sn-muted); margin-bottom: 1.5rem;">
+      <time datetime={meta.updatedAt}>{meta.updatedAt.replace(/-/g, '/')} 時点の情報</time>
+      ｜ <a href="https://doi.org/10.1038/318419a0" target="_blank" rel="noopener noreferrer" style="color: var(--sn-primary);">Carlson 1985 Nature</a> 参照
+    </p>
+
+    <!-- このページでわかること -->
+    <blockquote style="background: var(--sn-surface, #fff); border-left: 4px solid var(--sn-primary, #7C3AED); padding: 1rem 1.25rem; margin: 0 0 2rem; border-radius: 0 0.5rem 0.5rem 0;">
+      <strong>このページでわかること</strong>
+      <ul style="margin: 0.5rem 0 0; padding-left: 1.25rem; line-height: 1.8;">
+        <li>{detail.japaneseName}の伝統的な性格特性・強み・弱み（西洋占星術文化の分類）</li>
+        <li>仕事スタイル・恋愛傾向・友人関係の特性</li>
+        <li>全11星座との相性ランキング（スコア付き）</li>
+      </ul>
+    </blockquote>
+
+    <!-- 性格特性説明 -->
+    <section style="margin-bottom: 2.5rem;">
+      <h2 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1rem;">
+        {detail.japaneseName}の性格特性
+        <span style="font-size: 0.75rem; font-weight: 400; color: var(--sn-muted); margin-left: 0.5rem;">（西洋占星術の伝統的分類）</span>
+      </h2>
+      {detail.description.split('\n').filter(Boolean).map((para) => (
+        <p style="line-height: 1.9; margin-bottom: 1rem; color: var(--sn-text); font-size: 0.95rem;">{para}</p>
+      ))}
+    </section>
+
+    <!-- 特徴・強み・気をつけたい傾向 -->
+    <section style="margin-bottom: 2.5rem;">
+      <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1rem;">
+        <!-- 特徴 -->
+        <div style={`background: ${colors.bg}; border: 2px solid ${colors.border}; border-radius: 0.75rem; padding: 1rem;`}>
+          <h3 style={`font-size: 0.95rem; font-weight: 700; color: ${colors.text}; margin-bottom: 0.75rem;`}>
+            主な特徴（5項目）
+          </h3>
+          <ul style="padding-left: 1.25rem; line-height: 1.9; font-size: 0.875rem; color: var(--sn-text); margin: 0;">
+            {detail.characteristics.map((c) => <li>{c}</li>)}
+          </ul>
+        </div>
+
+        <!-- 強み -->
+        <div style="background: #ECFDF5; border: 2px solid #6EE7B7; border-radius: 0.75rem; padding: 1rem;">
+          <h3 style="font-size: 0.95rem; font-weight: 700; color: #064E3B; margin-bottom: 0.75rem;">
+            強み・得意なこと
+          </h3>
+          <ul style="padding-left: 1.25rem; line-height: 1.9; font-size: 0.875rem; color: var(--sn-text); margin: 0;">
+            {detail.strengths.map((s) => <li>{s}</li>)}
+          </ul>
+        </div>
+
+        <!-- 気をつけたい傾向 -->
+        <div style="background: #FFFBEB; border: 2px solid #FCD34D; border-radius: 0.75rem; padding: 1rem;">
+          <h3 style="font-size: 0.95rem; font-weight: 700; color: #92400E; margin-bottom: 0.75rem;">
+            気をつけたい傾向
+          </h3>
+          <ul style="padding-left: 1.25rem; line-height: 1.9; font-size: 0.875rem; color: var(--sn-text); margin: 0;">
+            {detail.weaknesses.map((w) => <li>{w}</li>)}
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- 仕事・恋愛・友人スタイル -->
+    <section style="margin-bottom: 2.5rem;">
+      <h2 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 1rem;">スタイル別特性</h2>
+      <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1rem;">
+        {[
+          { title: '仕事スタイル', content: detail.workStyle, icon: '💼' },
+          { title: '恋愛傾向', content: detail.loveStyle, icon: '💝' },
+          { title: '友人関係', content: detail.friendStyle, icon: '🤝' },
+        ].map((item) => (
+          <div style="background: var(--sn-surface, #fff); border: 2px solid var(--sn-border, #e5e7eb); border-radius: 0.75rem; padding: 1rem;">
+            <h3 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 0.75rem; color: var(--sn-text);">
+              {item.icon} {item.title}
+            </h3>
+            <p style="font-size: 0.875rem; line-height: 1.8; color: var(--sn-text); margin: 0;">{item.content}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- エレメントとモダリティ -->
+    <section style="margin-bottom: 2.5rem;">
+      <h2 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 1rem;">エレメントとモダリティ</h2>
+      <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1rem;">
+        <!-- エレメント -->
+        <div style={`background: ${colors.bg}; border: 2px solid ${colors.border}; border-radius: 0.75rem; padding: 1rem;`}>
+          <h3 style={`font-size: 0.95rem; font-weight: 700; color: ${colors.text}; margin-bottom: 0.5rem;`}>
+            {elementInfo.symbol} {elementInfo.japaneseName}のエレメント（{elementInfo.englishName}）
+          </h3>
+          <p style={`font-size: 0.85rem; color: ${colors.text}; margin-bottom: 0.5rem; opacity: 0.8;`}>
+            同エレメント: {elementInfo.zodiacSigns.map((id) => typesDetail[id].japaneseName).join('・')}
+          </p>
+          <p style={`font-size: 0.85rem; color: ${colors.text}; line-height: 1.7; margin: 0;`}>
+            {elementInfo.characterTrait}
+          </p>
+        </div>
+
+        <!-- モダリティ -->
+        <div style="background: var(--sn-surface, #fff); border: 2px solid var(--sn-border, #e5e7eb); border-radius: 0.75rem; padding: 1rem;">
+          <h3 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--sn-text);">
+            {modalityInfo.symbol} {modalityInfo.japaneseName}（{modalityInfo.englishName}）
+          </h3>
+          <p style="font-size: 0.85rem; color: var(--sn-muted); margin-bottom: 0.5rem;">
+            同モダリティ: {modalityInfo.zodiacSigns.map((id) => typesDetail[id].japaneseName).join('・')}
+          </p>
+          <p style="font-size: 0.85rem; color: var(--sn-text); line-height: 1.7; margin: 0;">
+            {modalityInfo.actionStyle}
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ★ 11星座との相性ランキング -->
+    <section style="margin-bottom: 2.5rem;">
+      <h2 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 0.5rem;">全11星座との相性ランキング</h2>
+      <p style="font-size: 0.85rem; color: var(--sn-muted); margin-bottom: 1.5rem;">
+        ※ 西洋占星術の伝統的分類に基づく傾向値です。科学的根拠は確認されていません（Carlson 1985 Nature）。
+        スコアで人を選ばないことを推奨します。
+      </p>
+
+      <!-- ベストマッチ -->
+      <h3 style="font-size: 1rem; font-weight: 700; margin-bottom: 0.75rem; color: #065F46;">
+        ✨ 伝統的に相性良好とされる組み合わせ（上位3位）
+      </h3>
+      <div style="display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 1.5rem;">
+        {bestMatches.map((pair, i) => {
+          const other = pair.type1 === zodiac ? pair.type2 : pair.type1;
+          const otherDetail = typesDetail[other];
+          const otherColors = ELEMENT_COLORS[otherDetail.element];
+          return (
+            <a
+              href={`/diagnosis/zodiac/${other}/`}
+              style={`display: block; background: ${CATEGORY_BG[pair.category] ?? '#fff'}; border: 2px solid ${getCategoryColor(pair.category)}40; border-radius: 0.75rem; padding: 1rem; text-decoration: none;`}
+            >
+              <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem; flex-wrap: wrap;">
+                <span style="font-size: 0.9rem; font-weight: 700; color: var(--sn-muted);">#{i + 1}</span>
+                <span style="font-size: 1.5rem;">{otherDetail.symbol}</span>
+                <span style="font-size: 1rem; font-weight: 700; color: var(--sn-text);">{otherDetail.japaneseName}</span>
+                <span style={`margin-left: auto; font-size: 1rem; font-weight: 700; color: ${getCategoryColor(pair.category)};`}>
+                  {pair.score}点
+                </span>
+                <span style={`padding: 0.15rem 0.6rem; background: ${getCategoryColor(pair.category)}20; border-radius: 999px; font-size: 0.75rem; color: ${getCategoryColor(pair.category)}; font-weight: 600;`}>
+                  {getCategoryLabel(pair.category)}
+                </span>
+              </div>
+              <p style="font-size: 0.85rem; color: var(--sn-text); margin: 0;">{pair.oneLineSummary}</p>
+            </a>
+          );
+        })}
+      </div>
+
+      <!-- 対比ペア -->
+      <h3 style="font-size: 1rem; font-weight: 700; margin-bottom: 0.75rem; color: #92400E;">
+        🌱 対比から学べるペア（最大の成長機会）
+      </h3>
+      <div style="display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 1.5rem;">
+        {challengeMatches.map((pair) => {
+          const other = pair.type1 === zodiac ? pair.type2 : pair.type1;
+          const otherDetail = typesDetail[other];
+          return (
+            <a
+              href={`/diagnosis/zodiac/${other}/`}
+              style={`display: block; background: ${CATEGORY_BG[pair.category] ?? '#fff'}; border: 2px solid ${getCategoryColor(pair.category)}40; border-radius: 0.75rem; padding: 1rem; text-decoration: none;`}
+            >
+              <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem; flex-wrap: wrap;">
+                <span style="font-size: 1.5rem;">{otherDetail.symbol}</span>
+                <span style="font-size: 1rem; font-weight: 700; color: var(--sn-text);">{otherDetail.japaneseName}</span>
+                <span style={`margin-left: auto; font-size: 1rem; font-weight: 700; color: ${getCategoryColor(pair.category)};`}>
+                  {pair.score}点
+                </span>
+                <span style={`padding: 0.15rem 0.6rem; background: ${getCategoryColor(pair.category)}20; border-radius: 999px; font-size: 0.75rem; color: ${getCategoryColor(pair.category)}; font-weight: 600;`}>
+                  {getCategoryLabel(pair.category)}
+                </span>
+              </div>
+              <p style="font-size: 0.85rem; color: var(--sn-text); margin: 0 0 0.25rem;">{pair.oneLineSummary}</p>
+              <p style="font-size: 0.8rem; color: var(--sn-muted); margin: 0;">{pair.growthPoint}</p>
+            </a>
+          );
+        })}
+      </div>
+
+      <!-- 全11星座スコア一覧テーブル -->
+      <h3 style="font-size: 1rem; font-weight: 700; margin-bottom: 0.75rem;">全11星座との相性スコア一覧</h3>
+      <div style="overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse; font-size: 0.875rem;">
+          <thead>
+            <tr style="background: #F9FAFB;">
+              <th style="padding: 0.5rem 0.75rem; text-align: left; border-bottom: 2px solid var(--sn-border, #e5e7eb);">星座</th>
+              <th style="padding: 0.5rem 0.75rem; text-align: center; border-bottom: 2px solid var(--sn-border, #e5e7eb);">スコア</th>
+              <th style="padding: 0.5rem 0.75rem; text-align: left; border-bottom: 2px solid var(--sn-border, #e5e7eb);">傾向</th>
+              <th style="padding: 0.5rem 0.75rem; text-align: left; border-bottom: 2px solid var(--sn-border, #e5e7eb);">ひとこと</th>
+            </tr>
+          </thead>
+          <tbody>
+            {sortedByScore.map((pair, i) => {
+              const other = pair.type1 === zodiac ? pair.type2 : pair.type1;
+              const otherDetail = typesDetail[other];
+              return (
+                <tr style={`background: ${i % 2 === 0 ? 'transparent' : '#F9FAFB'};`}>
+                  <td style="padding: 0.5rem 0.75rem; border-bottom: 1px solid var(--sn-border, #e5e7eb);">
+                    <a href={`/diagnosis/zodiac/${other}/`} style="color: var(--sn-primary); text-decoration: none; display: flex; align-items: center; gap: 0.4rem;">
+                      <span>{otherDetail.symbol}</span>
+                      <span>{otherDetail.japaneseName}</span>
+                    </a>
+                  </td>
+                  <td style={`padding: 0.5rem 0.75rem; text-align: center; border-bottom: 1px solid var(--sn-border, #e5e7eb); font-weight: 700; color: ${getCategoryColor(pair.category)};`}>
+                    {pair.score}
+                  </td>
+                  <td style="padding: 0.5rem 0.75rem; border-bottom: 1px solid var(--sn-border, #e5e7eb);">
+                    <span style={`padding: 0.15rem 0.5rem; background: ${getCategoryColor(pair.category)}20; border-radius: 999px; font-size: 0.75rem; color: ${getCategoryColor(pair.category)}; font-weight: 600; white-space: nowrap;`}>
+                      {getCategoryLabel(pair.category)}
+                    </span>
+                  </td>
+                  <td style="padding: 0.5rem 0.75rem; border-bottom: 1px solid var(--sn-border, #e5e7eb); color: var(--sn-muted); font-size: 0.8rem;">
+                    {pair.oneLineSummary}
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section style="margin-bottom: 2.5rem;">
+      <h2 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 1rem;">よくある質問</h2>
+      <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+        {faqs.map((faq, i) => (
+          <details style="background: var(--sn-surface, #fff); border: 2px solid var(--sn-border, #e5e7eb); border-radius: 0.75rem; overflow: hidden;">
+            <summary style="padding: 0.875rem 1rem; font-weight: 700; font-size: 0.9rem; cursor: pointer; list-style: none; display: flex; align-items: center; gap: 0.5rem;">
+              <span style="color: var(--sn-primary);">Q{i + 1}.</span>
+              {faq.question}
+            </summary>
+            <div style="padding: 0 1rem 0.875rem; font-size: 0.875rem; color: var(--sn-text); line-height: 1.8; border-top: 1px solid var(--sn-border, #e5e7eb);">
+              <p style="margin: 0.75rem 0 0;">{faq.answer}</p>
+            </div>
+          </details>
+        ))}
+      </div>
+    </section>
+
+    <!-- 関連診断リンク -->
+    <section style="margin-bottom: 2.5rem;">
+      <h2 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 1rem;">関連する診断</h2>
+      <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 0.75rem;">
+        {[
+          { href: '/diagnosis/zodiac/', label: '12星座 一覧に戻る', desc: '全星座を比較する' },
+          { href: '/diagnosis/zodiac/compatibility/', label: '12×12 相性表', desc: '全144ペアを一覧で' },
+          { href: '/diagnosis/blood-compat/', label: '血液型相性診断', desc: 'A・B・O・AB型' },
+          { href: '/diagnosis/mbti-compat/', label: 'MBTI相性診断', desc: '16タイプの相性' },
+        ].map((link) => (
+          <a href={link.href} style="display: block; background: var(--sn-surface, #fff); border: 2px solid var(--sn-border, #e5e7eb); border-radius: 0.75rem; padding: 0.75rem; text-decoration: none;">
+            <p style="font-size: 0.9rem; font-weight: 700; color: var(--sn-primary); margin: 0 0 0.25rem;">{link.label}</p>
+            <p style="font-size: 0.775rem; color: var(--sn-muted); margin: 0;">{link.desc}</p>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <!-- Disclaimer -->
+    <aside
+      aria-label="免責事項"
+      style="background: #F3F4F6; border-radius: 0.75rem; padding: 1rem 1.25rem; margin-bottom: 2rem; font-size: 0.8rem; color: var(--sn-muted); line-height: 1.8;"
+    >
+      <strong>免責事項:</strong> {meta.disclaimer}
+    </aside>
+
+    <!-- 最終更新 -->
+    <p style="font-size: 0.75rem; color: var(--sn-muted); text-align: right;">
+      最終更新: <time datetime={meta.updatedAt}>{meta.updatedAt.replace(/-/g, '/')}</time>
+    </p>
+  </Container>
+</BaseLayout>

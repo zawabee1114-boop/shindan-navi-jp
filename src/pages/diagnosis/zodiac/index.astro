@@ -1,0 +1,440 @@
+---
+/**
+ * 星座性格診断 メインハブページ
+ * KW: 星座性格（VOL: 4,400 / SD: 16・超穴場）
+ * 学術根拠:
+ *   - Carlson S (1985) "A double-blind test of astrology" Nature 318, 419-425
+ *   - Hartmann P et al. (2006) Personality and Individual Differences 40(7)
+ *   - IAU公式: https://www.iau.org/public/themes/astrology_vs_astronomy/
+ *   - 国立天文台: https://www.nao.ac.jp/faq/a0204.html
+ * 確認日: 2026-05-21
+ *
+ * SEO/AIO対応:
+ * - JSON-LD: WebApplication + Article + FAQPage + BreadcrumbList
+ * - @id連結: エンティティグラフ形成
+ * - 12星座詳細グリッド・4エレメント・3モダリティ解説
+ * - FAQ 8問（科学的位置付け明示）
+ * - YMYL回避: 医療・精神疾患言及ゼロ
+ * - disclaimer 必須表示
+ */
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Container from '../../../components/Container.astro';
+import ZodiacFinder from '../../../components/ZodiacFinder';
+import { meta, ZODIAC_TYPES } from '../../../data/diagnoses/zodiac/meta';
+import { typesDetail } from '../../../data/diagnoses/zodiac/types-detail';
+import { elementsData, modalitiesData } from '../../../data/diagnoses/zodiac/elements-modality';
+
+const SITE_URL = 'https://shindan-navi.jp';
+const PAGE_URL = `${SITE_URL}/diagnosis/zodiac/`;
+
+// 12星座のデータ配列
+const zodiacList = ZODIAC_TYPES.map((id) => typesDetail[id]);
+
+// 4エレメント
+const elements = Object.values(elementsData);
+
+// 3モダリティ
+const modalities = Object.values(modalitiesData);
+
+// FAQ 8問
+const faqs = [
+  {
+    question: '星座性格に科学的根拠はありますか？',
+    answer:
+      '科学的根拠は確認されていません。Carlson S（1985年）がNature誌に発表した二重盲検試験（https://doi.org/10.1038/318419a0）で、占星術師の予測が偶然レベルと差がないことが示されています。また国際天文学連合（IAU）も「占星術は科学ではない」と明記しています（https://www.iau.org/public/themes/astrology_vs_astronomy/）。本サイトは西洋占星術の12星座分類を「文化的な性格分類フレームワーク」として自己理解のヒントに活用することを推奨しており、科学的測定ではありません。',
+  },
+  {
+    question: '12星座の決まり方は？',
+    answer:
+      '12星座の日付区分は、古代ギリシャの天文学者プトレマイオスが2世紀に著した『テトラビブロス』に基づいています。太陽が黄道12区分のどの領域にあるかで決まる「太陽星座」が一般的に「生まれ星座」として使われています。ただし、現代天文学では地球の歳差運動により実際の星座の位置はずれており、西洋占星術は天文学的な星座の位置とは別の概念として扱われています（国立天文台 https://www.nao.ac.jp/faq/a0204.html）。',
+  },
+  {
+    question: '太陽星座と月星座の違いは？',
+    answer:
+      '太陽星座は誕生日に太陽がどの星座にあったかを示し、一般に「あなたの星座」として使われます。月星座は誕生時に月がどの星座にあったかで決まります。西洋占星術では太陽星座が表の性格、月星座が感情や内面を示すとされていますが、いずれも科学的な根拠は確認されておらず（Carlson 1985 Nature）、自己理解のヒントとして楽しむことを推奨します。',
+  },
+  {
+    question: 'エレメント（火・地・風・水）とは何ですか？',
+    answer:
+      '西洋占星術の伝統的分類で12星座を4つのグループに分けた概念です。火（牡羊・獅子・射手）は情熱・行動力、地（牡牛・乙女・山羊）は安定・実務、風（双子・天秤・水瓶）は知性・社交、水（蟹・蠍・魚）は感受性・共感とされています。プトレマイオス『テトラビブロス』（2世紀）に基づく古代の分類で、現代心理学の性格分類とは別のフレームワークです。科学的根拠は確認されていません。',
+  },
+  {
+    question: '一番相性のいい星座の組み合わせは？',
+    answer:
+      '本サイトのスコアでは、蟹座×魚座（88点）・牡牛座×山羊座（86点）・蠍座×魚座（86点）などが高評価です。ただしこれらは「西洋占星術の伝統的分類に基づく傾向値」であり、実際の相性は個人の性格・価値観・コミュニケーション方法によって大きく変わります。スコアの高低で相手を選ぶ判断材料にしないことを推奨します。',
+  },
+  {
+    question: 'このサイトで運勢は見られますか？',
+    answer:
+      '見られません。本サイトは「性格特性の分類・自己理解」を目的としており、今日の運勢・ラッキーアイテム・ラッキーカラーなどの占い的なコンテンツは一切提供していません。Carlson（1985 Nature）の研究が示すように、占星術による将来予測に科学的根拠はありません。自己理解と人間関係の話題としてお楽しみください。',
+  },
+  {
+    question: '星座を就職・結婚の判断に使ってもいいですか？',
+    answer:
+      '推奨しません。科学的根拠のない基準で重要な人生の決断を下すことは、適切な選択の機会を逃すリスクがあります。就職では実際のスキル・価値観・職場環境への適合性を、結婚では実際の対話・価値観の一致・共通の目標を基準にしてください。本サイトは自己理解のヒントとして提供しており、人生の重大な決断には使えません。',
+  },
+  {
+    question: '占星術と天文学の違いは何ですか？',
+    answer:
+      '天文学は星・惑星・宇宙の物理的現象を科学的に研究する学問です。占星術は天体の位置と人間の性格・運命の関係を探る文化的・歴史的実践です。国際天文学連合（IAU）は「占星術は天文学とは異なり、科学的方法論に基づいていない」と明記しています（https://www.iau.org/public/themes/astrology_vs_astronomy/）。Carlson（1985 Nature）の二重盲検試験でも占星術の予測能力に科学的根拠がないことが示されています。',
+  },
+];
+
+// JSON-LD: WebApplication
+const jsonLdWebApp = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  '@id': `${PAGE_URL}#webapp`,
+  name: '星座性格診断【12星座完全版・性格分類×心理学】',
+  url: PAGE_URL,
+  applicationCategory: 'EducationalApplication',
+  operatingSystem: 'Web',
+  description: meta.description,
+  offers: {
+    '@type': 'Offer',
+    price: '0',
+    priceCurrency: 'JPY',
+  },
+  inLanguage: 'ja',
+  datePublished: meta.publishedAt,
+  dateModified: meta.updatedAt,
+};
+
+// JSON-LD: Article
+const jsonLdArticle = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  '@id': `${PAGE_URL}#article`,
+  headline: meta.title,
+  description: meta.description,
+  url: PAGE_URL,
+  datePublished: meta.publishedAt,
+  dateModified: meta.updatedAt,
+  inLanguage: 'ja',
+  mainEntityOfPage: {
+    '@type': 'WebPage',
+    '@id': PAGE_URL,
+  },
+  citation: meta.references.map((ref) => ({
+    '@type': 'CreativeWork',
+    name: ref.title,
+    author: ref.author,
+    datePublished: String(ref.year),
+    publisher: ref.publisher,
+    url: ref.url,
+  })),
+};
+
+// JSON-LD: FAQPage
+const jsonLdFaq = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  '@id': `${PAGE_URL}#faq`,
+  mainEntity: faqs.map((faq) => ({
+    '@type': 'Question',
+    name: faq.question,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: faq.answer,
+    },
+  })),
+};
+
+// JSON-LD: BreadcrumbList
+const jsonLdBreadcrumb = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  '@id': `${PAGE_URL}#breadcrumb`,
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'ホーム', item: SITE_URL + '/' },
+    { '@type': 'ListItem', position: 2, name: '診断一覧', item: SITE_URL + '/diagnosis/' },
+    { '@type': 'ListItem', position: 3, name: '星座性格診断', item: PAGE_URL },
+  ],
+};
+
+// エレメントカラー
+const ELEMENT_COLORS: Record<string, { bg: string; border: string; text: string; badge: string }> = {
+  fire:  { bg: '#FEF2F2', border: '#FCA5A5', text: '#991B1B', badge: '🔥' },
+  earth: { bg: '#F5F5F4', border: '#A8A29E', text: '#44403C', badge: '🌍' },
+  air:   { bg: '#EFF6FF', border: '#93C5FD', text: '#1E40AF', badge: '💨' },
+  water: { bg: '#ECFEFF', border: '#67E8F9', text: '#164E63', badge: '💧' },
+};
+---
+
+<BaseLayout
+  title={meta.title}
+  description={meta.description}
+>
+  <Fragment slot="head">
+    <link rel="canonical" href={PAGE_URL} />
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLdWebApp)} />
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLdArticle)} />
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLdFaq)} />
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLdBreadcrumb)} />
+  </Fragment>
+
+  <Container>
+    <!-- パンくず -->
+    <nav aria-label="パンくずリスト" style="padding-block: 0.75rem; font-size: 0.85rem; color: var(--sn-muted);">
+      <a href="/" style="color: var(--sn-primary);">ホーム</a>
+      <span aria-hidden="true"> › </span>
+      <a href="/diagnosis/" style="color: var(--sn-primary);">診断一覧</a>
+      <span aria-hidden="true"> › </span>
+      <span aria-current="page">星座性格診断</span>
+    </nav>
+
+    <!-- H1 -->
+    <h1 style="font-size: clamp(1.5rem, 4vw, 2.25rem); font-weight: 800; line-height: 1.3; margin-bottom: 0.75rem; color: var(--sn-text);">
+      星座性格診断【12星座完全版】<br>
+      <span style="font-size: 0.75em; font-weight: 600; color: var(--sn-muted);">性格分類 × 心理学 × 科学的位置付け</span>
+    </h1>
+
+    <!-- 鮮度バッジ -->
+    <p style="font-size: 0.8rem; color: var(--sn-muted); margin-bottom: 1.5rem;">
+      <time datetime={meta.updatedAt}>{meta.updatedAt.replace(/-/g, '/')} 時点の情報</time>
+      ｜ 確認: <a href="https://doi.org/10.1038/318419a0" target="_blank" rel="noopener noreferrer" style="color: var(--sn-primary);">Carlson 1985 Nature</a> ｜
+      <a href="https://www.iau.org/public/themes/astrology_vs_astronomy/" target="_blank" rel="noopener noreferrer" style="color: var(--sn-primary);">IAU公式</a>
+    </p>
+
+    <!-- このページでわかること -->
+    <blockquote style="background: var(--sn-surface, #fff); border-left: 4px solid var(--sn-primary, #7C3AED); padding: 1rem 1.25rem; margin: 0 0 2rem; border-radius: 0 0.5rem 0.5rem 0;">
+      <strong>このページでわかること</strong>
+      <ul style="margin: 0.5rem 0 0; padding-left: 1.25rem; line-height: 1.8;">
+        <li>牡羊座〜魚座 12星座それぞれの性格特性・強み・仕事スタイル（2026-05-21確認）</li>
+        <li>4エレメント（火・地・風・水）と3モダリティ（活動・不動・柔軟）の解説</li>
+        <li>12星座の相性概観・科学的位置付け（Carlson 1985 Nature 引用）</li>
+      </ul>
+    </blockquote>
+
+    <!-- ★ 誕生日入力ツール（React Island） -->
+    <section style="margin-bottom: 3rem;">
+      <h2 style="font-size: 1.3rem; font-weight: 700; margin-bottom: 1rem;">誕生日から自分の星座を調べる</h2>
+      <ZodiacFinder client:load />
+    </section>
+
+    <!-- ★ 科学的・文化的位置付けセクション（必須） -->
+    <section style="background: #FEF3C7; border: 2px solid #FCD34D; border-radius: 1rem; padding: 1.5rem; margin-bottom: 3rem;">
+      <h2 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 0.75rem; color: #92400E;">
+        ⚠️ 星座性格の科学的・文化的位置付け
+      </h2>
+      <p style="margin-bottom: 0.75rem; line-height: 1.8; color: #78350F;">
+        西洋占星術には科学的根拠が確認されていません。
+        Carlson S（1985年）がNature誌（<a href="https://doi.org/10.1038/318419a0" target="_blank" rel="noopener noreferrer" style="color: #92400E;">DOI: 10.1038/318419a0</a>）に発表した二重盲検試験では、占星術師の予測が偶然レベルと差がないことが示されました。
+      </p>
+      <p style="margin-bottom: 0.75rem; line-height: 1.8; color: #78350F;">
+        また国際天文学連合（IAU）も「占星術は科学的方法論に基づいていない」と明記しています（<a href="https://www.iau.org/public/themes/astrology_vs_astronomy/" target="_blank" rel="noopener noreferrer" style="color: #92400E;">IAU公式</a>）。
+        国立天文台も占星術と天文学は別物と説明しています（<a href="https://www.nao.ac.jp/faq/a0204.html" target="_blank" rel="noopener noreferrer" style="color: #92400E;">国立天文台</a>）。
+      </p>
+      <ul style="padding-left: 1.25rem; color: #78350F; line-height: 1.8;">
+        <li>✅ 活用推奨: 自己理解のヒント・人間関係の話題・エンタメ</li>
+        <li>❌ 使えない: 未来予測・運勢判断・就職・結婚の判断基準</li>
+        <li>❌ 提供しない: 今日の運勢・ラッキーアイテム・ラッキーカラー</li>
+      </ul>
+    </section>
+
+    <!-- 12星座 概観グリッド -->
+    <section style="margin-bottom: 3rem;">
+      <h2 style="font-size: 1.3rem; font-weight: 700; margin-bottom: 1rem;">12星座 性格特性 一覧</h2>
+      <p style="color: var(--sn-muted); margin-bottom: 1.5rem; font-size: 0.95rem;">
+        西洋占星術の伝統的分類に基づく12星座の性格傾向です。「〜とされている」「〜傾向がある」として記述しています。
+      </p>
+      <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem;">
+        {zodiacList.map((zodiac) => {
+          const colors = ELEMENT_COLORS[zodiac.element];
+          return (
+            <a
+              href={`/diagnosis/zodiac/${zodiac.id}/`}
+              style={`
+                display: block;
+                background: ${colors.bg};
+                border: 2px solid ${colors.border};
+                border-radius: 0.75rem;
+                padding: 1rem;
+                text-decoration: none;
+                transition: transform 0.15s, box-shadow 0.15s;
+              `}
+              aria-label={`${zodiac.japaneseName}の性格特性詳細ページへ`}
+            >
+              <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;">
+                <span style="font-size: 2rem; line-height: 1;">{zodiac.symbol}</span>
+                <div>
+                  <p style={`font-size: 1rem; font-weight: 700; color: ${colors.text}; margin: 0;`}>
+                    {zodiac.japaneseName}
+                  </p>
+                  <p style={`font-size: 0.8rem; color: ${colors.text}; opacity: 0.7; margin: 0;`}>
+                    {zodiac.dateRange}
+                  </p>
+                </div>
+              </div>
+              <p style={`font-size: 0.85rem; color: ${colors.text}; margin: 0 0 0.5rem; font-weight: 600;`}>
+                {zodiac.catchphrase}
+              </p>
+              <div style="display: flex; gap: 0.4rem; flex-wrap: wrap;">
+                {zodiac.characteristics.slice(0, 3).map((c) => (
+                  <span style={`padding: 0.15rem 0.5rem; background: ${colors.border}40; border-radius: 999px; font-size: 0.75rem; color: ${colors.text};`}>
+                    {c}
+                  </span>
+                ))}
+              </div>
+            </a>
+          );
+        })}
+      </div>
+    </section>
+
+    <!-- 4エレメント解説 -->
+    <section style="margin-bottom: 3rem;">
+      <h2 style="font-size: 1.3rem; font-weight: 700; margin-bottom: 0.5rem;">4エレメント（火・地・風・水）とは</h2>
+      <p style="color: var(--sn-muted); margin-bottom: 1.5rem; font-size: 0.9rem;">
+        プトレマイオス『テトラビブロス』（2世紀）に基づく伝統的な分類。科学的根拠は確認されていません。
+      </p>
+      <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1rem;">
+        {elements.map((el) => {
+          const colors = ELEMENT_COLORS[el.id];
+          return (
+            <div style={`background: ${colors.bg}; border: 2px solid ${colors.border}; border-radius: 0.75rem; padding: 1rem;`}>
+              <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
+                <span style="font-size: 1.5rem;">{el.symbol}</span>
+                <h3 style={`font-size: 1rem; font-weight: 700; color: ${colors.text}; margin: 0;`}>
+                  {el.japaneseName}のエレメント（{el.englishName}）
+                </h3>
+              </div>
+              <p style={`font-size: 0.8rem; color: ${colors.text}; margin-bottom: 0.75rem; opacity: 0.8;`}>
+                {el.zodiacSigns.map((id) => typesDetail[id].japaneseName).join('・')}
+              </p>
+              <div style="display: flex; gap: 0.4rem; flex-wrap: wrap; margin-bottom: 0.75rem;">
+                {el.keywords.map((kw) => (
+                  <span style={`padding: 0.15rem 0.5rem; background: ${colors.border}40; border-radius: 999px; font-size: 0.75rem; color: ${colors.text};`}>
+                    {kw}
+                  </span>
+                ))}
+              </div>
+              <p style={`font-size: 0.85rem; color: ${colors.text}; line-height: 1.6; margin: 0;`}>
+                {el.characterTrait}
+              </p>
+            </div>
+          );
+        })}
+      </div>
+    </section>
+
+    <!-- 3モダリティ解説 -->
+    <section style="margin-bottom: 3rem;">
+      <h2 style="font-size: 1.3rem; font-weight: 700; margin-bottom: 0.5rem;">3モダリティ（活動・不動・柔軟）とは</h2>
+      <p style="color: var(--sn-muted); margin-bottom: 1.5rem; font-size: 0.9rem;">
+        西洋占星術の伝統的な行動スタイルの分類。科学的根拠は確認されていません。
+      </p>
+      <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1rem;">
+        {modalities.map((mod) => (
+          <div style="background: var(--sn-surface, #fff); border: 2px solid var(--sn-border, #e5e7eb); border-radius: 0.75rem; padding: 1rem;">
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
+              <span style="font-size: 1.25rem;">{mod.symbol}</span>
+              <h3 style="font-size: 1rem; font-weight: 700; margin: 0; color: var(--sn-text);">
+                {mod.japaneseName}（{mod.englishName}）
+              </h3>
+            </div>
+            <p style="font-size: 0.8rem; color: var(--sn-muted); margin-bottom: 0.75rem;">
+              {mod.zodiacSigns.map((id) => typesDetail[id].japaneseName).join('・')}
+            </p>
+            <div style="display: flex; gap: 0.4rem; flex-wrap: wrap; margin-bottom: 0.75rem;">
+              {mod.keywords.map((kw) => (
+                <span style="padding: 0.15rem 0.5rem; background: #f3f4f6; border-radius: 999px; font-size: 0.75rem; color: var(--sn-muted);">
+                  {kw}
+                </span>
+              ))}
+            </div>
+            <p style="font-size: 0.85rem; color: var(--sn-text); line-height: 1.6; margin: 0;">
+              {mod.actionStyle}
+            </p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- 相性表へのリンク -->
+    <section style="background: var(--sn-surface, #fff); border: 2px solid var(--sn-border, #e5e7eb); border-radius: 1rem; padding: 1.5rem; margin-bottom: 3rem; text-align: center;">
+      <h2 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 0.75rem;">12星座 × 12星座 相性表</h2>
+      <p style="color: var(--sn-muted); margin-bottom: 1rem; font-size: 0.95rem;">
+        144ペアのスコアと傾向をビジュアルで確認できます。
+      </p>
+      <a
+        href="/diagnosis/zodiac/compatibility/"
+        style="display: inline-block; padding: 0.75rem 2rem; background: var(--sn-primary, #7C3AED); color: #fff; border-radius: 0.5rem; text-decoration: none; font-weight: 700; font-size: 1rem;"
+      >
+        12×12 相性表を見る →
+      </a>
+    </section>
+
+    <!-- 関連診断へのリンク -->
+    <section style="margin-bottom: 3rem;">
+      <h2 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 1rem;">関連する診断・ツール</h2>
+      <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 0.75rem;">
+        {[
+          { href: '/diagnosis/blood-compat/', label: '血液型相性診断', desc: '4タイプ×全10ペア' },
+          { href: '/diagnosis/mbti-compat/', label: 'MBTI相性診断', desc: '16タイプの相性一覧' },
+          { href: '/diagnosis/friend-compat/', label: '友達相性診断', desc: 'タイプ別相性チェック' },
+          { href: '/diagnosis/disc/', label: 'DiSC診断', desc: '職場スタイル4タイプ' },
+        ].map((link) => (
+          <a
+            href={link.href}
+            style="display: block; background: var(--sn-surface, #fff); border: 2px solid var(--sn-border, #e5e7eb); border-radius: 0.75rem; padding: 0.75rem 1rem; text-decoration: none;"
+          >
+            <p style="font-size: 0.95rem; font-weight: 700; color: var(--sn-primary); margin: 0 0 0.25rem;">{link.label}</p>
+            <p style="font-size: 0.8rem; color: var(--sn-muted); margin: 0;">{link.desc}</p>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section style="margin-bottom: 3rem;">
+      <h2 style="font-size: 1.3rem; font-weight: 700; margin-bottom: 1.5rem;">よくある質問（FAQ）</h2>
+      <div style="display: flex; flex-direction: column; gap: 1rem;">
+        {faqs.map((faq, i) => (
+          <details
+            style="background: var(--sn-surface, #fff); border: 2px solid var(--sn-border, #e5e7eb); border-radius: 0.75rem; overflow: hidden;"
+          >
+            <summary
+              style="padding: 1rem 1.25rem; font-weight: 700; font-size: 0.95rem; cursor: pointer; color: var(--sn-text); list-style: none; display: flex; align-items: center; gap: 0.5rem;"
+            >
+              <span style="color: var(--sn-primary);">Q{i + 1}.</span>
+              {faq.question}
+            </summary>
+            <div style="padding: 0 1.25rem 1rem; font-size: 0.9rem; color: var(--sn-text); line-height: 1.8; border-top: 1px solid var(--sn-border, #e5e7eb);">
+              <p style="margin: 0.75rem 0 0;">{faq.answer}</p>
+            </div>
+          </details>
+        ))}
+      </div>
+    </section>
+
+    <!-- 学術参考文献 -->
+    <section style="background: #F9FAFB; border-radius: 1rem; padding: 1.5rem; margin-bottom: 3rem;">
+      <h2 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 1rem; color: var(--sn-text);">参考文献・学術資料</h2>
+      <ul style="list-style: disc; padding-left: 1.25rem; line-height: 2; font-size: 0.85rem; color: var(--sn-muted);">
+        {meta.references.map((ref) => (
+          <li>
+            {ref.author}（{ref.year}）「{ref.title}」{ref.publisher}。
+            {ref.note}
+            {ref.url && (
+              <span> <a href={ref.url} target="_blank" rel="noopener noreferrer" style="color: var(--sn-primary);">[公式URL]</a></span>
+            )}
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <!-- Disclaimer -->
+    <aside
+      aria-label="免責事項"
+      style="background: #F3F4F6; border-radius: 0.75rem; padding: 1rem 1.25rem; margin-bottom: 2rem; font-size: 0.8rem; color: var(--sn-muted); line-height: 1.8;"
+    >
+      <strong>免責事項:</strong> {meta.disclaimer}
+    </aside>
+
+    <!-- 最終更新 -->
+    <p style="font-size: 0.75rem; color: var(--sn-muted); text-align: right;">
+      最終更新: <time datetime={meta.updatedAt}>{meta.updatedAt.replace(/-/g, '/')}</time>
+    </p>
+  </Container>
+</BaseLayout>
