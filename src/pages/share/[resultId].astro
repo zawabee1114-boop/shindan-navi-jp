@@ -1,0 +1,33 @@
+---
+/**
+ * /share/[resultId]/ - SNSシェア用OGP最適化ページ
+ * Phase 1: Supabase連携後に動的生成実装。
+ * Phase 0: 静的スタブ。
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Container from '../../components/Container.astro';
+
+export async function getStaticPaths() {
+  // Phase 0: 静的スタブ。Phase 1でSupabase連携に切り替える。
+  return [
+    { params: { resultId: 'demo' } },
+  ];
+}
+
+const { resultId } = Astro.params;
+---
+<BaseLayout
+  title="診断結果シェア - 診断ナビ"
+  description="診断ナビで診断した結果をシェアしています"
+  noindex={true}
+>
+  <Container>
+    <div style="padding-block:4rem; text-align:center;">
+      <p style="font-size:3rem; margin-bottom:1rem;">🔮</p>
+      <h1 style="font-family:var(--sn-font-rounded); font-size:1.5rem; margin-bottom:1rem;">診断結果シェア</h1>
+      <p style="color:var(--sn-muted);">Result ID: {resultId}</p>
+      <p style="color:var(--sn-muted); margin-top:0.5rem;">Phase 1でSupabase連携後に動的実装します</p>
+      <a href="/" style="display:inline-block; margin-top:2rem; color:var(--sn-primary);">診断をやってみる</a>
+    </div>
+  </Container>
+</BaseLayout>

@@ -1,0 +1,85 @@
+---
+/**
+ * TypeIcon.astro - タイプアイコン（診断タイプ別）
+ *
+ * ===== SVG差し替えガイド =====
+ * 現在: 絵文字ダミー表示
+ * 本番: public/icons/types/{typeKey}.svg を配置すること
+ *       SVGは 48x48 のビューポートを推奨
+ *
+ * typeKey 例:
+ *   MBTI:    "infj" / "entp" 等（小文字4文字）
+ *   血液型:  "blood-a" / "blood-b" / "blood-o" / "blood-ab"
+ *   知能:    "linguistic" / "logical" 等
+ * ===========================
+ */
+interface Props {
+  /** タイプキー（アイコン特定に使用）*/
+  typeKey: string;
+  /** 表示ラベル */
+  label: string;
+  /** 絵文字ダミー（SVG未配置時のフォールバック）*/
+  emoji?: string;
+  /** アイコンサイズ */
+  size?: 'xs' | 'sm' | 'md' | 'lg';
+}
+
+const {
+  typeKey,
+  label,
+  emoji = '🔮',
+  size = 'md',
+} = Astro.props;
+
+const sizeMap = {
+  xs: '24px',
+  sm: '32px',
+  md: '48px',
+  lg: '64px',
+};
+
+const sizePx = sizeMap[size];
+---
+
+<span
+  class={`type-icon type-icon--${size}`}
+  style={`--icon-size: ${sizePx}`}
+  aria-label={label}
+  role="img"
+>
+  <!--
+    TODO: SVGアイコン配置後に以下に差し替え:
+    <img
+      src={`/icons/types/${typeKey}.svg`}
+      alt={label}
+      width={parseInt(sizePx)}
+      height={parseInt(sizePx)}
+      loading="lazy"
+    />
+  -->
+  <span class="type-icon-emoji" aria-hidden="true">{emoji}</span>
+</span>
+
+<style>
+  .type-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--icon-size);
+    height: var(--icon-size);
+    border-radius: var(--sn-radius-sm);
+    background: var(--sn-primary-bg);
+    flex-shrink: 0;
+  }
+
+  .type-icon-emoji {
+    font-size: calc(var(--icon-size) * 0.55);
+    line-height: 1;
+  }
+
+  /* サイズ別調整 */
+  .type-icon--xs .type-icon-emoji { font-size: 0.875rem; }
+  .type-icon--sm .type-icon-emoji { font-size: 1.125rem; }
+  .type-icon--md .type-icon-emoji { font-size: 1.5rem; }
+  .type-icon--lg .type-icon-emoji { font-size: 2rem; }
+</style>

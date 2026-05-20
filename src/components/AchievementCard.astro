@@ -1,0 +1,210 @@
+---
+/**
+ * AchievementCard.astro - 達成カード（ゲーミフィケーション）
+ * バッジ獲得・マイルストーン達成時に表示するトースト/カード。
+ */
+interface Props {
+  /** バッジ名 */
+  title: string;
+  /** バッジ説明 */
+  description: string;
+  /** バッジアイコン（絵文字）*/
+  icon: string;
+  /** 獲得日 */
+  achievedAt?: string;
+  /** レアリティ */
+  rarity?: 'normal' | 'rare' | 'super-rare';
+  /** トースト表示かカード表示か */
+  variant?: 'toast' | 'card' | 'compact';
+  /** 非表示済みか（ユーザーが閉じた）*/
+  dismissed?: boolean;
+}
+
+const {
+  title,
+  description,
+  icon,
+  achievedAt,
+  rarity = 'normal',
+  variant = 'card',
+  dismissed = false,
+} = Astro.props;
+
+const rarityConfig = {
+  normal: { label: 'ノーマル', color: 'var(--sn-muted)' },
+  rare: { label: 'レア', color: 'var(--sn-rare-color)' },
+  'super-rare': { label: 'スーパーレア', color: 'var(--sn-super-rare-color)' },
+};
+
+const rc = rarityConfig[rarity];
+---
+
+{!dismissed && (
+  <div
+    class={`achievement-card achievement-card--${variant} achievement-card--${rarity}`}
+    style={`--rarity-color: ${rc.color}`}
+    role="alert"
+    aria-live="polite"
+    aria-label={`バッジ獲得: ${title}`}
+  >
+    <div class="achievement-icon" aria-hidden="true">
+      {icon}
+    </div>
+    <div class="achievement-content">
+      <div class="achievement-header">
+        <span class="rarity-label">{rc.label}</span>
+        <span class="achievement-title">{title}</span>
+      </div>
+      {variant !== 'compact' && (
+        <p class="achievement-description">{description}</p>
+      )}
+      {achievedAt && variant === 'card' && (
+        <p class="achievement-date">取得: {achievedAt}</p>
+      )}
+    </div>
+    {variant === 'toast' && (
+      <button
+        type="button"
+        class="achievement-close"
+        aria-label="バッジ通知を閉じる"
+      >
+        ×
+      </button>
+    )}
+  </div>
+)}
+
+<style>
+  .achievement-card {
+    display: flex;
+    align-items: center;
+    gap: var(--sn-space-4);
+    background: var(--sn-bg-white);
+    border-radius: var(--sn-radius-md);
+    padding: var(--sn-space-4);
+    box-shadow: var(--sn-shadow);
+    border: 1.5px solid color-mix(in srgb, var(--rarity-color) 30%, transparent);
+    position: relative;
+  }
+
+  /* トースト */
+  .achievement-card--toast {
+    position: fixed;
+    bottom: calc(var(--sn-bottom-nav-h) + var(--sn-space-4));
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 200;
+    min-width: 300px;
+    max-width: 90vw;
+    animation: toastSlideUp var(--sn-dur-base) var(--sn-ease-out) both;
+    box-shadow: var(--sn-shadow-xl);
+  }
+
+  @keyframes toastSlideUp {
+    from { opacity: 0; transform: translateX(-50%) translateY(20px); }
+    to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+  }
+
+  /* コンパクト（マイページ一覧）*/
+  .achievement-card--compact {
+    padding: var(--sn-space-3);
+    gap: var(--sn-space-3);
+  }
+
+  /* レアリティ別ボーダー装飾 */
+  .achievement-card--super-rare {
+    background: linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--rarity-color) 8%, var(--sn-bg-white)) 0%,
+      var(--sn-bg-white) 100%
+    );
+  }
+
+  /* アイコン */
+  .achievement-icon {
+    font-size: 2rem;
+    line-height: 1;
+    width: 52px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: color-mix(in srgb, var(--rarity-color) 10%, transparent);
+    border-radius: var(--sn-radius-md);
+    flex-shrink: 0;
+  }
+
+  .achievement-card--compact .achievement-icon {
+    font-size: 1.25rem;
+    width: 36px;
+    height: 36px;
+  }
+
+  /* コンテンツ */
+  .achievement-content {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .achievement-header {
+    display: flex;
+    align-items: center;
+    gap: var(--sn-space-2);
+    flex-wrap: wrap;
+    margin-bottom: var(--sn-space-1);
+  }
+
+  .rarity-label {
+    font-size: var(--sn-text-xs);
+    font-weight: 700;
+    color: var(--rarity-color);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .achievement-title {
+    font-family: var(--sn-font-rounded);
+    font-size: var(--sn-text-base);
+    font-weight: 700;
+    color: var(--sn-text);
+  }
+
+  .achievement-description {
+    font-size: var(--sn-text-sm);
+    color: var(--sn-muted);
+    line-height: var(--sn-leading-base);
+    margin: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .achievement-date {
+    font-size: var(--sn-text-xs);
+    color: var(--sn-muted-light);
+    margin: var(--sn-space-1) 0 0;
+  }
+
+  /* 閉じるボタン */
+  .achievement-close {
+    position: absolute;
+    top: var(--sn-space-2);
+    right: var(--sn-space-2);
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--sn-text-sm);
+    color: var(--sn-muted);
+    background: var(--sn-bg-soft);
+    border-radius: 50%;
+    cursor: pointer;
+    border: none;
+    transition: background var(--sn-dur-fast) var(--sn-ease);
+  }
+
+  .achievement-close:hover {
+    background: var(--sn-border);
+  }
+</style>

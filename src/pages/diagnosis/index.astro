@@ -1,0 +1,154 @@
+---
+/**
+ * /diagnosis/ - 診断一覧ページ（ハブページ）
+ * Phase 0: スタブ。content-writer が本文を執筆する。
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import DiagnosisCard from '../../components/DiagnosisCard.astro';
+import Container from '../../components/Container.astro';
+
+const diagnoses = [
+  {
+    title: '多重知能テスト',
+    icon: '🧠',
+    description: 'Howard Gardner理論。8つの知能タイプで才能を発見。仕事・学習に活かせる最優先診断。',
+    href: '/diagnosis/multi-int/',
+    badge: '最優先・VOL18,100',
+    badgeClass: 'badge-free',
+    duration: '約5分',
+    questionCount: 40,
+    categoryKey: 'multi-int' as const,
+  },
+  {
+    title: 'MBTI診断',
+    icon: '🔮',
+    description: '16タイプの性格を5軸で徹底分析。相性診断にも対応。',
+    href: '/diagnosis/mbti/',
+    badge: '人気No.1',
+    badgeClass: 'badge-primary',
+    duration: '約5分',
+    questionCount: 60,
+    categoryKey: 'mbti' as const,
+  },
+  {
+    title: '血液型性格診断',
+    icon: '🩸',
+    description: '日本独自×Big5換算で科学的に相性スコアを計算。',
+    href: '/diagnosis/ketsuekigata/',
+    badge: '無料',
+    badgeClass: 'badge-free',
+    duration: '約3分',
+    questionCount: 20,
+    categoryKey: 'blood' as const,
+  },
+  {
+    title: 'DiSC診断',
+    icon: '💼',
+    description: '仕事・職場コミュニケーションに最強の4タイプ診断。',
+    href: '/diagnosis/disc/',
+    badge: '仕事に必見',
+    badgeClass: 'badge-primary',
+    duration: '約4分',
+    questionCount: 28,
+    categoryKey: 'disc' as const,
+  },
+  {
+    title: '完璧主義タイプ診断',
+    icon: '⭐',
+    description: '心理学CBTベース。完璧主義が強みか罠かを診断。',
+    href: '/diagnosis/perfectionism/',
+    badge: '無料',
+    badgeClass: 'badge-free',
+    duration: '約3分',
+    questionCount: 24,
+    categoryKey: 'perfectionism' as const,
+  },
+  {
+    title: '恋愛スタイル診断',
+    icon: '💕',
+    description: 'J.A.Lee理論。6タイプの恋愛スタイルで相性を分析。',
+    href: '/diagnosis/love-style/',
+    badge: '恋愛に必見',
+    badgeClass: 'badge-primary',
+    duration: '約4分',
+    questionCount: 30,
+    categoryKey: 'love' as const,
+  },
+  {
+    title: '星座性格診断',
+    icon: '✨',
+    description: '西洋占星術×性格科学。エンタメ×サイエンスで解説。',
+    href: '/diagnosis/seiza/',
+    badge: 'エンタメ',
+    badgeClass: 'badge-primary',
+    duration: '即時',
+    categoryKey: 'seiza' as const,
+  },
+  {
+    title: '金銭感覚診断',
+    icon: '💰',
+    description: '行動経済学ベース。お金の使い方タイプを分析。',
+    href: '/diagnosis/money-sense/',
+    badge: '無料',
+    badgeClass: 'badge-free',
+    duration: '約3分',
+    questionCount: 20,
+    categoryKey: 'money' as const,
+  },
+];
+---
+
+<BaseLayout
+  title="診断一覧 - 8診断すべて無料"
+  description="MBTI・血液型・多重知能テスト・DiSC・完璧主義・恋愛スタイル・星座・金銭感覚。8診断すべて無料・登録不要で受診できます。"
+  breadcrumbs={[{ name: '診断一覧', url: '/diagnosis/' }]}
+>
+  <section class="page-hero">
+    <Container>
+      <h1 class="page-title">
+        <span aria-hidden="true">🔮</span>
+        8つの診断一覧
+      </h1>
+      <p class="page-description">
+        全診断無料・登録なしで受診OK。どれか1つ受けると統合プロファイルが始まります。
+      </p>
+    </Container>
+  </section>
+
+  <section class="section">
+    <Container>
+      <div class="diagnosis-grid">
+        {diagnoses.map((d) => (
+          <DiagnosisCard {...d} />
+        ))}
+      </div>
+    </Container>
+  </section>
+</BaseLayout>
+
+<style>
+  .page-hero {
+    background: linear-gradient(135deg, var(--sn-primary-bg) 0%, var(--sn-secondary-bg) 100%);
+    padding-block: var(--sn-space-12) var(--sn-space-8);
+    text-align: center;
+  }
+
+  .page-title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--sn-space-3);
+    font-family: var(--sn-font-rounded);
+    font-size: var(--sn-text-3xl);
+    font-weight: 900;
+    color: var(--sn-text);
+    margin-bottom: var(--sn-space-4);
+  }
+
+  .page-description {
+    font-size: var(--sn-text-lg);
+    color: var(--sn-muted);
+    max-width: 480px;
+    margin-inline: auto;
+  }
+</style>
