@@ -1,0 +1,121 @@
+---
+/**
+ * PassCta.astro - ¥390 PASS 誘導CTA（ペイウォール内表示用）
+ * ResultLayout.astro の有料タブが未購入時に表示されるCTA
+ *
+ * 確認日: 2026-05-20
+ */
+
+interface Props {
+  /** タイプ名（例: '言語的知能タイプ'）*/
+  typeName: string;
+  /** 診断名（例: 'MBTI'）*/
+  diagnosisName: string;
+  /** シーン名（例: '仕事'）*/
+  scene: string;
+}
+
+const { typeName, diagnosisName, scene } = Astro.props;
+---
+
+<div class="pass-cta">
+  <div class="pass-cta-lock" aria-hidden="true">🔒</div>
+  <p class="pass-cta-title">
+    {typeName}の<strong>「{scene}」</strong>詳細レポート
+  </p>
+  <p class="pass-cta-desc">
+    {diagnosisName}の{scene}軸の詳細アドバイス・向く環境・注意点は
+    ¥390 PASSで解放されます。
+  </p>
+  <ul class="pass-cta-features">
+    <li>5軸（仕事・恋愛・友人・家族・学校）の詳細レポート</li>
+    <li>全8診断のレポートに使用可</li>
+    <li>登録不要・買切</li>
+  </ul>
+  <a href="/pass/" class="pass-cta-btn">
+    <span class="pass-cta-price">¥390</span>
+    PASSで{scene}レポートを読む
+  </a>
+  <p class="pass-cta-note">月額ではなく1回払い・全診断に使えます</p>
+</div>
+
+<style>
+.pass-cta {
+  background: linear-gradient(135deg, #6366f1 0%, #7c3aed 100%);
+  color: #fff;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+.pass-cta-lock {
+  font-size: 2rem;
+}
+.pass-cta-title {
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 0;
+  line-height: 1.5;
+}
+.pass-cta-desc {
+  font-size: 0.875rem;
+  opacity: 0.9;
+  line-height: 1.6;
+  margin: 0;
+}
+.pass-cta-features {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  text-align: left;
+  width: 100%;
+  max-width: 280px;
+}
+.pass-cta-features li {
+  font-size: 0.8rem;
+  opacity: 0.85;
+  padding-left: 1.25rem;
+  position: relative;
+}
+.pass-cta-features li::before {
+  content: '✓ ';
+  position: absolute;
+  left: 0;
+  color: #a5f3fc;
+}
+.pass-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #fff;
+  color: #6366f1;
+  font-weight: 700;
+  font-size: 1rem;
+  padding: 0.75rem 1.75rem;
+  border-radius: 3rem;
+  text-decoration: none;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.pass-cta-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0 0 0 / 0.2);
+}
+.pass-cta-price {
+  background: #6366f1;
+  color: #fff;
+  border-radius: 1rem;
+  padding: 0.1rem 0.5rem;
+  font-size: 0.85em;
+}
+.pass-cta-note {
+  font-size: 0.75rem;
+  opacity: 0.7;
+  margin: 0;
+}
+</style>
