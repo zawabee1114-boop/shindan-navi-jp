@@ -1,0 +1,1223 @@
+---
+/**
+ * 恋愛スタイル診断 結果ページ（動的ルート）
+ * 6タイプ分の結果ページを静的生成する
+ *
+ * URL: /diagnosis/love-style/result/{typeId}/
+ * タイプID: eros / ludus / storge / pragma / mania / agape
+ *
+ * SEO/AIO:
+ * - JSON-LD: WebApplication + Article + BreadcrumbList
+ * - タイプ別メタタイトル・ディスクリプション
+ * - 5タイプとの相性ランキング（スコア順）
+ * - 友情関係への転用セクション
+ * - self-care セクション（このタイプが大切にすべきこと）
+ * - YMYL回避: 「mania型=依存症」等のラベリングNG
+ * - LGBTQ+配慮: 「パートナー/相手」表現
+ *
+ * 確認日: 2026-05-21
+ */
+import ResultLayout from '../../../../layouts/ResultLayout.astro';
+import Container from '../../../../components/Container.astro';
+import { types, getOtherTypes } from '../../../../data/diagnoses/love-style/types';
+import { meta } from '../../../../data/diagnoses/love-style/meta';
+import { getAllPairsForType } from '../../../../data/diagnoses/love-style/compatibility';
+import type { LoveStyleType } from '../../../../data/diagnoses/love-style/questions';
+
+export function getStaticPaths() {
+  return Object.keys(types).map((typeId) => ({
+    params: { type: typeId },
+    props: {
+      typeId: typeId as LoveStyleType,
+      typeData: types[typeId as LoveStyleType],
+    },
+  }));
+}
+
+const { typeId, typeData } = Astro.props;
+
+const SITE_URL = 'https://shindan-navi.jp';
+const PAGE_URL = `${SITE_URL}/diagnosis/love-style/result/${typeId}/`;
+
+// 5タイプとの相性ランキング（スコア降順）
+const compatibilityRanking = getAllPairsForType(typeId);
+
+// タイプ別テーマカラー
+const typeColor: Record<LoveStyleType, string> = {
+  eros: '#dc2626',
+  ludus: '#d97706',
+  storge: '#16a34a',
+  pragma: '#2563eb',
+  mania: '#7c3aed',
+  agape: '#0891b2',
+};
+
+// 思考傾向グラフ用ラベル（Big5/OCEAN表記禁止）
+const radarLabels = [
+  { key: 'O', label: '好奇心・探求' },
+  { key: 'C', label: '計画性・丁寧さ' },
+  { key: 'E', label: '行動力・積極性' },
+  { key: 'A', label: '共感力・協調性' },
+  { key: 'N', label: '感情の繊細さ' },
+] as const;
+
+// 相性カテゴリの色
+const categoryColor: Record<string, string> = {
+  '非常に高い相性': '#16a34a',
+  '良い相性': '#2563eb',
+  '補完し合える関係': '#d97706',
+  '成長機会の多いペア': '#7c3aed',
+  '対比から学べる関係': '#dc2626',
+};
+
+// FAQs（タイプ別）
+const faqs = [
+  {
+    question: `${typeData.japaneseName}の恋愛傾向の特徴は？`,
+    answer: typeData.characteristics.slice(0, 3).join('。') + '。',
+  },
+  {
+    question: `${typeData.japaneseName}はどんな強みがありますか？`,
+    answer: typeData.strengths.join('。また、') + '。',
+  },
+  {
+    question: `${typeData.japaneseName}が気をつけたい恋愛パターンは？`,
+    answer: typeData.weaknesses[0] + '。' + typeData.weaknesses[1] + '。ただし、これらは弱点ではなく強みと表裏一体の傾向です。',
+  },
+  {
+    question: `${typeData.japaneseName}と最も相性の良いタイプは？`,
+    answer:
+      compatibilityRanking.length > 0
+        ? `${types[compatibilityRanking[0].typeId].japaneseName}との相性が最も高い傾向があります（スコア: ${compatibilityRanking[0].compatibility.score}/100）。${compatibilityRanking[0].compatibility.oneLineSummary}`
+        : '相性は個人差があります。対話を重ねることが最も重要です。',
+  },
+  {
+    question: `${typeData.japaneseName}の友情パターンは？`,
+    answer: typeData.friendshipPattern,
+  },
+];
+
+// JSON-LD: WebApplication
+const jsonLdWebApp = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  '@id': `${PAGE_URL}#webapp`,
+  name: `恋愛スタイル診断 結果：${typeData.japaneseName}`,
+  url: PAGE_URL,
+  applicationCategory: 'EducationalApplication',
+  operatingSystem: 'Web',
+  description: `恋愛スタイル診断の結果は「${typeData.japaneseName}」。${typeData.catchphrase}`,
+  author: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+    name: '診断ナビ',
+    url: SITE_URL,
+  },
+};
+
+// JSON-LD: Article
+const jsonLdArticle = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  '@id': `${PAGE_URL}#article`,
+  headline: `${typeData.japaneseName}（${typeData.nameEn}）の恋愛傾向・強み・相性ランキング完全ガイド`,
+  url: PAGE_URL,
+  description: `恋愛スタイル診断の結果「${typeData.japaneseName}」の恋愛傾向・強み・気をつけたい点・5タイプとの相性ランキングを詳しく解説。J.A.Lee（1973）理論に基づく自己理解ガイド。`,
+  datePublished: meta.publishedAt,
+  dateModified: meta.updatedAt,
+  author: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+    name: '診断ナビ',
+    url: SITE_URL,
+  },
+  publisher: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+    name: '診断ナビ',
+    url: SITE_URL,
+  },
+  about: {
+    '@type': 'Thing',
+    name: `${typeData.japaneseName} 恋愛スタイル`,
+    sameAs: 'https://doi.org/10.1037/0022-3514.50.2.392',
+  },
+  citation: [
+    {
+      '@type': 'CreativeWork',
+      name: 'Colours of Love',
+      author: 'Lee JA',
+      datePublished: '1973',
+    },
+    {
+      '@type': 'CreativeWork',
+      name: 'A Theory and Method of Love',
+      author: 'Hendrick C, Hendrick S',
+      datePublished: '1986',
+      url: 'https://doi.org/10.1037/0022-3514.50.2.392',
+    },
+  ],
+};
+
+// JSON-LD: BreadcrumbList
+const jsonLdBreadcrumb = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'ホーム', item: SITE_URL },
+    { '@type': 'ListItem', position: 2, name: '診断一覧', item: `${SITE_URL}/diagnosis/` },
+    { '@type': 'ListItem', position: 3, name: '恋愛スタイル診断', item: `${SITE_URL}/diagnosis/love-style/` },
+    { '@type': 'ListItem', position: 4, name: typeData.japaneseName, item: PAGE_URL },
+  ],
+};
+
+const jsonLdAll = [jsonLdWebApp, jsonLdArticle, jsonLdBreadcrumb];
+
+// 関連診断
+const relatedDiagnoses = [
+  { title: 'MBTI恋愛相性診断', href: '/diagnosis/mbti-compat/love/', icon: '💑', badge: 'おすすめ' },
+  { title: '友達相性診断', href: '/diagnosis/friend-compat/', icon: '🤝' },
+  { title: '完璧主義診断', href: '/diagnosis/perfectionism/', icon: '🔱' },
+  { title: '多重知能テスト', href: '/diagnosis/multi-int/', icon: '🦉' },
+];
+
+// description の改行を除去
+const descriptionClean = typeData.description.replace(/\n+/g, ' ').trim();
+---
+
+<ResultLayout
+  diagnosisId="love-style"
+  typeId={typeId}
+  typeName={typeData.japaneseName}
+  diagnosisName="恋愛スタイル診断"
+  characterEmoji={typeData.emoji}
+  characterName={typeData.nameEn}
+  tagline={typeData.catchphrase}
+  shareUrl={PAGE_URL}
+  pageTitle={`${typeData.japaneseName}【恋愛スタイル診断】恋愛傾向・強み・相性ランキング | 診断ナビ`}
+  pageDescription={`恋愛スタイル診断の結果は「${typeData.japaneseName}（${typeData.nameEn}）」。${typeData.catchphrase} 恋愛傾向・強み・気をつけたい点・5タイプとの相性ランキングを詳しく解説。J.A.Lee（1973）理論に基づく自己理解ガイド。`}
+  relatedDiagnoses={relatedDiagnoses}
+  jsonLd={jsonLdAll}
+>
+  {/* ========== 概要タブ ========== */}
+  <Fragment slot="overview">
+    <div class="lsr-overview">
+      <div class="lsr-aio-block">
+        <p class="lsr-aio-title">このページでわかること</p>
+        <ul class="lsr-aio-list">
+          <li>{typeData.japaneseName}（{typeData.nameEn}）の恋愛傾向・特徴・強み・気をつけたい点</li>
+          <li>他5タイプとの相性ランキング（スコア順・J.A.Lee理論に基づく）</li>
+          <li>友情関係への応用方法・このタイプが恋愛で大切にすべきこと（self-care）</li>
+        </ul>
+      </div>
+
+      <div class="lsr-description">
+        {descriptionClean.split('。').filter(s => s.trim()).map((sentence) => (
+          <p class="lsr-body">{sentence.trim()}。</p>
+        ))}
+      </div>
+
+      <div class="lsr-characteristics">
+        <h3 class="lsr-h3">このタイプの5つの特徴</h3>
+        <ul class="lsr-char-list">
+          {typeData.characteristics.map((char) => (
+            <li class="lsr-char-item">
+              <span class="lsr-char-icon" aria-hidden="true" style={`color: ${typeColor[typeId]}`}>◆</span>
+              <span>{char}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div class="lsr-theory-note">
+        <p>
+          この診断結果はJ.A.Lee（1973）「Colours of Love」およびHendrick & Hendrick（1986）Love Attitudes Scale
+          （<a href="https://doi.org/10.1037/0022-3514.50.2.392" target="_blank" rel="noopener noreferrer">DOI確認済</a>）
+          に基づく恋愛傾向把握のための参考情報です。
+          医学的・臨床的な診断ではありません。
+        </p>
+      </div>
+
+      <div class="lsr-freshness">
+        <time datetime={meta.updatedAt}>{meta.updatedAt}</time> 時点の情報。
+        月1回以上の鮮度確認を実施しています。
+      </div>
+    </div>
+  </Fragment>
+
+  {/* ========== 強みタブ ========== */}
+  <Fragment slot="strengths">
+    <div class="lsr-strengths">
+      <h3 class="lsr-section-h3">{typeData.japaneseName}の4つの強み</h3>
+      <ul class="lsr-strength-list">
+        {typeData.strengths.map((s) => (
+          <li class="lsr-strength-item">
+            <span class="lsr-strength-icon" aria-hidden="true">✅</span>
+            <span>{s}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </Fragment>
+
+  {/* ========== 注意点タブ ========== */}
+  <Fragment slot="weaknesses">
+    <div class="lsr-weaknesses">
+      <h3 class="lsr-section-h3">気をつけたい傾向</h3>
+      <ul class="lsr-weakness-list">
+        {typeData.weaknesses.map((w) => (
+          <li class="lsr-weakness-item">
+            <span class="lsr-weakness-icon" aria-hidden="true">⚡</span>
+            <span>{w}</span>
+          </li>
+        ))}
+      </ul>
+      <div class="lsr-weakness-note">
+        これらは「弱点」ではなく「強みと表裏一体の傾向」です。
+        自分のスタイルを理解することで、パートナーとの対話に活かせます。
+      </div>
+    </div>
+  </Fragment>
+
+  {/* ========== 恋愛タブ（相性ランキング・self-care） ========== */}
+  <Fragment slot="love">
+    <div class="lsr-love">
+      {/* 相性ランキング */}
+      <h3 class="lsr-section-h3">5タイプとの相性ランキング</h3>
+      <p class="lsr-love-note">
+        J.A.Lee（1973）理論に基づく傾向値です。個人差があり、対話と相互理解が最も重要です。
+      </p>
+      <div class="lsr-compat-list">
+        {compatibilityRanking.map((item, index) => {
+          const otherType = types[item.typeId];
+          const catColor = categoryColor[item.compatibility.category] ?? '#6b7280';
+          return (
+            <div class="lsr-compat-item">
+              <div class="lsr-compat-rank" aria-hidden="true">{index + 1}</div>
+              <div class="lsr-compat-body">
+                <div class="lsr-compat-header">
+                  <span class="lsr-compat-emoji">{otherType.emoji}</span>
+                  <span class="lsr-compat-name">{otherType.japaneseName}</span>
+                  <span class="lsr-compat-score" style={`color: ${catColor}`}>
+                    {item.compatibility.score}/100
+                  </span>
+                  <span class="lsr-compat-category" style={`background: ${catColor}15; color: ${catColor}; border-color: ${catColor}40`}>
+                    {item.compatibility.category}
+                  </span>
+                </div>
+                <p class="lsr-compat-summary">{item.compatibility.oneLineSummary}</p>
+                <p class="lsr-compat-detail">{item.compatibility.detailDescription}</p>
+                <div class="lsr-compat-sub">
+                  <div class="lsr-compat-sub-item">
+                    <span class="lsr-compat-sub-label">うまくいくシーン</span>
+                    <span class="lsr-compat-sub-text">{item.compatibility.workingTogether}</span>
+                  </div>
+                  <div class="lsr-compat-sub-item">
+                    <span class="lsr-compat-sub-label">成長の機会</span>
+                    <span class="lsr-compat-sub-text">{item.compatibility.growthPotential}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* 相性タイプ概要カード */}
+      <div class="lsr-compat-types">
+        <h3 class="lsr-section-h3" style="margin-top: 2rem;">相性の良いタイプ（上位2タイプ）</h3>
+        <div class="lsr-compat-good-grid">
+          {typeData.compatibleTypes.map((ct) => {
+            const ct_data = types[ct.typeId];
+            return (
+              <a href={`/diagnosis/love-style/result/${ct.typeId}/`} class="lsr-compat-good-card" style={`--ct-color: ${typeColor[ct.typeId]}`}>
+                <span class="lsr-compat-good-emoji">{ct_data.emoji}</span>
+                <span class="lsr-compat-good-name">{ct_data.japaneseName}</span>
+                <span class="lsr-compat-good-reason">{ct.reason}</span>
+              </a>
+            );
+          })}
+        </div>
+
+        <h3 class="lsr-section-h3" style="margin-top: 1.5rem;">成長機会の多いタイプ</h3>
+        <p class="lsr-challenge-note">
+          「成長機会の多いタイプ」は、対話を重ねることで互いに多くを学べる関係です。
+        </p>
+        <div class="lsr-compat-good-grid">
+          {typeData.challengingTypes.map((ct) => {
+            const ct_data = types[ct.typeId];
+            return (
+              <a href={`/diagnosis/love-style/result/${ct.typeId}/`} class="lsr-compat-challenge-card" style={`--ct-color: ${typeColor[ct.typeId]}`}>
+                <span class="lsr-compat-good-emoji">{ct_data.emoji}</span>
+                <span class="lsr-compat-good-name">{ct_data.japaneseName}</span>
+                <span class="lsr-compat-good-reason">{ct.reason}</span>
+              </a>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  </Fragment>
+
+  {/* ========== 友人タブ（友情パターン） ========== */}
+  <Fragment slot="friend">
+    <div class="lsr-friend">
+      <h3 class="lsr-section-h3">{typeData.japaneseName}の友情パターン</h3>
+      <p class="lsr-body">{typeData.friendshipPattern}</p>
+      <div class="lsr-friend-note">
+        <p>
+          J.A.Lee（1973）の研究では、恋愛スタイルは友情関係にも影響することが示されています。
+          自分のスタイルを友人関係に応用することで、友情の特徴が理解しやすくなります。
+        </p>
+      </div>
+
+      <div class="lsr-pass-cta">
+        <p class="lsr-pass-desc">
+          友人関係での詳細な相性分析は友達相性診断で確認できます。
+        </p>
+        <a href="/diagnosis/friend-compat/" class="lsr-pass-btn">
+          <span>友達相性診断を受ける</span>
+          <span aria-hidden="true">→</span>
+        </a>
+      </div>
+    </div>
+  </Fragment>
+
+  {/* ========== 家族タブ ========== */}
+  <Fragment slot="family">
+    <div class="lsr-family">
+      <div class="lsr-pass-preview">
+        <h3 class="lsr-section-h3">{typeData.japaneseName}の家族関係</h3>
+        <p class="lsr-body">
+          {typeData.japaneseName}の恋愛スタイルは、家族への接し方にも影響します。
+          {typeData.characteristics[3]}
+        </p>
+        <div class="lsr-pass-cta">
+          <p class="lsr-pass-desc">
+            家族関係での{typeData.japaneseName}の傾向詳細は¥390 PASSで確認できます。
+          </p>
+          <a href="/pass/" class="lsr-pass-btn">
+            <span>¥390 PASSで家族レポートを読む</span>
+            <span aria-hidden="true">→</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </Fragment>
+
+  {/* ========== 学校タブ ========== */}
+  <Fragment slot="school">
+    <div class="lsr-school">
+      <div class="lsr-pass-preview">
+        <h3 class="lsr-section-h3">{typeData.japaneseName}の学習・成長スタイル</h3>
+        <div class="lsr-pass-cta">
+          <p class="lsr-pass-desc">
+            {typeData.japaneseName}に合った成長・学習のヒントは¥390 PASSで確認できます。
+          </p>
+          <a href="/pass/" class="lsr-pass-btn">
+            <span>¥390 PASSで詳細を読む</span>
+            <span aria-hidden="true">→</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </Fragment>
+
+  {/* ========== 有名人タブ ========== */}
+  <Fragment slot="celebrity">
+    <div class="lsr-celebrity">
+      <h3 class="lsr-section-h3">{typeData.japaneseName}の行動類型</h3>
+      <div class="lsr-pass-preview">
+        <div class="lsr-pass-cta">
+          <p class="lsr-pass-desc">
+            {typeData.japaneseName}の行動パターンが見える類型の詳細は¥390 PASSで確認できます。
+          </p>
+          <a href="/pass/" class="lsr-pass-btn">
+            <span>¥390 PASSで詳細を読む</span>
+            <span aria-hidden="true">→</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </Fragment>
+
+  {/* ========== 成長タブ（self-care） ========== */}
+  <Fragment slot="growth">
+    <div class="lsr-growth">
+      <h3 class="lsr-section-h3">{typeData.japaneseName}が恋愛で大切にすべきこと</h3>
+      <p class="lsr-growth-note">
+        恋愛スタイルの傾向を理解した上で、自分らしく関係を育てるためのガイドラインです。
+        専門的なカウンセリングの代替ではありません。
+      </p>
+      <div class="lsr-selfcare-block">
+        <p class="lsr-body">{typeData.selfCare}</p>
+      </div>
+
+      <h3 class="lsr-section-h3" style="margin-top: 1.5rem;">実践ヒント（5ステップ）</h3>
+      <ul class="lsr-tips-list">
+        <li class="lsr-tips-item">
+          <div class="lsr-tips-num" style={`background: ${typeColor[typeId]}`} aria-hidden="true">1</div>
+          <p class="lsr-tips-body">
+            自分が「{typeData.japaneseName}」であることを言語化しておく。
+            「私の恋愛スタイルは{typeData.catchphrase}という傾向があります」と伝えられると、パートナーとの理解がスムーズになります。
+          </p>
+        </li>
+        <li class="lsr-tips-item">
+          <div class="lsr-tips-num" style={`background: ${typeColor[typeId]}`} aria-hidden="true">2</div>
+          <p class="lsr-tips-body">
+            パートナーの恋愛スタイルを確認する。
+            お互いのタイプを知ることで、「なぜこのすれ違いが起きているか」の原因が見えやすくなります。
+            恋愛スタイルは対話のきっかけとして活用してください。
+          </p>
+        </li>
+        <li class="lsr-tips-item">
+          <div class="lsr-tips-num" style={`background: ${typeColor[typeId]}`} aria-hidden="true">3</div>
+          <p class="lsr-tips-body">
+            「{typeData.strengths[0]}」という強みを意識的に発揮できる場面を増やす。
+            強みを自覚した上で関係に活かすことで、パートナーへの貢献が明確になります。
+          </p>
+        </li>
+        <li class="lsr-tips-item">
+          <div class="lsr-tips-num" style={`background: ${typeColor[typeId]}`} aria-hidden="true">4</div>
+          <p class="lsr-tips-body">
+            気をつけたい傾向のうち、最もよく出るパターンを1つ選んで意識する。
+            {typeData.weaknesses[0]}。
+            週1回の振り返りで「今週はどうだったか」を確認するとパターンが変わりやすくなります。
+          </p>
+        </li>
+        <li class="lsr-tips-item">
+          <div class="lsr-tips-num" style={`background: ${typeColor[typeId]}`} aria-hidden="true">5</div>
+          <p class="lsr-tips-body">
+            相性ランキングを参考に、成長機会の多いタイプとの対話を深める。
+            違うスタイルのパートナーや友人との丁寧な対話が、自分の恋愛スタイルの幅を広げます。
+          </p>
+        </li>
+      </ul>
+      <div class="lsr-pass-cta">
+        <p class="lsr-pass-desc">
+          他の診断と組み合わせた統合プロファイルは /pro で確認できます。
+        </p>
+        <a href="/pro/" class="lsr-pass-btn">
+          <span>統合プロファイルで過去と比較する</span>
+          <span aria-hidden="true">→</span>
+        </a>
+        <p class="lsr-pass-sub">複数診断の統合管理・AIプロンプトカード付き</p>
+      </div>
+    </div>
+  </Fragment>
+</ResultLayout>
+
+{/* ========== 結果ページ追加コンテンツ（ResultLayout外） ========== */}
+<Container>
+  {/* ========== もう一度診断する ========== */}
+  <section class="lsr-retake-section">
+    <h2 class="lsr-retake-h2">診断をやり直す</h2>
+    <p class="lsr-retake-desc">
+      恋愛スタイルは経験や状況によって変わることがあります。
+      3ヶ月後・1年後に再挑戦してみると、変化に気づくことができます。
+    </p>
+    <a href="/diagnosis/love-style/" class="lsr-retake-btn">
+      もう一度恋愛スタイル診断をする
+    </a>
+  </section>
+
+  {/* ========== 行動特性グラフ（Big5非開示） ========== */}
+  <section class="lsr-radar-section" aria-labelledby="lsr-radar-h2">
+    <h2 id="lsr-radar-h2" class="lsr-radar-h2">恋愛行動特性グラフ</h2>
+    <p class="lsr-radar-note">
+      {typeData.japaneseName}の研究傾向値をグラフ化したものです。
+      個人差があります（参考値）。恋愛スタイル↔Big5換算参考: Engel GL et al. (2019) Personal Relationships.
+    </p>
+    <div class="lsr-radar-bars" role="list" aria-label="恋愛行動特性グラフ">
+      {radarLabels.map(({ key, label }) => {
+        const score = typeData.big5[key as keyof typeof typeData.big5];
+        const barColor = typeColor[typeId];
+        return (
+          <div class="lsr-radar-row" role="listitem">
+            <span class="lsr-radar-label">{label}</span>
+            <div class="lsr-radar-bar-bg" role="meter" aria-valuenow={score} aria-valuemin={0} aria-valuemax={100} aria-label={`${label}: ${score}%`}>
+              <div class="lsr-radar-bar-fill" style={`width: ${score}%; background: ${barColor}`}></div>
+            </div>
+            <span class="lsr-radar-val">{score}</span>
+          </div>
+        );
+      })}
+    </div>
+  </section>
+
+  {/* ========== 他タイプを見る ========== */}
+  <section class="lsr-other-types-section" aria-labelledby="lsr-other-h2">
+    <h2 id="lsr-other-h2" class="lsr-other-h2">他の恋愛スタイルを見る</h2>
+    <div class="lsr-other-types-grid">
+      {getOtherTypes(typeId).map(([id, data]) => (
+        <a href={`/diagnosis/love-style/result/${id}/`} class="lsr-other-type-card" style={`--other-color: ${typeColor[id as LoveStyleType]}`}>
+          <span class="lsr-other-icon" aria-hidden="true">{data.emoji}</span>
+          <span class="lsr-other-name">{data.japaneseName}</span>
+          <span class="lsr-other-catch">{data.catchphrase.slice(0, 22)}...</span>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  {/* ========== 関連診断 ========== */}
+  <section class="lsr-related-section" aria-labelledby="lsr-related-h2">
+    <h2 id="lsr-related-h2" class="lsr-related-h2">関連診断でさらに深める</h2>
+    <ul class="lsr-related-list">
+      <li class="lsr-related-item">
+        <a href="/diagnosis/mbti-compat/love/" class="lsr-related-link">
+          <span class="lsr-related-icon" aria-hidden="true">💑</span>
+          <span class="lsr-related-body">
+            <span class="lsr-related-title">MBTI恋愛相性診断</span>
+            <span class="lsr-related-desc">16タイプ × 恋愛スタイルで詳細な相性を分析</span>
+          </span>
+        </a>
+      </li>
+      <li class="lsr-related-item">
+        <a href="/diagnosis/friend-compat/" class="lsr-related-link">
+          <span class="lsr-related-icon" aria-hidden="true">🤝</span>
+          <span class="lsr-related-body">
+            <span class="lsr-related-title">友達相性診断</span>
+            <span class="lsr-related-desc">友情での恋愛スタイル転用・相性を確認する</span>
+          </span>
+        </a>
+      </li>
+      <li class="lsr-related-item">
+        <a href="/diagnosis/perfectionism/" class="lsr-related-link">
+          <span class="lsr-related-icon" aria-hidden="true">🔱</span>
+          <span class="lsr-related-body">
+            <span class="lsr-related-title">完璧主義診断</span>
+            <span class="lsr-related-desc">Hewitt & Flett (1991) 理論に基づく4タイプ診断</span>
+          </span>
+        </a>
+      </li>
+    </ul>
+  </section>
+
+  {/* ========== FAQ ========== */}
+  <section class="lsr-faq-section" aria-labelledby="lsr-faq-h2">
+    <h2 id="lsr-faq-h2" class="lsr-faq-h2">よくある質問</h2>
+    <dl class="lsr-faq-list">
+      {faqs.map(({ question, answer }) => (
+        <div class="lsr-faq-item">
+          <dt class="lsr-faq-q">{question}</dt>
+          <dd class="lsr-faq-a">{answer}</dd>
+        </div>
+      ))}
+    </dl>
+  </section>
+
+  {/* ========== 学術注記 ========== */}
+  <p class="lsr-academic-note">
+    本診断はJ.A.Lee（1973）「Colours of Love」およびHendrick & Hendrick（1986）Love Attitudes Scale（DOI: 10.1037/0022-3514.50.2.392）に基づく自己理解ツールです。
+    医学的・臨床的な診断ではありません。感情型（Mania）は恋愛への感情的な傾向を示すスタイル分類であり、医学的な依存症・精神障害とは異なります。
+    確認日: 2026-05-21。
+  </p>
+</Container>
+
+<style>
+/* ========== 概要 ========== */
+.lsr-aio-block {
+  background: #fdf2f8;
+  border-left: 4px solid #db2777;
+  border-radius: 0 0.5rem 0.5rem 0;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.25rem;
+}
+.lsr-aio-title {
+  font-weight: 700;
+  font-size: 0.8rem;
+  color: #db2777;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0 0 0.5rem;
+}
+.lsr-aio-list {
+  margin: 0;
+  padding-left: 1.5rem;
+  font-size: 0.85rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+.lsr-body {
+  font-size: 0.95rem;
+  line-height: 1.8;
+  color: #374151;
+  margin: 0 0 0.75rem;
+}
+.lsr-description {
+  margin-bottom: 1.5rem;
+}
+.lsr-characteristics {
+  margin-top: 1.5rem;
+}
+.lsr-h3,
+.lsr-section-h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 0 0 0.75rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+.lsr-char-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+.lsr-char-item {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+.lsr-char-icon {
+  flex-shrink: 0;
+  font-size: 0.7em;
+  margin-top: 0.35em;
+}
+.lsr-theory-note {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+  font-size: 0.8rem;
+  color: #6b7280;
+  line-height: 1.6;
+  margin-top: 1.5rem;
+}
+.lsr-theory-note p { margin: 0; }
+.lsr-freshness {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  margin-top: 0.75rem;
+}
+
+/* ========== 強み・弱み ========== */
+.lsr-strength-list,
+.lsr-weakness-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.lsr-strength-item,
+.lsr-weakness-item {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+.lsr-strength-icon,
+.lsr-weakness-icon {
+  flex-shrink: 0;
+  font-size: 1.1em;
+}
+.lsr-weakness-note {
+  margin-top: 1.25rem;
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+  font-size: 0.85rem;
+  color: #92400e;
+  line-height: 1.6;
+}
+
+/* ========== 相性ランキング ========== */
+.lsr-love-note {
+  font-size: 0.82rem;
+  color: #6b7280;
+  margin-bottom: 1rem;
+  background: #fdf2f8;
+  border: 1px solid #fbcfe8;
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+  line-height: 1.5;
+}
+.lsr-compat-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  margin-bottom: 1rem;
+}
+.lsr-compat-item {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 1rem;
+}
+.lsr-compat-rank {
+  flex-shrink: 0;
+  width: 2rem;
+  height: 2rem;
+  background: #f3f4f6;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: #374151;
+}
+.lsr-compat-body {
+  flex: 1;
+  min-width: 0;
+}
+.lsr-compat-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.4rem;
+}
+.lsr-compat-emoji { font-size: 1.4rem; flex-shrink: 0; }
+.lsr-compat-name {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #111827;
+}
+.lsr-compat-score {
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+.lsr-compat-category {
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 0.2rem 0.6rem;
+  border-radius: 1rem;
+  border: 1px solid;
+}
+.lsr-compat-summary {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #374151;
+  margin: 0 0 0.4rem;
+  line-height: 1.5;
+}
+.lsr-compat-detail {
+  font-size: 0.83rem;
+  line-height: 1.7;
+  color: #4b5563;
+  margin: 0 0 0.75rem;
+}
+.lsr-compat-sub {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.lsr-compat-sub-item {
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-start;
+  font-size: 0.8rem;
+  line-height: 1.5;
+}
+.lsr-compat-sub-label {
+  flex-shrink: 0;
+  font-weight: 600;
+  color: #6b7280;
+  background: #f3f4f6;
+  padding: 0.1rem 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.73rem;
+}
+.lsr-compat-sub-text {
+  color: #4b5563;
+}
+
+/* ========== 相性カード ========== */
+.lsr-compat-types {
+  margin-top: 1.5rem;
+}
+.lsr-compat-good-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+.lsr-compat-good-card,
+.lsr-compat-challenge-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding: 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.15s;
+  border-top: 3px solid var(--ct-color, #db2777);
+}
+.lsr-compat-good-card:hover,
+.lsr-compat-challenge-card:hover {
+  border-color: var(--ct-color, #db2777);
+  box-shadow: 0 2px 8px rgba(0 0 0 / 0.08);
+}
+.lsr-compat-good-emoji { font-size: 1.4rem; }
+.lsr-compat-good-name {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--ct-color, #db2777);
+}
+.lsr-compat-good-reason {
+  font-size: 0.77rem;
+  line-height: 1.5;
+  color: #4b5563;
+}
+.lsr-challenge-note {
+  font-size: 0.82rem;
+  color: #6b7280;
+  margin-bottom: 0.75rem;
+  line-height: 1.5;
+}
+
+/* ========== 友情 ========== */
+.lsr-friend-note {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+  font-size: 0.82rem;
+  color: #166534;
+  line-height: 1.6;
+  margin-top: 1rem;
+}
+.lsr-friend-note p { margin: 0; }
+
+/* ========== PASSプレビュー ========== */
+.lsr-pass-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.lsr-pass-cta {
+  background: linear-gradient(135deg, #db2777 0%, #9333ea 100%);
+  color: #fff;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+.lsr-pass-desc {
+  font-size: 0.875rem;
+  opacity: 0.9;
+  line-height: 1.6;
+  margin: 0;
+}
+.lsr-pass-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #fff;
+  color: #db2777;
+  font-weight: 700;
+  font-size: 1rem;
+  padding: 0.75rem 1.75rem;
+  border-radius: 3rem;
+  text-decoration: none;
+  transition: transform 0.15s;
+}
+.lsr-pass-btn:hover { transform: translateY(-1px); }
+.lsr-pass-sub {
+  font-size: 0.75rem;
+  opacity: 0.75;
+  margin: 0;
+}
+
+/* ========== 成長Tips ========== */
+.lsr-growth-note {
+  font-size: 0.82rem;
+  color: #6b7280;
+  line-height: 1.6;
+  margin-bottom: 1.25rem;
+  background: #fdf2f8;
+  border: 1px solid #fbcfe8;
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+}
+.lsr-selfcare-block {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+.lsr-tips-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.lsr-tips-item {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+.lsr-tips-num {
+  flex-shrink: 0;
+  width: 2rem;
+  height: 2rem;
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+.lsr-tips-body {
+  font-size: 0.9rem;
+  line-height: 1.7;
+  color: #374151;
+  margin: 0;
+}
+
+/* ========== もう一度 ========== */
+.lsr-retake-section {
+  text-align: center;
+  padding: 2rem 1rem;
+  border-top: 1px solid #e5e7eb;
+  margin-top: 2rem;
+}
+.lsr-retake-h2 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+.lsr-retake-desc {
+  font-size: 0.9rem;
+  color: #6b7280;
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}
+.lsr-retake-btn {
+  display: inline-block;
+  background: #db2777;
+  color: #fff;
+  font-weight: 700;
+  padding: 0.75rem 2rem;
+  border-radius: 3rem;
+  text-decoration: none;
+  font-size: 0.95rem;
+  transition: opacity 0.15s;
+}
+.lsr-retake-btn:hover { opacity: 0.88; }
+
+/* ========== 行動特性グラフ ========== */
+.lsr-radar-section {
+  padding: 2rem 1rem;
+  border-top: 1px solid #e5e7eb;
+}
+.lsr-radar-h2 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+.lsr-radar-note {
+  font-size: 0.8rem;
+  color: #6b7280;
+  margin-bottom: 1.25rem;
+  line-height: 1.5;
+}
+.lsr-radar-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.lsr-radar-row {
+  display: grid;
+  grid-template-columns: 8rem 1fr 2.5rem;
+  align-items: center;
+  gap: 0.75rem;
+}
+.lsr-radar-label {
+  font-size: 0.85rem;
+  color: #374151;
+  white-space: nowrap;
+}
+.lsr-radar-bar-bg {
+  background: #e5e7eb;
+  border-radius: 1rem;
+  height: 0.625rem;
+  overflow: hidden;
+}
+.lsr-radar-bar-fill {
+  height: 100%;
+  border-radius: 1rem;
+  transition: width 0.5s ease;
+}
+.lsr-radar-val {
+  font-size: 0.8rem;
+  color: #6b7280;
+  text-align: right;
+}
+
+/* ========== 他タイプ ========== */
+.lsr-other-types-section {
+  padding: 2rem 1rem;
+  border-top: 1px solid #e5e7eb;
+}
+.lsr-other-h2 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+.lsr-other-types-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 0.75rem;
+}
+.lsr-other-type-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
+  text-align: center;
+}
+.lsr-other-type-card:hover {
+  border-color: var(--other-color, #db2777);
+  box-shadow: 0 2px 8px rgba(219 39 119 / 0.1);
+  transform: translateY(-2px);
+}
+.lsr-other-icon { font-size: 1.75rem; }
+.lsr-other-name {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--other-color, #db2777);
+}
+.lsr-other-catch {
+  font-size: 0.72rem;
+  color: #6b7280;
+  line-height: 1.4;
+}
+
+/* ========== 関連診断 ========== */
+.lsr-related-section {
+  padding: 2rem 1rem;
+  border-top: 1px solid #e5e7eb;
+}
+.lsr-related-h2 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+.lsr-related-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.lsr-related-link {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.lsr-related-link:hover {
+  border-color: #db2777;
+  box-shadow: 0 2px 8px rgba(219 39 119 / 0.1);
+}
+.lsr-related-icon { font-size: 1.75rem; flex-shrink: 0; }
+.lsr-related-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+.lsr-related-title { font-weight: 700; font-size: 0.95rem; }
+.lsr-related-desc { font-size: 0.8rem; color: var(--sn-muted, #6b7280); }
+
+/* ========== FAQ ========== */
+.lsr-faq-section {
+  padding: 2rem 1rem;
+  border-top: 1px solid #e5e7eb;
+}
+.lsr-faq-h2 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 1.25rem;
+}
+.lsr-faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.lsr-faq-item {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+.lsr-faq-q {
+  font-weight: 700;
+  font-size: 0.9rem;
+  padding: 0.875rem 1.25rem;
+  background: #f9fafb;
+  margin: 0;
+  display: block;
+}
+.lsr-faq-q::before { content: 'Q. '; color: #db2777; }
+.lsr-faq-a {
+  font-size: 0.875rem;
+  line-height: 1.7;
+  padding: 0.875rem 1.25rem;
+  margin: 0;
+  color: #4b5563;
+}
+.lsr-faq-a::before { content: 'A. '; font-weight: 700; color: #16a34a; }
+
+/* ========== 学術注記 ========== */
+.lsr-academic-note {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  border-top: 1px solid #e5e7eb;
+  padding-top: 1.5rem;
+  margin-top: 2rem;
+  line-height: 1.6;
+  padding-inline: 1rem;
+}
+
+/* ========== レスポンシブ ========== */
+@media (max-width: 480px) {
+  .lsr-radar-row {
+    grid-template-columns: 6rem 1fr 2rem;
+  }
+  .lsr-radar-label { font-size: 0.75rem; }
+  .lsr-other-types-grid {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+  .lsr-compat-good-grid {
+    grid-template-columns: 1fr;
+  }
+  .lsr-compat-item {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+}
+</style>

@@ -1,20 +1,1019 @@
 ---
 /**
- * 診断ページ スタブ（Phase 0）
- * content-writer が本文を執筆する。
- * ui-ux-designer が診断フローコンポーネントを実装する。
+ * 恋愛スタイル診断 ランディングページ
+ * KW: 恋愛スタイル診断（VOL3,600/SD20・Phase 1第9優先）
+ * 学術根拠: J.A.Lee (1973) + Hendrick & Hendrick (1986) Love Attitudes Scale
+ * 確認日: 2026-05-21
+ *
+ * SEO/AIO対応:
+ * - JSON-LD: WebApplication + Quiz + FAQPage + BreadcrumbList
+ * - AIOブロック: 「このページでわかること」
+ * - YMYL回避: 医学用語NG・「恋愛傾向」表現・「メンヘラ」等NG
+ * - LGBTQ+配慮: 「パートナー/相手」表現
+ * - 心理的決定論NG: 「傾向がある」表現
  */
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Container from '../../../components/Container.astro';
-const diagName = 'この診断';
+import DiagnosisFlow from '../../../components/DiagnosisFlow';
+import { meta } from '../../../data/diagnoses/love-style/meta';
+import { questions } from '../../../data/diagnoses/love-style/questions';
+import { calculateResultTypeId } from '../../../data/diagnoses/love-style/results';
+
+const SITE_URL = 'https://shindan-navi.jp';
+const PAGE_URL = `${SITE_URL}/diagnosis/love-style/`;
+
+// DiagnosisFlow に渡す questions を diagnosis.ts の Question 型に変換
+const flowQuestions = questions.map((q) => ({
+  id: String(q.id),
+  text: q.text,
+}));
+
+// JSON-LD: WebApplication
+const jsonLdWebApp = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  '@id': `${PAGE_URL}#webapp`,
+  name: '恋愛スタイル診断【無料・3分・30問・J.A.Lee理論】',
+  url: PAGE_URL,
+  applicationCategory: 'EducationalApplication',
+  operatingSystem: 'Web',
+  description:
+    'John Alan Lee（1973）の6タイプ恋愛理論に基づく無料診断。30問で情熱型（Eros）・遊戯型（Ludus）・友愛型（Storge）・実利型（Pragma）・感情型（Mania）・献身型（Agape）から恋愛スタイルを判定します。',
+  offers: {
+    '@type': 'Offer',
+    price: '0',
+    priceCurrency: 'JPY',
+    availability: 'https://schema.org/InStock',
+  },
+  author: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+    name: '診断ナビ',
+    url: SITE_URL,
+  },
+  publisher: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+  },
+};
+
+// JSON-LD: Quiz（citation に学術文献を配置）
+const jsonLdQuiz = {
+  '@context': 'https://schema.org',
+  '@type': 'Quiz',
+  '@id': `${PAGE_URL}#quiz`,
+  name: '恋愛スタイル診断（30問）',
+  url: PAGE_URL,
+  about: {
+    '@type': 'Thing',
+    name: '恋愛スタイル6タイプ理論（Eros / Ludus / Storge / Pragma / Mania / Agape）',
+    description: 'J.A.Lee（1973）が提唱した恋愛の6タイプ分類モデル',
+    sameAs: 'https://doi.org/10.1037/0022-3514.50.2.392',
+  },
+  educationalLevel: 'HighSchool',
+  numberOfQuestions: meta.questionCount,
+  assesses: '恋愛スタイル・恋愛傾向・パートナーとの相性・友情パターン',
+  dateCreated: meta.publishedAt,
+  dateModified: meta.updatedAt,
+  inLanguage: 'ja',
+  citation: meta.references.map((ref) => ({
+    '@type': 'CreativeWork',
+    name: ref.title,
+    author: ref.author,
+    datePublished: String(ref.year),
+    url: ref.url,
+  })),
+};
+
+// FAQ 8問
+const faqs = [
+  {
+    question: '恋愛スタイルは変わることがありますか？',
+    answer:
+      'はい、変わることがあります。Lee（1973）の研究でも、恋愛スタイルは経験・成長・環境の変化によって変容することが示されています。同じ人でも20代と30代では結果が異なる場合があります。本診断は「今の傾向」を把握するためのツールです。',
+  },
+  {
+    question: '6タイプの違いを教えてください',
+    answer:
+      '情熱型（Eros）：強い感情的惹かれを重視。遊戯型（Ludus）：自由と軽やかさを大切にする。友愛型（Storge）：友情から育まれる安定した愛。実利型（Pragma）：価値観・将来設計の一致を重視。感情型（Mania）：強い感情の波と深いつながりへの希求。献身型（Agape）：見返りを求めない深い愛情。（J.A.Lee 1973に基づく）',
+  },
+  {
+    question: '自分の恋愛スタイルを知るメリットは何ですか？',
+    answer:
+      'Hendrick & Hendrick（1986）の研究では、恋愛スタイルへの理解が関係満足度と関連することが示されています。自分の傾向を知ることで、パートナーとの期待値のすり合わせがしやすくなり、すれ違いを減らす対話のきっかけになります。',
+  },
+  {
+    question: '感情型（Mania）は依存傾向があるということですか？',
+    answer:
+      'いいえ、そうではありません。感情型は「恋愛への真剣さと強い感情表現の傾向」を示す恋愛スタイルです。医学的な依存症や執着障害とは全く異なります。感情型の方の深い愛情は、誠実さとパートナーへの真剣さの表れでもあります。',
+  },
+  {
+    question: '結婚に向いているタイプは何ですか？',
+    answer:
+      '研究（Hendrick & Hendrick 1992）では、Storge（友愛型）とPragma（実利型）が長期的な関係満足度と相関しやすい傾向が示されています。ただし、どのタイプでも自分のスタイルを理解してパートナーと対話できることが、最も重要です。',
+  },
+  {
+    question: '献身型（Agape）は自己犠牲しすぎる傾向がありますか？',
+    answer:
+      '献身型は相手の幸せを自分の喜びとする傾向が強い恋愛スタイルです。この傾向は深い誠実さの表れでもありますが、自分のニーズを後回しにしすぎると消耗することがあります。自分を大切にすることも、長期的に相手を支えるための選択です。',
+  },
+  {
+    question: '同じタイプ同士の相性はどうですか？',
+    answer:
+      'タイプによって異なります。友愛型同士・献身型同士は価値観の共鳴がしやすく、安定しやすいです。遊戯型同士も自由の感覚が合います。感情型同士は深い理解はしやすいですが、感情の波が重なると衝突しやすくなる場合があります。同タイプでも対話が最も重要です。',
+  },
+  {
+    question: 'この診断は恋愛だけに使えますか？',
+    answer:
+      '友情関係・職場の対人関係にも応用できます。各タイプページに「友情パターン」の説明を掲載しています。恋愛スタイルは友人への接し方にも影響することが研究（Lee 1973）で示されており、人間関係全般の自己理解ツールとして活用できます。',
+  },
+];
+
+const jsonLdFAQ = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  '@id': `${PAGE_URL}#faq`,
+  mainEntity: faqs.map(({ question, answer }) => ({
+    '@type': 'Question',
+    name: question,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: answer,
+    },
+  })),
+};
+
+// JSON-LD: BreadcrumbList
+const jsonLdBreadcrumb = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'ホーム', item: SITE_URL },
+    { '@type': 'ListItem', position: 2, name: '診断一覧', item: `${SITE_URL}/diagnosis/` },
+    { '@type': 'ListItem', position: 3, name: '恋愛スタイル診断', item: PAGE_URL },
+  ],
+};
+
+const jsonLdAll = [jsonLdWebApp, jsonLdQuiz, jsonLdFAQ, jsonLdBreadcrumb];
+
+// 6タイプカード用データ
+const typeCards = [
+  {
+    id: 'eros',
+    japaneseName: '情熱型',
+    nameEn: 'Eros',
+    catchphrase: '運命の出会いを信じる、情熱と直感の恋愛家',
+    icon: '❤️',
+    color: '#dc2626',
+  },
+  {
+    id: 'ludus',
+    japaneseName: '遊戯型',
+    nameEn: 'Ludus',
+    catchphrase: '自由に楽しむ、恋愛の達人スタイル',
+    icon: '🃏',
+    color: '#d97706',
+  },
+  {
+    id: 'storge',
+    japaneseName: '友愛型',
+    nameEn: 'Storge',
+    catchphrase: '信頼と時間が育む、友情から始まる深い絆',
+    icon: '🌿',
+    color: '#16a34a',
+  },
+  {
+    id: 'pragma',
+    japaneseName: '実利型',
+    nameEn: 'Pragma',
+    catchphrase: '現実と感情を両立させる、賢明な恋愛設計者',
+    icon: '🔑',
+    color: '#2563eb',
+  },
+  {
+    id: 'mania',
+    japaneseName: '感情型',
+    nameEn: 'Mania',
+    catchphrase: '愛の深さを全力で感じる、感情の豊かな恋愛家',
+    icon: '🌊',
+    color: '#7c3aed',
+  },
+  {
+    id: 'agape',
+    japaneseName: '献身型',
+    nameEn: 'Agape',
+    catchphrase: '見返りを求めない、深く静かな無償の愛',
+    icon: '🕊️',
+    color: '#0891b2',
+  },
+];
+
+// 恋愛スタイルが人生に与える影響（セクション用）
+const lifeImpacts = [
+  {
+    icon: '💬',
+    title: 'パートナーとの対話パターン',
+    desc: '恋愛スタイルによって、コミュニケーションの好みや期待値が異なります。情熱型は感情的な共鳴を求め、実利型は論理的な対話を好む傾向があります。自分のスタイルを知ることで、「なぜパートナーと話し合いがうまくいかないか」の原因が見えやすくなります。',
+  },
+  {
+    icon: '🤝',
+    title: '友情・人間関係への影響',
+    desc: 'Lee（1973）の研究では、恋愛スタイルは友情関係にも影響することが示されています。献身型は友人のために自然に動き、遊戯型は広いネットワークを好みます。自分のスタイルを友人関係に応用することで、人間関係の多くが腑に落ちる気づきを得られます。',
+  },
+  {
+    icon: '📈',
+    title: '長期的なパートナーシップ',
+    desc: 'Hendrick & Hendrick（1986）のLove Attitudes Scale研究では、恋愛スタイルと関係満足度の関連が示されています。自分のスタイルを自覚し、パートナーとの期待値を丁寧にすり合わせることが、長期的な関係満足の基盤になります。',
+  },
+];
 ---
-<BaseLayout title={`${diagName} - 診断ナビ`} description="診断説明（content-writerが執筆）">
+
+<BaseLayout
+  title={meta.title}
+  description={meta.description}
+  canonical={PAGE_URL}
+  jsonLd={jsonLdAll}
+  ogType="website"
+  publishDate={meta.publishedAt}
+  lastUpdated={meta.updatedAt}
+  breadcrumbs={[
+    { name: '診断一覧', url: '/diagnosis/' },
+    { name: '恋愛スタイル診断', url: '/diagnosis/love-style/' },
+  ]}
+>
+  {/* ========== ヒーローセクション ========== */}
+  <section class="ls-hero" aria-labelledby="ls-hero-h1">
+    <Container>
+      <div class="ls-hero-inner">
+        <div class="ls-hero-badge">J.A.Lee (1973) 恋愛6タイプ理論 | Hendrick & Hendrick (1986) LAS 準拠</div>
+        <h1 id="ls-hero-h1" class="ls-hero-h1">
+          恋愛スタイル診断<br />
+          <span class="ls-hero-meta">【無料・3分・30問・J.A.Lee理論】</span>
+        </h1>
+        <p class="ls-hero-catch">
+          あなたの恋愛スタイルはどのタイプ？<br />
+          情熱型・遊戯型・友愛型・実利型・感情型・献身型の6つから判定
+        </p>
+        <div class="ls-hero-stats">
+          <span class="ls-stat"><strong>30</strong>問</span>
+          <span class="ls-stat-sep">・</span>
+          <span class="ls-stat">約<strong>3</strong>分</span>
+          <span class="ls-stat-sep">・</span>
+          <span class="ls-stat"><strong>6</strong>タイプ</span>
+          <span class="ls-stat-sep">・</span>
+          <span class="ls-stat">無料</span>
+        </div>
+        <a href="#diagnosis-flow" class="ls-cta-btn">
+          <span>診断スタート</span>
+          <span class="ls-cta-arrow" aria-hidden="true">↓</span>
+        </a>
+        <p class="ls-hero-sub">登録不要・所要時間3分・途中保存OK</p>
+      </div>
+    </Container>
+  </section>
+
   <Container>
-    <div style="padding-block: 4rem; text-align: center;">
-      <p style="font-size: 3rem; margin-bottom: 1rem;">🔮</p>
-      <h1 style="font-family: var(--sn-font-rounded); font-size: 1.5rem; margin-bottom: 1rem;">診断準備中</h1>
-      <p style="color: var(--sn-muted);">Phase 1 にてコンテンツ・診断フローを実装します</p>
-      <a href="/diagnosis/" style="display:inline-block; margin-top:2rem; color:var(--sn-primary);">← 診断一覧に戻る</a>
+    {/* ========== AIOブロック（このページでわかること） ========== */}
+    <div class="ls-aio-block" role="note" aria-label="このページでわかること">
+      <p class="ls-aio-title">このページでわかること</p>
+      <ul class="ls-aio-list">
+        <li>30問・5段階リッカートで測る恋愛スタイル6タイプ（J.A.Lee 1973年・Hendrick & Hendrick 1986年LAS準拠）</li>
+        <li>タイプ別の恋愛傾向・強み・気をつけたい点・他タイプとの相性（スコア付き）</li>
+        <li>友情・人間関係全般への応用方法と、パートナーとの対話改善のヒント</li>
+      </ul>
+      <p class="ls-aio-updated">
+        <time datetime={meta.updatedAt}>{meta.updatedAt}</time> 時点の情報。
+        <a href="https://doi.org/10.1037/0022-3514.50.2.392" target="_blank" rel="noopener noreferrer">
+          Hendrick & Hendrick (1986) LAS
+        </a>
+        を確認済。
+      </p>
     </div>
+
+    {/* ========== 恋愛スタイル理論とは ========== */}
+    <section class="ls-section" aria-labelledby="ls-what-h2">
+      <h2 id="ls-what-h2" class="ls-h2">恋愛スタイル診断とは</h2>
+      <p class="ls-lead">
+        恋愛スタイル診断は、カナダの社会学者 John Alan Lee が 1973年の著書
+        「Colours of Love: An Exploration of the Ways of Loving」で提唱した恋愛6タイプ理論をもとにした自己理解ツールです。
+        その後 Clyde Hendrick & Susan Hendrick（1986年）が「Love Attitudes Scale（LAS）」として検証・体系化し、
+        世界中の恋愛心理学研究で活用されています
+        （<a href="https://doi.org/10.1037/0022-3514.50.2.392" target="_blank" rel="noopener noreferrer">Hendrick & Hendrick 1986, DOI確認済</a>）。
+      </p>
+      <p class="ls-body">
+        この診断は医学的・臨床的な評価ではなく、恋愛傾向を把握するための参考ツールです。
+        「どのタイプが良い・悪い」ではなく、それぞれのスタイルの特徴と強みを理解することを目的としています。
+      </p>
+      <div class="ls-info-table-wrap">
+        <table class="ls-info-table">
+          <caption class="ls-table-caption">恋愛スタイル診断の概要（2026-05-21時点）</caption>
+          <tbody>
+            <tr>
+              <th scope="row">理論の根拠</th>
+              <td>J.A.Lee (1973) Colours of Love + Hendrick & Hendrick (1986) Love Attitudes Scale</td>
+            </tr>
+            <tr>
+              <th scope="row">問題数</th>
+              <td>30問（各タイプ5問 × 6タイプ）</td>
+            </tr>
+            <tr>
+              <th scope="row">回答方式</th>
+              <td>5段階リッカートスケール（1=全く当てはまらない〜5=とても当てはまる）</td>
+            </tr>
+            <tr>
+              <th scope="row">所要時間</th>
+              <td>約3分</td>
+            </tr>
+            <tr>
+              <th scope="row">結果タイプ数</th>
+              <td>6タイプ（情熱型・遊戯型・友愛型・実利型・感情型・献身型）</td>
+            </tr>
+            <tr>
+              <th scope="row">対象シーン</th>
+              <td>恋愛・友情・人間関係全般の自己理解</td>
+            </tr>
+            <tr>
+              <th scope="row">注意事項</th>
+              <td>医学的診断ではありません。「恋愛傾向」の参考情報としてご活用ください。</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    {/* ========== 6タイプ紹介 ========== */}
+    <section class="ls-section" aria-labelledby="ls-types-h2">
+      <h2 id="ls-types-h2" class="ls-h2">6つの恋愛スタイル</h2>
+      <p class="ls-lead">
+        J.A.Lee（1973）は恋愛を「色のように混ざり合う6つのスタイル」として分類しました。
+        どのタイプが優れているかではなく、それぞれの傾向と強みを理解することが目的です。
+      </p>
+      <div class="ls-types-grid">
+        {typeCards.map((tc) => (
+          <article class="ls-type-card" style={`--type-color: ${tc.color}`}>
+            <div class="ls-type-icon" aria-hidden="true">{tc.icon}</div>
+            <h3 class="ls-type-name">{tc.japaneseName}</h3>
+            <p class="ls-type-name-en">{tc.nameEn}</p>
+            <p class="ls-type-desc">{tc.catchphrase}</p>
+            <a href={`/diagnosis/love-style/result/${tc.id}/`} class="ls-type-link">
+              {tc.japaneseName}の詳細を見る
+              <span aria-hidden="true">→</span>
+            </a>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    {/* ========== 恋愛スタイルが人生に与える影響 ========== */}
+    <section class="ls-section" aria-labelledby="ls-impact-h2">
+      <h2 id="ls-impact-h2" class="ls-h2">恋愛スタイルが人間関係に与える影響</h2>
+      <p class="ls-lead">
+        Hendrick & Hendrick（1986）の Love Attitudes Scale 研究では、
+        恋愛スタイルが関係満足度・対話パターン・友情にも影響することが示されています。
+        自分のスタイルを理解することで、人間関係全般の改善につながります。
+      </p>
+      <div class="ls-impact-grid">
+        {lifeImpacts.map((impact) => (
+          <div class="ls-impact-card">
+            <div class="ls-impact-icon" aria-hidden="true">{impact.icon}</div>
+            <h3 class="ls-impact-title">{impact.title}</h3>
+            <p class="ls-impact-desc">{impact.desc}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    {/* ========== 使い方 ========== */}
+    <section class="ls-section" aria-labelledby="ls-how-h2">
+      <h2 id="ls-how-h2" class="ls-h2">使い方（3ステップ）</h2>
+      <ol class="ls-steps">
+        <li class="ls-step">
+          <div class="ls-step-num" aria-hidden="true">1</div>
+          <div class="ls-step-body">
+            <h3 class="ls-step-title">「診断スタート」をタップ</h3>
+            <p class="ls-step-desc">
+              登録・インストール不要。ブラウザですぐ始められます。
+              途中で閉じても24時間以内なら再開できます。
+            </p>
+          </div>
+        </li>
+        <li class="ls-step">
+          <div class="ls-step-num" aria-hidden="true">2</div>
+          <div class="ls-step-body">
+            <h3 class="ls-step-title">30問に回答する（約3分）</h3>
+            <p class="ls-step-desc">
+              各質問に「1（全く当てはまらない）〜5（とても当てはまる）」で答えます。
+              「恋愛・人間関係での自分」を意識しながら正直に答えると精度が上がります。
+            </p>
+          </div>
+        </li>
+        <li class="ls-step">
+          <div class="ls-step-num" aria-hidden="true">3</div>
+          <div class="ls-step-body">
+            <h3 class="ls-step-title">恋愛スタイル・他タイプとの相性を確認</h3>
+            <p class="ls-step-desc">
+              6タイプのうち最もスコアが高いものが「あなたのタイプ」として表示されます。
+              恋愛傾向・強み・他タイプとの相性ランキングを無料で確認できます。
+            </p>
+          </div>
+        </li>
+      </ol>
+    </section>
+
+    {/* ========== 診断フロー（React島） ========== */}
+    <section class="ls-section ls-section--flow" id="diagnosis-flow" aria-labelledby="ls-flow-h2">
+      <h2 id="ls-flow-h2" class="ls-h2 ls-h2--center">診断を始める</h2>
+      <p class="ls-flow-lead">
+        全30問・約3分。「恋愛・パートナーシップでの自分」を意識しながら答えてください。
+      </p>
+      <div class="ls-flow-wrapper">
+        <DiagnosisFlow
+          client:load
+          diagnosisId="love-style"
+          questions={flowQuestions}
+          resultPath={(typeId: string) => `/diagnosis/love-style/result/${typeId}/`}
+          calculateResult={calculateResultTypeId}
+        />
+      </div>
+    </section>
+
+    {/* ========== 参考文献・根拠 ========== */}
+    <section class="ls-section" aria-labelledby="ls-science-h2">
+      <h2 id="ls-science-h2" class="ls-h2">診断の根拠・参考文献</h2>
+      <p class="ls-lead">
+        本診断はJ.A.Lee（1973）の恋愛スタイル理論とHendrick & Hendrick（1986）のLove Attitudes Scaleをもとに設計した自己理解ツールです。
+        傾向把握のための参考情報であり、医学的・臨床的な診断ではありません。
+      </p>
+      <div class="ls-science-grid">
+        <div class="ls-science-card">
+          <div class="ls-science-icon" aria-hidden="true">📚</div>
+          <h3 class="ls-science-title">主要参考文献</h3>
+          <ul class="ls-ref-list">
+            {meta.references.map((ref) => (
+              <li class="ls-ref-item">
+                <a href={ref.url} target="_blank" rel="noopener noreferrer" class="ls-ref-link">
+                  {ref.author} ({ref.year}). {ref.title}. {ref.publisher}.
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div class="ls-science-card">
+          <div class="ls-science-icon" aria-hidden="true">⚠️</div>
+          <h3 class="ls-science-title">ご注意</h3>
+          <p class="ls-science-body">
+            本診断を医学的判断・精神科的評価の代わりに使用しないでください。
+            恋愛スタイルの傾向把握と自己理解のためのツールです。
+            「感情型（Mania）」は医学的な依存症や精神障害を意味するものではなく、
+            恋愛への感情的な真剣さの傾向を示すスタイル分類です。
+          </p>
+        </div>
+        <div class="ls-science-card">
+          <div class="ls-science-icon" aria-hidden="true">🔄</div>
+          <h3 class="ls-science-title">更新・鮮度管理</h3>
+          <p class="ls-science-body">
+            理論・学術情報は定期的に確認しています。
+            最終確認日: <time datetime={meta.updatedAt}>{meta.updatedAt}</time>。
+            情報の誤りを見つけた場合は
+            <a href="/contact/">お問い合わせ</a>
+            からご連絡ください。
+          </p>
+        </div>
+      </div>
+    </section>
+
+    {/* ========== 関連診断クロス推薦 ========== */}
+    <section class="ls-section" aria-labelledby="ls-related-h2">
+      <h2 id="ls-related-h2" class="ls-h2">関連診断</h2>
+      <p class="ls-lead">
+        恋愛スタイル診断と組み合わせることで、自己理解がさらに深まります。
+      </p>
+      <ul class="ls-related-list">
+        <li class="ls-related-item">
+          <a href="/diagnosis/mbti-compat/love/" class="ls-related-link">
+            <span class="ls-related-icon" aria-hidden="true">💑</span>
+            <span class="ls-related-body">
+              <span class="ls-related-title">MBTI恋愛相性診断</span>
+              <span class="ls-related-desc">16タイプ × 恋愛スタイルで相性を詳しく分析</span>
+            </span>
+          </a>
+        </li>
+        <li class="ls-related-item">
+          <a href="/diagnosis/friend-compat/" class="ls-related-link">
+            <span class="ls-related-icon" aria-hidden="true">🤝</span>
+            <span class="ls-related-body">
+              <span class="ls-related-title">友達相性診断</span>
+              <span class="ls-related-desc">友情関係でのスタイルと相性を確認する</span>
+            </span>
+          </a>
+        </li>
+        <li class="ls-related-item">
+          <a href="/diagnosis/perfectionism/" class="ls-related-link">
+            <span class="ls-related-icon" aria-hidden="true">🔱</span>
+            <span class="ls-related-body">
+              <span class="ls-related-title">完璧主義診断</span>
+              <span class="ls-related-desc">Hewitt & Flett (1991) 理論に基づく4タイプ診断</span>
+            </span>
+          </a>
+        </li>
+        <li class="ls-related-item">
+          <a href="/diagnosis/multi-int/" class="ls-related-link">
+            <span class="ls-related-icon" aria-hidden="true">🦉</span>
+            <span class="ls-related-body">
+              <span class="ls-related-title">多重知能テスト</span>
+              <span class="ls-related-desc">8つの知能から「強みのかたち」を64問で発見</span>
+            </span>
+          </a>
+        </li>
+      </ul>
+    </section>
+
+    {/* ========== FAQ ========== */}
+    <section class="ls-section" aria-labelledby="ls-faq-h2">
+      <h2 id="ls-faq-h2" class="ls-h2">よくある質問</h2>
+      <dl class="ls-faq-list">
+        {faqs.map(({ question, answer }) => (
+          <div class="ls-faq-item">
+            <dt class="ls-faq-q">{question}</dt>
+            <dd class="ls-faq-a">{answer}</dd>
+          </div>
+        ))}
+      </dl>
+    </section>
+
+    {/* ========== 学術注記 ========== */}
+    <p class="ls-academic-note">
+      本診断は J.A.Lee（1973）「Colours of Love」および Hendrick & Hendrick（1986）Love Attitudes Scale に基づく自己理解ツールです。
+      医学的・臨床的な診断ではありません。感情型（Mania）は恋愛への真剣さの傾向を示すスタイル分類であり、医学的な依存症・精神障害とは異なります。
+      確認日: 2026-05-21。
+    </p>
   </Container>
 </BaseLayout>
+
+<style>
+/* ========== ヒーロー ========== */
+.ls-hero {
+  background: linear-gradient(135deg, #db2777 0%, #9333ea 100%);
+  color: #fff;
+  padding-block: 3.5rem 4rem;
+  text-align: center;
+}
+.ls-hero-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+.ls-hero-badge {
+  display: inline-block;
+  background: rgba(255 255 255 / 0.2);
+  border: 1px solid rgba(255 255 255 / 0.4);
+  border-radius: 2rem;
+  padding: 0.25rem 1rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+}
+.ls-hero-h1 {
+  font-size: clamp(1.75rem, 5vw, 2.5rem);
+  font-family: var(--sn-font-rounded, sans-serif);
+  font-weight: 700;
+  line-height: 1.3;
+  margin: 0;
+}
+.ls-hero-meta {
+  display: block;
+  font-size: clamp(1rem, 3vw, 1.4rem);
+  opacity: 0.9;
+}
+.ls-hero-catch {
+  font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+  opacity: 0.92;
+  line-height: 1.7;
+  margin: 0;
+}
+.ls-hero-stats {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  font-size: 0.9rem;
+  opacity: 0.85;
+}
+.ls-stat strong {
+  font-size: 1.4em;
+  font-weight: 700;
+}
+.ls-stat-sep {
+  color: rgba(255 255 255 / 0.5);
+}
+.ls-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #fff;
+  color: #db2777;
+  font-weight: 700;
+  font-size: 1.1rem;
+  padding: 0.85rem 2.5rem;
+  border-radius: 3rem;
+  text-decoration: none;
+  transition: transform 0.15s, box-shadow 0.15s;
+  margin-top: 0.5rem;
+}
+.ls-cta-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0 0 0 / 0.2);
+}
+.ls-cta-arrow {
+  font-size: 1.2em;
+}
+.ls-hero-sub {
+  font-size: 0.8rem;
+  opacity: 0.7;
+  margin: 0;
+}
+
+/* ========== AIOブロック ========== */
+.ls-aio-block {
+  background: #fdf2f8;
+  border-left: 4px solid #db2777;
+  border-radius: 0 0.5rem 0.5rem 0;
+  padding: 1.25rem 1.5rem;
+  margin-block: 2rem;
+}
+.ls-aio-title {
+  font-weight: 700;
+  margin: 0 0 0.5rem;
+  font-size: 0.9rem;
+  color: #db2777;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.ls-aio-list {
+  margin: 0 0 0.75rem;
+  padding-left: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.ls-aio-list li {
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+.ls-aio-updated {
+  font-size: 0.75rem;
+  color: var(--sn-muted, #6b7280);
+  margin: 0;
+}
+
+/* ========== セクション共通 ========== */
+.ls-section {
+  margin-block: 3rem;
+}
+.ls-section--flow {
+  background: #fdf2f8;
+  padding: 2rem 1.5rem;
+  border-radius: 1rem;
+  margin-inline: -1rem;
+}
+.ls-h2 {
+  font-size: clamp(1.3rem, 4vw, 1.75rem);
+  font-family: var(--sn-font-rounded, sans-serif);
+  font-weight: 700;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #db2777;
+}
+.ls-h2--center {
+  text-align: center;
+  border-bottom: none;
+}
+.ls-lead {
+  font-size: 1rem;
+  line-height: 1.8;
+  margin-bottom: 1rem;
+  color: #374151;
+}
+.ls-body {
+  font-size: 0.95rem;
+  line-height: 1.8;
+  margin-bottom: 1rem;
+  color: #374151;
+}
+.ls-flow-lead {
+  text-align: center;
+  color: var(--sn-muted, #6b7280);
+  font-size: 0.9rem;
+  margin-bottom: 1.5rem;
+}
+.ls-flow-wrapper {
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+/* ========== 情報テーブル ========== */
+.ls-info-table-wrap {
+  overflow-x: auto;
+  margin-top: 1.5rem;
+}
+.ls-info-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+.ls-info-table th,
+.ls-info-table td {
+  padding: 0.6rem 1rem;
+  border: 1px solid #e5e7eb;
+  text-align: left;
+  line-height: 1.5;
+}
+.ls-info-table th {
+  background: #f3f4f6;
+  font-weight: 600;
+  white-space: nowrap;
+  width: 9rem;
+}
+.ls-table-caption {
+  font-size: 0.8rem;
+  color: var(--sn-muted, #6b7280);
+  text-align: left;
+  padding: 0.25rem 0 0.5rem;
+}
+
+/* ========== 6タイプグリッド ========== */
+.ls-types-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-block: 1.5rem;
+}
+.ls-type-card {
+  border: 2px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  transition: box-shadow 0.15s, transform 0.15s;
+  border-top: 4px solid var(--type-color, #db2777);
+}
+.ls-type-card:hover {
+  box-shadow: 0 4px 16px rgba(0 0 0 / 0.1);
+  transform: translateY(-2px);
+}
+.ls-type-icon {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+.ls-type-name {
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 0 0 0.2rem;
+  color: var(--type-color, #db2777);
+}
+.ls-type-name-en {
+  font-size: 0.7rem;
+  color: var(--sn-muted, #6b7280);
+  margin: 0 0 0.5rem;
+}
+.ls-type-desc {
+  font-size: 0.82rem;
+  line-height: 1.6;
+  color: #4b5563;
+  margin: 0 0 0.75rem;
+}
+.ls-type-link {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--type-color, #db2777);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+.ls-type-link:hover {
+  text-decoration: underline;
+}
+
+/* ========== 影響グリッド ========== */
+.ls-impact-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1rem;
+  margin-block: 1.5rem;
+}
+.ls-impact-card {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+}
+.ls-impact-icon {
+  font-size: 1.75rem;
+  margin-bottom: 0.5rem;
+}
+.ls-impact-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem;
+}
+.ls-impact-desc {
+  font-size: 0.85rem;
+  line-height: 1.7;
+  color: #4b5563;
+  margin: 0;
+}
+
+/* ========== ステップ ========== */
+.ls-steps {
+  list-style: none;
+  padding: 0;
+  margin: 1.5rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+.ls-step {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+.ls-step-num {
+  flex-shrink: 0;
+  width: 2.5rem;
+  height: 2.5rem;
+  background: #db2777;
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+.ls-step-title {
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 0 0 0.25rem;
+}
+.ls-step-desc {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: #4b5563;
+  margin: 0;
+}
+
+/* ========== 科学的根拠 ========== */
+.ls-science-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+.ls-science-card {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+}
+.ls-science-icon {
+  font-size: 1.75rem;
+  margin-bottom: 0.5rem;
+}
+.ls-science-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem;
+}
+.ls-science-body {
+  font-size: 0.85rem;
+  line-height: 1.7;
+  color: #4b5563;
+  margin: 0;
+}
+.ls-ref-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.ls-ref-item {
+  font-size: 0.78rem;
+  line-height: 1.5;
+}
+.ls-ref-link {
+  color: #db2777;
+  text-decoration: none;
+  word-break: break-word;
+}
+.ls-ref-link:hover {
+  text-decoration: underline;
+}
+
+/* ========== 関連リンク ========== */
+.ls-related-list {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.ls-related-link {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.ls-related-link:hover {
+  border-color: #db2777;
+  box-shadow: 0 2px 8px rgba(219 39 119 / 0.1);
+}
+.ls-related-icon {
+  font-size: 1.75rem;
+  flex-shrink: 0;
+}
+.ls-related-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+.ls-related-title {
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+.ls-related-desc {
+  font-size: 0.8rem;
+  color: var(--sn-muted, #6b7280);
+}
+
+/* ========== FAQ ========== */
+.ls-faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+.ls-faq-item {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+.ls-faq-q {
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 1rem 1.25rem;
+  background: #f9fafb;
+  margin: 0;
+  display: block;
+}
+.ls-faq-q::before {
+  content: 'Q. ';
+  color: #db2777;
+}
+.ls-faq-a {
+  font-size: 0.9rem;
+  line-height: 1.7;
+  padding: 1rem 1.25rem;
+  margin: 0;
+  color: #4b5563;
+}
+.ls-faq-a::before {
+  content: 'A. ';
+  font-weight: 700;
+  color: #16a34a;
+}
+
+/* ========== 学術注記 ========== */
+.ls-academic-note {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  border-top: 1px solid #e5e7eb;
+  padding-top: 1.5rem;
+  margin-top: 2rem;
+  line-height: 1.6;
+}
+
+/* ========== レスポンシブ ========== */
+@media (max-width: 640px) {
+  .ls-types-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .ls-impact-grid {
+    grid-template-columns: 1fr;
+  }
+  .ls-science-grid {
+    grid-template-columns: 1fr;
+  }
+  .ls-section--flow {
+    margin-inline: -0.5rem;
+    padding: 1.5rem 1rem;
+  }
+}
+</style>
