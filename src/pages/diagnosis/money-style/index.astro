@@ -1,0 +1,1201 @@
+---
+/**
+ * 金銭感覚診断 ランディングページ
+ * KW: 金銭感覚診断（VOL480/SD17・Phase 1第10優先・8診断統合の最終ピース）
+ * 学術根拠: Klontz BT et al. (2011) Klontz Money Script Inventory (KMSI)
+ * 確認日: 2026-05-21
+ *
+ * SEO/AIO対応:
+ * - JSON-LD: WebApplication + Quiz + FAQPage + BreadcrumbList
+ * - AIOブロック: 「このページでわかること」
+ * - YMYL回避: 投資推奨・金融商品比較・税務助言 絶対NG
+ * - 「守銭奴」「ケチ」「浪費家」「買い物依存」等スティグマNG
+ * - LGBTQ+配慮: 「パートナー」表現
+ * - 心理的決定論NG: 「傾向がある」表現
+ */
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Container from '../../../components/Container.astro';
+import DiagnosisFlow from '../../../components/DiagnosisFlow';
+import { meta } from '../../../data/diagnoses/money-style/meta';
+import { questions } from '../../../data/diagnoses/money-style/questions';
+import { calculateResultTypeId } from '../../../data/diagnoses/money-style/results';
+
+const SITE_URL = 'https://shindan-navi.jp';
+const PAGE_URL = `${SITE_URL}/diagnosis/money-style/`;
+
+// DiagnosisFlow に渡す questions を diagnosis.ts の Question 型に変換
+const flowQuestions = questions.map((q) => ({
+  id: String(q.id),
+  text: q.text,
+}));
+
+// JSON-LD: WebApplication
+const jsonLdWebApp = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  '@id': `${PAGE_URL}#webapp`,
+  name: '金銭感覚診断【無料・3分・24問・Klontz理論】',
+  url: PAGE_URL,
+  applicationCategory: 'EducationalApplication',
+  operatingSystem: 'Web',
+  description:
+    'Klontz et al.（2011）のマネースクリプト理論に基づく無料診断。24問で回避型・崇拝型・地位型・用心型の4タイプからお金の価値観を判定します。',
+  offers: {
+    '@type': 'Offer',
+    price: '0',
+    priceCurrency: 'JPY',
+    availability: 'https://schema.org/InStock',
+  },
+  author: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+    name: '診断ナビ',
+    url: SITE_URL,
+  },
+  publisher: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+  },
+};
+
+// JSON-LD: Quiz（citation に学術文献を配置）
+const jsonLdQuiz = {
+  '@context': 'https://schema.org',
+  '@type': 'Quiz',
+  '@id': `${PAGE_URL}#quiz`,
+  name: '金銭感覚診断（24問）',
+  url: PAGE_URL,
+  about: {
+    '@type': 'Thing',
+    name: 'マネースクリプト4タイプ理論（回避型 / 崇拝型 / 地位型 / 用心型）',
+    description: 'Klontz et al.（2011）が開発したKlontz Money Script Inventory（KMSI）に基づく金銭感覚4タイプ分類モデル',
+    sameAs: 'https://doi.org/10.4148/jft.v2i1.451',
+  },
+  educationalLevel: 'HighSchool',
+  numberOfQuestions: meta.questionCount,
+  assesses: '金銭感覚タイプ・お金の価値観・パートナーとの金銭相性・キャリアへの影響',
+  dateCreated: meta.publishedAt,
+  dateModified: meta.updatedAt,
+  inLanguage: 'ja',
+  citation: meta.references.map((ref) => ({
+    '@type': 'CreativeWork',
+    name: ref.title,
+    author: ref.author,
+    datePublished: String(ref.year),
+    url: ref.url,
+  })),
+};
+
+// FAQ 8問
+const faqs = [
+  {
+    question: '金銭感覚は変わることがありますか？',
+    answer:
+      'はい、変わることがあります。Klontz et al.（2011）の研究でも、マネースクリプト（お金に関する信念）は成長・経験・環境の変化によって変容することが示されています。同じ人でも年代やライフステージによって結果が変わる場合があります。本診断は「今の傾向」を把握するための参考ツールです。',
+  },
+  {
+    question: 'パートナーと金銭感覚が違う場合はどうすればよいですか？',
+    answer:
+      '金銭感覚の違いは多くのカップルで見られます。大切なのは「どちらが正しいか」ではなく、お互いの価値観の背景を理解し合うことです。月1回の収支共有・目標のすり合わせ・自由裁量費の設定など、具体的な仕組みを話し合うことが有効です。大きな違いがある場合はファイナンシャルプランナーへの共同相談も選択肢の一つです。',
+  },
+  {
+    question: '結婚・同棲前に話すべきお金の話題は何ですか？',
+    answer:
+      '（1）月々の収支・貯蓄目標、（2）共同口座の有無と家計分担のルール、（3）大きな買い物をする際の決め方、（4）将来の資産形成・老後の考え方、（5）緊急時の備えの方針。これらを事前に話し合っておくことが、金銭トラブルの予防につながります。本診断の相性機能もその対話のきっかけとしてご活用ください。',
+  },
+  {
+    question: '回避型はお金を稼げないということですか？',
+    answer:
+      'そうではありません。回避型は「お金の話や管理を避けやすい傾向」を示すものであり、収入の高低とは関係がありません。実際に収入の高い方でも、お金の管理や話し合いを避けやすい傾向を持つことはあります。傾向を理解することで、少しずつ向き合いやすくなるのが本診断の目的です。',
+  },
+  {
+    question: '崇拝型は消費しすぎてしまう傾向がありますか？',
+    answer:
+      '崇拝型は「収入向上への意欲が高い・豊かな生活を求める傾向」を持つスタイルです。必ずしも消費過多になるわけではなく、その意欲をキャリアや収入向上の原動力にしている方も多くいます。傾向として支出が増えやすい面はありますが、計画的な仕組みを導入することでバランスを取れます。',
+  },
+  {
+    question: '地位型はなぜ物やブランドにこだわるのですか？',
+    answer:
+      '地位型は社会的な印象・ライフスタイルの洗練さへの感度が高いスタイルです。これは「外見で人を判断する冷たさ」ではなく、自分の価値観を生活空間や持ち物で表現したいという美意識や上昇志向から来ていることが多いです。「誰かに見せるためか・自分が好きだからか」を意識することで、消費の満足度が高まります。',
+  },
+  {
+    question: '用心型は節約しすぎてしまう傾向がありますか？',
+    answer:
+      '用心型は「計画的な節制・将来への備えを重視する傾向」を持つスタイルです。貯蓄率が高く資産形成に強みがある一方、必要な体験や自分への投資を控えすぎる場合があります。「今を楽しむ予算」を意識的に計画に組み込むことで、節制と豊かさのバランスが取れます。',
+  },
+  {
+    question: 'この診断で投資や節税のアドバイスはもらえますか？',
+    answer:
+      '本診断は金融商品の推奨・投資アドバイス・税務助言は一切行いません。お金の価値観・傾向を把握するための自己理解ツールです。具体的な資産運用・節税・家計改善については、ファイナンシャルプランナー（FP）等の専門家へのご相談をおすすめします。',
+  },
+];
+
+const jsonLdFAQ = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  '@id': `${PAGE_URL}#faq`,
+  mainEntity: faqs.map(({ question, answer }) => ({
+    '@type': 'Question',
+    name: question,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: answer,
+    },
+  })),
+};
+
+// JSON-LD: BreadcrumbList
+const jsonLdBreadcrumb = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'ホーム', item: SITE_URL },
+    { '@type': 'ListItem', position: 2, name: '診断一覧', item: `${SITE_URL}/diagnosis/` },
+    { '@type': 'ListItem', position: 3, name: '金銭感覚診断', item: PAGE_URL },
+  ],
+};
+
+const jsonLdAll = [jsonLdWebApp, jsonLdQuiz, jsonLdFAQ, jsonLdBreadcrumb];
+
+// 4タイプカード用データ
+const typeCards = [
+  {
+    id: 'avoidance',
+    japaneseName: '回避型',
+    nameEn: 'Money Avoidance',
+    catchphrase: 'お金より大切なものがある、静かな価値観の持ち主',
+    icon: '🌿',
+    color: '#16a34a',
+  },
+  {
+    id: 'worship',
+    japaneseName: '崇拝型',
+    nameEn: 'Money Worship',
+    catchphrase: 'もっと稼げば、もっと自由になれると信じる行動派',
+    icon: '💫',
+    color: '#d97706',
+  },
+  {
+    id: 'status',
+    japaneseName: '地位型',
+    nameEn: 'Money Status',
+    catchphrase: '洗練された暮らしで、自分の価値を表現したい',
+    icon: '✨',
+    color: '#7c3aed',
+  },
+  {
+    id: 'vigilance',
+    japaneseName: '用心型',
+    nameEn: 'Money Vigilance',
+    catchphrase: '計画と節制で、将来への安心を積み上げる堅実派',
+    icon: '🏦',
+    color: '#2563eb',
+  },
+];
+
+// 4×4 相性マトリクス（16セル）
+const matrixTypes = ['avoidance', 'worship', 'status', 'vigilance'] as const;
+type MatrixType = (typeof matrixTypes)[number];
+
+const compatibilityScores: Record<string, number> = {
+  'avoidance__avoidance': 60,
+  'avoidance__worship': 45,
+  'avoidance__status': 55,
+  'avoidance__vigilance': 70,
+  'worship__avoidance': 45,
+  'worship__worship': 65,
+  'worship__status': 80,
+  'worship__vigilance': 60,
+  'status__avoidance': 55,
+  'status__worship': 80,
+  'status__status': 70,
+  'status__vigilance': 50,
+  'vigilance__avoidance': 70,
+  'vigilance__worship': 60,
+  'vigilance__status': 50,
+  'vigilance__vigilance': 88,
+};
+
+function getMatrixColor(score: number): string {
+  if (score >= 80) return '#16a34a';
+  if (score >= 65) return '#2563eb';
+  if (score >= 50) return '#d97706';
+  return '#dc2626';
+}
+
+// タイプ別CBTヒント（健全な金銭感覚への改善）
+const selfImprovementTips = [
+  {
+    id: 'avoidance',
+    emoji: '🌿',
+    japaneseName: '回避型',
+    color: '#16a34a',
+    tips: [
+      '月1回・10分だけ銀行口座の残高を確認する習慣から始める',
+      '「お金の話が苦手な理由」を紙に書き出して整理する',
+      '家計簿アプリ（Money Forward・Zaimなど）で自動記録を活用する',
+      'FP（ファイナンシャルプランナー）に相談することへの抵抗感を少しずつ下げる',
+    ],
+  },
+  {
+    id: 'worship',
+    emoji: '💫',
+    japaneseName: '崇拝型',
+    color: '#d97706',
+    tips: [
+      '収入の一定割合（例: 10〜20%）を先取り貯蓄する仕組みを作る',
+      '「今の生活の中にある豊かさ」を日記やメモで記録する',
+      '「収入が増えた時だけ幸せになれる」という考えを検証してみる',
+      '短期・中期・長期の財務目標をFPと一緒に具体化する',
+    ],
+  },
+  {
+    id: 'status',
+    emoji: '✨',
+    japaneseName: '地位型',
+    color: '#7c3aed',
+    tips: [
+      '「誰かに見せるためか・本当に自分が好きか」を購入前に確認する',
+      '月の「見栄消費」と「本当に満足できる消費」を分けて記録する',
+      'SNSのフォローを整理し、比較による消費衝動を減らす',
+      '自己評価を外的基準（収入・ブランド）ではなく内的充実から確認する習慣を持つ',
+    ],
+  },
+  {
+    id: 'vigilance',
+    emoji: '🏦',
+    japaneseName: '用心型',
+    color: '#2563eb',
+    tips: [
+      '毎月の「自由に使う予算」をあらかじめ計画に組み込む',
+      '「必要な自己投資」と「無駄遣い」を区別する自分なりの基準を持つ',
+      'パートナーの消費スタイルの背景を、批判せずに聞く機会を作る',
+      '将来への備えと現在の楽しさのバランスを定期的に見直す',
+    ],
+  },
+];
+
+// お金の価値観が人生に与える影響セクション
+const lifeImpacts = [
+  {
+    icon: '💑',
+    title: 'パートナーシップへの影響',
+    desc: 'Klontz et al.（2011）の研究では、金銭に関する信念の差異が夫婦・カップル間の対立の主要な要因の一つであることが示されています。お金の価値観を理解し合うことが、関係の安定につながります。',
+  },
+  {
+    icon: '💼',
+    title: 'キャリアへの影響',
+    desc: 'Mitchell & Mickel（1999）の研究では、お金の意味づけがキャリア選択・給与交渉・仕事への動機づけに影響することが示されています。自分の金銭感覚を知ることで、キャリアの選択がより自分軸になります。',
+  },
+  {
+    icon: '🧠',
+    title: '心理的ウェルビーイングへの影響',
+    desc: 'Furnham（1984）の研究では、お金への信念や態度が個人の精神的健康・満足感と関連することが示されています。「健全な金銭感覚」は稼ぐ額より、お金との関係のあり方で決まります。',
+  },
+];
+---
+
+<BaseLayout
+  title={meta.title}
+  description={meta.description}
+  canonical={PAGE_URL}
+  jsonLd={jsonLdAll}
+  ogType="website"
+  publishDate={meta.publishedAt}
+  lastUpdated={meta.updatedAt}
+  breadcrumbs={[
+    { name: '診断一覧', url: '/diagnosis/' },
+    { name: '金銭感覚診断', url: '/diagnosis/money-style/' },
+  ]}
+>
+  {/* ========== ヒーローセクション ========== */}
+  <section class="ms-hero" aria-labelledby="ms-hero-h1">
+    <Container>
+      <div class="ms-hero-inner">
+        <div class="ms-hero-badge">Klontz et al. (2011) マネースクリプト理論 準拠 | YMYL配慮・医学的診断ではありません</div>
+        <h1 id="ms-hero-h1" class="ms-hero-h1">
+          金銭感覚診断<br />
+          <span class="ms-hero-meta">【無料・3分・24問・Klontz理論】</span>
+        </h1>
+        <p class="ms-hero-catch">
+          あなたのお金の価値観はどのタイプ？<br />
+          回避型・崇拝型・地位型・用心型の4つから判定
+        </p>
+        <div class="ms-hero-stats">
+          <span class="ms-stat"><strong>24</strong>問</span>
+          <span class="ms-stat-sep">・</span>
+          <span class="ms-stat">約<strong>3</strong>分</span>
+          <span class="ms-stat-sep">・</span>
+          <span class="ms-stat"><strong>4</strong>タイプ</span>
+          <span class="ms-stat-sep">・</span>
+          <span class="ms-stat">無料</span>
+        </div>
+        <a href="#diagnosis-flow" class="ms-cta-btn">
+          <span>診断スタート</span>
+          <span class="ms-cta-arrow" aria-hidden="true">↓</span>
+        </a>
+        <p class="ms-hero-sub">登録不要・所要時間3分・途中保存OK</p>
+      </div>
+    </Container>
+  </section>
+
+  <Container>
+    {/* ========== AIOブロック（このページでわかること） ========== */}
+    <div class="ms-aio-block" role="note" aria-label="このページでわかること">
+      <p class="ms-aio-title">このページでわかること</p>
+      <ul class="ms-aio-list">
+        <li>24問・5段階リッカートで測る金銭感覚4タイプ（Klontz BT et al. 2011年 KMSI準拠）</li>
+        <li>タイプ別の消費パターン・貯蓄傾向・キャリアへの影響・他タイプとの相性（スコア付き）</li>
+        <li>パートナーとの金銭感覚チェック・4×4相性マトリクス・タイプ別改善ヒント</li>
+      </ul>
+      <p class="ms-aio-updated">
+        <time datetime={meta.updatedAt}>{meta.updatedAt}</time> 時点の情報。
+        <a href="https://doi.org/10.4148/jft.v2i1.451" target="_blank" rel="noopener noreferrer">
+          Klontz et al. (2011) KMSI
+        </a>
+        を確認済。本診断は金融商品の推奨・投資助言ではありません。
+      </p>
+    </div>
+
+    {/* ========== 金銭感覚診断とは ========== */}
+    <section class="ms-section" aria-labelledby="ms-what-h2">
+      <h2 id="ms-what-h2" class="ms-h2">金銭感覚診断とは</h2>
+      <p class="ms-lead">
+        金銭感覚診断は、臨床心理士の Brad Klontz らが 2011年の論文
+        「Money beliefs and financial behaviors: Development of the Klontz Money Script Inventory」
+        （Journal of Financial Therapy）で発表した「マネースクリプト」理論をもとにした自己理解ツールです
+        （<a href="https://doi.org/10.4148/jft.v2i1.451" target="_blank" rel="noopener noreferrer">DOI確認済</a>）。
+      </p>
+      <p class="ms-body">
+        「マネースクリプト」とは、子ども時代の体験・家庭環境・社会的な影響から形成されるお金に関する無意識の信念体系です。
+        Klontz らは、この信念が大人になってからの消費行動・貯蓄・財務的なストレスに大きく影響することを示しました。
+      </p>
+      <p class="ms-body">
+        本診断は医学的・臨床的な評価ではなく、金銭感覚の傾向を把握するための参考ツールです。
+        投資推奨・金融商品比較・税務助言は一切行いません。
+        「どのタイプが良い・悪い」ではなく、それぞれの特徴を理解することを目的としています。
+      </p>
+      <div class="ms-info-table-wrap">
+        <table class="ms-info-table">
+          <caption class="ms-table-caption">金銭感覚診断の概要（2026-05-21時点）</caption>
+          <tbody>
+            <tr>
+              <th scope="row">理論の根拠</th>
+              <td>Klontz BT et al. (2011) Klontz Money Script Inventory (KMSI) + Furnham A (1984) + Mitchell & Mickel (1999)</td>
+            </tr>
+            <tr>
+              <th scope="row">問題数</th>
+              <td>24問（各タイプ6問 × 4タイプ）</td>
+            </tr>
+            <tr>
+              <th scope="row">回答方式</th>
+              <td>5段階リッカートスケール（1=全く当てはまらない〜5=とても当てはまる）</td>
+            </tr>
+            <tr>
+              <th scope="row">所要時間</th>
+              <td>約3分</td>
+            </tr>
+            <tr>
+              <th scope="row">結果タイプ数</th>
+              <td>4タイプ（回避型・崇拝型・地位型・用心型）</td>
+            </tr>
+            <tr>
+              <th scope="row">対象シーン</th>
+              <td>自己理解・パートナーとの金銭観の対話・キャリア選択の参考</td>
+            </tr>
+            <tr>
+              <th scope="row">注意事項</th>
+              <td>医学的診断・投資助言ではありません。金銭感覚の傾向把握のためにご活用ください。</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    {/* ========== 4タイプ紹介 ========== */}
+    <section class="ms-section" aria-labelledby="ms-types-h2">
+      <h2 id="ms-types-h2" class="ms-h2">4つの金銭感覚タイプ</h2>
+      <p class="ms-lead">
+        Klontz et al.（2011）は、お金に関する信念を4つの主要なタイプに分類しました。
+        どのタイプが優れているかではなく、それぞれの傾向と強みを理解することが目的です。
+      </p>
+      <div class="ms-types-grid">
+        {typeCards.map((tc) => (
+          <article class="ms-type-card" style={`--type-color: ${tc.color}`}>
+            <div class="ms-type-icon" aria-hidden="true">{tc.icon}</div>
+            <h3 class="ms-type-name">{tc.japaneseName}</h3>
+            <p class="ms-type-name-en">{tc.nameEn}</p>
+            <p class="ms-type-desc">{tc.catchphrase}</p>
+            <a href={`/diagnosis/money-style/result/${tc.id}/`} class="ms-type-link">
+              {tc.japaneseName}の詳細を見る
+              <span aria-hidden="true">→</span>
+            </a>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    {/* ========== お金の価値観が人生に与える影響 ========== */}
+    <section class="ms-section" aria-labelledby="ms-impact-h2">
+      <h2 id="ms-impact-h2" class="ms-h2">金銭感覚が人生に与える影響</h2>
+      <p class="ms-lead">
+        Klontz et al.（2011）・Furnham（1984）・Mitchell & Mickel（1999）の研究では、
+        お金への信念がパートナーシップ・キャリア・心理的健康と関連することが示されています。
+      </p>
+      <div class="ms-impact-grid">
+        {lifeImpacts.map((impact) => (
+          <div class="ms-impact-card">
+            <div class="ms-impact-icon" aria-hidden="true">{impact.icon}</div>
+            <h3 class="ms-impact-title">{impact.title}</h3>
+            <p class="ms-impact-desc">{impact.desc}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    {/* ========== 使い方 ========== */}
+    <section class="ms-section" aria-labelledby="ms-how-h2">
+      <h2 id="ms-how-h2" class="ms-h2">使い方（3ステップ）</h2>
+      <ol class="ms-steps">
+        <li class="ms-step">
+          <div class="ms-step-num" aria-hidden="true">1</div>
+          <div class="ms-step-body">
+            <h3 class="ms-step-title">「診断スタート」をタップ</h3>
+            <p class="ms-step-desc">
+              登録・インストール不要。ブラウザですぐ始められます。
+              途中で閉じても24時間以内なら再開できます。
+            </p>
+          </div>
+        </li>
+        <li class="ms-step">
+          <div class="ms-step-num" aria-hidden="true">2</div>
+          <div class="ms-step-body">
+            <h3 class="ms-step-title">24問に回答する（約3分）</h3>
+            <p class="ms-step-desc">
+              各質問に「1（全く当てはまらない）〜5（とても当てはまる）」で答えます。
+              「普段のお金に関する感覚や考え方」を正直に答えると精度が上がります。
+            </p>
+          </div>
+        </li>
+        <li class="ms-step">
+          <div class="ms-step-num" aria-hidden="true">3</div>
+          <div class="ms-step-body">
+            <h3 class="ms-step-title">金銭感覚タイプ・相性・改善ヒントを確認</h3>
+            <p class="ms-step-desc">
+              4タイプのうち最もスコアが高いものが「あなたのタイプ」として表示されます。
+              消費パターン・貯蓄傾向・他タイプとの相性を無料で確認できます。
+            </p>
+          </div>
+        </li>
+      </ol>
+    </section>
+
+    {/* ========== 診断フロー（React島） ========== */}
+    <section class="ms-section ms-section--flow" id="diagnosis-flow" aria-labelledby="ms-flow-h2">
+      <h2 id="ms-flow-h2" class="ms-h2 ms-h2--center">診断を始める</h2>
+      <p class="ms-flow-lead">
+        全24問・約3分。「普段のお金に関する感覚や考え方」を意識しながら答えてください。
+      </p>
+      <div class="ms-flow-wrapper">
+        <DiagnosisFlow
+          client:load
+          diagnosisId="money-style"
+          questions={flowQuestions}
+          resultPath={(typeId: string) => `/diagnosis/money-style/result/${typeId}/`}
+          calculateResult={calculateResultTypeId}
+        />
+      </div>
+    </section>
+
+    {/* ========== ★パートナー金銭感覚チェックセクション ========== */}
+    <section class="ms-section" aria-labelledby="ms-partner-h2">
+      <h2 id="ms-partner-h2" class="ms-h2">結婚・同棲前に必ず話したいお金の価値観</h2>
+      <p class="ms-lead">
+        Klontz et al.（2011）は「金銭的な信念の違いがカップル間の対立の主要な要因の一つ」と示しています。
+        パートナーとそれぞれ診断を受け、相性を確認することが対話のきっかけになります。
+      </p>
+
+      {/* 4×4 相性マトリクス */}
+      <div class="ms-matrix-wrap">
+        <h3 class="ms-h3">4タイプ × 4タイプ 相性マトリクス</h3>
+        <p class="ms-matrix-note">
+          スコアは傾向値です（0-100）。個人差があり、対話と相互理解が最も重要です。
+          「相性が低い = うまくいかない」ではありません。
+        </p>
+        <div class="ms-matrix-container" role="table" aria-label="金銭感覚タイプ相性マトリクス">
+          <div class="ms-matrix-row ms-matrix-header" role="row">
+            <div class="ms-matrix-cell ms-matrix-cell--corner" role="columnheader" aria-label="行・列の交差"></div>
+            {matrixTypes.map((col) => (
+              <div class="ms-matrix-cell ms-matrix-cell--header" role="columnheader">
+                {typeCards.find(t => t.id === col)?.emoji}
+                <span>{typeCards.find(t => t.id === col)?.japaneseName}</span>
+              </div>
+            ))}
+          </div>
+          {matrixTypes.map((row) => (
+            <div class="ms-matrix-row" role="row">
+              <div class="ms-matrix-cell ms-matrix-cell--row-header" role="rowheader">
+                {typeCards.find(t => t.id === row)?.emoji}
+                <span>{typeCards.find(t => t.id === row)?.japaneseName}</span>
+              </div>
+              {matrixTypes.map((col) => {
+                const key = `${row}__${col}`;
+                const score = compatibilityScores[key] ?? 60;
+                const color = getMatrixColor(score);
+                const isMe = row === col;
+                return (
+                  <div
+                    class={`ms-matrix-cell ms-matrix-cell--score ${isMe ? 'ms-matrix-cell--self' : ''}`}
+                    role="cell"
+                    style={`--score-color: ${color}`}
+                    aria-label={`${typeCards.find(t => t.id === row)?.japaneseName} × ${typeCards.find(t => t.id === col)?.japaneseName}: ${score}点`}
+                  >
+                    <span class="ms-matrix-score">{score}</span>
+                    {isMe && <span class="ms-matrix-self-label" aria-hidden="true">同</span>}
+                  </div>
+                );
+              })}
+            </div>
+          ))}
+        </div>
+        <div class="ms-matrix-legend" aria-label="スコア凡例">
+          <span class="ms-legend-item" style="--lg-color: #16a34a">80以上: 非常に高い相性</span>
+          <span class="ms-legend-item" style="--lg-color: #2563eb">65-79: 良い相性</span>
+          <span class="ms-legend-item" style="--lg-color: #d97706">50-64: 補完し合える関係</span>
+          <span class="ms-legend-item" style="--lg-color: #dc2626">49以下: 対話が必要なペア</span>
+        </div>
+      </div>
+
+      {/* 結婚・同棲前に話すべきトピック */}
+      <div class="ms-couple-topics">
+        <h3 class="ms-h3">結婚・同棲前に話し合うべき5つのお金のテーマ</h3>
+        <ol class="ms-topic-list">
+          <li class="ms-topic-item">
+            <span class="ms-topic-num" aria-hidden="true">1</span>
+            <div class="ms-topic-body">
+              <strong>毎月の収支・家計分担のルール</strong>
+              <p>共同口座の有無・生活費の割合・各自の自由裁量費の設定方法を決めておく。</p>
+            </div>
+          </li>
+          <li class="ms-topic-item">
+            <span class="ms-topic-num" aria-hidden="true">2</span>
+            <div class="ms-topic-body">
+              <strong>貯蓄・緊急資金の目標と優先度</strong>
+              <p>毎月いくら貯めるか・緊急資金は何ヶ月分を目標にするかを共有する。</p>
+            </div>
+          </li>
+          <li class="ms-topic-item">
+            <span class="ms-topic-num" aria-hidden="true">3</span>
+            <div class="ms-topic-body">
+              <strong>大きな支出の決め方（金額の閾値）</strong>
+              <p>「いくら以上の支出は相談してから決める」という閾値を事前に合意する。</p>
+            </div>
+          </li>
+          <li class="ms-topic-item">
+            <span class="ms-topic-num" aria-hidden="true">4</span>
+            <div class="ms-topic-body">
+              <strong>将来のライフイベントへの備え</strong>
+              <p>住宅購入・教育費・老後の蓄えについて、それぞれのイメージをすり合わせる。</p>
+            </div>
+          </li>
+          <li class="ms-topic-item">
+            <span class="ms-topic-num" aria-hidden="true">5</span>
+            <div class="ms-topic-body">
+              <strong>お金の使い方の優先順位と価値観</strong>
+              <p>「体験」と「物」のどちらを優先するか・生活水準のイメージを言語化して共有する。</p>
+            </div>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    {/* ========== ★金銭タイプ別の改善ヒント（CBTヒント） ========== */}
+    <section class="ms-section" aria-labelledby="ms-tips-h2">
+      <h2 id="ms-tips-h2" class="ms-h2">タイプ別・健全な金銭感覚を育てるヒント</h2>
+      <p class="ms-lead">
+        金銭感覚は変えることができます。Klontz et al.（2011）は「マネースクリプトへの気づき」が財務行動の改善の第一歩であることを示しています。
+        各タイプの傾向を理解した上で、小さな行動変容から始めましょう。
+      </p>
+      <div class="ms-tips-grid">
+        {selfImprovementTips.map((tip) => (
+          <div class="ms-tip-card" style={`--tip-color: ${tip.color}`}>
+            <div class="ms-tip-header">
+              <span class="ms-tip-emoji" aria-hidden="true">{tip.emoji}</span>
+              <h3 class="ms-tip-title">{tip.japaneseName}の改善ヒント</h3>
+            </div>
+            <ul class="ms-tip-list">
+              {tip.tips.map((t) => (
+                <li class="ms-tip-item">
+                  <span class="ms-tip-icon" aria-hidden="true">→</span>
+                  <span>{t}</span>
+                </li>
+              ))}
+            </ul>
+            <a href={`/diagnosis/money-style/result/${tip.id}/`} class="ms-tip-link">
+              {tip.japaneseName}の詳細を見る →
+            </a>
+          </div>
+        ))}
+      </div>
+      <div class="ms-tips-disclaimer">
+        <p>
+          上記のヒントは一般的な自己理解・行動変容のきっかけとして提供しています。
+          具体的な資産運用・節税・家計改善については、
+          ファイナンシャルプランナー（FP）等の専門家へのご相談をおすすめします。
+          本診断は金融商品の推奨・投資アドバイスを行うものではありません。
+        </p>
+      </div>
+    </section>
+
+    {/* ========== 参考文献・根拠 ========== */}
+    <section class="ms-section" aria-labelledby="ms-science-h2">
+      <h2 id="ms-science-h2" class="ms-h2">診断の根拠・参考文献</h2>
+      <p class="ms-lead">
+        本診断はKlontz BT et al.（2011）のマネースクリプト理論（KMSI）をもとに設計した自己理解ツールです。
+        傾向把握のための参考情報であり、医学的・臨床的な診断ではありません。
+        投資推奨・金融商品比較・税務助言は一切行いません。
+      </p>
+      <div class="ms-science-grid">
+        <div class="ms-science-card">
+          <div class="ms-science-icon" aria-hidden="true">📚</div>
+          <h3 class="ms-science-title">主要参考文献</h3>
+          <ul class="ms-ref-list">
+            {meta.references.map((ref) => (
+              <li class="ms-ref-item">
+                <a href={ref.url} target="_blank" rel="noopener noreferrer" class="ms-ref-link">
+                  {ref.author} ({ref.year}). {ref.title}. {ref.publisher}.
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div class="ms-science-card">
+          <div class="ms-science-icon" aria-hidden="true">⚠️</div>
+          <h3 class="ms-science-title">ご注意（YMYL対応）</h3>
+          <p class="ms-science-body">
+            本診断は金融商品の推奨・投資アドバイス・税務助言を一切行いません。
+            金銭感覚の傾向を把握するための自己理解ツールです。
+            医学的判断・精神科的評価の代わりに使用しないでください。
+            具体的な資産形成・家計改善については、ファイナンシャルプランナー（FP）等の専門家にご相談ください。
+          </p>
+        </div>
+        <div class="ms-science-card">
+          <div class="ms-science-icon" aria-hidden="true">🔄</div>
+          <h3 class="ms-science-title">更新・鮮度管理</h3>
+          <p class="ms-science-body">
+            理論・学術情報は定期的に確認しています。
+            最終確認日: <time datetime={meta.updatedAt}>{meta.updatedAt}</time>。
+            情報の誤りを見つけた場合は
+            <a href="/contact/">お問い合わせ</a>
+            からご連絡ください。
+          </p>
+        </div>
+      </div>
+    </section>
+
+    {/* ========== FAQ ========== */}
+    <section class="ms-section" aria-labelledby="ms-faq-h2">
+      <h2 id="ms-faq-h2" class="ms-h2">よくある質問（FAQ）</h2>
+      <dl class="ms-faq-list">
+        {faqs.map((faq) => (
+          <div class="ms-faq-item">
+            <dt class="ms-faq-q">
+              <span class="ms-faq-q-icon" aria-hidden="true">Q</span>
+              {faq.question}
+            </dt>
+            <dd class="ms-faq-a">
+              <span class="ms-faq-a-icon" aria-hidden="true">A</span>
+              {faq.answer}
+            </dd>
+          </div>
+        ))}
+      </dl>
+    </section>
+
+    {/* ========== 関連診断クロス推薦 ========== */}
+    <section class="ms-section" aria-labelledby="ms-related-h2">
+      <h2 id="ms-related-h2" class="ms-h2">関連診断</h2>
+      <p class="ms-lead">
+        金銭感覚診断と組み合わせることで、自己理解がさらに深まります。
+      </p>
+      <ul class="ms-related-list">
+        <li class="ms-related-item">
+          <a href="/diagnosis/love-style/" class="ms-related-link">
+            <span class="ms-related-icon" aria-hidden="true">💕</span>
+            <span class="ms-related-body">
+              <span class="ms-related-title">恋愛スタイル診断</span>
+              <span class="ms-related-desc">J.A.Lee理論・6タイプの恋愛スタイルで相性を確認</span>
+            </span>
+          </a>
+        </li>
+        <li class="ms-related-item">
+          <a href="/diagnosis/disc/" class="ms-related-link">
+            <span class="ms-related-icon" aria-hidden="true">💼</span>
+            <span class="ms-related-body">
+              <span class="ms-related-title">DiSC診断</span>
+              <span class="ms-related-desc">職場・キャリアでの行動スタイルを4タイプで把握</span>
+            </span>
+          </a>
+        </li>
+        <li class="ms-related-item">
+          <a href="/diagnosis/perfectionism/" class="ms-related-link">
+            <span class="ms-related-icon" aria-hidden="true">🔱</span>
+            <span class="ms-related-body">
+              <span class="ms-related-title">完璧主義診断</span>
+              <span class="ms-related-desc">健全な完璧主義傾向・ストレスパターンを把握</span>
+            </span>
+          </a>
+        </li>
+        <li class="ms-related-item">
+          <a href="/diagnosis/multi-int/" class="ms-related-link">
+            <span class="ms-related-icon" aria-hidden="true">🦉</span>
+            <span class="ms-related-body">
+              <span class="ms-related-title">多重知能テスト</span>
+              <span class="ms-related-desc">Gardner理論・8つの知能タイプで才能を発見</span>
+            </span>
+          </a>
+        </li>
+      </ul>
+    </section>
+  </Container>
+</BaseLayout>
+
+<style>
+  /* ========== ヒーロー ========== */
+  .ms-hero {
+    background: linear-gradient(135deg, #1e3a5f 0%, #2563eb 50%, #7c3aed 100%);
+    color: #fff;
+    padding-block: 4rem 3rem;
+  }
+  .ms-hero-inner {
+    text-align: center;
+    max-width: 640px;
+    margin-inline: auto;
+  }
+  .ms-hero-badge {
+    display: inline-block;
+    background: rgba(255 255 255 / 0.15);
+    border: 1px solid rgba(255 255 255 / 0.3);
+    border-radius: 999px;
+    padding: 0.3rem 1rem;
+    font-size: 0.72rem;
+    margin-bottom: 1.5rem;
+    letter-spacing: 0.03em;
+  }
+  .ms-hero-h1 {
+    font-size: clamp(1.75rem, 5vw, 2.5rem);
+    font-weight: 800;
+    line-height: 1.3;
+    margin-bottom: 0.75rem;
+  }
+  .ms-hero-meta {
+    font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+    font-weight: 500;
+    opacity: 0.85;
+  }
+  .ms-hero-catch {
+    font-size: 1.05rem;
+    line-height: 1.7;
+    margin-bottom: 1.25rem;
+    opacity: 0.9;
+  }
+  .ms-hero-stats {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.25rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+  }
+  .ms-stat { font-size: 0.95rem; }
+  .ms-stat strong { font-size: 1.3rem; font-weight: 800; }
+  .ms-stat-sep { opacity: 0.5; }
+  .ms-cta-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: #fff;
+    color: #1e3a5f;
+    font-weight: 700;
+    font-size: 1.1rem;
+    padding: 0.85rem 2.5rem;
+    border-radius: 999px;
+    text-decoration: none;
+    margin-bottom: 0.75rem;
+    transition: transform 0.15s, box-shadow 0.15s;
+    box-shadow: 0 4px 15px rgba(0 0 0 / 0.2);
+  }
+  .ms-cta-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0 0 0 / 0.25); }
+  .ms-cta-arrow { font-size: 1.2rem; }
+  .ms-hero-sub { font-size: 0.8rem; opacity: 0.7; margin: 0; }
+
+  /* ========== AIOブロック ========== */
+  .ms-aio-block {
+    background: #eff6ff;
+    border-left: 4px solid #2563eb;
+    border-radius: 0 0.5rem 0.5rem 0;
+    padding: 1.25rem 1.5rem;
+    margin-block: 2.5rem;
+  }
+  .ms-aio-title {
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: #1e40af;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .ms-aio-list {
+    margin: 0 0 0.75rem 1.25rem;
+    padding: 0;
+    list-style: disc;
+    font-size: 0.9rem;
+    line-height: 1.8;
+    color: #1e3a5f;
+  }
+  .ms-aio-updated {
+    font-size: 0.78rem;
+    color: #6b7280;
+    margin: 0;
+  }
+  .ms-aio-updated a { color: #2563eb; }
+
+  /* ========== 共通セクション ========== */
+  .ms-section { margin-block: 3.5rem; }
+  .ms-h2 {
+    font-size: clamp(1.3rem, 3.5vw, 1.75rem);
+    font-weight: 800;
+    color: #1e3a5f;
+    margin-bottom: 1rem;
+    border-bottom: 3px solid #2563eb;
+    padding-bottom: 0.5rem;
+  }
+  .ms-h2--center { text-align: center; }
+  .ms-h3 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #1e3a5f;
+    margin-bottom: 0.75rem;
+  }
+  .ms-lead {
+    font-size: 0.95rem;
+    line-height: 1.8;
+    color: #374151;
+    margin-bottom: 1.5rem;
+  }
+  .ms-lead a { color: #2563eb; }
+  .ms-body {
+    font-size: 0.9rem;
+    line-height: 1.8;
+    color: #374151;
+    margin-bottom: 1rem;
+  }
+
+  /* ========== 情報テーブル ========== */
+  .ms-info-table-wrap { overflow-x: auto; }
+  .ms-info-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.88rem;
+  }
+  .ms-table-caption {
+    text-align: left;
+    font-size: 0.8rem;
+    color: #6b7280;
+    margin-bottom: 0.5rem;
+  }
+  .ms-info-table th,
+  .ms-info-table td {
+    padding: 0.6rem 1rem;
+    border: 1px solid #e5e7eb;
+    text-align: left;
+    vertical-align: top;
+  }
+  .ms-info-table th {
+    background: #f3f4f6;
+    font-weight: 600;
+    width: 30%;
+    white-space: nowrap;
+    color: #374151;
+  }
+
+  /* ========== 4タイプグリッド ========== */
+  .ms-types-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.25rem;
+  }
+  .ms-type-card {
+    border: 2px solid var(--type-color, #2563eb);
+    border-radius: 1rem;
+    padding: 1.5rem 1.25rem;
+    text-align: center;
+    transition: box-shadow 0.15s, transform 0.15s;
+  }
+  .ms-type-card:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0 0 0 / 0.1); }
+  .ms-type-icon { font-size: 2.5rem; margin-bottom: 0.5rem; }
+  .ms-type-name { font-size: 1.1rem; font-weight: 700; color: #1e3a5f; margin-bottom: 0.25rem; }
+  .ms-type-name-en { font-size: 0.8rem; color: #6b7280; margin-bottom: 0.75rem; }
+  .ms-type-desc { font-size: 0.85rem; line-height: 1.6; color: #374151; margin-bottom: 1rem; }
+  .ms-type-link {
+    display: inline-block;
+    background: var(--type-color, #2563eb);
+    color: #fff;
+    font-size: 0.82rem;
+    font-weight: 600;
+    padding: 0.4rem 1rem;
+    border-radius: 999px;
+    text-decoration: none;
+    transition: opacity 0.15s;
+  }
+  .ms-type-link:hover { opacity: 0.85; }
+
+  /* ========== 影響グリッド ========== */
+  .ms-impact-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.25rem;
+  }
+  .ms-impact-card {
+    background: #f9fafb;
+    border-radius: 1rem;
+    padding: 1.5rem;
+  }
+  .ms-impact-icon { font-size: 1.75rem; margin-bottom: 0.5rem; }
+  .ms-impact-title { font-size: 1rem; font-weight: 700; color: #1e3a5f; margin-bottom: 0.5rem; }
+  .ms-impact-desc { font-size: 0.88rem; line-height: 1.7; color: #374151; }
+
+  /* ========== ステップ ========== */
+  .ms-steps { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 1.25rem; }
+  .ms-step { display: flex; align-items: flex-start; gap: 1rem; }
+  .ms-step-num {
+    flex-shrink: 0;
+    width: 2.5rem;
+    height: 2.5rem;
+    background: #2563eb;
+    color: #fff;
+    font-weight: 800;
+    font-size: 1.1rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .ms-step-title { font-size: 1rem; font-weight: 700; color: #1e3a5f; margin-bottom: 0.25rem; }
+  .ms-step-desc { font-size: 0.88rem; line-height: 1.7; color: #374151; }
+
+  /* ========== 診断フロー ========== */
+  .ms-section--flow { background: #f8faff; border-radius: 1.5rem; padding: 2.5rem 1.5rem; }
+  .ms-flow-lead { text-align: center; font-size: 0.9rem; color: #374151; margin-bottom: 2rem; }
+  .ms-flow-wrapper { max-width: 680px; margin-inline: auto; }
+
+  /* ========== 相性マトリクス ========== */
+  .ms-matrix-wrap { margin-block: 2rem; }
+  .ms-matrix-note { font-size: 0.82rem; color: #6b7280; margin-bottom: 1rem; }
+  .ms-matrix-container {
+    display: grid;
+    grid-template-columns: auto repeat(4, 1fr);
+    border: 1px solid #e5e7eb;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    font-size: 0.82rem;
+    margin-bottom: 0.75rem;
+  }
+  .ms-matrix-row { display: contents; }
+  .ms-matrix-cell {
+    padding: 0.6rem 0.4rem;
+    text-align: center;
+    border: 1px solid #e5e7eb;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.2rem;
+  }
+  .ms-matrix-cell--corner { background: #f9fafb; }
+  .ms-matrix-cell--header {
+    background: #f3f4f6;
+    font-weight: 600;
+    font-size: 0.78rem;
+    color: #374151;
+  }
+  .ms-matrix-cell--row-header {
+    background: #f3f4f6;
+    font-weight: 600;
+    font-size: 0.78rem;
+    color: #374151;
+    white-space: nowrap;
+    padding-inline: 0.6rem;
+  }
+  .ms-matrix-cell--score {
+    background: color-mix(in srgb, var(--score-color, #6b7280) 12%, #fff);
+    color: var(--score-color, #6b7280);
+    font-weight: 700;
+  }
+  .ms-matrix-cell--self { background: #f0fdf4; }
+  .ms-matrix-score { font-size: 1rem; font-weight: 800; }
+  .ms-matrix-self-label { font-size: 0.65rem; color: #16a34a; }
+  .ms-matrix-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    font-size: 0.78rem;
+  }
+  .ms-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    color: var(--lg-color, #6b7280);
+    font-weight: 600;
+  }
+  .ms-legend-item::before {
+    content: '';
+    width: 0.8rem;
+    height: 0.8rem;
+    background: var(--lg-color, #6b7280);
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  /* ========== カップルトピック ========== */
+  .ms-couple-topics { margin-top: 2rem; }
+  .ms-topic-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 1rem; }
+  .ms-topic-item { display: flex; align-items: flex-start; gap: 1rem; }
+  .ms-topic-num {
+    flex-shrink: 0;
+    width: 2rem;
+    height: 2rem;
+    background: #2563eb;
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.9rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .ms-topic-body strong { display: block; font-size: 0.95rem; color: #1e3a5f; margin-bottom: 0.25rem; }
+  .ms-topic-body p { font-size: 0.85rem; line-height: 1.6; color: #374151; margin: 0; }
+
+  /* ========== 改善ヒント ========== */
+  .ms-tips-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.25rem;
+    margin-bottom: 1.5rem;
+  }
+  .ms-tip-card {
+    border: 2px solid var(--tip-color, #2563eb);
+    border-radius: 1rem;
+    padding: 1.25rem;
+  }
+  .ms-tip-header { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem; }
+  .ms-tip-emoji { font-size: 1.5rem; }
+  .ms-tip-title { font-size: 0.95rem; font-weight: 700; color: #1e3a5f; }
+  .ms-tip-list { list-style: none; padding: 0; margin: 0 0 1rem; display: flex; flex-direction: column; gap: 0.5rem; }
+  .ms-tip-item { display: flex; align-items: flex-start; gap: 0.5rem; font-size: 0.85rem; line-height: 1.6; color: #374151; }
+  .ms-tip-icon { color: var(--tip-color, #2563eb); flex-shrink: 0; font-weight: 700; }
+  .ms-tip-link { font-size: 0.82rem; color: var(--tip-color, #2563eb); font-weight: 600; text-decoration: none; }
+  .ms-tip-link:hover { text-decoration: underline; }
+  .ms-tips-disclaimer {
+    background: #fffbeb;
+    border: 1px solid #f59e0b;
+    border-radius: 0.5rem;
+    padding: 1rem 1.25rem;
+    font-size: 0.82rem;
+    color: #78350f;
+    line-height: 1.7;
+  }
+
+  /* ========== 参考文献 ========== */
+  .ms-science-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.25rem;
+  }
+  .ms-science-card {
+    background: #f9fafb;
+    border-radius: 1rem;
+    padding: 1.5rem;
+  }
+  .ms-science-icon { font-size: 1.5rem; margin-bottom: 0.5rem; }
+  .ms-science-title { font-size: 0.95rem; font-weight: 700; color: #1e3a5f; margin-bottom: 0.75rem; }
+  .ms-science-body { font-size: 0.85rem; line-height: 1.7; color: #374151; }
+  .ms-ref-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.5rem; }
+  .ms-ref-item { font-size: 0.82rem; line-height: 1.6; }
+  .ms-ref-link { color: #2563eb; text-decoration: none; }
+  .ms-ref-link:hover { text-decoration: underline; }
+
+  /* ========== FAQ ========== */
+  .ms-faq-list { display: flex; flex-direction: column; gap: 1.25rem; }
+  .ms-faq-item {
+    border: 1px solid #e5e7eb;
+    border-radius: 0.75rem;
+    overflow: hidden;
+  }
+  .ms-faq-q {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 1rem 1.25rem;
+    background: #f3f4f6;
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: #1e3a5f;
+    margin: 0;
+  }
+  .ms-faq-q-icon {
+    flex-shrink: 0;
+    width: 1.5rem;
+    height: 1.5rem;
+    background: #2563eb;
+    color: #fff;
+    font-size: 0.75rem;
+    font-weight: 800;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .ms-faq-a {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 1rem 1.25rem;
+    font-size: 0.88rem;
+    line-height: 1.8;
+    color: #374151;
+    margin: 0;
+  }
+  .ms-faq-a-icon {
+    flex-shrink: 0;
+    width: 1.5rem;
+    height: 1.5rem;
+    background: #16a34a;
+    color: #fff;
+    font-size: 0.75rem;
+    font-weight: 800;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* ========== 関連診断 ========== */
+  .ms-related-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.75rem; }
+  .ms-related-link {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.25rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.75rem;
+    text-decoration: none;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .ms-related-link:hover { background: #eff6ff; border-color: #2563eb; }
+  .ms-related-icon { font-size: 1.5rem; flex-shrink: 0; }
+  .ms-related-body { display: flex; flex-direction: column; gap: 0.2rem; }
+  .ms-related-title { font-size: 0.95rem; font-weight: 700; color: #1e3a5f; }
+  .ms-related-desc { font-size: 0.82rem; color: #6b7280; }
+</style>
