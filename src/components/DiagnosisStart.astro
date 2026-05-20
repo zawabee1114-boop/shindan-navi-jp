@@ -1,0 +1,473 @@
+---
+/**
+ * DiagnosisStart.astro - 診断開始画面（ランディング）
+ *
+ * 診断フロー開始前のハブ。科学的根拠・所要時間・CTA を提示する。
+ * Props で全診断共通化。各診断ページから import して使う。
+ *
+ * Props:
+ *   title          - 診断名（H1 に使用）
+ *   description    - キャッチコピー（1〜2文）
+ *   minutes        - 所要時間（数値。「約N分」と表示）
+ *   questionCount  - 問題数
+ *   startHref      - 「診断スタート」ボタンのリンク先
+ *   scientificBasis - 科学的根拠の説明（200字程度）
+ *   references      - 参考文献リスト（任意）
+ *   icon            - 絵文字アイコン
+ *   categoryKey     - 診断カテゴリ（カラートークン対応）
+ *   privacyNote     - プライバシーに関する注記（任意）
+ */
+interface Reference {
+  title: string;
+  author?: string;
+  year?: number;
+  url?: string;
+}
+
+interface Props {
+  title: string;
+  description: string;
+  minutes: number;
+  questionCount: number;
+  startHref: string;
+  scientificBasis: string;
+  references?: Reference[];
+  icon?: string;
+  categoryKey?: 'mbti' | 'blood' | 'multi-int' | 'perfectionism' | 'disc' | 'love' | 'seiza' | 'money';
+  privacyNote?: string;
+}
+
+const {
+  title,
+  description,
+  minutes,
+  questionCount,
+  startHref,
+  scientificBasis,
+  references = [],
+  icon = '🔮',
+  categoryKey,
+  privacyNote,
+} = Astro.props;
+
+const accentVar = categoryKey ? `var(--sn-diag-${categoryKey})` : `var(--sn-primary)`;
+---
+
+<section class="ds-start" style={`--ds-accent: ${accentVar}`}>
+  <!-- ヒーローブロック -->
+  <div class="ds-hero">
+    <div class="ds-icon" aria-hidden="true">{icon}</div>
+    <h1 class="ds-title">{title}</h1>
+    <p class="ds-description">{description}</p>
+
+    <!-- メタ情報 -->
+    <div class="ds-meta" role="list" aria-label="診断の概要">
+      <div class="ds-meta-item" role="listitem">
+        <span class="ds-meta-icon" aria-hidden="true">⏱</span>
+        <span class="ds-meta-label">所要時間</span>
+        <span class="ds-meta-value">約<strong>{minutes}</strong>分</span>
+      </div>
+      <div class="ds-meta-divider" aria-hidden="true"></div>
+      <div class="ds-meta-item" role="listitem">
+        <span class="ds-meta-icon" aria-hidden="true">📝</span>
+        <span class="ds-meta-label">問題数</span>
+        <span class="ds-meta-value"><strong>{questionCount}</strong>問</span>
+      </div>
+      <div class="ds-meta-divider" aria-hidden="true"></div>
+      <div class="ds-meta-item" role="listitem">
+        <span class="ds-meta-icon" aria-hidden="true">🆓</span>
+        <span class="ds-meta-label">費用</span>
+        <span class="ds-meta-value"><strong>無料</strong></span>
+      </div>
+    </div>
+
+    <!-- スタートボタン -->
+    <a
+      href={startHref}
+      class="ds-cta"
+      aria-label={`${title}を始める`}
+    >
+      <span aria-hidden="true">▶</span>
+      診断スタート
+      <span class="ds-cta-hint">（{minutes}分・{questionCount}問）</span>
+    </a>
+
+    {privacyNote && (
+      <p class="ds-privacy" role="note">
+        <span aria-hidden="true">🔒</span>
+        {privacyNote}
+      </p>
+    )}
+  </div>
+
+  <!-- 診断とは何か -->
+  <div class="ds-about">
+    <h2 class="ds-section-title">
+      <span aria-hidden="true">ℹ</span>
+      この診断について
+    </h2>
+    <p class="ds-about-text">{scientificBasis}</p>
+  </div>
+
+  <!-- 科学的根拠・参考文献 -->
+  {references.length > 0 && (
+    <details class="ds-references">
+      <summary class="ds-references-summary">
+        <span aria-hidden="true">📚</span>
+        科学的根拠・参考文献
+        <span class="ds-references-count">（{references.length}件）</span>
+      </summary>
+      <ul class="ds-references-list" role="list">
+        {references.map((ref) => (
+          <li class="ds-reference-item" role="listitem">
+            {ref.url ? (
+              <a
+                href={ref.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="ds-reference-link"
+              >
+                {ref.title}
+                {ref.author && <span class="ds-reference-meta"> — {ref.author}</span>}
+                {ref.year && <span class="ds-reference-meta">（{ref.year}）</span>}
+                <span class="ds-external-icon" aria-label="外部リンク" aria-hidden="true">↗</span>
+              </a>
+            ) : (
+              <span>
+                {ref.title}
+                {ref.author && <span class="ds-reference-meta"> — {ref.author}</span>}
+                {ref.year && <span class="ds-reference-meta">（{ref.year}）</span>}
+              </span>
+            )}
+          </li>
+        ))}
+      </ul>
+    </details>
+  )}
+
+  <!-- フッターCTA -->
+  <div class="ds-footer-cta">
+    <a
+      href={startHref}
+      class="ds-cta ds-cta--footer"
+      aria-label={`${title}を今すぐ始める`}
+    >
+      今すぐ診断する（無料）
+    </a>
+    <p class="ds-footer-note">登録不要・完全無料。{questionCount}問に答えるだけ。</p>
+  </div>
+</section>
+
+<style>
+  .ds-start {
+    max-width: var(--sn-max-w-narrow);
+    margin-inline: auto;
+    padding: var(--sn-space-6) var(--sn-space-4);
+    display: flex;
+    flex-direction: column;
+    gap: var(--sn-space-6);
+  }
+
+  /* ヒーローブロック */
+  .ds-hero {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--sn-space-4);
+    padding: var(--sn-space-8) var(--sn-space-6);
+    background: var(--sn-bg-white);
+    border-radius: var(--sn-radius-xl);
+    box-shadow: var(--sn-shadow-md);
+    border-top: 4px solid var(--ds-accent);
+  }
+
+  .ds-icon {
+    font-size: 4rem;
+    line-height: 1;
+    width: 96px;
+    height: 96px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: color-mix(in srgb, var(--ds-accent) 10%, transparent);
+    border-radius: var(--sn-radius-xl);
+  }
+
+  .ds-title {
+    font-family: var(--sn-font-rounded);
+    font-size: var(--sn-text-3xl);
+    font-weight: 900;
+    color: var(--sn-text);
+    line-height: var(--sn-leading-tight);
+    margin: 0;
+  }
+
+  .ds-description {
+    font-size: var(--sn-text-lg);
+    color: var(--sn-text-soft);
+    line-height: var(--sn-leading-base);
+    margin: 0;
+    max-width: 420px;
+  }
+
+  /* メタ情報 */
+  .ds-meta {
+    display: flex;
+    align-items: center;
+    gap: var(--sn-space-3);
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: var(--sn-space-4) var(--sn-space-6);
+    background: var(--sn-bg-soft);
+    border-radius: var(--sn-radius-lg);
+    width: 100%;
+  }
+
+  .ds-meta-item {
+    display: flex;
+    align-items: center;
+    gap: var(--sn-space-2);
+    font-size: var(--sn-text-sm);
+  }
+
+  .ds-meta-icon {
+    font-size: var(--sn-text-base);
+  }
+
+  .ds-meta-label {
+    color: var(--sn-muted);
+    font-size: var(--sn-text-xs);
+  }
+
+  .ds-meta-value {
+    color: var(--sn-text);
+    font-size: var(--sn-text-sm);
+  }
+
+  .ds-meta-value strong {
+    color: var(--ds-accent);
+    font-size: var(--sn-text-lg);
+    font-family: var(--sn-font-rounded);
+  }
+
+  .ds-meta-divider {
+    width: 1px;
+    height: 24px;
+    background: var(--sn-border);
+  }
+
+  /* スタートボタン */
+  .ds-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sn-space-2);
+    padding: var(--sn-space-4) var(--sn-space-10);
+    background: var(--ds-accent);
+    color: #fff;
+    border-radius: var(--sn-radius-pill);
+    font-family: var(--sn-font-rounded);
+    font-size: var(--sn-text-xl);
+    font-weight: 900;
+    text-decoration: none;
+    box-shadow: var(--sn-shadow-md);
+    min-height: var(--sn-tap-min);
+    transition:
+      transform var(--sn-dur-fast) var(--sn-ease),
+      box-shadow var(--sn-dur-fast) var(--sn-ease),
+      background var(--sn-dur-fast) var(--sn-ease);
+  }
+
+  .ds-cta:hover,
+  .ds-cta:focus-visible {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: var(--sn-shadow-lg);
+    background: color-mix(in srgb, var(--ds-accent) 85%, #000);
+    text-decoration: none;
+  }
+
+  .ds-cta:focus-visible {
+    outline: 3px solid var(--ds-accent);
+    outline-offset: 3px;
+  }
+
+  .ds-cta-hint {
+    font-size: var(--sn-text-xs);
+    font-weight: 400;
+    opacity: 0.8;
+  }
+
+  .ds-cta--footer {
+    font-size: var(--sn-text-lg);
+    padding: var(--sn-space-3) var(--sn-space-8);
+  }
+
+  /* プライバシー */
+  .ds-privacy {
+    display: flex;
+    align-items: center;
+    gap: var(--sn-space-2);
+    font-size: var(--sn-text-xs);
+    color: var(--sn-muted);
+    margin: 0;
+  }
+
+  /* 診断について */
+  .ds-about {
+    background: var(--sn-bg-white);
+    border-radius: var(--sn-radius);
+    padding: var(--sn-space-6);
+    box-shadow: var(--sn-shadow-sm);
+    border: 1px solid var(--sn-border);
+  }
+
+  .ds-section-title {
+    display: flex;
+    align-items: center;
+    gap: var(--sn-space-2);
+    font-family: var(--sn-font-rounded);
+    font-size: var(--sn-text-lg);
+    font-weight: 700;
+    color: var(--sn-text);
+    margin: 0 0 var(--sn-space-4);
+  }
+
+  .ds-about-text {
+    font-size: var(--sn-text-base);
+    color: var(--sn-text-soft);
+    line-height: var(--sn-leading-base);
+    margin: 0;
+  }
+
+  /* 参考文献 */
+  .ds-references {
+    background: var(--sn-bg-white);
+    border-radius: var(--sn-radius);
+    border: 1px solid var(--sn-border);
+    overflow: hidden;
+  }
+
+  .ds-references-summary {
+    display: flex;
+    align-items: center;
+    gap: var(--sn-space-2);
+    padding: var(--sn-space-4) var(--sn-space-5);
+    font-size: var(--sn-text-sm);
+    font-weight: 700;
+    color: var(--sn-text-soft);
+    cursor: pointer;
+    user-select: none;
+    list-style: none;
+    min-height: var(--sn-tap-min);
+  }
+
+  .ds-references-summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .ds-references-summary::after {
+    content: '▼';
+    margin-left: auto;
+    font-size: var(--sn-text-xs);
+    color: var(--sn-muted);
+    transition: transform var(--sn-dur-fast) var(--sn-ease);
+  }
+
+  details[open] .ds-references-summary::after {
+    transform: rotate(180deg);
+  }
+
+  .ds-references-count {
+    font-size: var(--sn-text-xs);
+    color: var(--sn-muted);
+    font-weight: 400;
+  }
+
+  .ds-references-list {
+    padding: 0 var(--sn-space-5) var(--sn-space-5);
+    margin: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: var(--sn-space-2);
+    border-top: 1px solid var(--sn-border-soft);
+  }
+
+  .ds-reference-item {
+    font-size: var(--sn-text-xs);
+    color: var(--sn-text-soft);
+    padding: var(--sn-space-2) 0;
+  }
+
+  .ds-reference-link {
+    color: var(--ds-accent);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sn-space-1);
+    flex-wrap: wrap;
+  }
+
+  .ds-reference-link:hover {
+    text-decoration: underline;
+  }
+
+  .ds-reference-meta {
+    color: var(--sn-muted);
+  }
+
+  .ds-external-icon {
+    font-size: 0.625rem;
+    opacity: 0.6;
+  }
+
+  /* フッターCTA */
+  .ds-footer-cta {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--sn-space-3);
+    text-align: center;
+    padding: var(--sn-space-6);
+    background: color-mix(in srgb, var(--ds-accent) 5%, var(--sn-bg-white));
+    border-radius: var(--sn-radius-lg);
+    border: 1px solid color-mix(in srgb, var(--ds-accent) 15%, transparent);
+  }
+
+  .ds-footer-note {
+    font-size: var(--sn-text-xs);
+    color: var(--sn-muted);
+    margin: 0;
+  }
+
+  /* レスポンシブ */
+  @media (max-width: 480px) {
+    .ds-start {
+      padding: var(--sn-space-4) var(--sn-space-3);
+    }
+
+    .ds-hero {
+      padding: var(--sn-space-6) var(--sn-space-4);
+    }
+
+    .ds-title {
+      font-size: var(--sn-text-2xl);
+    }
+
+    .ds-cta {
+      font-size: var(--sn-text-lg);
+      padding: var(--sn-space-4) var(--sn-space-6);
+      width: 100%;
+      justify-content: center;
+    }
+
+    .ds-meta {
+      gap: var(--sn-space-2);
+      padding: var(--sn-space-3) var(--sn-space-4);
+    }
+
+    .ds-meta-divider {
+      display: none;
+    }
+  }
+</style>

@@ -1,40 +1,401 @@
 ---
+/**
+ * /aisei/ - 相性診断ハブページ
+ * 4種類の相性入口 / 4プライバシーモード説明 / バイラル設計
+ */
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Container from '../../components/Container.astro';
 
-const types = [
-  { title: '恋愛相性診断', icon: '💕', href: '/aisei/renai/', desc: 'MBTI×血液型で恋愛相性をチェック' },
-  { title: '友達相性診断', icon: '👥', href: '/aisei/yujin/', desc: '友人関係の相性を4モードで診断' },
-  { title: '職場相性診断', icon: '💼', href: '/aisei/shokuba/', desc: 'DiSC×MBTIで職場の相性を確認' },
-  { title: '夫婦相性診断', icon: '👫', href: '/aisei/kazoku/fufu/', desc: 'パートナーとの性格相性をチェック' },
-  { title: '親子相性診断', icon: '👪', href: '/aisei/kazoku/oyako/', desc: '親子の性格タイプ別相互理解ガイド' },
+const compatTypes = [
+  {
+    title: '恋愛相性診断',
+    icon: '💕',
+    href: '/aisei/renai/',
+    desc: 'MBTI×血液型で恋愛相性をリアル計算。好きになりやすい相手・すれ違いパターンも分析。',
+    color: 'var(--sn-scene-love)',
+    bg: 'var(--sn-scene-love-bg)',
+    badge: '人気 No.1',
+  },
+  {
+    title: '友達相性診断',
+    icon: '👥',
+    href: '/aisei/yujin/',
+    desc: '4モードで友人関係の相性を深掘り。グループでの立ち位置・長続きする友人タイプも分かる。',
+    color: 'var(--sn-scene-friend)',
+    bg: 'var(--sn-scene-friend-bg)',
+    badge: 'バイラル',
+  },
+  {
+    title: '職場相性診断',
+    icon: '💼',
+    href: '/aisei/shokuba/',
+    desc: 'DiSC×MBTIで職場の相性を確認。上司・同僚とのコミュニケーション改善に使える。',
+    color: 'var(--sn-scene-work)',
+    bg: 'var(--sn-scene-work-bg)',
+  },
+  {
+    title: '夫婦相性診断',
+    icon: '👫',
+    href: '/aisei/kazoku/fufu/',
+    desc: 'パートナーとの性格相性をチェック。すれ違いやすいパターンと対話法が分かる。',
+    color: 'var(--sn-scene-family)',
+    bg: 'var(--sn-scene-family-bg)',
+  },
+  {
+    title: '親子相性診断',
+    icon: '👪',
+    href: '/aisei/kazoku/oyako/',
+    desc: '親子の性格タイプ別相互理解ガイド。子どもの強みを活かす接し方が分かる。',
+    color: 'var(--sn-scene-family)',
+    bg: 'var(--sn-scene-family-bg)',
+  },
+];
+
+const privacyModes = [
+  {
+    icon: '🔒',
+    name: 'こっそりモード',
+    desc: '相手にバレない。自分の結果と相手タイプを入力して即チェック。',
+    badge: 'デフォルト',
+  },
+  {
+    icon: '👥',
+    name: '招待モード',
+    desc: '招待リンクを送って2人の本物の診断結果でリアル相性算出。',
+    badge: 'バイラル',
+  },
+  {
+    icon: '🎭',
+    name: '片方向開示',
+    desc: '招待はするが自分の情報は隠す。ドキドキ非対称モード。',
+  },
+  {
+    icon: '🔓',
+    name: '完全共有',
+    desc: '2人の全情報を相互開示。お互いオープンな関係向け。',
+  },
 ];
 ---
+
 <BaseLayout
-  title="相性診断 - 友達・恋愛・夫婦・親子"
-  description="友達相性診断・MBTI恋愛相性・夫婦相性・親子相性。4つのプライバシーモード対応。こっそりモードなら相手にバレず即チェック。全て無料。"
+  title="相性診断 - 友達・恋愛・夫婦・親子 | 診断ナビ"
+  description="友達相性診断・MBTI恋愛相性・夫婦相性・親子相性。4つのプライバシーモード対応。こっそりモードなら相手にバレず即チェック。招待相性診断は完全無料・無制限。"
   breadcrumbs={[{ name: '相性診断', url: '/aisei/' }]}
 >
-  <section style="background: linear-gradient(135deg, var(--sn-secondary-bg) 0%, var(--sn-primary-bg) 100%); padding-block: 3rem 2rem; text-align:center;">
+  <section class="aisei-hero">
     <Container>
-      <h1 style="font-family: var(--sn-font-rounded); font-size: 2rem; font-weight:900; margin-bottom:1rem;">💕 相性診断</h1>
-      <p style="color:var(--sn-muted); max-width:480px; margin:0 auto;">友達・恋愛・職場・夫婦・親子。4つのプライバシーモード対応。こっそりモードなら相手にバレません。</p>
+      <div class="aisei-hero-inner">
+        <div class="aisei-hero-icon" aria-hidden="true">💕</div>
+        <h1 class="aisei-hero-title">相性診断</h1>
+        <p class="aisei-hero-desc">
+          恋愛・友達・職場・家族。4つのプライバシーモード対応。<br />
+          <strong>こっそりモード</strong>なら相手にバレずに即チェック。<br />
+          <strong>招待モード</strong>はリンクを送るだけ。完全無料・無制限。
+        </p>
+        <div class="aisei-viral-badge" role="note">
+          <span aria-hidden="true">👥</span>
+          招待相性診断は<strong>完全無料・無制限</strong>。今すぐ友達に送れます
+        </div>
+      </div>
     </Container>
   </section>
-  <section style="padding-block:3rem;">
+
+  <section class="aisei-types" aria-label="相性診断の種類">
     <Container>
-      <div style="display:grid; grid-template-columns:1fr; gap:1rem;">
-        {types.map((t) => (
-          <a href={t.href} style="display:flex; align-items:center; gap:1rem; padding:1.25rem; background:var(--sn-bg-white); border-radius:var(--sn-radius-md); border:1px solid var(--sn-border); text-decoration:none; transition:transform 0.15s;">
-            <span style="font-size:2rem;">{t.icon}</span>
-            <div>
-              <p style="font-weight:700; color:var(--sn-text);">{t.title}</p>
-              <p style="font-size:0.875rem; color:var(--sn-muted);">{t.desc}</p>
+      <h2 class="aisei-section-title">
+        <span aria-hidden="true">🎯</span>
+        相性の種類を選ぶ
+      </h2>
+      <div class="aisei-grid">
+        {compatTypes.map((t) => (
+          <a
+            href={t.href}
+            class="aisei-card"
+            style={`--card-color: ${t.color}; --card-bg: ${t.bg}`}
+            aria-label={t.title}
+          >
+            <div class="aisei-card-left">
+              <span class="aisei-card-icon" aria-hidden="true">{t.icon}</span>
+              <div class="aisei-card-body">
+                <div class="aisei-card-header">
+                  <p class="aisei-card-title">{t.title}</p>
+                  {t.badge && <span class="aisei-card-badge">{t.badge}</span>}
+                </div>
+                <p class="aisei-card-desc">{t.desc}</p>
+              </div>
             </div>
-            <span style="margin-left:auto; color:var(--sn-primary); font-size:1.25rem;">→</span>
+            <span class="aisei-card-arrow" aria-hidden="true">→</span>
           </a>
         ))}
       </div>
     </Container>
   </section>
+
+  <section class="aisei-privacy" aria-label="プライバシーモードについて">
+    <Container>
+      <h2 class="aisei-section-title">
+        <span aria-hidden="true">🔒</span>
+        4つのプライバシーモード
+      </h2>
+      <p class="aisei-privacy-intro">
+        相性診断は相手への通知レベルを4段階で選べます。相手にバレたくない場合は「こっそりモード」がデフォルトです。
+      </p>
+      <div class="aisei-privacy-grid">
+        {privacyModes.map((m) => (
+          <div class="aisei-privacy-card" role="article" aria-label={m.name}>
+            <div class="aisei-privacy-header">
+              <span class="aisei-privacy-icon" aria-hidden="true">{m.icon}</span>
+              <div>
+                <p class="aisei-privacy-name">{m.name}</p>
+                {m.badge && <span class="aisei-privacy-badge">{m.badge}</span>}
+              </div>
+            </div>
+            <p class="aisei-privacy-desc">{m.desc}</p>
+          </div>
+        ))}
+      </div>
+    </Container>
+  </section>
+
+  <section class="aisei-viral" aria-label="招待相性診断の仕組み">
+    <Container>
+      <div class="aisei-viral-inner">
+        <h2 class="aisei-viral-title">
+          <span aria-hidden="true">🔗</span>
+          招待相性診断 — 完全無料・無制限
+        </h2>
+        <p class="aisei-viral-desc">
+          「招待モード」を使えば、友達に診断リンクを送るだけでリアルな相性スコアが出ます。登録不要・何度でも無料。友達と比べるのが楽しい。
+        </p>
+        <ol class="aisei-viral-steps" aria-label="招待の流れ">
+          <li class="aisei-viral-step">
+            <span class="aisei-viral-step-num" aria-hidden="true">1</span>
+            <span>自分の診断結果ページで「友達と相性診断する」をタップ</span>
+          </li>
+          <li class="aisei-viral-step">
+            <span class="aisei-viral-step-num" aria-hidden="true">2</span>
+            <span>発行された招待リンクを LINE / X で友達に送る</span>
+          </li>
+          <li class="aisei-viral-step">
+            <span class="aisei-viral-step-num" aria-hidden="true">3</span>
+            <span>友達が診断したらペア相性スコアが即表示</span>
+          </li>
+          <li class="aisei-viral-step">
+            <span class="aisei-viral-step-num" aria-hidden="true">4</span>
+            <span>詳細5軸レポートは ¥390 PASS で解放</span>
+          </li>
+        </ol>
+        <a href="/aisei/yujin/" class="aisei-viral-cta">
+          <span aria-hidden="true">👥</span>
+          友達相性診断を始める（無料）
+        </a>
+      </div>
+    </Container>
+  </section>
 </BaseLayout>
+
+<style>
+  .aisei-hero {
+    background: linear-gradient(135deg, var(--sn-secondary-bg) 0%, var(--sn-primary-bg) 100%);
+    padding-block: var(--sn-space-12) var(--sn-space-8);
+    text-align: center;
+  }
+  .aisei-hero-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--sn-space-4);
+  }
+  .aisei-hero-icon { font-size: 4rem; line-height: 1; }
+  .aisei-hero-title {
+    font-family: var(--sn-font-rounded);
+    font-size: var(--sn-text-4xl);
+    font-weight: 900;
+    color: var(--sn-text);
+    margin: 0;
+  }
+  .aisei-hero-desc {
+    font-size: var(--sn-text-lg);
+    color: var(--sn-text-soft);
+    line-height: var(--sn-leading-base);
+    max-width: 480px;
+    margin: 0;
+  }
+  .aisei-viral-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sn-space-2);
+    padding: var(--sn-space-2) var(--sn-space-5);
+    background: var(--sn-primary);
+    color: #fff;
+    border-radius: var(--sn-radius-pill);
+    font-size: var(--sn-text-sm);
+    font-weight: 700;
+  }
+  .aisei-section-title {
+    display: flex;
+    align-items: center;
+    gap: var(--sn-space-2);
+    font-family: var(--sn-font-rounded);
+    font-size: var(--sn-text-2xl);
+    font-weight: 900;
+    color: var(--sn-text);
+    margin: 0 0 var(--sn-space-6);
+  }
+  .aisei-types { padding-block: var(--sn-space-12); }
+  .aisei-grid { display: flex; flex-direction: column; gap: var(--sn-space-3); }
+  .aisei-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--sn-space-5);
+    background: var(--sn-bg-white);
+    border-radius: var(--sn-radius);
+    border: 1px solid var(--sn-border);
+    border-left: 4px solid var(--card-color);
+    text-decoration: none;
+    min-height: var(--sn-tap-min);
+    gap: var(--sn-space-4);
+    transition: transform var(--sn-dur-fast) var(--sn-ease), box-shadow var(--sn-dur-fast) var(--sn-ease);
+  }
+  .aisei-card:hover { transform: translateX(4px); box-shadow: var(--sn-shadow-md); text-decoration: none; }
+  .aisei-card:focus-visible { outline: 2px solid var(--card-color); outline-offset: 2px; }
+  .aisei-card-left { display: flex; align-items: flex-start; gap: var(--sn-space-4); flex: 1; }
+  .aisei-card-icon {
+    font-size: 2rem;
+    line-height: 1;
+    flex-shrink: 0;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--card-bg);
+    border-radius: var(--sn-radius-md);
+  }
+  .aisei-card-body { flex: 1; }
+  .aisei-card-header {
+    display: flex;
+    align-items: center;
+    gap: var(--sn-space-2);
+    margin-bottom: var(--sn-space-1);
+    flex-wrap: wrap;
+  }
+  .aisei-card-title {
+    font-family: var(--sn-font-rounded);
+    font-size: var(--sn-text-lg);
+    font-weight: 700;
+    color: var(--sn-text);
+    margin: 0;
+  }
+  .aisei-card-badge {
+    font-size: var(--sn-text-xs);
+    font-weight: 700;
+    background: var(--card-color);
+    color: #fff;
+    padding: 2px 8px;
+    border-radius: var(--sn-radius-pill);
+  }
+  .aisei-card-desc { font-size: var(--sn-text-sm); color: var(--sn-muted); line-height: var(--sn-leading-base); margin: 0; }
+  .aisei-card-arrow {
+    color: var(--card-color);
+    font-size: var(--sn-text-xl);
+    font-weight: 700;
+    flex-shrink: 0;
+    transition: transform var(--sn-dur-fast) var(--sn-ease);
+  }
+  .aisei-card:hover .aisei-card-arrow { transform: translateX(4px); }
+  .aisei-privacy { padding-block: var(--sn-space-12); background: var(--sn-bg-soft); }
+  .aisei-privacy-intro {
+    font-size: var(--sn-text-base);
+    color: var(--sn-text-soft);
+    line-height: var(--sn-leading-base);
+    margin: 0 0 var(--sn-space-6);
+    max-width: 560px;
+  }
+  .aisei-privacy-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--sn-space-3); }
+  .aisei-privacy-card {
+    background: var(--sn-bg-white);
+    border-radius: var(--sn-radius-md);
+    padding: var(--sn-space-4);
+    border: 1px solid var(--sn-border);
+    display: flex;
+    flex-direction: column;
+    gap: var(--sn-space-2);
+  }
+  .aisei-privacy-header { display: flex; align-items: center; gap: var(--sn-space-3); }
+  .aisei-privacy-icon { font-size: 1.75rem; line-height: 1; flex-shrink: 0; }
+  .aisei-privacy-name { font-family: var(--sn-font-rounded); font-size: var(--sn-text-base); font-weight: 700; color: var(--sn-text); margin: 0; }
+  .aisei-privacy-badge {
+    font-size: var(--sn-text-xs);
+    font-weight: 700;
+    background: var(--sn-accent);
+    color: #fff;
+    padding: 1px 6px;
+    border-radius: var(--sn-radius-pill);
+    display: inline-block;
+    margin-top: 2px;
+  }
+  .aisei-privacy-desc { font-size: var(--sn-text-sm); color: var(--sn-muted); line-height: var(--sn-leading-base); margin: 0; }
+  .aisei-viral { padding-block: var(--sn-space-12); }
+  .aisei-viral-inner {
+    background: linear-gradient(135deg, var(--sn-primary-bg) 0%, var(--sn-secondary-bg) 100%);
+    border-radius: var(--sn-radius-xl);
+    padding: var(--sn-space-8);
+    border: 1px solid color-mix(in srgb, var(--sn-primary) 20%, transparent);
+    display: flex;
+    flex-direction: column;
+    gap: var(--sn-space-5);
+  }
+  .aisei-viral-title {
+    display: flex;
+    align-items: center;
+    gap: var(--sn-space-2);
+    font-family: var(--sn-font-rounded);
+    font-size: var(--sn-text-2xl);
+    font-weight: 900;
+    color: var(--sn-text);
+    margin: 0;
+  }
+  .aisei-viral-desc { font-size: var(--sn-text-base); color: var(--sn-text-soft); line-height: var(--sn-leading-base); max-width: 540px; margin: 0; }
+  .aisei-viral-steps { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: var(--sn-space-3); }
+  .aisei-viral-step { display: flex; align-items: center; gap: var(--sn-space-3); font-size: var(--sn-text-base); color: var(--sn-text-soft); }
+  .aisei-viral-step-num {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--sn-primary);
+    color: #fff;
+    border-radius: 50%;
+    font-size: var(--sn-text-sm);
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .aisei-viral-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sn-space-2);
+    padding: var(--sn-space-4) var(--sn-space-8);
+    background: var(--sn-primary);
+    color: #fff;
+    border-radius: var(--sn-radius-pill);
+    font-family: var(--sn-font-rounded);
+    font-size: var(--sn-text-lg);
+    font-weight: 900;
+    text-decoration: none;
+    box-shadow: var(--sn-shadow-md);
+    min-height: var(--sn-tap-min);
+    align-self: flex-start;
+    transition: transform var(--sn-dur-fast) var(--sn-ease), box-shadow var(--sn-dur-fast) var(--sn-ease);
+  }
+  .aisei-viral-cta:hover { transform: translateY(-2px); box-shadow: var(--sn-shadow-lg); text-decoration: none; }
+  .aisei-viral-cta:focus-visible { outline: 3px solid var(--sn-primary); outline-offset: 3px; }
+  @media (max-width: 640px) {
+    .aisei-hero-title { font-size: var(--sn-text-3xl); }
+    .aisei-privacy-grid { grid-template-columns: 1fr; }
+    .aisei-viral-inner { padding: var(--sn-space-6) var(--sn-space-4); }
+    .aisei-viral-cta { width: 100%; justify-content: center; }
+  }
+</style>

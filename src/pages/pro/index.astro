@@ -1,13 +1,864 @@
 ---
+/**
+ * /pro/ - PRO会員機能説明ページ
+ *
+ * ¥590/月の価値訴求・機能比較表・CTA（Stripe接続は後・モック）
+ * タイムカプセル機能・AIプロンプトカード機能の説明
+ */
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Container from '../../components/Container.astro';
+
+const features = [
+  {
+    icon: '⏳',
+    title: 'タイムカプセル機能',
+    desc: '今日の診断結果を「封印」して1年後の自分と比較。自己成長を可視化できます。「1年前の自分はこんな性格だった」がデータで確認できます。',
+    isPro: true,
+    isPass: false,
+  },
+  {
+    icon: '🤖',
+    title: 'AIプロンプトカード（月次更新）',
+    desc: 'ChatGPT・Claude・Geminiで自己分析を深める専用プロンプトを毎月配信。「あなたのMBTI×Big5パターン専用」でAIをフル活用できます。',
+    isPro: true,
+    isPass: false,
+  },
+  {
+    icon: '💕',
+    title: '相性詳細レポート',
+    desc: '5軸（仕事・恋愛・友人・家族・学校）の詳細相性分析＋AI行動提案。招待相性診断と組み合わせると最大効果。',
+    isPro: true,
+    isPass: true,
+  },
+  {
+    icon: '📈',
+    title: 'N因子時系列グラフ',
+    desc: 'Big5の神経症傾向（N因子）を週単位で追跡。自分の気分の波パターンが視覚的に分かります。',
+    isPro: true,
+    isPass: false,
+  },
+  {
+    icon: '🐾',
+    title: 'Big5キャラ完全解放',
+    desc: '16動物キャラの詳細版・レアリティ・進化ロードマップ。キャラ装飾・SNSシェア専用素材も付属。',
+    isPro: true,
+    isPass: true,
+  },
+  {
+    icon: '🚫',
+    title: '広告完全非表示',
+    desc: 'すべての広告が消えてストレスゼロ。診断フロー・結果ページ・相性診断すべてが広告なし。',
+    isPro: true,
+    isPass: false,
+  },
+  {
+    icon: '📊',
+    title: '統合プロファイル詳細版',
+    desc: '5軸（仕事・恋愛・友人・家族・学校）のフル2,000字以上レポート。シーン別行動指針・言葉遣い・注意点まで。',
+    isPro: true,
+    isPass: true,
+  },
+  {
+    icon: '🎯',
+    title: '優先サポート',
+    desc: 'フィードバック・バグ報告の優先対応。新機能の先行アクセス権付き。',
+    isPro: true,
+    isPass: false,
+  },
+];
+
+const comparisonRows = [
+  { feature: '8診断すべて受ける', free: true, pass: true, pro: true },
+  { feature: '診断結果の閲覧', free: true, pass: true, pro: true },
+  { feature: '相性診断（こっそりモード）', free: true, pass: true, pro: true },
+  { feature: 'SNSシェア（基本）', free: true, pass: true, pro: true },
+  { feature: '招待相性診断（完全無料）', free: true, pass: true, pro: true },
+  { feature: '統合プロファイル 5軸詳細版', free: false, pass: true, pro: true },
+  { feature: '相性詳細レポート（5軸）', free: false, pass: true, pro: true },
+  { feature: 'Big5キャラ完全解放', free: false, pass: true, pro: true },
+  { feature: 'シェア用SNS素材（高画質）', free: false, pass: true, pro: true },
+  { feature: '広告非表示', free: false, pass: false, pro: true },
+  { feature: 'タイムカプセル機能', free: false, pass: false, pro: true },
+  { feature: 'AIプロンプトカード（月次）', free: false, pass: false, pro: true },
+  { feature: 'N因子時系列グラフ', free: false, pass: false, pro: true },
+  { feature: '優先サポート', free: false, pass: false, pro: true },
+];
 ---
-<BaseLayout title="準備中 - 診断ナビ" description="準備中" noindex={true}>
-  <Container>
-    <div style="padding-block:4rem; text-align:center;">
-      <p style="font-size:3rem; margin-bottom:1rem;">🚧</p>
-      <h1 style="font-family:var(--sn-font-rounded); font-size:1.5rem;">準備中</h1>
-      <a href="/" style="display:inline-block; margin-top:2rem; color:var(--sn-primary);">← トップに戻る</a>
-    </div>
-  </Container>
+
+<BaseLayout
+  title="PRO会員 ¥590/月 - 診断ナビ"
+  description="診断ナビPRO会員（¥590/月）の機能一覧。タイムカプセル機能・AIプロンプトカード・相性詳細レポート・広告非表示。¥390 PASSとの違いも確認できます。"
+  breadcrumbs={[{ name: 'PRO会員', url: '/pro/' }]}
+>
+  <!-- ヒーロー -->
+  <section class="pro-hero">
+    <Container>
+      <div class="pro-hero-inner">
+        <span class="pro-hero-badge">PRO</span>
+        <h1 class="pro-hero-title">自己理解をもっと深く</h1>
+        <p class="pro-hero-desc">
+          タイムカプセルで自己成長を追跡。AIプロンプトカードでChatGPT・Claudeをフル活用。
+          広告なし・相性詳細レポート・Big5キャラ完全解放。
+        </p>
+        <div class="pro-hero-price">
+          <span class="pro-price-amount">¥590</span>
+          <span class="pro-price-unit">/月</span>
+          <span class="pro-price-note">（税込・いつでも解約可）</span>
+        </div>
+        <a
+          href="#pro-join"
+          class="pro-hero-cta"
+          aria-label="PRO会員に今すぐ加入する"
+        >
+          今すぐPRO会員になる
+          <span aria-hidden="true">→</span>
+        </a>
+        <p class="pro-hero-sub">
+          まずは<a href="#comparison" class="pro-hero-link">¥390 PASSとの違いを確認</a>する
+        </p>
+      </div>
+    </Container>
+  </section>
+
+  <!-- 機能一覧 -->
+  <section class="pro-features" aria-label="PRO会員機能一覧">
+    <Container>
+      <h2 class="pro-section-title">
+        <span aria-hidden="true">✨</span>
+        PRO会員の機能
+      </h2>
+      <div class="pro-features-grid">
+        {features.map((f) => (
+          <div class="pro-feature-card" role="article" aria-label={f.title}>
+            <div class="pro-feature-icon" aria-hidden="true">{f.icon}</div>
+            <div class="pro-feature-body">
+              <div class="pro-feature-header">
+                <h3 class="pro-feature-title">{f.title}</h3>
+                <div class="pro-feature-badges">
+                  {f.isPass && <span class="pro-feature-badge pro-feature-badge--pass">PASS対象</span>}
+                  <span class="pro-feature-badge pro-feature-badge--pro">PRO</span>
+                </div>
+              </div>
+              <p class="pro-feature-desc">{f.desc}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </Container>
+  </section>
+
+  <!-- タイムカプセル機能 詳細 -->
+  <section class="pro-timecapsule" aria-label="タイムカプセル機能の詳細">
+    <Container>
+      <div class="pro-feature-spotlight">
+        <div class="pro-feature-spotlight-icon" aria-hidden="true">⏳</div>
+        <div class="pro-feature-spotlight-body">
+          <h2 class="pro-feature-spotlight-title">タイムカプセル機能</h2>
+          <p class="pro-feature-spotlight-desc">
+            診断結果を「未来の自分へのメッセージ」とともに記録。
+            1年後・3年後に開封して、どれだけ自分が変わったかをデータで比較できます。
+            「あのとき悩んでいたことが、今では解決している」という成長の実感が得られます。
+          </p>
+          <ul class="pro-feature-spotlight-list" role="list">
+            <li>今日の8診断結果を封印（いつでも記録可）</li>
+            <li>未来の自分へのメッセージを添えられる</li>
+            <li>指定日時に「開封通知」がメール or ブラウザ通知で届く</li>
+            <li>過去のカプセルと現在の結果を並べてグラフ比較</li>
+          </ul>
+        </div>
+      </div>
+    </Container>
+  </section>
+
+  <!-- AIプロンプトカード機能 詳細 -->
+  <section class="pro-ai-prompt" aria-label="AIプロンプトカード機能の詳細">
+    <Container>
+      <div class="pro-feature-spotlight pro-feature-spotlight--alt">
+        <div class="pro-feature-spotlight-icon" aria-hidden="true">🤖</div>
+        <div class="pro-feature-spotlight-body">
+          <h2 class="pro-feature-spotlight-title">AIプロンプトカード（月次更新）</h2>
+          <p class="pro-feature-spotlight-desc">
+            ChatGPT・Claude・Geminiで「あなたのタイプ専用」の自己分析を深める
+            プロンプトを毎月配信。コピペするだけでAIがあなたの性格に合わせた深掘りをしてくれます。
+          </p>
+          <ul class="pro-feature-spotlight-list" role="list">
+            <li>MBTI×Big5パターン専用プロンプト（毎月15〜20枚）</li>
+            <li>仕事・恋愛・友人・家族・学校の5軸別プロンプト</li>
+            <li>コピペ→AIに貼るだけ（対話例付き）</li>
+            <li>前月との変化レポートプロンプトも含む</li>
+          </ul>
+        </div>
+      </div>
+    </Container>
+  </section>
+
+  <!-- 料金比較表 -->
+  <section class="pro-comparison" id="comparison" aria-label="料金プラン比較表">
+    <Container>
+      <h2 class="pro-section-title">
+        <span aria-hidden="true">📊</span>
+        料金プラン比較
+      </h2>
+      <div class="pro-comparison-table-wrap">
+        <table class="pro-comparison-table">
+          <caption class="pro-table-caption">料金プラン別機能比較</caption>
+          <thead>
+            <tr>
+              <th scope="col" class="pro-th-feature">機能</th>
+              <th scope="col" class="pro-th-free">無料</th>
+              <th scope="col" class="pro-th-pass">
+                PASS<br /><span class="pro-th-price">¥390</span><br /><span class="pro-th-unit">買切</span>
+              </th>
+              <th scope="col" class="pro-th-pro">
+                PRO<br /><span class="pro-th-price">¥590</span><br /><span class="pro-th-unit">/月</span>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {comparisonRows.map((row) => (
+              <tr>
+                <td class="pro-td-feature">{row.feature}</td>
+                <td class="pro-td-check" aria-label={row.free ? '○' : '✕'}>
+                  {row.free ? <span class="pro-check">○</span> : <span class="pro-cross">—</span>}
+                </td>
+                <td class="pro-td-check pro-td-pass" aria-label={row.pass ? '○' : '✕'}>
+                  {row.pass ? <span class="pro-check">○</span> : <span class="pro-cross">—</span>}
+                </td>
+                <td class="pro-td-check pro-td-pro" aria-label={row.pro ? '○' : '✕'}>
+                  {row.pro ? <span class="pro-check">○</span> : <span class="pro-cross">—</span>}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </Container>
+  </section>
+
+  <!-- 加入CTA（モック・Stripe接続は後） -->
+  <section class="pro-join" id="pro-join" aria-label="PRO会員加入">
+    <Container>
+      <div class="pro-join-inner">
+        <h2 class="pro-join-title">PRO会員に加入する</h2>
+        <div class="pro-join-cards">
+          <!-- PASS（買切） -->
+          <div class="pro-plan-card pro-plan-card--pass">
+            <p class="pro-plan-badge">単発購入</p>
+            <p class="pro-plan-name">PASS</p>
+            <div class="pro-plan-price">
+              <span class="pro-plan-amount">¥390</span>
+              <span class="pro-plan-unit">買切</span>
+            </div>
+            <p class="pro-plan-desc">統合プロファイル詳細版・相性詳細レポートを1回分解放。</p>
+            <button
+              class="pro-plan-cta pro-plan-cta--pass"
+              type="button"
+              aria-label="¥390 PASSを購入する"
+              disabled
+            >
+              Stripe連携後に解放
+            </button>
+            <p class="pro-plan-note">※ 近日開始予定</p>
+          </div>
+
+          <!-- PRO（月額） -->
+          <div class="pro-plan-card pro-plan-card--pro">
+            <p class="pro-plan-badge pro-plan-badge--pro">おすすめ</p>
+            <p class="pro-plan-name">PRO</p>
+            <div class="pro-plan-price">
+              <span class="pro-plan-amount">¥590</span>
+              <span class="pro-plan-unit">/月</span>
+            </div>
+            <p class="pro-plan-desc">全機能解放。タイムカプセル・AIプロンプトカード・広告非表示・相性詳細レポートすべて含む。</p>
+            <button
+              class="pro-plan-cta pro-plan-cta--pro"
+              type="button"
+              aria-label="¥590/月 PRO会員に加入する"
+              disabled
+            >
+              Stripe連携後に解放
+            </button>
+            <p class="pro-plan-note">※ 近日開始予定。いつでも解約可。</p>
+          </div>
+        </div>
+
+        <!-- モック注記 -->
+        <div class="pro-mock-note" role="note">
+          <span aria-hidden="true">ℹ</span>
+          現在は機能プレビュー中です。Stripe決済連携後に購入可能になります。
+          今のうちに<a href="/diagnosis/">診断を受けておく</a>と、会員登録時すぐに全機能を使えます。
+        </div>
+      </div>
+    </Container>
+  </section>
 </BaseLayout>
+
+<style>
+  /* ヒーロー */
+  .pro-hero {
+    background: var(--sn-pro-gradient);
+    padding-block: var(--sn-space-16) var(--sn-space-12);
+    text-align: center;
+  }
+
+  .pro-hero-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--sn-space-5);
+  }
+
+  .pro-hero-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: var(--sn-space-1) var(--sn-space-5);
+    background: rgba(255, 255, 255, 0.2);
+    color: #fff;
+    border-radius: var(--sn-radius-pill);
+    font-size: var(--sn-text-sm);
+    font-weight: 900;
+    letter-spacing: 0.1em;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(4px);
+  }
+
+  .pro-hero-title {
+    font-family: var(--sn-font-rounded);
+    font-size: var(--sn-text-4xl);
+    font-weight: 900;
+    color: #fff;
+    margin: 0;
+    line-height: var(--sn-leading-tight);
+  }
+
+  .pro-hero-desc {
+    font-size: var(--sn-text-lg);
+    color: rgba(255, 255, 255, 0.85);
+    line-height: var(--sn-leading-base);
+    max-width: 480px;
+    margin: 0;
+  }
+
+  .pro-hero-price {
+    display: flex;
+    align-items: baseline;
+    gap: var(--sn-space-1);
+    color: #fff;
+  }
+
+  .pro-price-amount {
+    font-family: var(--sn-font-rounded);
+    font-size: var(--sn-text-4xl);
+    font-weight: 900;
+  }
+
+  .pro-price-unit {
+    font-size: var(--sn-text-xl);
+    font-weight: 700;
+  }
+
+  .pro-price-note {
+    font-size: var(--sn-text-sm);
+    opacity: 0.7;
+  }
+
+  .pro-hero-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sn-space-2);
+    padding: var(--sn-space-4) var(--sn-space-10);
+    background: #fff;
+    color: var(--sn-pro-color);
+    border-radius: var(--sn-radius-pill);
+    font-family: var(--sn-font-rounded);
+    font-size: var(--sn-text-xl);
+    font-weight: 900;
+    text-decoration: none;
+    box-shadow: var(--sn-shadow-lg);
+    min-height: var(--sn-tap-min);
+    transition:
+      transform var(--sn-dur-fast) var(--sn-ease),
+      box-shadow var(--sn-dur-fast) var(--sn-ease);
+  }
+
+  .pro-hero-cta:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    text-decoration: none;
+  }
+
+  .pro-hero-cta:focus-visible {
+    outline: 3px solid #fff;
+    outline-offset: 3px;
+  }
+
+  .pro-hero-sub {
+    font-size: var(--sn-text-sm);
+    color: rgba(255, 255, 255, 0.7);
+    margin: 0;
+  }
+
+  .pro-hero-link {
+    color: rgba(255, 255, 255, 0.9);
+    text-decoration: underline;
+  }
+
+  /* セクションタイトル共通 */
+  .pro-section-title {
+    display: flex;
+    align-items: center;
+    gap: var(--sn-space-2);
+    font-family: var(--sn-font-rounded);
+    font-size: var(--sn-text-2xl);
+    font-weight: 900;
+    color: var(--sn-text);
+    margin: 0 0 var(--sn-space-8);
+  }
+
+  /* 機能カード */
+  .pro-features {
+    padding-block: var(--sn-space-16);
+  }
+
+  .pro-features-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--sn-space-4);
+  }
+
+  .pro-feature-card {
+    display: flex;
+    gap: var(--sn-space-4);
+    padding: var(--sn-space-5);
+    background: var(--sn-bg-white);
+    border-radius: var(--sn-radius);
+    border: 1px solid var(--sn-border);
+    box-shadow: var(--sn-shadow-xs);
+  }
+
+  .pro-feature-icon {
+    font-size: 2rem;
+    line-height: 1;
+    flex-shrink: 0;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--sn-pro-bg);
+    border-radius: var(--sn-radius-md);
+  }
+
+  .pro-feature-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: var(--sn-space-2);
+  }
+
+  .pro-feature-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--sn-space-2);
+    flex-wrap: wrap;
+  }
+
+  .pro-feature-title {
+    font-family: var(--sn-font-rounded);
+    font-size: var(--sn-text-base);
+    font-weight: 700;
+    color: var(--sn-text);
+    margin: 0;
+  }
+
+  .pro-feature-badges {
+    display: flex;
+    gap: var(--sn-space-1);
+    flex-shrink: 0;
+  }
+
+  .pro-feature-badge {
+    font-size: var(--sn-text-xs);
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: var(--sn-radius-pill);
+  }
+
+  .pro-feature-badge--pass {
+    background: var(--sn-pass-bg);
+    color: var(--sn-pass-color);
+  }
+
+  .pro-feature-badge--pro {
+    background: var(--sn-pro-bg);
+    color: var(--sn-pro-color);
+  }
+
+  .pro-feature-desc {
+    font-size: var(--sn-text-sm);
+    color: var(--sn-muted);
+    line-height: var(--sn-leading-base);
+    margin: 0;
+  }
+
+  /* 機能スポットライト */
+  .pro-timecapsule,
+  .pro-ai-prompt {
+    padding-block: var(--sn-space-12);
+  }
+
+  .pro-ai-prompt {
+    background: var(--sn-bg-soft);
+  }
+
+  .pro-feature-spotlight {
+    display: flex;
+    gap: var(--sn-space-8);
+    align-items: flex-start;
+    padding: var(--sn-space-8);
+    background: var(--sn-bg-white);
+    border-radius: var(--sn-radius-xl);
+    border: 1px solid color-mix(in srgb, var(--sn-pro-color) 15%, transparent);
+    box-shadow: var(--sn-shadow-sm);
+  }
+
+  .pro-feature-spotlight--alt {
+    background: var(--sn-bg-white);
+  }
+
+  .pro-feature-spotlight-icon {
+    font-size: 4rem;
+    line-height: 1;
+    flex-shrink: 0;
+    width: 80px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--sn-pro-bg);
+    border-radius: var(--sn-radius-lg);
+  }
+
+  .pro-feature-spotlight-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: var(--sn-space-4);
+  }
+
+  .pro-feature-spotlight-title {
+    font-family: var(--sn-font-rounded);
+    font-size: var(--sn-text-2xl);
+    font-weight: 900;
+    color: var(--sn-text);
+    margin: 0;
+  }
+
+  .pro-feature-spotlight-desc {
+    font-size: var(--sn-text-base);
+    color: var(--sn-text-soft);
+    line-height: var(--sn-leading-base);
+    margin: 0;
+  }
+
+  .pro-feature-spotlight-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--sn-space-2);
+  }
+
+  .pro-feature-spotlight-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--sn-space-2);
+    font-size: var(--sn-text-sm);
+    color: var(--sn-text-soft);
+    line-height: var(--sn-leading-base);
+  }
+
+  .pro-feature-spotlight-list li::before {
+    content: '✓';
+    color: var(--sn-pro-color);
+    font-weight: 700;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  /* 比較表 */
+  .pro-comparison {
+    padding-block: var(--sn-space-16);
+    background: var(--sn-bg-soft);
+  }
+
+  .pro-comparison-table-wrap {
+    overflow-x: auto;
+    border-radius: var(--sn-radius);
+    box-shadow: var(--sn-shadow-sm);
+  }
+
+  .pro-comparison-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--sn-bg-white);
+    min-width: 480px;
+  }
+
+  .pro-table-caption {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+  }
+
+  .pro-comparison-table thead tr {
+    background: var(--sn-bg-soft);
+    border-bottom: 2px solid var(--sn-border);
+  }
+
+  .pro-comparison-table th,
+  .pro-comparison-table td {
+    padding: var(--sn-space-3) var(--sn-space-4);
+    text-align: center;
+    border-bottom: 1px solid var(--sn-border-soft);
+  }
+
+  .pro-th-feature {
+    text-align: left !important;
+    font-size: var(--sn-text-sm);
+    font-weight: 700;
+    color: var(--sn-text-soft);
+    width: 50%;
+  }
+
+  .pro-th-free,
+  .pro-th-pass,
+  .pro-th-pro {
+    font-family: var(--sn-font-rounded);
+    font-size: var(--sn-text-sm);
+    font-weight: 900;
+    line-height: 1.4;
+  }
+
+  .pro-th-pass {
+    background: color-mix(in srgb, var(--sn-pass-color) 5%, transparent);
+    color: var(--sn-pass-color);
+  }
+
+  .pro-th-pro {
+    background: color-mix(in srgb, var(--sn-pro-color) 8%, transparent);
+    color: var(--sn-pro-color);
+  }
+
+  .pro-th-price {
+    font-size: var(--sn-text-lg);
+    display: block;
+  }
+
+  .pro-th-unit {
+    font-size: var(--sn-text-xs);
+    font-weight: 400;
+    opacity: 0.7;
+    display: block;
+  }
+
+  .pro-td-feature {
+    text-align: left;
+    font-size: var(--sn-text-sm);
+    color: var(--sn-text-soft);
+  }
+
+  .pro-td-check {
+    font-size: var(--sn-text-lg);
+  }
+
+  .pro-td-pass {
+    background: color-mix(in srgb, var(--sn-pass-color) 3%, transparent);
+  }
+
+  .pro-td-pro {
+    background: color-mix(in srgb, var(--sn-pro-color) 3%, transparent);
+  }
+
+  .pro-check {
+    color: var(--sn-success);
+    font-weight: 700;
+  }
+
+  .pro-cross {
+    color: var(--sn-muted);
+    font-size: var(--sn-text-sm);
+  }
+
+  /* 加入CTA */
+  .pro-join {
+    padding-block: var(--sn-space-16);
+  }
+
+  .pro-join-inner {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sn-space-8);
+  }
+
+  .pro-join-title {
+    font-family: var(--sn-font-rounded);
+    font-size: var(--sn-text-2xl);
+    font-weight: 900;
+    color: var(--sn-text);
+    margin: 0;
+    text-align: center;
+  }
+
+  .pro-join-cards {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--sn-space-5);
+    max-width: 700px;
+    margin-inline: auto;
+    width: 100%;
+  }
+
+  .pro-plan-card {
+    background: var(--sn-bg-white);
+    border-radius: var(--sn-radius-xl);
+    padding: var(--sn-space-6);
+    border: 2px solid var(--sn-border);
+    display: flex;
+    flex-direction: column;
+    gap: var(--sn-space-4);
+    position: relative;
+  }
+
+  .pro-plan-card--pro {
+    border-color: var(--sn-pro-color);
+    box-shadow: var(--sn-shadow-md);
+  }
+
+  .pro-plan-badge {
+    font-size: var(--sn-text-xs);
+    font-weight: 700;
+    color: var(--sn-muted);
+    margin: 0;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .pro-plan-badge--pro {
+    color: var(--sn-pro-color);
+  }
+
+  .pro-plan-name {
+    font-family: var(--sn-font-rounded);
+    font-size: var(--sn-text-2xl);
+    font-weight: 900;
+    color: var(--sn-text);
+    margin: 0;
+  }
+
+  .pro-plan-price {
+    display: flex;
+    align-items: baseline;
+    gap: var(--sn-space-1);
+  }
+
+  .pro-plan-amount {
+    font-family: var(--sn-font-rounded);
+    font-size: var(--sn-text-3xl);
+    font-weight: 900;
+    color: var(--sn-text);
+  }
+
+  .pro-plan-unit {
+    font-size: var(--sn-text-base);
+    color: var(--sn-muted);
+  }
+
+  .pro-plan-desc {
+    font-size: var(--sn-text-sm);
+    color: var(--sn-muted);
+    line-height: var(--sn-leading-base);
+    margin: 0;
+    flex: 1;
+  }
+
+  .pro-plan-cta {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--sn-space-3) var(--sn-space-5);
+    border-radius: var(--sn-radius-pill);
+    font-family: var(--sn-font-rounded);
+    font-size: var(--sn-text-base);
+    font-weight: 900;
+    cursor: not-allowed;
+    border: none;
+    min-height: var(--sn-tap-min);
+  }
+
+  .pro-plan-cta--pass {
+    background: var(--sn-bg-soft);
+    color: var(--sn-muted);
+  }
+
+  .pro-plan-cta--pro {
+    background: var(--sn-bg-soft);
+    color: var(--sn-muted);
+  }
+
+  .pro-plan-note {
+    font-size: var(--sn-text-xs);
+    color: var(--sn-muted);
+    margin: 0;
+    text-align: center;
+  }
+
+  /* モック注記 */
+  .pro-mock-note {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--sn-space-2);
+    padding: var(--sn-space-4) var(--sn-space-5);
+    background: var(--sn-bg-soft);
+    border-radius: var(--sn-radius-md);
+    font-size: var(--sn-text-sm);
+    color: var(--sn-muted);
+    line-height: var(--sn-leading-base);
+    border: 1px solid var(--sn-border);
+  }
+
+  .pro-mock-note a {
+    color: var(--sn-primary);
+  }
+
+  @media (max-width: 768px) {
+    .pro-features-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .pro-feature-spotlight {
+      flex-direction: column;
+      gap: var(--sn-space-5);
+      padding: var(--sn-space-5);
+    }
+
+    .pro-join-cards {
+      grid-template-columns: 1fr;
+    }
+
+    .pro-hero-title {
+      font-size: var(--sn-text-3xl);
+    }
+
+    .pro-hero-cta {
+      font-size: var(--sn-text-lg);
+      padding: var(--sn-space-4) var(--sn-space-6);
+      width: 100%;
+      justify-content: center;
+    }
+  }
+</style>

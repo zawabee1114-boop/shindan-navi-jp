@@ -1,11 +1,17 @@
 ---
 /**
- * /share/[resultId]/ - SNSシェア用OGP最適化ページ
- * Phase 1: Supabase連携後に動的生成実装。
- * Phase 0: 静的スタブ。
+ * /share/[resultId]/ - SNSシェアからの着地ページ（バイラル装置）
+ *
+ * 共有された診断結果を表示し「あなたも診断してみる」CTAでバイラルを回す。
+ *
+ * Phase 0: 静的スタブ（resultId=demo のみ）。
+ * Phase 1: Supabase連携で resultId から結果を動的取得。
+ *
+ * noindex: 動的共有ページは検索除外（重複コンテンツ防止）。
  */
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Container from '../../components/Container.astro';
+import ShareCardGenerator from '../../components/ShareCardGenerator.astro';
 
 export async function getStaticPaths() {
   // Phase 0: 静的スタブ。Phase 1でSupabase連携に切り替える。
@@ -15,19 +21,477 @@ export async function getStaticPaths() {
 }
 
 const { resultId } = Astro.params;
+
+/**
+ * Phase 0 ダミーデータ。
+ * Phase 1: Supabase から resultId で取得。
+ *
+ * const { data } = await supabase
+ *   .from('results')
+ *   .select('*')
+ *   .eq('id', resultId)
+ *   .single();
+ */
+const demoResult = {
+  typeName: 'INFJ — 提唱者',
+  catchphrase: 'あなたは静かな理想主義者',
+  diagName: 'MBTI診断',
+  icon: '🦉',
+  primaryColor: '#6366f1',
+  sharedAt: '2026-05-20',
+};
+
+const result = demoResult; // Phase 1でSupabaseデータに差し替え
+const shareUrl = `https://shindan-navi.jp/share/${resultId}/`;
+const ogTitle = `${result.diagName}の結果: ${result.typeName}`;
+const ogDesc = `${result.catchphrase}。あなたの性格タイプも診断してみよう。shindan-navi.jp`;
 ---
+
 <BaseLayout
-  title="診断結果シェア - 診断ナビ"
-  description="診断ナビで診断した結果をシェアしています"
+  title={`${ogTitle} | 診断ナビ`}
+  description={ogDesc}
   noindex={true}
+  ogType="article"
+  canonical={shareUrl}
 >
-  <Container>
-    <div style="padding-block:4rem; text-align:center;">
-      <p style="font-size:3rem; margin-bottom:1rem;">🔮</p>
-      <h1 style="font-family:var(--sn-font-rounded); font-size:1.5rem; margin-bottom:1rem;">診断結果シェア</h1>
-      <p style="color:var(--sn-muted);">Result ID: {resultId}</p>
-      <p style="color:var(--sn-muted); margin-top:0.5rem;">Phase 1でSupabase連携後に動的実装します</p>
-      <a href="/" style="display:inline-block; margin-top:2rem; color:var(--sn-primary);">診断をやってみる</a>
-    </div>
-  </Container>
+  <!-- シェアランディングヘッダー -->
+  <section class="share-hero">
+    <Container>
+      <div class="share-hero-inner">
+        <p class="share-hero-from">
+          <span aria-hidden="true">👤</span>
+          友達があなたに診断結果をシェアしました
+        </p>
+        <div class="share-result-card">
+          <div
+            class="share-result-visual"
+            style={`background: linear-gradient(135deg, ${result.primaryColor} 0%, color-mix(in srgb, ${result.primaryColor} 60%, #1a1a2e) 100%)`}
+            aria-label={`${result.diagName}の診断結果`}
+          >
+            <span class="share-result-icon" aria-hidden="true">{result.icon}</span>
+            <div class="share-result-text">
+              <p class="share-result-diag">{result.diagName}</p>
+              <p class="share-result-type">{result.typeName}</p>
+              <p class="share-result-catch">{result.catchphrase}</p>
+            </div>
+          </div>
+          <p class="share-brand" aria-hidden="true">shindan-navi.jp</p>
+        </div>
+      </div>
+    </Container>
+  </section>
+
+  <!-- バイラルCTA（核心） -->
+  <section class="share-cta" aria-label="あなたも診断してみる">
+    <Container>
+      <div class="share-cta-inner">
+        <h1 class="share-cta-title">
+          あなたのタイプは何？
+        </h1>
+        <p class="share-cta-desc">
+          {result.diagName}を無料で受けて、自分のタイプを確かめよう。友達との相性もチェックできます。
+        </p>
+        <div class="share-cta-btns">
+          <a
+            href="/diagnosis/mbti/"
+            class="share-cta-primary"
+            aria-label={`${result.diagName}を無料で受ける`}
+          >
+            <span aria-hidden="true">▶</span>
+            {result.diagName}を無料で受ける
+            <span class="share-cta-hint">約3分・無料</span>
+          </a>
+          <a
+            href="/aisei/yujin/?pair_from={resultId}"
+            class="share-cta-secondary"
+            aria-label="友達と相性診断する"
+          >
+            <span aria-hidden="true">👥</span>
+            この友達と相性診断する
+          </a>
+        </div>
+        <p class="share-cta-note">登録不要・完全無料</p>
+      </div>
+    </Container>
+  </section>
+
+  <!-- 診断ナビ紹介 -->
+  <section class="share-about" aria-label="診断ナビについて">
+    <Container>
+      <div class="share-about-inner">
+        <h2 class="share-about-title">
+          <span aria-hidden="true">🔮</span>
+          診断ナビとは？
+        </h2>
+        <p class="share-about-desc">
+          MBTI・血液型・多重知能・DiSC・恋愛スタイルなど8つの診断を統合し、仕事・恋愛・友人・家族・学校の5シーンで具体的な行動指針を出す自己理解プラットフォームです。
+        </p>
+        <div class="share-about-features">
+          <div class="share-about-feature">
+            <span class="share-about-feature-icon" aria-hidden="true">🆓</span>
+            <p class="share-about-feature-text">全診断<strong>完全無料</strong></p>
+          </div>
+          <div class="share-about-feature">
+            <span class="share-about-feature-icon" aria-hidden="true">⏱</span>
+            <p class="share-about-feature-text">各診断<strong>約3分</strong></p>
+          </div>
+          <div class="share-about-feature">
+            <span class="share-about-feature-icon" aria-hidden="true">🔒</span>
+            <p class="share-about-feature-text">登録<strong>不要</strong></p>
+          </div>
+          <div class="share-about-feature">
+            <span class="share-about-feature-icon" aria-hidden="true">👥</span>
+            <p class="share-about-feature-text">相性診断<strong>無制限</strong></p>
+          </div>
+        </div>
+        <a href="/" class="share-about-cta">
+          全8診断を見る →
+        </a>
+      </div>
+    </Container>
+  </section>
+
+  <!-- シェアカード（受け取った側もシェアできる） -->
+  <section class="share-reshare" aria-label="さらにシェアする">
+    <Container>
+      <h2 class="share-reshare-title">
+        <span aria-hidden="true">📤</span>
+        診断結果をシェア
+      </h2>
+      <p class="share-reshare-desc">あなたの診断結果を受けてから、友達にシェアしてみよう。</p>
+      <ShareCardGenerator
+        typeName={result.typeName}
+        catchphrase={result.catchphrase}
+        icon={result.icon}
+        resultId={resultId}
+        diagName={result.diagName}
+        primaryColor={result.primaryColor}
+      />
+    </Container>
+  </section>
 </BaseLayout>
+
+<style>
+  /* ヒーロー */
+  .share-hero {
+    background: var(--sn-bg-soft);
+    padding-block: var(--sn-space-10) var(--sn-space-8);
+  }
+
+  .share-hero-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--sn-space-5);
+    text-align: center;
+  }
+
+  .share-hero-from {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sn-space-2);
+    font-size: var(--sn-text-sm);
+    color: var(--sn-muted);
+    padding: var(--sn-space-2) var(--sn-space-4);
+    background: var(--sn-bg-white);
+    border-radius: var(--sn-radius-pill);
+    border: 1px solid var(--sn-border);
+    margin: 0;
+  }
+
+  /* 結果カード */
+  .share-result-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--sn-space-2);
+    width: 100%;
+    max-width: 420px;
+  }
+
+  .share-result-visual {
+    width: 100%;
+    aspect-ratio: 40 / 21;
+    border-radius: var(--sn-radius-lg);
+    display: flex;
+    align-items: center;
+    gap: 5%;
+    padding: 6% 8%;
+    box-shadow: var(--sn-shadow-md);
+  }
+
+  .share-result-icon {
+    font-size: clamp(2rem, 8vw, 3.5rem);
+    line-height: 1;
+    flex-shrink: 0;
+  }
+
+  .share-result-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2%;
+    flex: 1;
+  }
+
+  .share-result-diag {
+    font-size: clamp(0.625rem, 2vw, 0.75rem);
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.7);
+    margin: 0;
+    letter-spacing: 0.05em;
+  }
+
+  .share-result-type {
+    font-family: var(--sn-font-rounded);
+    font-size: clamp(1rem, 4vw, 1.75rem);
+    font-weight: 900;
+    color: #fff;
+    margin: 0;
+    line-height: 1.2;
+  }
+
+  .share-result-catch {
+    font-size: clamp(0.75rem, 2.5vw, 0.875rem);
+    color: rgba(255, 255, 255, 0.9);
+    margin: 0;
+    line-height: 1.4;
+  }
+
+  .share-brand {
+    font-size: var(--sn-text-xs);
+    color: var(--sn-muted);
+    margin: 0;
+    letter-spacing: 0.05em;
+  }
+
+  /* バイラルCTA */
+  .share-cta {
+    padding-block: var(--sn-space-12);
+  }
+
+  .share-cta-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--sn-space-5);
+    text-align: center;
+    max-width: 480px;
+    margin-inline: auto;
+  }
+
+  .share-cta-title {
+    font-family: var(--sn-font-rounded);
+    font-size: var(--sn-text-3xl);
+    font-weight: 900;
+    color: var(--sn-text);
+    margin: 0;
+  }
+
+  .share-cta-desc {
+    font-size: var(--sn-text-base);
+    color: var(--sn-text-soft);
+    line-height: var(--sn-leading-base);
+    margin: 0;
+  }
+
+  .share-cta-btns {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sn-space-3);
+    width: 100%;
+  }
+
+  .share-cta-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--sn-space-2);
+    padding: var(--sn-space-4) var(--sn-space-8);
+    background: var(--sn-primary);
+    color: #fff;
+    border-radius: var(--sn-radius-pill);
+    font-family: var(--sn-font-rounded);
+    font-size: var(--sn-text-xl);
+    font-weight: 900;
+    text-decoration: none;
+    box-shadow: var(--sn-shadow-md);
+    min-height: var(--sn-tap-min);
+    width: 100%;
+    transition:
+      transform var(--sn-dur-fast) var(--sn-ease),
+      box-shadow var(--sn-dur-fast) var(--sn-ease);
+  }
+
+  .share-cta-primary:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: var(--sn-shadow-lg);
+    text-decoration: none;
+  }
+
+  .share-cta-primary:focus-visible {
+    outline: 3px solid var(--sn-primary);
+    outline-offset: 3px;
+  }
+
+  .share-cta-hint {
+    font-size: var(--sn-text-xs);
+    font-weight: 400;
+    opacity: 0.8;
+  }
+
+  .share-cta-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--sn-space-2);
+    padding: var(--sn-space-3) var(--sn-space-6);
+    background: var(--sn-scene-friend-bg);
+    color: var(--sn-scene-friend);
+    border: 1px solid color-mix(in srgb, var(--sn-scene-friend) 30%, transparent);
+    border-radius: var(--sn-radius-pill);
+    font-family: var(--sn-font-rounded);
+    font-size: var(--sn-text-base);
+    font-weight: 700;
+    text-decoration: none;
+    min-height: var(--sn-tap-min);
+    width: 100%;
+    transition:
+      background var(--sn-dur-fast) var(--sn-ease),
+      color var(--sn-dur-fast) var(--sn-ease);
+  }
+
+  .share-cta-secondary:hover {
+    background: var(--sn-scene-friend);
+    color: #fff;
+    text-decoration: none;
+  }
+
+  .share-cta-secondary:focus-visible {
+    outline: 2px solid var(--sn-scene-friend);
+    outline-offset: 2px;
+  }
+
+  .share-cta-note {
+    font-size: var(--sn-text-xs);
+    color: var(--sn-muted);
+    margin: 0;
+  }
+
+  /* 診断ナビ紹介 */
+  .share-about {
+    padding-block: var(--sn-space-12);
+    background: var(--sn-bg-soft);
+  }
+
+  .share-about-inner {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sn-space-5);
+    max-width: 560px;
+    margin-inline: auto;
+  }
+
+  .share-about-title {
+    display: flex;
+    align-items: center;
+    gap: var(--sn-space-2);
+    font-family: var(--sn-font-rounded);
+    font-size: var(--sn-text-xl);
+    font-weight: 900;
+    color: var(--sn-text);
+    margin: 0;
+  }
+
+  .share-about-desc {
+    font-size: var(--sn-text-base);
+    color: var(--sn-text-soft);
+    line-height: var(--sn-leading-base);
+    margin: 0;
+  }
+
+  .share-about-features {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--sn-space-3);
+  }
+
+  .share-about-feature {
+    display: flex;
+    align-items: center;
+    gap: var(--sn-space-3);
+    padding: var(--sn-space-3) var(--sn-space-4);
+    background: var(--sn-bg-white);
+    border-radius: var(--sn-radius-md);
+    border: 1px solid var(--sn-border);
+  }
+
+  .share-about-feature-icon {
+    font-size: 1.5rem;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+
+  .share-about-feature-text {
+    font-size: var(--sn-text-sm);
+    color: var(--sn-text-soft);
+    margin: 0;
+    line-height: 1.4;
+  }
+
+  .share-about-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sn-space-2);
+    padding: var(--sn-space-3) var(--sn-space-6);
+    background: var(--sn-primary);
+    color: #fff;
+    border-radius: var(--sn-radius-pill);
+    font-family: var(--sn-font-rounded);
+    font-size: var(--sn-text-base);
+    font-weight: 700;
+    text-decoration: none;
+    min-height: var(--sn-tap-min);
+    align-self: flex-start;
+    transition:
+      transform var(--sn-dur-fast) var(--sn-ease),
+      box-shadow var(--sn-dur-fast) var(--sn-ease);
+  }
+
+  .share-about-cta:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--sn-shadow-md);
+    text-decoration: none;
+  }
+
+  /* リシェアセクション */
+  .share-reshare {
+    padding-block: var(--sn-space-12);
+  }
+
+  .share-reshare-title {
+    display: flex;
+    align-items: center;
+    gap: var(--sn-space-2);
+    font-family: var(--sn-font-rounded);
+    font-size: var(--sn-text-xl);
+    font-weight: 900;
+    color: var(--sn-text);
+    margin: 0 0 var(--sn-space-2);
+  }
+
+  .share-reshare-desc {
+    font-size: var(--sn-text-sm);
+    color: var(--sn-muted);
+    margin: 0 0 var(--sn-space-5);
+  }
+
+  @media (max-width: 480px) {
+    .share-about-features {
+      grid-template-columns: 1fr;
+    }
+
+    .share-cta-title {
+      font-size: var(--sn-text-2xl);
+    }
+  }
+</style>
