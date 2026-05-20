@@ -1,0 +1,529 @@
+---
+/**
+ * ResultCard.astro - 診断結果カード（ライト版・デフォルト表示）
+ *
+ * 詳細版（8,000字）は別途 content-writer が執筆する。
+ * このコンポーネントはライト版（3分読了）のシェル。
+ *
+ * 無料表示: キャラ + タイプ名 + キャッチコピー + 特徴3つ + シーン別一言 + CTA
+ * 有料表示: 「続きを読む」→ ¥390 PASS
+ */
+interface SceneAdvice {
+  scene: 'work' | 'love' | 'friend' | 'family' | 'school';
+  label: string;
+  advice: string;
+}
+
+interface Big5Scores {
+  /** 開放性 Openness 0-100 */
+  O: number;
+  /** 誠実性 Conscientiousness 0-100 */
+  C: number;
+  /** 外向性 Extraversion 0-100 */
+  E: number;
+  /** 協調性 Agreeableness 0-100 */
+  A: number;
+  /** 神経症傾向 Neuroticism 0-100 */
+  N: number;
+}
+
+interface Props {
+  /** タイプキー（例: "INFJ" / "A型" / "言語的知能"）*/
+  typeKey: string;
+  /** タイプ表示名 */
+  typeName: string;
+  /** キャラクター名（動物キャラ） */
+  characterName?: string;
+  /** キャッチコピー */
+  tagline: string;
+  /** 特徴（3つ）*/
+  features: string[];
+  /** 強み（3つ）*/
+  strengths: string[];
+  /** 弱み（3つ）*/
+  weaknesses: string[];
+  /** シーン別一言アドバイス（5軸）*/
+  sceneAdvice?: SceneAdvice[];
+  /** Big5スコア（オプション）*/
+  big5?: Big5Scores;
+  /** 診断名（例: "MBTI"）*/
+  diagnosisName: string;
+  /** 詳細版へのリンク */
+  detailHref?: string;
+  /** 課金済みか */
+  isPaid?: boolean;
+}
+
+const {
+  typeKey,
+  typeName,
+  characterName,
+  tagline,
+  features,
+  strengths,
+  weaknesses,
+  sceneAdvice = [],
+  big5,
+  diagnosisName,
+  detailHref,
+  isPaid = false,
+} = Astro.props;
+
+const sceneIcons: Record<string, string> = {
+  work: '💼',
+  love: '💕',
+  friend: '👥',
+  family: '🏠',
+  school: '📚',
+};
+
+const sceneColors: Record<string, string> = {
+  work: 'var(--sn-scene-work)',
+  love: 'var(--sn-scene-love)',
+  friend: 'var(--sn-scene-friend)',
+  family: 'var(--sn-scene-family)',
+  school: 'var(--sn-scene-school)',
+};
+---
+
+<div class="result-card animate-fade-in">
+  <!-- ヘッダー：タイプ名 + キャラ -->
+  <div class="result-header">
+    <!-- キャラアイコン（後でSVGに差し替え：CharacterDisplay コンポーネント参照）-->
+    <div class="character-placeholder" aria-label={characterName ?? typeName}>
+      <!-- TODO: デザイナーが本番SVGキャラを差し替え -->
+      <!-- src/assets/characters/{typeKey}.svg に配置する -->
+      <span class="character-emoji" aria-hidden="true">🦊</span>
+    </div>
+
+    <div class="result-title-block">
+      <p class="diagnosis-label">{diagnosisName} 診断結果</p>
+      <h1 class="result-type">{typeName}</h1>
+      {characterName && (
+        <p class="character-name">{characterName}タイプ</p>
+      )}
+      <p class="result-tagline">{tagline}</p>
+    </div>
+  </div>
+
+  <!-- 特徴（3つ）-->
+  <section class="features-section" aria-labelledby="features-heading">
+    <h2 id="features-heading" class="section-heading">
+      <span aria-hidden="true">✨</span>
+      {typeName}の特徴
+    </h2>
+    <ul class="features-list">
+      {features.map((feature) => (
+        <li class="feature-item">
+          <span class="feature-check" aria-hidden="true">●</span>
+          {feature}
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  <!-- 強み・弱み -->
+  <div class="sw-grid">
+    <section class="strengths-section" aria-labelledby="strengths-heading">
+      <h2 id="strengths-heading" class="section-heading section-heading--success">
+        <span aria-hidden="true">💪</span>
+        強み
+      </h2>
+      <ul class="sw-list">
+        {strengths.map((s) => (
+          <li class="sw-item sw-item--strength">{s}</li>
+        ))}
+      </ul>
+    </section>
+
+    <section class="weaknesses-section" aria-labelledby="weaknesses-heading">
+      <h2 id="weaknesses-heading" class="section-heading section-heading--warning">
+        <span aria-hidden="true">⚡</span>
+        注意点
+      </h2>
+      <ul class="sw-list">
+        {weaknesses.map((w) => (
+          <li class="sw-item sw-item--weakness">{w}</li>
+        ))}
+      </ul>
+    </section>
+  </div>
+
+  <!-- シーン別一言アドバイス（5軸）-->
+  {sceneAdvice.length > 0 && (
+    <section class="scene-section" aria-labelledby="scene-heading">
+      <h2 id="scene-heading" class="section-heading">
+        <span aria-hidden="true">🗺</span>
+        シーン別アドバイス
+      </h2>
+      <div class="scene-grid">
+        {sceneAdvice.map((item) => (
+          <div
+            class="scene-card"
+            style={`--scene-color: ${sceneColors[item.scene] ?? 'var(--sn-primary)'}`}
+          >
+            <span class="scene-icon" aria-hidden="true">{sceneIcons[item.scene] ?? '📌'}</span>
+            <span class="scene-label">{item.label}</span>
+            <p class="scene-advice">{item.advice}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+  )}
+
+  <!-- 詳細版ペイウォール（無料ユーザー向け）-->
+  {!isPaid && detailHref && (
+    <div class="paywall">
+      <div class="paywall-blur" aria-hidden="true">
+        <p class="paywall-preview">
+          詳細版では8診断統合による仕事・恋愛・友人・家族・学校の5軸行動指針を
+          8,000字以上で徹底解説します。AI活用プロンプトカード付き...
+        </p>
+      </div>
+      <div class="paywall-cta">
+        <p class="paywall-message">
+          <span class="badge badge-pass">¥390 PASS</span>
+          詳細レポートを読む
+        </p>
+        <a href="/pro/" class="btn btn-primary btn-lg">
+          <span aria-hidden="true">🔓</span>
+          詳細版を見る（¥390）
+        </a>
+        <p class="paywall-note">1年間有効・全診断の詳細が見放題</p>
+      </div>
+    </div>
+  )}
+
+  <!-- SNSシェアボタン -->
+  <div class="share-block">
+    <p class="share-label">結果をシェアする</p>
+    <div class="share-buttons">
+      <!-- ShareButtons コンポーネントを参照 -->
+      <a
+        href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(`私の${diagnosisName}は「${typeName}」でした！${tagline} #診断ナビ`)}&url=${encodeURIComponent(`https://shindan-navi.jp`)}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="share-btn share-btn--x"
+        aria-label="X（Twitter）でシェア"
+      >
+        X でシェア
+      </a>
+      <a
+        href={`https://line.me/R/msg/text/?${encodeURIComponent(`私の${diagnosisName}は「${typeName}」！ https://shindan-navi.jp`)}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="share-btn share-btn--line"
+        aria-label="LINEでシェア"
+      >
+        LINE でシェア
+      </a>
+    </div>
+  </div>
+</div>
+
+<style>
+  .result-card {
+    max-width: var(--sn-max-w-content);
+    margin-inline: auto;
+    display: flex;
+    flex-direction: column;
+    gap: var(--sn-space-8);
+  }
+
+  /* ヘッダー */
+  .result-header {
+    background: linear-gradient(135deg, var(--sn-primary-bg) 0%, var(--sn-secondary-bg) 100%);
+    border-radius: var(--sn-radius-lg);
+    padding: var(--sn-space-8);
+    display: flex;
+    gap: var(--sn-space-6);
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .character-placeholder {
+    width: 100px;
+    height: 100px;
+    background: var(--sn-bg-white);
+    border-radius: var(--sn-radius-lg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--sn-shadow);
+    flex-shrink: 0;
+    /* TODO: 本番ではSVGに差し替え */
+  }
+
+  .character-emoji {
+    font-size: 3rem;
+  }
+
+  .result-title-block {
+    flex: 1;
+    min-width: 200px;
+  }
+
+  .diagnosis-label {
+    font-size: var(--sn-text-sm);
+    color: var(--sn-muted);
+    margin-bottom: var(--sn-space-1);
+  }
+
+  .result-type {
+    font-family: var(--sn-font-rounded);
+    font-size: var(--sn-text-3xl);
+    font-weight: 900;
+    color: var(--sn-primary);
+    line-height: 1;
+    margin-bottom: var(--sn-space-1);
+  }
+
+  .character-name {
+    font-size: var(--sn-text-lg);
+    font-weight: 700;
+    color: var(--sn-secondary);
+    margin-bottom: var(--sn-space-2);
+  }
+
+  .result-tagline {
+    font-size: var(--sn-text-base);
+    color: var(--sn-text-soft);
+    line-height: var(--sn-leading-base);
+  }
+
+  /* セクション共通 */
+  .section-heading {
+    display: flex;
+    align-items: center;
+    gap: var(--sn-space-2);
+    font-family: var(--sn-font-rounded);
+    font-size: var(--sn-text-lg);
+    font-weight: 700;
+    color: var(--sn-text);
+    margin-bottom: var(--sn-space-4);
+  }
+
+  .section-heading--success { color: var(--sn-success); }
+  .section-heading--warning { color: var(--sn-accent-dark); }
+
+  /* 特徴リスト */
+  .features-section {
+    background: var(--sn-bg-white);
+    border-radius: var(--sn-radius);
+    padding: var(--sn-space-6);
+    box-shadow: var(--sn-shadow-sm);
+  }
+
+  .features-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: var(--sn-space-3);
+  }
+
+  .feature-item {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--sn-space-3);
+    font-size: var(--sn-text-base);
+    line-height: var(--sn-leading-base);
+  }
+
+  .feature-check {
+    color: var(--sn-primary);
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  /* 強み・弱みグリッド */
+  .sw-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--sn-space-4);
+  }
+
+  @media (min-width: 640px) {
+    .sw-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .strengths-section, .weaknesses-section {
+    background: var(--sn-bg-white);
+    border-radius: var(--sn-radius);
+    padding: var(--sn-space-6);
+    box-shadow: var(--sn-shadow-sm);
+  }
+
+  .sw-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: var(--sn-space-2);
+  }
+
+  .sw-item {
+    font-size: var(--sn-text-sm);
+    padding: var(--sn-space-2) var(--sn-space-3);
+    border-radius: var(--sn-radius-sm);
+  }
+
+  .sw-item--strength {
+    background: var(--sn-success-bg);
+    color: var(--sn-success);
+  }
+
+  .sw-item--weakness {
+    background: var(--sn-warning-bg);
+    color: var(--sn-accent-dark);
+  }
+
+  /* シーン軸グリッド */
+  .scene-section {
+    background: var(--sn-bg-white);
+    border-radius: var(--sn-radius);
+    padding: var(--sn-space-6);
+    box-shadow: var(--sn-shadow-sm);
+  }
+
+  .scene-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--sn-space-3);
+  }
+
+  @media (min-width: 480px) {
+    .scene-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 768px) {
+    .scene-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .scene-card {
+    background: color-mix(in srgb, var(--scene-color) 8%, var(--sn-bg-white));
+    border: 1px solid color-mix(in srgb, var(--scene-color) 20%, transparent);
+    border-radius: var(--sn-radius-md);
+    padding: var(--sn-space-4);
+    display: flex;
+    flex-direction: column;
+    gap: var(--sn-space-2);
+  }
+
+  .scene-icon {
+    font-size: var(--sn-text-xl);
+  }
+
+  .scene-label {
+    font-size: var(--sn-text-xs);
+    font-weight: 700;
+    color: var(--scene-color);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .scene-advice {
+    font-size: var(--sn-text-sm);
+    color: var(--sn-text-soft);
+    line-height: var(--sn-leading-base);
+    margin: 0;
+  }
+
+  /* ペイウォール */
+  .paywall {
+    position: relative;
+    border-radius: var(--sn-radius);
+    overflow: hidden;
+    background: var(--sn-bg-white);
+    box-shadow: var(--sn-shadow);
+  }
+
+  .paywall-blur {
+    padding: var(--sn-space-6);
+    -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 100%);
+    mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 100%);
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .paywall-preview {
+    font-size: var(--sn-text-base);
+    color: var(--sn-text-soft);
+    line-height: var(--sn-leading-base);
+    filter: blur(4px);
+  }
+
+  .paywall-cta {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--sn-space-4);
+    padding: var(--sn-space-8);
+    background: linear-gradient(180deg, transparent, var(--sn-bg-white) 30%);
+    text-align: center;
+  }
+
+  .paywall-message {
+    display: flex;
+    align-items: center;
+    gap: var(--sn-space-2);
+    font-size: var(--sn-text-lg);
+    font-weight: 700;
+    color: var(--sn-text);
+  }
+
+  .paywall-note {
+    font-size: var(--sn-text-sm);
+    color: var(--sn-muted);
+  }
+
+  /* シェアボタン */
+  .share-block {
+    text-align: center;
+  }
+
+  .share-label {
+    font-size: var(--sn-text-sm);
+    color: var(--sn-muted);
+    margin-bottom: var(--sn-space-3);
+  }
+
+  .share-buttons {
+    display: flex;
+    gap: var(--sn-space-3);
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .share-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: var(--sn-tap-min);
+    padding: var(--sn-space-3) var(--sn-space-6);
+    border-radius: var(--sn-radius-pill);
+    font-size: var(--sn-text-sm);
+    font-weight: 700;
+    text-decoration: none;
+    transition: opacity var(--sn-dur-fast) var(--sn-ease);
+  }
+
+  .share-btn:hover {
+    opacity: 0.85;
+    text-decoration: none;
+  }
+
+  .share-btn--x {
+    background: #000000;
+    color: #ffffff;
+  }
+
+  .share-btn--line {
+    background: #00b900;
+    color: #ffffff;
+  }
+</style>

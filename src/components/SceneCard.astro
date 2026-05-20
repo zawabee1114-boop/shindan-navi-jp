@@ -1,0 +1,207 @@
+---
+/**
+ * SceneCard.astro - シーン別アクションカード（5軸共通フォーマット）
+ *
+ * 仕事 / 恋愛 / 友人 / 家族 / 学校 の5軸で共通のカードUI。
+ * ResultCard の「シーン別アドバイス」セクションでも使用可能な単体コンポーネント。
+ */
+type SceneKey = 'work' | 'love' | 'friend' | 'family' | 'school';
+
+interface ActionItem {
+  label: string;
+  description: string;
+}
+
+interface Props {
+  /** シーンキー */
+  scene: SceneKey;
+  /** カードタイトル（例: "職場でのコミュニケーション"）*/
+  title: string;
+  /** サブタイトル（例: "あなたのタイプ別アドバイス"）*/
+  subtitle?: string;
+  /** アクションアイテム（3-5件推奨）*/
+  actions: ActionItem[];
+  /** 詳細版へのリンク（有料）*/
+  detailHref?: string;
+  /** 詳細版表示中か（PASSユーザー）*/
+  showDetail?: boolean;
+}
+
+const sceneConfig: Record<SceneKey, { icon: string; label: string; colorVar: string; bgVar: string }> = {
+  work:   { icon: '💼', label: '仕事',       colorVar: '--sn-scene-work',   bgVar: '--sn-scene-work-bg'   },
+  love:   { icon: '💕', label: '恋愛',       colorVar: '--sn-scene-love',   bgVar: '--sn-scene-love-bg'   },
+  friend: { icon: '👥', label: '友人',       colorVar: '--sn-scene-friend', bgVar: '--sn-scene-friend-bg' },
+  family: { icon: '🏠', label: '家族',       colorVar: '--sn-scene-family', bgVar: '--sn-scene-family-bg' },
+  school: { icon: '📚', label: '学校・学習', colorVar: '--sn-scene-school', bgVar: '--sn-scene-school-bg' },
+};
+
+const {
+  scene,
+  title,
+  subtitle,
+  actions,
+  detailHref,
+  showDetail = false,
+} = Astro.props;
+
+const config = sceneConfig[scene];
+---
+
+<div
+  class="scene-card-full"
+  style={`--scene-color: var(${config.colorVar}); --scene-bg: var(${config.bgVar})`}
+>
+  <!-- ヘッダー -->
+  <div class="scene-header">
+    <div class="scene-badge">
+      <span class="scene-icon" aria-hidden="true">{config.icon}</span>
+      <span class="scene-tag">{config.label}</span>
+    </div>
+    <h3 class="scene-title">{title}</h3>
+    {subtitle && <p class="scene-subtitle">{subtitle}</p>}
+  </div>
+
+  <!-- アクションリスト -->
+  <ul class="action-list" aria-label={`${config.label}軸のアクションアイテム`}>
+    {actions.map((action, index) => (
+      <li class="action-item">
+        <span class="action-number" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
+        <div class="action-content">
+          <strong class="action-label">{action.label}</strong>
+          <p class="action-description">{action.description}</p>
+        </div>
+      </li>
+    ))}
+  </ul>
+
+  <!-- 詳細版CTA（無料ユーザー向け）-->
+  {!showDetail && detailHref && (
+    <div class="scene-paywall">
+      <p class="paywall-hint">
+        <span class="badge badge-pass">¥390 PASS</span>
+        さらに詳しい{config.label}軸アドバイスを見る
+      </p>
+      <a href="/pro/" class="btn btn-sm" style="background: var(--scene-color); color: #fff;">
+        詳細を見る
+      </a>
+    </div>
+  )}
+</div>
+
+<style>
+  .scene-card-full {
+    background: var(--sn-bg-white);
+    border-radius: var(--sn-radius);
+    box-shadow: var(--sn-shadow-sm);
+    overflow: hidden;
+    border: 1px solid var(--sn-border);
+  }
+
+  /* ヘッダー */
+  .scene-header {
+    background: var(--scene-bg);
+    padding: var(--sn-space-5) var(--sn-space-6);
+    border-bottom: 1px solid color-mix(in srgb, var(--scene-color) 20%, transparent);
+  }
+
+  .scene-badge {
+    display: flex;
+    align-items: center;
+    gap: var(--sn-space-2);
+    margin-bottom: var(--sn-space-2);
+  }
+
+  .scene-icon {
+    font-size: var(--sn-text-xl);
+  }
+
+  .scene-tag {
+    font-size: var(--sn-text-xs);
+    font-weight: 700;
+    color: var(--scene-color);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .scene-title {
+    font-family: var(--sn-font-rounded);
+    font-size: var(--sn-text-lg);
+    font-weight: 700;
+    color: var(--sn-text);
+    line-height: var(--sn-leading-tight);
+    margin: 0;
+  }
+
+  .scene-subtitle {
+    font-size: var(--sn-text-sm);
+    color: var(--sn-muted);
+    margin: var(--sn-space-1) 0 0;
+  }
+
+  /* アクションリスト */
+  .action-list {
+    list-style: none;
+    padding: var(--sn-space-4) var(--sn-space-6);
+    display: flex;
+    flex-direction: column;
+    gap: var(--sn-space-4);
+  }
+
+  .action-item {
+    display: flex;
+    gap: var(--sn-space-4);
+    align-items: flex-start;
+  }
+
+  .action-number {
+    font-family: var(--sn-font-rounded);
+    font-size: var(--sn-text-sm);
+    font-weight: 900;
+    color: var(--scene-color);
+    opacity: 0.5;
+    flex-shrink: 0;
+    line-height: 1.5;
+    min-width: 28px;
+  }
+
+  .action-content {
+    flex: 1;
+  }
+
+  .action-label {
+    display: block;
+    font-size: var(--sn-text-base);
+    font-weight: 700;
+    color: var(--sn-text);
+    margin-bottom: var(--sn-space-1);
+  }
+
+  .action-description {
+    font-size: var(--sn-text-sm);
+    color: var(--sn-muted);
+    line-height: var(--sn-leading-base);
+    margin: 0;
+  }
+
+  /* ペイウォール */
+  .scene-paywall {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--sn-space-4);
+    padding: var(--sn-space-4) var(--sn-space-6);
+    background: var(--sn-bg-soft);
+    border-top: 1px solid var(--sn-border);
+    flex-wrap: wrap;
+  }
+
+  .paywall-hint {
+    display: flex;
+    align-items: center;
+    gap: var(--sn-space-2);
+    font-size: var(--sn-text-sm);
+    color: var(--sn-text-soft);
+    margin: 0;
+    flex-wrap: wrap;
+  }
+</style>

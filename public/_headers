@@ -1,0 +1,7 @@
+/*
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://pagead2.googlesyndication.com https://www.googleadservices.com https://www.google-analytics.com https://static.cloudflareinsights.com https://tpc.googlesyndication.com https://adservice.google.com https://js.stripe.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https: blob:; font-src 'self' https://fonts.gstatic.com data:; connect-src 'self' https://www.google-analytics.com https://analytics.google.com https://pagead2.googlesyndication.com https://www.googletagmanager.com https://cloudflareinsights.com https://adservice.google.com https://api.stripe.com https://*.supabase.co wss://*.supabase.co https://api.anthropic.com; frame-src https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://www.googletagmanager.com https://js.stripe.com https://hooks.stripe.com; object-src 'none'; base-uri 'self'; form-action 'self' https://hooks.stripe.com
+  Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: SAMEORIGIN
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: geolocation=(), microphone=(), camera=(), payment=(self https://js.stripe.com), usb=(), bluetooth=(), serial=()

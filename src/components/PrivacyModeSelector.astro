@@ -1,0 +1,221 @@
+---
+/**
+ * PrivacyModeSelector.astro - 4プライバシーモード選択UI
+ *
+ * こっそり / 招待 / 片方向 / 完全共有
+ * 相性診断エントリポイントで使用。
+ */
+interface PrivacyMode {
+  key: string;
+  icon: string;
+  label: string;
+  description: string;
+  isDefault?: boolean;
+  isFree: boolean;
+}
+
+interface Props {
+  /** 現在選択中のモード */
+  selected?: string;
+  /** 選択可能かどうか（React Islandに渡す） */
+  interactive?: boolean;
+}
+
+const {
+  selected = 'secret',
+  interactive = false,
+} = Astro.props;
+
+const modes: PrivacyMode[] = [
+  {
+    key: 'secret',
+    icon: '🔒',
+    label: 'こっそりモード',
+    description: '相手に通知せず、タイプを手入力して相性をチェック',
+    isDefault: true,
+    isFree: true,
+  },
+  {
+    key: 'invite',
+    icon: '👥',
+    label: '招待モード',
+    description: '相手に診断を依頼。お互いの結果が揃ったら相性スコア公開',
+    isFree: true,
+  },
+  {
+    key: 'one-way',
+    icon: '🎭',
+    label: '片方向開示',
+    description: '招待はするが、自分の診断結果は相手に見せない',
+    isFree: true,
+  },
+  {
+    key: 'open',
+    icon: '🔓',
+    label: '完全共有',
+    description: 'お互いの診断結果を全て共有してより深い相性分析',
+    isFree: true,
+  },
+];
+---
+
+<div class="privacy-selector" data-interactive={interactive}>
+  <p class="selector-label">
+    プライバシーモードを選択
+    <span class="badge badge-free">全モード無料</span>
+  </p>
+
+  <div class="modes-grid" role="radiogroup" aria-label="相性診断のプライバシーモード選択">
+    {modes.map((mode) => (
+      <label
+        class={`mode-card ${selected === mode.key ? 'mode-card--selected' : ''}`}
+        aria-label={`${mode.label}: ${mode.description}`}
+      >
+        <input
+          type="radio"
+          name="privacy-mode"
+          value={mode.key}
+          checked={selected === mode.key}
+          class="sr-only"
+        />
+        <span class="mode-icon" aria-hidden="true">{mode.icon}</span>
+        <span class="mode-label">
+          {mode.label}
+          {mode.isDefault && <span class="default-badge">おすすめ</span>}
+        </span>
+        <span class="mode-description">{mode.description}</span>
+        <span class="mode-check" aria-hidden="true">✓</span>
+      </label>
+    ))}
+  </div>
+
+  <p class="selector-note">
+    招待モードは相手がURLを受け取るだけでOK。アプリ不要・登録不要で診断できます。
+  </p>
+</div>
+
+<style>
+  .privacy-selector {
+    background: var(--sn-bg-white);
+    border-radius: var(--sn-radius);
+    padding: var(--sn-space-6);
+    box-shadow: var(--sn-shadow-sm);
+  }
+
+  .selector-label {
+    display: flex;
+    align-items: center;
+    gap: var(--sn-space-2);
+    font-size: var(--sn-text-sm);
+    font-weight: 700;
+    color: var(--sn-text-soft);
+    margin-bottom: var(--sn-space-4);
+    flex-wrap: wrap;
+  }
+
+  .modes-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--sn-space-3);
+    margin-bottom: var(--sn-space-4);
+  }
+
+  @media (min-width: 480px) {
+    .modes-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  .mode-card {
+    position: relative;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    grid-template-rows: auto auto;
+    grid-template-areas:
+      "icon label check"
+      "icon description check";
+    column-gap: var(--sn-space-3);
+    row-gap: var(--sn-space-1);
+    padding: var(--sn-space-4);
+    background: var(--sn-bg-soft);
+    border: 2px solid var(--sn-border);
+    border-radius: var(--sn-radius-md);
+    cursor: pointer;
+    transition:
+      border-color var(--sn-dur-fast) var(--sn-ease),
+      background-color var(--sn-dur-fast) var(--sn-ease);
+    min-height: var(--sn-tap-min);
+  }
+
+  .mode-card:hover {
+    border-color: var(--sn-primary-light);
+    background: var(--sn-primary-bg);
+  }
+
+  .mode-card--selected {
+    border-color: var(--sn-primary);
+    background: var(--sn-primary-bg);
+  }
+
+  .mode-icon {
+    grid-area: icon;
+    font-size: var(--sn-text-xl);
+    line-height: 1;
+    align-self: center;
+  }
+
+  .mode-label {
+    grid-area: label;
+    display: flex;
+    align-items: center;
+    gap: var(--sn-space-2);
+    font-size: var(--sn-text-sm);
+    font-weight: 700;
+    color: var(--sn-text);
+    flex-wrap: wrap;
+  }
+
+  .default-badge {
+    font-size: var(--sn-text-xs);
+    font-weight: 700;
+    padding: 1px var(--sn-space-2);
+    background: var(--sn-accent);
+    color: #fff;
+    border-radius: var(--sn-radius-pill);
+  }
+
+  .mode-description {
+    grid-area: description;
+    font-size: var(--sn-text-xs);
+    color: var(--sn-muted);
+    line-height: var(--sn-leading-base);
+  }
+
+  .mode-check {
+    grid-area: check;
+    align-self: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--sn-primary);
+    color: #ffffff;
+    font-size: var(--sn-text-xs);
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity var(--sn-dur-fast) var(--sn-ease);
+  }
+
+  .mode-card--selected .mode-check {
+    opacity: 1;
+  }
+
+  .selector-note {
+    font-size: var(--sn-text-xs);
+    color: var(--sn-muted);
+    text-align: center;
+    margin: 0;
+  }
+</style>

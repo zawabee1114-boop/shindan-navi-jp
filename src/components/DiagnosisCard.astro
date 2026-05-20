@@ -1,0 +1,192 @@
+---
+/**
+ * DiagnosisCard.astro - 診断選択カード
+ *
+ * Props で全項目カスタマイズ可能。
+ * 診断トップページの一覧・ホームのグリッドで共通使用。
+ */
+interface Props {
+  /** 診断タイトル */
+  title: string;
+  /** 絵文字 or SVGアイコン（文字列の場合は絵文字として表示） */
+  icon: string;
+  /** 1-2行の説明文 */
+  description: string;
+  /** リンク先URL */
+  href: string;
+  /** バッジテキスト（例: "無料" / "最優先" / "NEW" / "人気"）*/
+  badge?: string;
+  /** バッジ色クラス（badge-primary / badge-new / badge-free 等）*/
+  badgeClass?: string;
+  /** 所要時間 */
+  duration?: string;
+  /** 質問数 */
+  questionCount?: number;
+  /** カテゴリキー（--sn-diag-* トークンと対応）*/
+  categoryKey?: 'mbti' | 'blood' | 'multi-int' | 'perfectionism' | 'disc' | 'love' | 'seiza' | 'money';
+  /** ボタンラベル（デフォルト: "診断を始める"）*/
+  ctaLabel?: string;
+  /** PRO専用機能か */
+  isPro?: boolean;
+  /** カードをdisabledにするか（近日公開等）*/
+  disabled?: boolean;
+}
+
+const {
+  title,
+  icon,
+  description,
+  href,
+  badge,
+  badgeClass = 'badge-free',
+  duration = '約3分',
+  questionCount,
+  categoryKey,
+  ctaLabel = '診断を始める',
+  isPro = false,
+  disabled = false,
+} = Astro.props;
+
+// カテゴリ別アクセントカラー（CSS変数を参照）
+const accentVar = categoryKey ? `var(--sn-diag-${categoryKey})` : `var(--sn-primary)`;
+---
+
+<article
+  class={`diagnosis-card ${disabled ? 'diagnosis-card--disabled' : ''}`}
+  style={`--card-accent: ${accentVar}`}
+  aria-label={`${title}の診断カード`}
+>
+  <!-- アイコン -->
+  <div class="card-icon" aria-hidden="true">
+    {icon}
+  </div>
+
+  <!-- バッジ -->
+  <div class="card-badges">
+    {badge && <span class={`badge ${badgeClass}`}>{badge}</span>}
+    {isPro && <span class="badge badge-pro">PRO</span>}
+    {disabled && <span class="badge badge-new">近日公開</span>}
+  </div>
+
+  <!-- テキスト -->
+  <h3 class="card-title">{title}</h3>
+  <p class="card-description">{description}</p>
+
+  <!-- メタ情報 -->
+  <div class="card-meta">
+    <span class="meta-item">
+      <span aria-hidden="true">⏱</span>
+      {duration}
+    </span>
+    {questionCount && (
+      <span class="meta-item">
+        <span aria-hidden="true">📝</span>
+        {questionCount}問
+      </span>
+    )}
+  </div>
+
+  <!-- CTAリンク -->
+  {!disabled ? (
+    <a href={href} class="card-cta btn btn-primary" aria-label={`${title}を始める`}>
+      {ctaLabel}
+      <span aria-hidden="true">→</span>
+    </a>
+  ) : (
+    <span class="card-cta-disabled" aria-disabled="true">近日公開</span>
+  )}
+</article>
+
+<style>
+  .diagnosis-card {
+    position: relative;
+    background: var(--sn-bg-white);
+    border-radius: var(--sn-radius);
+    box-shadow: var(--sn-shadow);
+    padding: var(--sn-space-6);
+    display: flex;
+    flex-direction: column;
+    gap: var(--sn-space-3);
+    border-top: 3px solid var(--card-accent);
+    transition:
+      transform var(--sn-dur-fast) var(--sn-ease),
+      box-shadow var(--sn-dur-fast) var(--sn-ease);
+  }
+
+  .diagnosis-card:hover:not(.diagnosis-card--disabled) {
+    transform: translateY(-2px);
+    box-shadow: var(--sn-shadow-md);
+  }
+
+  .diagnosis-card--disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  .card-icon {
+    font-size: 2.5rem;
+    line-height: 1;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: color-mix(in srgb, var(--card-accent) 10%, transparent);
+    border-radius: var(--sn-radius-md);
+  }
+
+  .card-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sn-space-1);
+    min-height: 20px;
+  }
+
+  .card-title {
+    font-family: var(--sn-font-rounded);
+    font-size: var(--sn-text-lg);
+    font-weight: 700;
+    color: var(--sn-text);
+    line-height: var(--sn-leading-tight);
+    margin: 0;
+  }
+
+  .card-description {
+    font-size: var(--sn-text-sm);
+    color: var(--sn-muted);
+    line-height: var(--sn-leading-base);
+    flex: 1;
+    margin: 0;
+  }
+
+  .card-meta {
+    display: flex;
+    gap: var(--sn-space-3);
+    flex-wrap: wrap;
+  }
+
+  .meta-item {
+    display: flex;
+    align-items: center;
+    gap: var(--sn-space-1);
+    font-size: var(--sn-text-xs);
+    color: var(--sn-muted);
+  }
+
+  .card-cta {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .card-cta-disabled {
+    display: block;
+    width: 100%;
+    text-align: center;
+    padding: var(--sn-space-3) var(--sn-space-6);
+    border-radius: var(--sn-radius-pill);
+    background: var(--sn-bg-soft);
+    color: var(--sn-muted);
+    font-size: var(--sn-text-sm);
+    font-weight: 700;
+  }
+</style>

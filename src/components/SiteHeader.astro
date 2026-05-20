@@ -1,0 +1,133 @@
+---
+/**
+ * SiteHeader.astro - グローバルヘッダー
+ * ロゴ + ナビゲーション + PRO/PASSボタン
+ */
+import siteMeta from '../data/site-meta.json';
+
+const navItems = [
+  { label: '診断一覧', href: '/diagnosis/' },
+  { label: '相性診断', href: '/aisei/' },
+  { label: '強み発見', href: '/strengths/' },
+  { label: 'PRO機能', href: '/pro/' },
+];
+---
+
+<header class="site-header">
+  <div class="container">
+    <div class="header-inner">
+      <!-- ロゴ -->
+      <a href="/" class="site-logo" aria-label={`${siteMeta.siteName} - トップページ`}>
+        <!-- TODO: 本番ではSVGロゴに差し替え -->
+        <span class="logo-icon" aria-hidden="true">🔮</span>
+        <span class="logo-text">{siteMeta.siteName}</span>
+      </a>
+
+      <!-- PC ナビ -->
+      <nav class="header-nav" aria-label="グローバルナビゲーション">
+        <ul class="nav-list">
+          {navItems.map((item) => (
+            <li>
+              <a href={item.href} class="nav-link">{item.label}</a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+
+      <!-- CTA ボタン -->
+      <div class="header-cta">
+        <a href="/pro/" class="btn btn-pro btn-sm">
+          <span aria-hidden="true">✨</span>
+          PRO ¥590/月
+        </a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    height: var(--sn-header-h);
+    background: var(--sn-bg-white);
+    border-bottom: 1px solid var(--sn-border);
+    box-shadow: var(--sn-shadow-xs);
+  }
+
+  .header-inner {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    gap: var(--sn-space-4);
+  }
+
+  /* ロゴ */
+  .site-logo {
+    display: flex;
+    align-items: center;
+    gap: var(--sn-space-2);
+    text-decoration: none;
+    flex-shrink: 0;
+  }
+
+  .site-logo:hover {
+    text-decoration: none;
+  }
+
+  .logo-icon {
+    font-size: var(--sn-text-xl);
+    line-height: 1;
+  }
+
+  .logo-text {
+    font-family: var(--sn-font-rounded);
+    font-size: var(--sn-text-lg);
+    font-weight: 900;
+    color: var(--sn-primary);
+    letter-spacing: -0.02em;
+  }
+
+  /* PC ナビ */
+  .header-nav {
+    display: none;
+    flex: 1;
+    margin-inline: var(--sn-space-4);
+  }
+
+  @media (min-width: 768px) {
+    .header-nav {
+      display: block;
+    }
+  }
+
+  .nav-list {
+    display: flex;
+    list-style: none;
+    gap: var(--sn-space-1);
+  }
+
+  .nav-link {
+    display: block;
+    padding: var(--sn-space-2) var(--sn-space-3);
+    border-radius: var(--sn-radius-sm);
+    font-size: var(--sn-text-sm);
+    font-weight: 500;
+    color: var(--sn-text-soft);
+    text-decoration: none;
+    transition: background-color var(--sn-dur-fast) var(--sn-ease), color var(--sn-dur-fast) var(--sn-ease);
+  }
+
+  .nav-link:hover {
+    background: var(--sn-primary-bg);
+    color: var(--sn-primary);
+    text-decoration: none;
+  }
+
+  /* CTAボタン */
+  .header-cta {
+    margin-left: auto;
+    flex-shrink: 0;
+  }
+</style>

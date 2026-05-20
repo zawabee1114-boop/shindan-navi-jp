@@ -1,0 +1,162 @@
+---
+/**
+ * SiteFooter.astro - グローバルフッター
+ */
+import siteMeta from '../data/site-meta.json';
+
+const currentYear = new Date().getFullYear();
+
+const footerLinks = [
+  {
+    heading: '診断',
+    links: [
+      { label: 'MBTI診断', href: '/diagnosis/mbti/' },
+      { label: '血液型診断', href: '/diagnosis/ketsuekigata/' },
+      { label: '多重知能テスト', href: '/diagnosis/multi-int/' },
+      { label: 'DiSC診断', href: '/diagnosis/disc/' },
+      { label: '恋愛スタイル診断', href: '/diagnosis/love-style/' },
+    ],
+  },
+  {
+    heading: '相性',
+    links: [
+      { label: '恋愛相性診断', href: '/aisei/renai/' },
+      { label: '友達相性診断', href: '/aisei/yujin/' },
+      { label: '夫婦相性診断', href: '/aisei/kazoku/fufu/' },
+      { label: '親子相性診断', href: '/aisei/kazoku/oyako/' },
+    ],
+  },
+  {
+    heading: '機能',
+    links: [
+      { label: '強み発見診断', href: '/strengths/' },
+      { label: 'PRO会員', href: '/pro/' },
+      { label: 'マイページ', href: '/me/' },
+    ],
+  },
+  {
+    heading: 'サイト情報',
+    links: [
+      { label: '編集方針', href: '/about/' },
+      { label: 'プライバシーポリシー', href: '/privacy/' },
+      { label: '利用規約', href: '/terms/' },
+      { label: '免責事項', href: '/disclaimer/' },
+      { label: 'お問い合わせ', href: '/contact/' },
+    ],
+  },
+];
+---
+
+<footer class="site-footer">
+  <div class="container">
+    <!-- フッターナビ -->
+    <div class="footer-nav">
+      {footerLinks.map((group) => (
+        <div class="footer-group">
+          <h3 class="footer-heading">{group.heading}</h3>
+          <ul class="footer-links">
+            {group.links.map((link) => (
+              <li>
+                <a href={link.href} class="footer-link">{link.label}</a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+
+    <!-- ブランド・コピーライト -->
+    <div class="footer-bottom">
+      <p class="footer-brand">
+        <span class="footer-logo" aria-hidden="true">🔮</span>
+        <strong>{siteMeta.siteName}</strong>
+      </p>
+      <p class="footer-tagline">{siteMeta.tagline}</p>
+      <p class="footer-copyright">
+        &copy; {currentYear} {siteMeta.siteName}. All rights reserved.
+      </p>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    background: var(--sn-text);
+    color: var(--sn-muted-light);
+    padding-block: var(--sn-space-12) var(--sn-space-8);
+    margin-top: var(--sn-space-16);
+  }
+
+  .footer-nav {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--sn-space-8);
+    margin-bottom: var(--sn-space-10);
+  }
+
+  @media (min-width: 768px) {
+    .footer-nav {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  .footer-heading {
+    font-family: var(--sn-font-rounded);
+    font-size: var(--sn-text-sm);
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: var(--sn-space-3);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .footer-links {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: var(--sn-space-2);
+  }
+
+  .footer-link {
+    font-size: var(--sn-text-sm);
+    color: var(--sn-muted-light);
+    text-decoration: none;
+    transition: color var(--sn-dur-fast) var(--sn-ease);
+  }
+
+  .footer-link:hover {
+    color: #ffffff;
+    text-decoration: none;
+  }
+
+  .footer-bottom {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: var(--sn-space-6);
+    text-align: center;
+  }
+
+  .footer-brand {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--sn-space-2);
+    font-size: var(--sn-text-lg);
+    color: #ffffff;
+    margin-bottom: var(--sn-space-2);
+  }
+
+  .footer-logo {
+    font-size: var(--sn-text-xl);
+  }
+
+  .footer-tagline {
+    font-size: var(--sn-text-sm);
+    color: var(--sn-muted-light);
+    margin-bottom: var(--sn-space-4);
+  }
+
+  .footer-copyright {
+    font-size: var(--sn-text-xs);
+    color: var(--sn-muted);
+  }
+</style>

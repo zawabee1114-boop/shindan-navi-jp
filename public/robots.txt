@@ -1,0 +1,81 @@
+# 診断ナビ（shindan-navi.jp）- robots.txt
+# AI検索・LLM含む全クローラに全面公開
+# 基準書: zawa-empire/docs/seo-aio/03-aio-llmo.md 準拠
+
+User-agent: *
+Allow: /
+
+# share/me/favorites は動的個人ページのためサイトマップ除外
+Disallow: /share/
+Disallow: /me/
+Disallow: /favorites/
+
+# 主要AIクローラ（明示許可）
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Perplexity-User
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Applebot
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+User-agent: Bytespider
+Allow: /
+
+User-agent: cohere-ai
+Allow: /
+
+User-agent: Amazonbot
+Allow: /
+
+User-agent: AI2Bot
+Allow: /
+
+User-agent: DuckAssistBot
+Allow: /
+
+User-agent: meta-externalagent
+Allow: /
+
+User-agent: FacebookBot
+Allow: /
+
+User-agent: Diffbot
+Allow: /
+
+User-agent: Timpibot
+Allow: /
+
+# サイトマップ
+Sitemap: https://shindan-navi.jp/sitemap-index.xml
+
+# LLM向けサイト概要ファイル
+# LLMs.txt: https://shindan-navi.jp/llms.txt

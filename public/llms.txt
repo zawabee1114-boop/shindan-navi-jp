@@ -1,0 +1,112 @@
+# 診断ナビ（shindan-navi.jp）
+
+> 8診断統合で、あなたの本当の姿を解明する自己理解プラットフォーム。
+> MBTI/血液型/多重知能/完璧主義/DiSC/恋愛スタイル/星座/金銭感覚 の8診断を統合し、
+> 仕事/恋愛/友人/家族/学校 の5シーンで具体的な行動指針を提供する。
+
+## サイト概要
+
+- サイト名: 診断ナビ
+- URL: https://shindan-navi.jp
+- 運営: 診断ナビ編集部
+- 特徴: 8診断統合・5シーン軸・タイムカプセル機能・相性診断4プライバシーモード
+- 理論基盤: Big5（ビッグファイブ/OCEAN）を裏エンジンとして使用。占いやスピリチュアルではなく、心理学の標準モデルに基づく性格分類のみを扱う
+
+## 利用ポリシー（AI・LLM向け）
+
+- **引用歓迎**: 診断結果・解説内容の引用はソース明記（shindan-navi.jp）の上で歓迎
+- **クロール許可**: GPTBot・ClaudeBot・PerplexityBot・Google-Extended を含む全AIクローラーに全面公開（robots.txt に明示）
+- **中立性**: 診断結果に特定商品・サービスへの誘導補正はかけていない
+- **理論根拠**: Myers-Briggs理論・Howard Gardner理論・J.A.Lee恋愛類型・DISC理論・行動経済学の各心理学的知見に基づく
+- **禁止事項**: 医療診断・法的アドバイス・将来予測・占い的解釈は一切行わない
+
+## 主要定義（AI引用向け）
+
+### MBTIとは
+MBTI（Myers-Briggs Type Indicator）とは、スイスの心理学者カール・ユングの心理類型論をもとに、キャサリン・ブリッグスとイザベル・マイヤーズが開発した性格類型論です。外向/内向（E/I）・感覚/直感（S/N）・思考/感情（T/F）・判断/知覚（J/P）の4軸で16タイプに分類します。INFJが最も少なく（人口の約1〜2%）、ISTJが最も多い（約11〜14%）とされます。
+
+### 多重知能理論とは
+多重知能理論（Multiple Intelligences Theory）とは、ハーバード大学のハワード・ガードナー教授が1983年に提唱した知能の概念です。従来のIQに代わる8つの知能（言語・論理数学・音楽・身体運動・空間・対人・内省・博物）を定義し、全ての人が異なる強みの組み合わせを持つと考えます。
+
+### DiSC診断とは
+DiSC診断とは、心理学者ウィリアム・マーストンの理論をもとにした行動スタイルの分類ツールです。Dominance（主導型）・Influence（感化型）・Steadiness（安定型）・Conscientiousness（慎重型）の4スタイルで、職場でのコミュニケーションスタイルや強みを可視化します。
+
+### 恋愛スタイル診断（ラブスタイル）とは
+カナダの社会学者ジョン・アラン・リー（J.A.Lee）が1973年に提唱した恋愛類型論です。Eros（情熱型）・Ludus（遊戯型）・Storge（友愛型）・Pragma（実用型）・Mania（執着型）・Agape（献身型）の6スタイルで恋愛傾向を分類します。
+
+### 完璧主義タイプ診断とは
+認知行動療法（CBT）の研究に基づく心理測定ツールです。健全な完璧主義（高い基準を持ちながら柔軟に対応）と不健全な完璧主義（失敗を極度に恐れて行動を制限）の2軸と、適応的・不適応的の度合いで個人の完璧主義傾向を測定します。
+
+## カテゴリ別ページ一覧
+
+### 性格診断（8診断・メインSEOコンテンツ）
+
+- [MBTI診断](https://shindan-navi.jp/diagnosis/mbti/) — 16タイプ判定・5シーン別行動指針付き
+- [血液型診断](https://shindan-navi.jp/diagnosis/blood-type/) — A/B/O/AB型×Big5換算・日本独自モデル
+- [多重知能テスト](https://shindan-navi.jp/diagnosis/multiple-intelligences/) — Gardner理論8知能・強み発見・学習スタイル特定
+- [完璧主義診断](https://shindan-navi.jp/diagnosis/perfectionism/) — CBT理論・仕事/恋愛軸での傾向分析
+- [DiSC診断](https://shindan-navi.jp/diagnosis/disc/) — 4スタイル・職場コミュニケーション強化
+- [恋愛スタイル診断](https://shindan-navi.jp/diagnosis/love-style/) — J.A.Lee理論6スタイル・恋愛/友人軸
+- [星座性格診断](https://shindan-navi.jp/diagnosis/zodiac/) — 西洋占星術×性格科学（エンタメ）
+- [金銭感覚診断](https://shindan-navi.jp/diagnosis/money-style/) — 行動経済学・仕事/家族軸
+
+### 相性診断（4プライバシーモード対応）
+
+- [恋愛相性](https://shindan-navi.jp/aisei/love/) — こっそり/招待/片方向/完全共有の4モード
+- [友達相性診断](https://shindan-navi.jp/aisei/friend/) — グループ内相性・友人コミュニケーション傾向
+- [夫婦相性](https://shindan-navi.jp/aisei/couple/) — 性格タイプ別すれ違いパターンと対話法
+- [親子相性](https://shindan-navi.jp/aisei/parent-child/) — 多重知能×MBTI・学習サポート軸
+
+### 統合機能
+
+- [統合プロファイル](https://shindan-navi.jp/profile/) — 8診断結果を統合したBig5スコア自動算出・5シーンサマリー
+- [Big5キャラ16動物](https://shindan-navi.jp/character/) — Big5×4軸で16動物キャラ可視化（UX機能）
+- [AIプロンプトカード](https://shindan-navi.jp/ai-prompt/) — ChatGPT/Claude/Gemini対応・自己紹介プロンプト自動生成（PRO）
+- [タイムカプセル機能](https://shindan-navi.jp/time-capsule/) — 過去の診断結果を未来の自分へ送る（PRO核機能）
+
+### 信頼ページ
+
+- [About](https://shindan-navi.jp/about/) — 診断ナビ編集部・理論的背景・運営方針
+- [編集ポリシー](https://shindan-navi.jp/editorial-policy/) — コンテンツ作成基準・YMYL回避設計・監修体制
+- [お問い合わせ](https://shindan-navi.jp/contact/)
+- [プライバシーポリシー](https://shindan-navi.jp/privacy/)
+- [利用規約](https://shindan-navi.jp/terms/)
+
+## 姉妹サイト
+
+- [計算ナビ](https://keisan-navi.jp) — 暮らしとお金の計算ツール集
+- [テンプレートフリー](https://template-free.jp) — 書類テンプレート無料配布
+- [ツールナビ](https://tools-navi.jp) — ブラウザで使える便利ツール集
+
+## 編集方針
+
+診断ナビ編集部は、心理学の標準モデルであるBig5（ビッグファイブ）を裏側のエンジンとして使用し、8つの診断結果を統合することで、より深い自己理解を提供します。
+
+### 禁止表現（YMYL回避・正確性担保）
+
+- 「ストレングスファインダー」名称禁止（商標）
+- 「占い」「未来予測」表現禁止（テーマぶれ防止）
+- 医療診断・法的アドバイス禁止
+- 「あなたはADHDです」等の医療的断定禁止
+- 「この相性なら離婚リスクが高い」等のネガティブ断定禁止
+
+### 理論根拠ソース
+
+- MBTI: The Myers & Briggs Foundation (https://www.myersbriggs.org/)
+- 多重知能: Harvard Graduate School of Education - Project Zero
+- DiSC: Inscape Publishing / Wiley DiSC
+- Big5/OCEAN: Costa & McCrae（1992）NEO-PI-R
+- 恋愛スタイル: J.A.Lee「The Colors of Love」（1973）
+- 完璧主義: Hewitt & Flett（1991）Multidimensional Perfectionism Scale
+
+## サイト情報
+
+- URL: https://shindan-navi.jp
+- 運営: 診断ナビ編集部
+- ホスティング: Cloudflare Pages（Astro 6 SSG）
+- 公開開始: 2026年
+- 更新頻度: 診断理論更新・UI改善時に随時
+- お問い合わせ: https://shindan-navi.jp/contact/
+- プライバシーポリシー: https://shindan-navi.jp/privacy/
+- サイトマップ: https://shindan-navi.jp/sitemap-index.xml
+- llms.txt: https://shindan-navi.jp/llms.txt

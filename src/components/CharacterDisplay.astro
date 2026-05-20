@@ -1,0 +1,147 @@
+---
+/**
+ * CharacterDisplay.astro - Big5 16動物キャラ表示
+ *
+ * ===== SVG差し替えガイド =====
+ * 現在: 絵文字ダミー
+ * 本番: src/assets/characters/{characterId}.svg を配置し、
+ *       下記の TODO コメント箇所を <Image> コンポーネントに差し替える
+ *
+ * characterId の命名規則:
+ *   4軸（O/C/E/A）× 各2段階（high/low）= 16パターン
+ *   例: "o-high_c-high_e-high_a-high" → ライオン
+ *
+ * デザイナー向け:
+ *   src/assets/characters/ に {characterId}.svg を配置するだけで反映される
+ * ===========================
+ */
+interface Props {
+  /** キャラクターID（Big5 4軸パターン）*/
+  characterId: string;
+  /** キャラクター表示名 */
+  characterName: string;
+  /** 絵文字ダミー（SVG差し替えまでの暫定）*/
+  emojiDummy?: string;
+  /** 表示サイズ */
+  size?: 'sm' | 'md' | 'lg' | 'xl';
+  /** ライト版（無料）か完全版（有料）か */
+  variant?: 'lite' | 'full';
+  /** アニメーション効果 */
+  animated?: boolean;
+}
+
+const {
+  characterId,
+  characterName,
+  emojiDummy = '🦊',
+  size = 'md',
+  variant = 'lite',
+  animated = false,
+} = Astro.props;
+
+const sizeMap = {
+  sm: '64px',
+  md: '100px',
+  lg: '140px',
+  xl: '180px',
+};
+
+const sizePx = sizeMap[size];
+---
+
+<div
+  class={`character-display character-display--${size} ${animated ? 'character-display--animated' : ''} ${variant === 'lite' ? 'character-display--lite' : ''}`}
+  data-character-id={characterId}
+  aria-label={`${characterName}のキャラクターアイコン`}
+  style={`--char-size: ${sizePx}`}
+>
+  <div class="character-frame">
+    <!--
+      TODO: デザイナーがSVGキャラを配置したら以下に差し替え:
+      <img
+        src={`/characters/${characterId}.svg`}
+        alt={characterName}
+        width={parseInt(sizePx)}
+        height={parseInt(sizePx)}
+        loading="lazy"
+      />
+    -->
+    <span class="character-emoji" aria-hidden="true">{emojiDummy}</span>
+  </div>
+
+  {variant === 'lite' && (
+    <div class="lite-overlay" aria-hidden="true">
+      <span class="lite-lock">🔒</span>
+    </div>
+  )}
+
+  <p class="character-name">{characterName}</p>
+</div>
+
+<style>
+  .character-display {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--sn-space-2);
+    width: var(--char-size);
+  }
+
+  .character-frame {
+    width: var(--char-size);
+    height: var(--char-size);
+    background: linear-gradient(135deg, var(--sn-primary-bg) 0%, var(--sn-secondary-bg) 100%);
+    border-radius: var(--sn-radius-lg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--sn-shadow);
+    overflow: hidden;
+    position: relative;
+    border: 2px solid var(--sn-border);
+  }
+
+  .character-emoji {
+    font-size: calc(var(--char-size) * 0.5);
+    line-height: 1;
+  }
+
+  /* ライト版（無料）はぼかし + 鍵アイコン */
+  .character-display--lite .character-frame {
+    filter: blur(2px);
+  }
+
+  .lite-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.4);
+    border-radius: var(--sn-radius-lg);
+  }
+
+  .lite-lock {
+    font-size: calc(var(--char-size) * 0.3);
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+  }
+
+  .character-name {
+    font-family: var(--sn-font-rounded);
+    font-size: var(--sn-text-sm);
+    font-weight: 700;
+    color: var(--sn-text);
+    text-align: center;
+  }
+
+  /* アニメーション */
+  .character-display--animated .character-frame {
+    animation: characterBounce 2s var(--sn-ease-bounce) infinite;
+  }
+
+  @keyframes characterBounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+  }
+</style>

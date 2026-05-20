@@ -1,0 +1,172 @@
+---
+/**
+ * Big5MoodMeter.astro - N因子（神経症傾向）気分メーター
+ *
+ * PRO機能: 週1回更新の「今の気分」状態表示。
+ * 無料ユーザーにはダミー表示（ぼかし）。
+ *
+ * N因子（神経症傾向 Neuroticism）を気分メーターとして可視化:
+ * - 低N（安定）: 穏やか 😊 → グリーン
+ * - 中N（普通）: まずまず 😐 → イエロー
+ * - 高N（不安定）: ソワソワ 😟 → レッド
+ */
+interface Props {
+  /** N因子スコア 0-100 */
+  nScore?: number;
+  /** 表示モード */
+  variant?: 'full' | 'mini' | 'locked';
+  /** 最終更新日 */
+  lastUpdated?: string;
+}
+
+const {
+  nScore = 50,
+  variant = 'full',
+  lastUpdated,
+} = Astro.props;
+
+// N因子から気分状態を計算
+const getMoodState = (score: number) => {
+  if (score <= 33) return { label: '穏やか', emoji: '😊', color: 'var(--sn-success)', level: 'calm' };
+  if (score <= 66) return { label: 'まずまず', emoji: '😐', color: 'var(--sn-accent)', level: 'neutral' };
+  return { label: 'ソワソワ', emoji: '😟', color: 'var(--sn-error)', level: 'anxious' };
+};
+
+const mood = getMoodState(nScore);
+const barWidth = `${nScore}%`;
+---
+
+{variant === 'locked' ? (
+  <div class="mood-meter mood-meter--locked" aria-label="N因子気分メーター（PRO限定）">
+    <div class="locked-overlay">
+      <span class="locked-icon" aria-hidden="true">🔒</span>
+      <p class="locked-text">気分メーターはPRO限定</p>
+      <a href="/pro/" class="btn btn-pro btn-sm">PRO ¥590/月</a>
+    </div>
+  </div>
+) : (
+  <div
+    class={`mood-meter mood-meter--${variant}`}
+    aria-label={`現在の気分: ${mood.label}（N因子 ${nScore}点）`}
+  >
+    <div class="mood-header">
+      <span class="mood-emoji" aria-hidden="true">{mood.emoji}</span>
+      <div class="mood-info">
+        <p class="mood-label">今の気分: <strong>{mood.label}</strong></p>
+        {lastUpdated && (
+          <p class="mood-updated">更新: {lastUpdated}</p>
+        )}
+      </div>
+    </div>
+
+    {variant === 'full' && (
+      <div class="mood-bar-wrapper">
+        <div class="mood-bar" role="meter" aria-valuenow={nScore} aria-valuemin={0} aria-valuemax={100}>
+          <div
+            class="mood-bar-fill"
+            style={`width: ${barWidth}; background: ${mood.color}`}
+          ></div>
+        </div>
+        <div class="mood-scale">
+          <span>😊 安定</span>
+          <span>😟 不安定</span>
+        </div>
+      </div>
+    )}
+
+    <p class="mood-note">N因子（神経症傾向）は毎週変動します</p>
+  </div>
+)}
+
+<style>
+  .mood-meter {
+    background: var(--sn-bg-white);
+    border-radius: var(--sn-radius-md);
+    padding: var(--sn-space-4);
+    box-shadow: var(--sn-shadow-sm);
+    border: 1px solid var(--sn-border);
+  }
+
+  .mood-meter--locked {
+    position: relative;
+    min-height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--sn-bg-soft);
+    filter: blur(0);
+  }
+
+  .locked-overlay {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--sn-space-2);
+    text-align: center;
+  }
+
+  .locked-icon {
+    font-size: var(--sn-text-2xl);
+  }
+
+  .locked-text {
+    font-size: var(--sn-text-sm);
+    color: var(--sn-muted);
+  }
+
+  .mood-header {
+    display: flex;
+    align-items: center;
+    gap: var(--sn-space-3);
+    margin-bottom: var(--sn-space-3);
+  }
+
+  .mood-emoji {
+    font-size: 2rem;
+    line-height: 1;
+  }
+
+  .mood-label {
+    font-size: var(--sn-text-base);
+    color: var(--sn-text);
+    margin: 0;
+  }
+
+  .mood-updated {
+    font-size: var(--sn-text-xs);
+    color: var(--sn-muted);
+    margin: 0;
+  }
+
+  .mood-bar-wrapper {
+    margin-bottom: var(--sn-space-2);
+  }
+
+  .mood-bar {
+    width: 100%;
+    height: 10px;
+    background: var(--sn-bg-soft);
+    border-radius: var(--sn-radius-pill);
+    overflow: hidden;
+    margin-bottom: var(--sn-space-1);
+  }
+
+  .mood-bar-fill {
+    height: 100%;
+    border-radius: var(--sn-radius-pill);
+    transition: width var(--sn-dur-slow) var(--sn-ease-out);
+  }
+
+  .mood-scale {
+    display: flex;
+    justify-content: space-between;
+    font-size: var(--sn-text-xs);
+    color: var(--sn-muted);
+  }
+
+  .mood-note {
+    font-size: var(--sn-text-xs);
+    color: var(--sn-muted);
+    margin: 0;
+  }
+</style>

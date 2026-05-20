@@ -1,0 +1,360 @@
+---
+/**
+ * CompatibilityResult.astro - 相性診断結果表示
+ *
+ * 4プライバシーモード（こっそり/招待/片方向/完全共有）に対応。
+ * 無料: スコア + 一言
+ * PASS: 詳細レポート（5シーン軸）
+ */
+type CompatibilityType = 'love' | 'friend' | 'work' | 'family_couple' | 'family_parent';
+type PrivacyMode = 'secret' | 'invite' | 'one-way' | 'open';
+
+interface Props {
+  /** 相性スコア 0-100 */
+  score: number;
+  /** 相性の一言（無料表示）*/
+  summary: string;
+  /** 相性タイプ */
+  compatibilityType: CompatibilityType;
+  /** 自分のタイプ */
+  myType: string;
+  /** 相手のタイプ */
+  partnerType?: string;
+  /** プライバシーモード */
+  privacyMode?: PrivacyMode;
+  /** 詳細レポートを表示するか（PASSユーザー）*/
+  showDetail?: boolean;
+}
+
+const compatibilityConfig: Record<CompatibilityType, { label: string; icon: string; colorVar: string }> = {
+  love:          { label: '恋愛相性',   icon: '💕', colorVar: '--sn-scene-love'   },
+  friend:        { label: '友達相性',   icon: '👥', colorVar: '--sn-scene-friend' },
+  work:          { label: '職場相性',   icon: '💼', colorVar: '--sn-scene-work'   },
+  family_couple: { label: '夫婦相性',   icon: '👫', colorVar: '--sn-scene-family' },
+  family_parent: { label: '親子相性',   icon: '👪', colorVar: '--sn-scene-family' },
+};
+
+const privacyLabels: Record<PrivacyMode, { icon: string; label: string }> = {
+  secret:  { icon: '🔒', label: 'こっそりモード' },
+  invite:  { icon: '👥', label: '招待モード'     },
+  'one-way': { icon: '🎭', label: '片方向開示'   },
+  open:    { icon: '🔓', label: '完全共有'       },
+};
+
+const {
+  score,
+  summary,
+  compatibilityType,
+  myType,
+  partnerType,
+  privacyMode = 'secret',
+  showDetail = false,
+} = Astro.props;
+
+const config = compatibilityConfig[compatibilityType];
+const privacy = privacyLabels[privacyMode];
+
+// スコアによるカラーグレード
+const getScoreColor = (s: number) => {
+  if (s >= 80) return 'var(--sn-success)';
+  if (s >= 60) return 'var(--sn-accent)';
+  if (s >= 40) return 'var(--sn-primary)';
+  return 'var(--sn-error)';
+};
+
+const getScoreLabel = (s: number) => {
+  if (s >= 80) return '最高の相性';
+  if (s >= 60) return 'とても良い';
+  if (s >= 40) return 'まずまず';
+  if (s >= 20) return '要注意';
+  return 'すれ違いに注意';
+};
+
+const scoreColor = getScoreColor(score);
+const scoreLabel = getScoreLabel(score);
+---
+
+<div
+  class="compat-result"
+  style={`--compat-color: var(${config.colorVar}); --score-color: ${scoreColor}`}
+>
+  <!-- ヘッダー -->
+  <div class="compat-header">
+    <div class="compat-meta">
+      <span class="compat-type-badge">
+        <span aria-hidden="true">{config.icon}</span>
+        {config.label}
+      </span>
+      <span class="privacy-badge">
+        <span aria-hidden="true">{privacy.icon}</span>
+        {privacy.label}
+      </span>
+    </div>
+    <div class="compat-types">
+      <span class="type-chip">{myType}</span>
+      <span class="vs-label" aria-hidden="true">×</span>
+      {partnerType ? (
+        <span class="type-chip">{partnerType}</span>
+      ) : (
+        <span class="type-chip type-chip--unknown">相手のタイプ</span>
+      )}
+    </div>
+  </div>
+
+  <!-- スコア表示 -->
+  <div class="score-display">
+    <div
+      class="score-circle"
+      role="meter"
+      aria-valuenow={score}
+      aria-valuemin={0}
+      aria-valuemax={100}
+      aria-label={`相性スコア: ${score}点`}
+    >
+      <span class="score-number">{score}</span>
+      <span class="score-unit">点</span>
+    </div>
+    <div class="score-info">
+      <p class="score-label">{scoreLabel}</p>
+      <div class="score-bar" aria-hidden="true">
+        <div class="score-bar-fill" style={`width: ${score}%`}></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 一言サマリー（無料）-->
+  <div class="compat-summary">
+    <p class="summary-text">{summary}</p>
+  </div>
+
+  <!-- 詳細レポート（PASS以上）-->
+  {showDetail ? (
+    <div class="detail-hint">
+      <p class="detail-note">
+        <span class="badge badge-pass">PASS</span>
+        5シーン軸の詳細相性レポートを表示中
+      </p>
+    </div>
+  ) : (
+    <div class="detail-cta">
+      <a href="/pro/" class="btn btn-primary">
+        <span aria-hidden="true">🔓</span>
+        詳細相性レポートを見る（¥390 PASS）
+      </a>
+      <p class="detail-cta-note">
+        仕事・恋愛・友人・家族・学校 5軸の詳細分析
+      </p>
+    </div>
+  )}
+
+  <!-- シェアボタン -->
+  <div class="compat-share">
+    <a
+      href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(`${myType}×${partnerType ?? '?'}の${config.label}は${score}点！${summary} #診断ナビ #相性診断`)}`}
+      target="_blank"
+      rel="noopener noreferrer"
+      class="btn btn-sm"
+      style="background: #000; color: #fff;"
+      aria-label="X（Twitter）で相性結果をシェア"
+    >
+      X でシェア
+    </a>
+    <a
+      href={`https://line.me/R/msg/text/?${encodeURIComponent(`${myType}×${partnerType ?? '?'}の${config.label}: ${score}点 https://shindan-navi.jp`)}`}
+      target="_blank"
+      rel="noopener noreferrer"
+      class="btn btn-sm"
+      style="background: #00b900; color: #fff;"
+      aria-label="LINEで相性結果をシェア"
+    >
+      LINE でシェア
+    </a>
+  </div>
+</div>
+
+<style>
+  .compat-result {
+    background: var(--sn-bg-white);
+    border-radius: var(--sn-radius-lg);
+    box-shadow: var(--sn-shadow-md);
+    overflow: hidden;
+    max-width: 480px;
+    margin-inline: auto;
+  }
+
+  /* ヘッダー */
+  .compat-header {
+    padding: var(--sn-space-5) var(--sn-space-6);
+    background: color-mix(in srgb, var(--compat-color) 8%, var(--sn-bg-white));
+    border-bottom: 1px solid color-mix(in srgb, var(--compat-color) 15%, transparent);
+  }
+
+  .compat-meta {
+    display: flex;
+    gap: var(--sn-space-2);
+    flex-wrap: wrap;
+    margin-bottom: var(--sn-space-3);
+  }
+
+  .compat-type-badge, .privacy-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sn-space-1);
+    font-size: var(--sn-text-xs);
+    font-weight: 700;
+    padding: var(--sn-space-1) var(--sn-space-3);
+    border-radius: var(--sn-radius-pill);
+  }
+
+  .compat-type-badge {
+    background: color-mix(in srgb, var(--compat-color) 15%, transparent);
+    color: var(--compat-color);
+  }
+
+  .privacy-badge {
+    background: var(--sn-bg-soft);
+    color: var(--sn-muted);
+  }
+
+  .compat-types {
+    display: flex;
+    align-items: center;
+    gap: var(--sn-space-3);
+    flex-wrap: wrap;
+  }
+
+  .type-chip {
+    font-family: var(--sn-font-rounded);
+    font-size: var(--sn-text-lg);
+    font-weight: 900;
+    color: var(--sn-primary);
+    background: var(--sn-primary-bg);
+    padding: var(--sn-space-1) var(--sn-space-3);
+    border-radius: var(--sn-radius-pill);
+  }
+
+  .type-chip--unknown {
+    color: var(--sn-muted);
+    background: var(--sn-bg-soft);
+    font-size: var(--sn-text-sm);
+  }
+
+  .vs-label {
+    font-size: var(--sn-text-lg);
+    font-weight: 700;
+    color: var(--sn-muted);
+  }
+
+  /* スコア */
+  .score-display {
+    display: flex;
+    align-items: center;
+    gap: var(--sn-space-5);
+    padding: var(--sn-space-6);
+  }
+
+  .score-circle {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--score-color) 10%, var(--sn-bg-white));
+    border: 3px solid var(--score-color);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .score-number {
+    font-family: var(--sn-font-rounded);
+    font-size: var(--sn-text-2xl);
+    font-weight: 900;
+    color: var(--score-color);
+    line-height: 1;
+  }
+
+  .score-unit {
+    font-size: var(--sn-text-xs);
+    color: var(--score-color);
+  }
+
+  .score-info {
+    flex: 1;
+  }
+
+  .score-label {
+    font-family: var(--sn-font-rounded);
+    font-size: var(--sn-text-xl);
+    font-weight: 700;
+    color: var(--sn-text);
+    margin-bottom: var(--sn-space-2);
+  }
+
+  .score-bar {
+    width: 100%;
+    height: 8px;
+    background: var(--sn-bg-soft);
+    border-radius: var(--sn-radius-pill);
+    overflow: hidden;
+  }
+
+  .score-bar-fill {
+    height: 100%;
+    background: var(--score-color);
+    border-radius: var(--sn-radius-pill);
+    transition: width var(--sn-dur-slow) var(--sn-ease-out);
+  }
+
+  /* サマリー */
+  .compat-summary {
+    padding: 0 var(--sn-space-6) var(--sn-space-5);
+  }
+
+  .summary-text {
+    font-size: var(--sn-text-base);
+    color: var(--sn-text-soft);
+    line-height: var(--sn-leading-base);
+    margin: 0;
+    padding: var(--sn-space-4);
+    background: var(--sn-bg-soft);
+    border-radius: var(--sn-radius-md);
+    border-left: 3px solid var(--compat-color);
+  }
+
+  /* 詳細CTA */
+  .detail-cta, .detail-hint {
+    padding: var(--sn-space-5) var(--sn-space-6);
+    background: var(--sn-bg-soft);
+    border-top: 1px solid var(--sn-border);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--sn-space-3);
+    text-align: center;
+  }
+
+  .detail-cta-note {
+    font-size: var(--sn-text-xs);
+    color: var(--sn-muted);
+    margin: 0;
+  }
+
+  .detail-note {
+    display: flex;
+    align-items: center;
+    gap: var(--sn-space-2);
+    font-size: var(--sn-text-sm);
+    color: var(--sn-text-soft);
+    margin: 0;
+  }
+
+  /* シェア */
+  .compat-share {
+    display: flex;
+    gap: var(--sn-space-3);
+    justify-content: center;
+    padding: var(--sn-space-4) var(--sn-space-6);
+    flex-wrap: wrap;
+  }
+</style>

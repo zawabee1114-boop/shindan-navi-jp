@@ -1,0 +1,30 @@
+---
+/**
+ * Container.astro - コンテンツ幅制御ラッパー
+ */
+interface Props {
+  /** 'wide' | 'default' | 'content' | 'narrow' */
+  size?: 'wide' | 'default' | 'content' | 'narrow';
+  /** 追加クラス */
+  class?: string;
+  /** HTML要素（デフォルト: div） */
+  as?: 'div' | 'section' | 'article' | 'aside' | 'main';
+}
+
+const {
+  size = 'default',
+  class: className = '',
+  as: Tag = 'div',
+} = Astro.props;
+
+const sizeClass = {
+  wide: 'container',
+  default: 'container',
+  content: 'container container--content',
+  narrow: 'container container--narrow',
+}[size];
+---
+
+<Tag class={`${sizeClass} ${className}`}>
+  <slot />
+</Tag>

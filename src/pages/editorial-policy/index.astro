@@ -1,0 +1,410 @@
+---
+// 診断ナビ 編集ポリシーページ
+// AdSense審査・E-E-A-T強化必須
+// 2026-05-20 time点の情報・content-writer 執筆
+const title = "編集ポリシー | 診断ナビ";
+const description = "診断ナビの編集ポリシーです。コンテンツ作成基準、AI支援の透明化、著作権・引用ポリシー、訂正方針、YMYLへの対応方針について説明します。";
+const canonicalURL = "https://shindan-navi.jp/editorial-policy/";
+---
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{title}</title>
+  <meta name="description" content={description} />
+  <link rel="canonical" href={canonicalURL} />
+
+  <!-- OGP -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content={title} />
+  <meta property="og:description" content={description} />
+  <meta property="og:url" content={canonicalURL} />
+  <meta property="og:site_name" content="診断ナビ" />
+  <meta property="og:locale" content="ja_JP" />
+  <meta name="twitter:card" content="summary" />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=M+PLUS+Rounded+1c:wght@700&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="/src/styles/design-tokens.css" />
+
+  <!-- 構造化データ -->
+  <script type="application/ld+json">
+    {JSON.stringify([
+      {
+        "@context": "https://schema.org",
+        "@type": "WebPage",
+        "@id": "https://shindan-navi.jp/editorial-policy/",
+        "url": "https://shindan-navi.jp/editorial-policy/",
+        "name": "編集ポリシー | 診断ナビ",
+        "description": "診断ナビのコンテンツ作成基準・AI支援透明化・YMYL対応方針",
+        "isPartOf": { "@type": "WebSite", "url": "https://shindan-navi.jp" },
+        "publisher": {
+          "@type": "Organization",
+          "name": "診断ナビ編集部",
+          "url": "https://shindan-navi.jp",
+          "email": "zawalab.info@gmail.com"
+        }
+      },
+      {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "ホーム", "item": "https://shindan-navi.jp/" },
+          { "@type": "ListItem", "position": 2, "name": "編集ポリシー", "item": "https://shindan-navi.jp/editorial-policy/" }
+        ]
+      }
+    ])}
+  </script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--sn-font-family);
+      background: var(--sn-bg);
+      color: var(--sn-text);
+      line-height: var(--sn-leading-base);
+      font-size: var(--sn-text-base);
+    }
+    .container { max-width: var(--sn-max-w-content); margin: 0 auto; padding: 0 var(--sn-space-4); }
+    /* ヘッダー */
+    .site-header {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(255,255,255,0.95); backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--sn-border); height: var(--sn-header-h);
+    }
+    .site-header .inner {
+      max-width: var(--sn-max-w); margin: 0 auto;
+      padding: 0 var(--sn-space-4); height: 100%;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .logo { font-family: var(--sn-font-rounded); font-size: var(--sn-text-xl); font-weight: 700; color: var(--sn-primary); text-decoration: none; }
+    .header-cta {
+      display: inline-flex; align-items: center; gap: var(--sn-space-2);
+      background: var(--sn-primary); color: #fff; font-size: var(--sn-text-sm);
+      font-weight: 700; padding: var(--sn-space-2) var(--sn-space-4);
+      border-radius: var(--sn-radius-pill); text-decoration: none; min-height: var(--sn-tap-min);
+    }
+    /* パンくず */
+    .breadcrumb { font-size: var(--sn-text-sm); color: var(--sn-muted); padding: var(--sn-space-4) var(--sn-space-4); }
+    .breadcrumb a { color: var(--sn-muted); text-decoration: none; }
+    .breadcrumb a:hover { color: var(--sn-primary); }
+    /* ページヒーロー */
+    .page-hero {
+      background: linear-gradient(135deg, #f0fdf4 0%, #eef2ff 100%);
+      padding: var(--sn-space-12) 0; text-align: center; margin-bottom: var(--sn-space-10);
+    }
+    .page-hero h1 { font-family: var(--sn-font-rounded); font-size: var(--sn-text-3xl); font-weight: 700; margin-bottom: var(--sn-space-3); }
+    .page-hero p { color: var(--sn-muted); font-size: var(--sn-text-sm); }
+    /* 本文 */
+    .policy-section { margin-bottom: var(--sn-space-10); }
+    .policy-heading {
+      font-family: var(--sn-font-rounded); font-size: var(--sn-text-xl); font-weight: 700;
+      margin-bottom: var(--sn-space-5); padding-bottom: var(--sn-space-3);
+      border-bottom: 2px solid var(--sn-primary-bg);
+      display: flex; align-items: center; gap: var(--sn-space-2);
+    }
+    .policy-subheading {
+      font-size: var(--sn-text-base); font-weight: 700;
+      margin: var(--sn-space-5) 0 var(--sn-space-3);
+      color: var(--sn-text);
+    }
+    p.policy-text {
+      font-size: var(--sn-text-sm); color: var(--sn-text-soft);
+      line-height: var(--sn-leading-relaxed); margin-bottom: var(--sn-space-4);
+    }
+    .policy-list {
+      list-style: none; display: flex; flex-direction: column; gap: var(--sn-space-2);
+      margin-bottom: var(--sn-space-5);
+    }
+    .policy-list li {
+      display: flex; align-items: flex-start; gap: var(--sn-space-2);
+      font-size: var(--sn-text-sm); color: var(--sn-text-soft);
+      line-height: var(--sn-leading-relaxed);
+    }
+    .policy-list li::before { content: "✓"; color: var(--sn-success); font-weight: 700; flex-shrink: 0; margin-top: 2px; }
+    .policy-list.cross li::before { content: "✕"; color: var(--sn-error); }
+    .policy-box {
+      background: var(--sn-primary-bg); border-radius: var(--sn-radius);
+      padding: var(--sn-space-5) var(--sn-space-6); margin-bottom: var(--sn-space-5);
+      border-left: 3px solid var(--sn-primary);
+    }
+    .policy-box-title { font-weight: 700; margin-bottom: var(--sn-space-3); font-size: var(--sn-text-sm); }
+    .policy-box p { font-size: var(--sn-text-sm); color: var(--sn-text-soft); line-height: var(--sn-leading-relaxed); }
+    .policy-warn {
+      background: #fff7ed; border-radius: var(--sn-radius);
+      padding: var(--sn-space-5) var(--sn-space-6); margin-bottom: var(--sn-space-5);
+      border-left: 3px solid var(--sn-warning);
+    }
+    .policy-warn-title { font-weight: 700; margin-bottom: var(--sn-space-3); font-size: var(--sn-text-sm); color: var(--sn-accent-dark); }
+    .policy-warn p { font-size: var(--sn-text-sm); color: var(--sn-text-soft); line-height: var(--sn-leading-relaxed); }
+    .meta-text { font-size: var(--sn-text-xs); color: var(--sn-muted); margin-bottom: var(--sn-space-2); }
+    /* フッター */
+    .site-footer {
+      background: var(--sn-text); color: rgba(255,255,255,0.7);
+      padding: var(--sn-space-10) 0 var(--sn-space-8); margin-top: var(--sn-space-16);
+    }
+    .footer-inner { max-width: var(--sn-max-w); margin: 0 auto; padding: 0 var(--sn-space-4); }
+    .footer-logo { font-family: var(--sn-font-rounded); font-size: var(--sn-text-xl); color: #fff; font-weight: 700; text-decoration: none; display: block; margin-bottom: var(--sn-space-2); }
+    .footer-links { display: flex; flex-wrap: wrap; gap: var(--sn-space-6); margin: var(--sn-space-6) 0; }
+    .footer-links a { color: rgba(255,255,255,0.6); text-decoration: none; font-size: var(--sn-text-sm); }
+    .footer-links a:hover { color: #fff; }
+    .footer-bottom { font-size: var(--sn-text-xs); border-top: 1px solid rgba(255,255,255,0.1); padding-top: var(--sn-space-6); }
+  </style>
+</head>
+<body>
+
+  <!-- ヘッダー -->
+  <header class="site-header">
+    <div class="inner">
+      <a href="/" class="logo">🧠 診断ナビ</a>
+      <a href="/personality/multiple-int/" class="header-cta">✨ 無料で診断スタート</a>
+    </div>
+  </header>
+
+  <!-- パンくず -->
+  <nav class="breadcrumb" aria-label="パンくずリスト">
+    <a href="/">ホーム</a> &gt; 編集ポリシー
+  </nav>
+
+  <!-- ページヒーロー -->
+  <div class="page-hero">
+    <div class="container">
+      <h1>📋 編集ポリシー</h1>
+      <p>診断ナビのコンテンツ作成基準・品質管理方針</p>
+    </div>
+  </div>
+
+  <main>
+    <div class="container">
+
+      <!-- AIOブロック -->
+      <div class="policy-section">
+        <blockquote style="
+          background: var(--sn-primary-bg); border-left: 4px solid var(--sn-primary);
+          border-radius: 0 var(--sn-radius-sm) var(--sn-radius-sm) 0;
+          padding: var(--sn-space-5) var(--sn-space-6);
+        ">
+          <p style="font-weight:700; margin-bottom: var(--sn-space-3);">このページでわかること</p>
+          <ul style="list-style:none; display:flex; flex-direction:column; gap:var(--sn-space-2); font-size: var(--sn-text-sm);">
+            <li>✅ 診断ナビのコンテンツ作成原則（公的機関・学術論文ベース・YMYL非扱い）</li>
+            <li>✅ AI支援の透明化方針（何にAIを使い、何は人間が判断するか）</li>
+            <li>✅ 著作権・引用・訂正・ユーザー報告の各ポリシー</li>
+          </ul>
+        </blockquote>
+        <div class="meta-text" style="margin-top: var(--sn-space-3);">
+          制定日: 2026-05-20 ｜ 最終更新: 2026-05-20
+        </div>
+      </div>
+
+      <!-- 1. コンテンツ作成原則 -->
+      <section class="policy-section">
+        <h2 class="policy-heading">🎯 1. コンテンツ作成原則</h2>
+
+        <h3 class="policy-subheading">1-1. 情報の一次情報性</h3>
+        <p class="policy-text">
+          診断ナビが提供するコンテンツは、以下の情報源を一次情報として参照します。
+          他のメディア・ブログ記事を孫引きすることは原則禁止とします。
+        </p>
+        <ul class="policy-list">
+          <li>公的機関・学術機関の研究論文・レポート（PubMed・Google Scholar等）</li>
+          <li>各理論の原著（Gardner著作・Myers-Briggsの研究文献等）</li>
+          <li>DiSC公式資料・Myers &amp; Briggs Foundation公式情報</li>
+          <li>行動経済学分野のノーベル賞受賞研究（Kahneman等）</li>
+          <li>編集長・専門ライターの実務・実体験からの知見</li>
+        </ul>
+
+        <h3 class="policy-subheading">1-2. 「占い」「未来予測」との明示的区別</h3>
+        <div class="policy-warn">
+          <div class="policy-warn-title">⚠️ 当サービスが扱わないこと</div>
+          <p>以下の内容は、当サービスのコンテンツには含まれません。</p>
+          <ul class="policy-list cross" style="margin-top: var(--sn-space-3); margin-bottom:0;">
+            <li>今後の運勢・仕事運・恋愛運などの未来予測</li>
+            <li>星座・血液型による「この人はこうなる」という断定的な予言</li>
+            <li>霊的・スピリチュアルな解釈・エネルギー診断</li>
+            <li>「あなたの前世は〜」「相性が悪いから別れるべき」等の誘導的表現</li>
+          </ul>
+        </div>
+        <p class="policy-text">
+          当サービスの診断結果は「現時点の性格傾向の分類」です。性格は変化するものであり、診断結果は将来の行動や結果を保証するものではありません。
+        </p>
+
+        <h3 class="policy-subheading">1-3. YMYLジャンル非扱い原則</h3>
+        <p class="policy-text">
+          YMYL（Your Money or Your Life）とは、ユーザーの健康・安全・財務・法的状況に重大な影響を与える可能性のあるコンテンツジャンルです。診断ナビでは以下のYMYLコンテンツを扱いません。
+        </p>
+        <ul class="policy-list cross">
+          <li>メンタル疾患（うつ病・発達障害・パーソナリティ障害等）の診断・治療アドバイス</li>
+          <li>育児・子育てにおける医療的判断（「この子はADHDかもしれない」等）</li>
+          <li>介護・高齢者ケアにおける医療的判断</li>
+          <li>法的アドバイス（離婚・相続・トラブル対処等）</li>
+          <li>具体的な投資・財務アドバイス（「このタイプは投資に向いている」等の断定）</li>
+        </ul>
+        <div class="policy-box">
+          <div class="policy-box-title">✅ 扱う内容（YMYLに該当しない）</div>
+          <p>性格タイプ別のコミュニケーション傾向・学習スタイル・職種の向き不向き（参考情報として）・対人関係のパターン分析。これらは参考情報であり、専門家の判断の代替ではありません。</p>
+        </div>
+
+        <h3 class="policy-subheading">1-4. 情報鮮度の維持</h3>
+        <p class="policy-text">
+          各コンテンツには作成日・最終更新日を明記します。
+          学術情報・サービス情報が更新された場合は速やかにコンテンツを修正します。
+          定期的な内容レビューは最低年1回実施します。
+        </p>
+      </section>
+
+      <!-- 2. AI支援の透明化 -->
+      <section class="policy-section">
+        <h2 class="policy-heading">🤖 2. AI支援の透明化</h2>
+        <p class="policy-text">
+          診断ナビでは、コンテンツ品質の向上を目的として、AI（大規模言語モデル）を支援ツールとして活用しています。以下にAI活用の範囲と人間の判断が必要な部分を明示します。
+        </p>
+
+        <h3 class="policy-subheading">AIを活用する業務</h3>
+        <ul class="policy-list">
+          <li>コンテンツの初稿作成支援・構成案の生成</li>
+          <li>日本語の校正・読みやすさ改善の提案</li>
+          <li>FAQ回答文の下書き作成</li>
+          <li>ユーザー向けAIプロンプトカードのフォーマット生成（PRO機能）</li>
+        </ul>
+
+        <h3 class="policy-subheading">人間（編集長・専門ライター）が必ず担う業務</h3>
+        <ul class="policy-list">
+          <li>一次情報との事実確認・整合性チェック</li>
+          <li>学術的正確性の最終判断</li>
+          <li>YMYL判定・YMYLコンテンツの削除判断</li>
+          <li>価値観・倫理的判断が必要な表現のレビュー</li>
+          <li>最終公開承認</li>
+        </ul>
+        <div class="policy-box">
+          <div class="policy-box-title">📌 AI出力のそのまま公開は禁止</div>
+          <p>AI生成テキストは、必ず編集長または専門ライターが内容を確認・修正・承認してから公開します。AI出力のコピー&amp;ペーストをそのまま公開することは当編集部のポリシーで禁止しています。</p>
+        </div>
+      </section>
+
+      <!-- 3. 著作権・引用ポリシー -->
+      <section class="policy-section">
+        <h2 class="policy-heading">©️ 3. 著作権・引用ポリシー</h2>
+        <p class="policy-text">
+          当サービスのコンテンツは著作権法により保護されています。
+        </p>
+
+        <h3 class="policy-subheading">引用・参照の基準</h3>
+        <ul class="policy-list">
+          <li>学術論文・公的資料を引用する場合、必ず出典（著者名・発表年・論文名等）を明記します</li>
+          <li>引用範囲は著作権法第32条の範囲内（必要最小限・主従関係の維持）に限定します</li>
+          <li>他メディアのコンテンツを無断転載・コピーすることは行いません</li>
+          <li>画像・イラストは使用許諾を確認したもののみ使用します</li>
+        </ul>
+
+        <h3 class="policy-subheading">当サービスのコンテンツ利用について</h3>
+        <ul class="policy-list">
+          <li>個人的な学習・研究目的での参照・引用は許可します（出典明記を条件に）</li>
+          <li>商業目的での無断転用・複製は禁止します</li>
+          <li>SNSでのシェア・引用は歓迎します（URL付き・改変なし）</li>
+          <li>メディア取材・掲載については事前にご連絡ください（<a href="mailto:zawalab.info@gmail.com" style="color: var(--sn-primary);">zawalab.info@gmail.com</a>）</li>
+        </ul>
+      </section>
+
+      <!-- 4. 訂正方針 -->
+      <section class="policy-section">
+        <h2 class="policy-heading">✏️ 4. 訂正方針</h2>
+        <p class="policy-text">
+          診断ナビは正確な情報の提供に努めていますが、誤りが見つかった場合は速やかに訂正します。
+        </p>
+        <ul class="policy-list">
+          <li>誤りを発見した場合、原則として発見から7営業日以内に訂正します</li>
+          <li>重大な誤り（ユーザーに誤解を与える内容・学術的に明らかに誤った情報）は即時対応します</li>
+          <li>訂正箇所は記事末尾に訂正履歴として記録します（削除・隠蔽はしません）</li>
+          <li>ユーザーからの指摘は真摯に受け止め、事実確認後に対応します</li>
+        </ul>
+        <p class="policy-text">
+          誤りのご指摘は <a href="/contact/" style="color: var(--sn-primary);">お問い合わせページ</a> または <a href="mailto:zawalab.info@gmail.com" style="color: var(--sn-primary);">zawalab.info@gmail.com</a> までご連絡ください。
+        </p>
+      </section>
+
+      <!-- 5. ユーザー報告フォーム -->
+      <section class="policy-section">
+        <h2 class="policy-heading">📣 5. ユーザー報告・フィードバック</h2>
+        <p class="policy-text">
+          コンテンツの品質向上のため、以下についてご報告・フィードバックを歓迎します。
+        </p>
+        <ul class="policy-list">
+          <li>情報の誤り・古い情報の指摘</li>
+          <li>学術的根拠に関する補足・訂正提案</li>
+          <li>表現が不適切・不快と感じる箇所の指摘</li>
+          <li>YMYLに該当する可能性のある表現の指摘</li>
+          <li>利用体験の改善提案（機能・UI含む）</li>
+        </ul>
+        <div style="text-align:center; margin-top: var(--sn-space-6);">
+          <a href="/contact/" style="
+            display: inline-flex; align-items: center; gap: var(--sn-space-2);
+            background: var(--sn-primary); color: #fff; font-weight: 700;
+            padding: var(--sn-space-3) var(--sn-space-8); border-radius: var(--sn-radius-pill);
+            text-decoration: none; min-height: var(--sn-tap-min);
+          ">
+            📬 フィードバックを送る
+          </a>
+        </div>
+      </section>
+
+      <!-- 6. 広告・アフィリエイト方針 -->
+      <section class="policy-section">
+        <h2 class="policy-heading">💰 6. 広告・アフィリエイト方針</h2>
+        <p class="policy-text">
+          診断ナビはGoogle AdSenseによる広告を掲載しています。また、一部のコンテンツにアフィリエイトリンクが含まれる場合があります。
+        </p>
+        <ul class="policy-list">
+          <li>広告・アフィリエイトの有無は、コンテンツの内容・評価には一切影響しません</li>
+          <li>広告配置は診断・結果確認の妨げにならない位置を優先します（UX最優先）</li>
+          <li>¥590/月 PRO会員は広告が完全非表示になります</li>
+          <li>アフィリエイトリンクを含む場合は、ページ内に明示します</li>
+        </ul>
+      </section>
+
+      <!-- 更新履歴 -->
+      <section class="policy-section">
+        <div style="background: var(--sn-bg-soft); border-radius: var(--sn-radius); padding: var(--sn-space-5) var(--sn-space-6);">
+          <div style="font-weight:700; margin-bottom: var(--sn-space-3); font-size: var(--sn-text-sm);">📋 更新履歴</div>
+          <div style="font-size: var(--sn-text-xs); color: var(--sn-muted);">
+            <div>2026-05-20: 初版制定・公開</div>
+          </div>
+        </div>
+        <div style="margin-top: var(--sn-space-6); display: flex; flex-wrap: wrap; gap: var(--sn-space-4);">
+          <a href="/about/" style="color: var(--sn-primary); font-size: var(--sn-text-sm); text-decoration:none;">👤 運営者情報</a>
+          <a href="/contact/" style="color: var(--sn-primary); font-size: var(--sn-text-sm); text-decoration:none;">📬 お問い合わせ</a>
+          <a href="/privacy/" style="color: var(--sn-primary); font-size: var(--sn-text-sm); text-decoration:none;">🔒 プライバシーポリシー</a>
+          <a href="/terms/" style="color: var(--sn-primary); font-size: var(--sn-text-sm); text-decoration:none;">📄 利用規約</a>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- フッター -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <a href="/" class="footer-logo">🧠 診断ナビ</a>
+      <div class="footer-links">
+        <a href="/about/">運営者情報</a>
+        <a href="/editorial-policy/">編集ポリシー</a>
+        <a href="/contact/">お問い合わせ</a>
+        <a href="/faq/">よくある質問</a>
+        <a href="/privacy/">プライバシーポリシー</a>
+        <a href="/terms/">利用規約</a>
+        <a href="/disclaimer/">免責事項</a>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2026 診断ナビ ｜ zawalab.info@gmail.com ｜ 最終更新: 2026-05-20</p>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

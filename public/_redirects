@@ -1,0 +1,4 @@
+# Cloudflare Pages 301 Redirects
+# 診断ナビ（shindan-navi.jp）
+# 現時点では旧URL→新URLマッピングなし
+# 将来追加時: 長いパスから順に記述する（先頭から評価されるため）

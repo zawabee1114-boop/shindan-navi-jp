@@ -1,0 +1,341 @@
+---
+/**
+ * BaseLayout.astro - 診断ナビ 共通レイアウト
+ * SEO/AIO/LLMO 基盤設定完了（2026-05-20）
+ * 準拠基準書: zawa-empire/docs/seo-aio/01-foundations.md / 02-structured-data.md
+ *
+ * テーマ変更ガイド:
+ * - カラー: src/styles/design-tokens.css の --sn-* 変数を変更
+ * - フォント: 下記 Google Fonts URL と --sn-font-* を同時変更
+ * - OGP画像: public/ogp-default.png を差し替え
+ *
+ * 環境変数（Cloudflare Pages で設定）:
+ * - PUBLIC_GA4_ID: GA4 測定ID（例: G-XXXXXXXXXX）
+ * - PUBLIC_ADSENSE_PUB: AdSense パブリッシャーID（デフォルト: ca-pub-3827953973757487）
+ * - PUBLIC_GSC_VERIFICATION: Search Console 確認メタタグ
+ */
+import '../styles/global.css';
+import siteMeta from '../data/site-meta.json';
+import SiteHeader from '../components/SiteHeader.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+
+interface Props {
+  /** ページタイトル（<title> に使用・主要KWを先頭に・28〜42字推奨）*/
+  title: string;
+  /** メタディスクリプション（KW自然含有・80〜120字・CTA含む）*/
+  description?: string;
+  /** canonical URL */
+  canonical?: string;
+  /** JSON-LD 構造化データ（ページ別・単体 or 配列）*/
+  jsonLd?: object | object[];
+  /** <main> の追加クラス */
+  mainClass?: string;
+  /** og:type（デフォルト: website）*/
+  ogType?: string;
+  /** OGP画像URL（絶対URL または /から始まるパス）*/
+  ogImage?: string;
+  /** 公開日 YYYY-MM-DD */
+  publishDate?: string;
+  /** 最終更新日 YYYY-MM-DD */
+  lastUpdated?: string;
+  /** noindex: trueでメタに noindex 付与（share/me等の動的ページ用）*/
+  noindex?: boolean;
+  /** ヘッダーを非表示にするか（診断フロー画面等）*/
+  hideHeader?: boolean;
+  /** フッターを非表示にするか */
+  hideFooter?: boolean;
+  /** ヘッダーを非表示にするか */
+  hideBottomNav?: boolean;
+  /**
+   * パンくずリストデータ（BreadcrumbList JSON-LD 生成用）
+   * ホームは自動付与されるため不要。2階層目以降を記述する。
+   * 例: [{ name: 'MBTI診断', url: '/diagnosis/mbti/' }]
+   */
+  breadcrumbs?: Array<{ name: string; url: string }>;
+}
+
+const {
+  title,
+  description = siteMeta.description,
+  canonical,
+  jsonLd,
+  mainClass = '',
+  ogType = 'website',
+  ogImage,
+  publishDate,
+  lastUpdated,
+  noindex = false,
+  hideHeader = false,
+  hideFooter = false,
+  hideBottomNav = false,
+  breadcrumbs,
+} = Astro.props;
+
+const SITE_URL = siteMeta.siteUrl;
+
+const pageUrl = canonical ?? new URL(Astro.url.pathname, SITE_URL).href;
+const ogImageUrl = ogImage
+  ? (ogImage.startsWith('http') ? ogImage : `${SITE_URL}${ogImage}`)
+  : `${SITE_URL}${siteMeta.ogImage}`;
+
+const fullTitle = title === siteMeta.siteName
+  ? siteMeta.siteName
+  : `${title} | ${siteMeta.siteName}`;
+
+// ページ別 JSON-LD を配列に正規化
+const jsonLdArray = jsonLd
+  ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd])
+  : [];
+
+// ============================================================
+// 共通 JSON-LD スキーマ（全ページ必須・@id連結設計）
+// 準拠: zawa-empire/docs/seo-aio/02-structured-data.md
+// ============================================================
+
+// Organization JSON-LD（E-E-A-T強化・@id連結の基盤）
+const organizationSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  '@id': `${SITE_URL}/#organization`,
+  name: '診断ナビ編集部',
+  alternateName: '診断ナビ',
+  url: SITE_URL,
+  logo: {
+    '@type': 'ImageObject',
+    url: `${SITE_URL}/favicon.svg`,
+    width: 32,
+    height: 32,
+  },
+  foundingDate: '2026',
+  description: 'Big5（ビッグファイブ）を裏エンジンとして8診断を統合し、仕事・恋愛・友人・家族・学校の5シーンで具体的な行動指針を提供する自己理解プラットフォームを運営する編集部。心理学の標準モデルに基づく性格分類のみを扱い、占いやスピリチュアルは一切扱わない。',
+  knowsAbout: [
+    { '@type': 'Thing', name: 'MBTI（Myers-Briggs Type Indicator）', sameAs: 'https://www.myersbriggs.org/' },
+    { '@type': 'Thing', name: '多重知能理論（Multiple Intelligences）', sameAs: 'https://www.pz.harvard.edu/' },
+    { '@type': 'Thing', name: 'DiSC診断（DISC行動スタイル）' },
+    { '@type': 'Thing', name: '恋愛スタイル理論（J.A.Lee Love Styles）' },
+    { '@type': 'Thing', name: '完璧主義心理学（Multidimensional Perfectionism Scale）' },
+    { '@type': 'Thing', name: 'ビッグファイブ性格特性（Big Five OCEAN）' },
+    { '@type': 'Thing', name: '行動経済学（Behavioral Economics）' },
+    { '@type': 'Thing', name: '自己理解・自己分析' },
+    { '@type': 'Thing', name: '性格心理学' },
+    { '@type': 'Thing', name: '血液型性格診断（日本独自モデル）' },
+  ],
+  areaServed: { '@type': 'Country', name: '日本' },
+  sameAs: [],
+};
+
+// WebSite JSON-LD（SiteLinksSearchBox + SearchAction + @id連結）
+const websiteSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  '@id': `${SITE_URL}/#website`,
+  name: siteMeta.siteName,
+  alternateName: 'shindan-navi',
+  url: SITE_URL,
+  description: siteMeta.description,
+  inLanguage: 'ja-JP',
+  potentialAction: {
+    '@type': 'SearchAction',
+    target: {
+      '@type': 'EntryPoint',
+      urlTemplate: `${SITE_URL}/search?q={search_term_string}`,
+    },
+    'query-input': 'required name=search_term_string',
+  },
+  publisher: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+  },
+};
+
+// BreadcrumbList JSON-LD（breadcrumbs prop があるページのみ生成）
+const breadcrumbSchema = breadcrumbs && breadcrumbs.length > 0
+  ? {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        {
+          '@type': 'ListItem',
+          position: 1,
+          name: 'ホーム',
+          item: SITE_URL,
+        },
+        ...breadcrumbs.map((crumb, index) => ({
+          '@type': 'ListItem',
+          position: index + 2,
+          name: crumb.name,
+          item: crumb.url.startsWith('http') ? crumb.url : `${SITE_URL}${crumb.url}`,
+        })),
+      ],
+    }
+  : null;
+
+// Speakable JSON-LD（音声検索対応）
+const speakableSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  url: pageUrl,
+  speakable: {
+    '@type': 'SpeakableSpecification',
+    cssSelector: ['.hero-description', 'h1', '.result-summary', '.tldr'],
+  },
+};
+
+// ============================================================
+// 環境変数（Cloudflare Pages で設定後に有効化）
+// ============================================================
+const GA4_ID = import.meta.env.PUBLIC_GA4_ID ?? '';
+const ADSENSE_PUB = import.meta.env.PUBLIC_ADSENSE_PUB ?? 'ca-pub-3827953973757487';
+const GSC_VERIFICATION = import.meta.env.PUBLIC_GSC_VERIFICATION ?? '';
+---
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Resource Hints: Google Fonts, AdSense, Analytics -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://www.googletagmanager.com" />
+  <link rel="dns-prefetch" href="https://pagead2.googlesyndication.com" />
+
+  <!--
+    Google Fonts: M PLUS Rounded 1c + Noto Sans JP（非ブロッキング読み込み）
+    テーマ変更時は下記 URL と design-tokens.css の --sn-font-* を同時変更すること
+  -->
+  <link
+    rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700;900&family=Noto+Sans+JP:wght@400;500;700&display=swap"
+    media="print"
+    onload="this.media='all'"
+  />
+  <noscript>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700;900&family=Noto+Sans+JP:wght@400;500;700&display=swap"
+    />
+  </noscript>
+
+  <!-- SEO Meta（準拠: zawa-empire/docs/seo-aio/01-foundations.md §1.3）-->
+  <title>{fullTitle}</title>
+  <meta name="description" content={description} />
+  {noindex
+    ? <meta name="robots" content="noindex,nofollow" />
+    : <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
+  }
+  <link rel="canonical" href={pageUrl} />
+
+  <!-- Google Search Console 確認（CEO設定後に有効化）-->
+  {GSC_VERIFICATION && (
+    <meta name="google-site-verification" content={GSC_VERIFICATION} />
+  )}
+
+  <!-- OGP（1200x630 推奨）-->
+  <meta property="og:type" content={ogType} />
+  <meta property="og:title" content={fullTitle} />
+  <meta property="og:description" content={description} />
+  <meta property="og:url" content={pageUrl} />
+  <meta property="og:image" content={ogImageUrl} />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content={`${siteMeta.siteName} - ${title}`} />
+  <meta property="og:site_name" content={siteMeta.siteName} />
+  <meta property="og:locale" content={siteMeta.locale} />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:site" content={siteMeta.twitterHandle} />
+  <meta name="twitter:title" content={fullTitle} />
+  <meta name="twitter:description" content={description} />
+  <meta name="twitter:image" content={ogImageUrl} />
+
+  <!-- Article 日付メタ -->
+  {publishDate && <meta property="article:published_time" content={new Date(publishDate).toISOString()} />}
+  {lastUpdated && <meta property="article:modified_time" content={new Date(lastUpdated).toISOString()} />}
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+  <!-- Theme color -->
+  <meta name="theme-color" content={siteMeta.themeColor} />
+
+  <!-- ============================================================
+       JSON-LD 構造化データ（全ページ共通）
+       準拠: zawa-empire/docs/seo-aio/02-structured-data.md
+       @id 連結: Organization/#organization ← WebSite.publisher
+       ============================================================ -->
+
+  <!-- Organization JSON-LD（E-E-A-T・@id連結の基盤）-->
+  <script type="application/ld+json" set:html={JSON.stringify(organizationSchema)} />
+
+  <!-- WebSite JSON-LD（SiteLinksSearchBox・SearchAction）-->
+  <script type="application/ld+json" set:html={JSON.stringify(websiteSchema)} />
+
+  <!-- BreadcrumbList JSON-LD（breadcrumbs prop があるページのみ）-->
+  {breadcrumbSchema && (
+    <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
+  )}
+
+  <!-- Speakable JSON-LD（音声検索対応）-->
+  <script type="application/ld+json" set:html={JSON.stringify(speakableSchema)} />
+
+  <!-- ページ別 JSON-LD（content-writer / seo-optimizer が個別設定）-->
+  {jsonLdArray.map((schema) => (
+    <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+  ))}
+
+  <!-- ============================================================
+       Google tag (gtag.js) - GA4
+       PUBLIC_GA4_ID 設定後に自動有効化
+       ============================================================ -->
+  {GA4_ID && (
+    <>
+      <script async src={`https://www.googletagmanager.com/gtag/js?id=${GA4_ID}`}></script>
+      <script define:vars={{ GA4_ID }}>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', GA4_ID);
+      </script>
+    </>
+  )}
+
+  <!-- ============================================================
+       Google AdSense
+       PUBLIC_ADSENSE_PUB 設定後 or デフォルト ca-pub-3827953973757487 で即発動
+       承認前は auto-ads が表示されないため SEO 影響なし
+       ============================================================ -->
+  {ADSENSE_PUB && (
+    <script
+      async
+      src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_PUB}`}
+      crossorigin="anonymous"
+    ></script>
+  )}
+</head>
+<body>
+  {!hideHeader && <SiteHeader />}
+
+  <main id="main-content" class={mainClass}>
+    <slot />
+  </main>
+
+  {!hideFooter && <SiteFooter />}
+
+  <!-- ヘッダスクロール浮き -->
+  <script is:inline>
+    (function () {
+      var header = document.querySelector('.site-header');
+      if (header) {
+        window.addEventListener('scroll', function () {
+          header.classList.toggle('is-scrolled', window.scrollY > 4);
+        }, { passive: true });
+      }
+    })();
+  </script>
+</body>
+</html>

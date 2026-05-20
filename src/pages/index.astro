@@ -1,0 +1,1143 @@
+---
+// shindan-navi.jp トップページ
+// 2026-05-20 時点の情報・content-writer 執筆
+const title = "8診断で、あなたを統合する。| 診断ナビ";
+const description = "MBTI・血液型・多重知能・完璧主義・DiSC・恋愛スタイル・星座・金銭感覚。8つの診断を統合して、仕事・恋愛・友人・家族・学校の5シーンであなたへの具体的アドバイスを提供。無料で診断スタート。";
+const canonicalURL = "https://shindan-navi.jp/";
+
+// 8診断データ
+const diagnoses = [
+  {
+    id: "multiple-int",
+    name: "多重知能テスト",
+    emoji: "🧠",
+    desc: "あなたの知能の強みを8種類で分類",
+    color: "var(--sn-diag-multi-int)",
+    bg: "#ecfdf5",
+    href: "/personality/multiple-int/",
+    phase: "Phase 1",
+  },
+  {
+    id: "mbti",
+    name: "MBTI診断",
+    emoji: "🎭",
+    desc: "16タイプで性格・行動パターンを解明",
+    color: "var(--sn-diag-mbti)",
+    bg: "#eef2ff",
+    href: "/personality/mbti/",
+    phase: "Phase 1",
+  },
+  {
+    id: "blood-type",
+    name: "血液型性格診断",
+    emoji: "🩸",
+    desc: "A/B/O/AB型×Big5換算で科学的分析",
+    color: "var(--sn-diag-blood)",
+    bg: "#fef2f2",
+    href: "/personality/blood-type/",
+    phase: "Phase 1",
+  },
+  {
+    id: "perfectionism",
+    name: "完璧主義タイプ診断",
+    emoji: "⭐",
+    desc: "あなたの完璧主義が強みか罠かを診断",
+    color: "var(--sn-diag-perfectionism)",
+    bg: "#fffbeb",
+    href: "/personality/perfectionism/",
+    phase: "Phase 1",
+  },
+  {
+    id: "disc",
+    name: "DiSC診断",
+    emoji: "💼",
+    desc: "仕事スタイル・コミュニケーション傾向",
+    color: "var(--sn-diag-disc)",
+    bg: "#eff6ff",
+    href: "/personality/disc/",
+    phase: "Phase 1",
+  },
+  {
+    id: "love-style",
+    name: "恋愛スタイル診断",
+    emoji: "💕",
+    desc: "6タイプ恋愛類型で恋愛傾向を可視化",
+    color: "var(--sn-diag-love)",
+    bg: "#fdf2f8",
+    href: "/personality/love-style/",
+    phase: "Phase 1",
+  },
+  {
+    id: "zodiac",
+    name: "星座性格診断",
+    emoji: "✨",
+    desc: "星座×性格科学でエンタメ＋科学的分析",
+    color: "var(--sn-diag-seiza)",
+    bg: "#f5f3ff",
+    href: "/personality/zodiac/",
+    phase: "Phase 1",
+  },
+  {
+    id: "money-sense",
+    name: "金銭感覚診断",
+    emoji: "💰",
+    desc: "行動経済学でお金の使い方タイプを分析",
+    color: "var(--sn-diag-money)",
+    bg: "#f0fdfa",
+    href: "/personality/money-sense/",
+    phase: "Phase 1",
+  },
+];
+
+// 5シーン軸
+const scenes = [
+  {
+    icon: "💼",
+    label: "仕事",
+    color: "var(--sn-scene-work)",
+    bg: "var(--sn-scene-work-bg)",
+    desc: "職場コミュニケーション・向いている職種・キャリアの伸ばし方",
+  },
+  {
+    icon: "💕",
+    label: "恋愛",
+    color: "var(--sn-scene-love)",
+    bg: "var(--sn-scene-love-bg)",
+    desc: "好きになる相手の傾向・すれ違いパターン・恋愛攻略ポイント",
+  },
+  {
+    icon: "👫",
+    label: "友人",
+    color: "var(--sn-scene-friend)",
+    bg: "var(--sn-scene-friend-bg)",
+    desc: "グループでの立ち位置・長続きしやすい友人タイプ・衝突回避法",
+  },
+  {
+    icon: "🏠",
+    label: "家族",
+    color: "var(--sn-scene-family)",
+    bg: "var(--sn-scene-family-bg)",
+    desc: "パートナーとの性格相性・親子の相互理解・家族内コミュニケーション",
+  },
+  {
+    icon: "📚",
+    label: "学校・学習",
+    color: "var(--sn-scene-school)",
+    bg: "var(--sn-scene-school-bg)",
+    desc: "タイプ別最適学習法・得意教科の伸ばし方・進路選択のヒント",
+  },
+];
+
+// 料金プラン
+const plans = [
+  {
+    name: "無料",
+    price: "¥0",
+    period: "",
+    color: "#6b7280",
+    highlight: false,
+    features: [
+      "8診断 個別受診（無制限）",
+      "診断ライト結果（キャラ+特徴3つ）",
+      "統合プロファイル 基本版",
+      "こっそり相性チェック（無制限）",
+      "招待相性診断（完全無料）",
+      "Big5変化グラフ（3ヶ月）",
+      "広告表示あり（4〜5枠）",
+    ],
+    cta: "無料で診断スタート",
+    ctaHref: "/personality/multiple-int/",
+  },
+  {
+    name: "¥390 PASS",
+    price: "¥390",
+    period: "（1年有効・買い切り）",
+    color: "var(--sn-pass-color)",
+    highlight: false,
+    features: [
+      "詳細版レポート（全診断・全5軸）",
+      "統合プロファイル 完全版",
+      "相性詳細レポート（5シーン軸）",
+      "Big5キャラ 完全版+SNSシェア素材",
+      "AIプロンプトカード 初回1枚",
+      "Big5変化グラフ（6ヶ月）",
+      "広告 控えめ（2枠・FVなし）",
+    ],
+    cta: "¥390 PASSを購入",
+    ctaHref: "/pro/",
+  },
+  {
+    name: "¥590/月 PRO",
+    price: "¥590",
+    period: "/月",
+    color: "var(--sn-pro-color)",
+    highlight: true,
+    features: [
+      "AIプロンプトカード（月次自動更新）",
+      "タイムカプセル機能（過去の自分への手紙）",
+      "時系列変化 全期間グラフ",
+      "ライフイベント記録",
+      "月1本の限定診断",
+      "自分史PDF エクスポート",
+      "広告 完全非表示",
+    ],
+    cta: "¥590/月 PROを始める",
+    ctaHref: "/pro/",
+  },
+];
+
+// FAQ抜粋（3問）
+const faqTop = [
+  {
+    q: "8診断統合って何ですか？",
+    a: "MBTI・血液型・多重知能など8つの診断を組み合わせて、1つの「統合プロファイル」を作る機能です。どれか1つの診断だけでは語りきれない「あなた」を多角的に解明します。",
+  },
+  {
+    q: "占いとは違うんですか？",
+    a: "はい、違います。当サービスは性格心理学・行動経済学・Gardner理論（多重知能）などの学術理論をベースにしています。未来予測や運勢は一切扱いません。あくまで「今のあなたの性格傾向」を分類します。",
+  },
+  {
+    q: "無料で何ができますか？",
+    a: "8診断すべてを無制限で受診でき、ライト版の結果とシーン別アドバイスを確認できます。相性診断（こっそりモード・招待モード）も完全無料・無制限でご利用いただけます。",
+  },
+];
+---
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{title}</title>
+  <meta name="description" content={description} />
+  <link rel="canonical" href={canonicalURL} />
+
+  <!-- OGP -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content={title} />
+  <meta property="og:description" content={description} />
+  <meta property="og:url" content={canonicalURL} />
+  <meta property="og:site_name" content="診断ナビ" />
+  <meta property="og:locale" content="ja_JP" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content={title} />
+  <meta name="twitter:description" content={description} />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=M+PLUS+Rounded+1c:wght@700&display=swap"
+    rel="stylesheet"
+  />
+
+  <!-- デザイントークン -->
+  <link rel="stylesheet" href="/src/styles/design-tokens.css" />
+
+  <!-- 構造化データ: WebSite -->
+  <script type="application/ld+json">
+    {JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "診断ナビ",
+      "url": "https://shindan-navi.jp",
+      "description": "8診断統合で、仕事・恋愛・友人・家族・学校の5シーンの行動指針を提供する自己理解プラットフォーム",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": "https://shindan-navi.jp/search/?q={search_term_string}"
+        },
+        "query-input": "required name=search_term_string"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "診断ナビ編集部",
+        "url": "https://shindan-navi.jp",
+        "email": "zawalab.info@gmail.com"
+      }
+    })}
+  </script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--sn-font-family);
+      background: var(--sn-bg);
+      color: var(--sn-text);
+      line-height: var(--sn-leading-base);
+      font-size: var(--sn-text-base);
+    }
+    .container {
+      max-width: var(--sn-max-w);
+      margin: 0 auto;
+      padding: 0 var(--sn-space-4);
+    }
+    /* ヘッダー */
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--sn-border);
+      height: var(--sn-header-h);
+    }
+    .site-header .inner {
+      max-width: var(--sn-max-w);
+      margin: 0 auto;
+      padding: 0 var(--sn-space-4);
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .logo {
+      font-family: var(--sn-font-rounded);
+      font-size: var(--sn-text-xl);
+      font-weight: 700;
+      color: var(--sn-primary);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: var(--sn-space-2);
+    }
+    .logo-badge {
+      font-size: var(--sn-text-xs);
+      background: var(--sn-primary-bg);
+      color: var(--sn-primary);
+      padding: 2px 8px;
+      border-radius: var(--sn-radius-pill);
+      font-weight: 500;
+    }
+    .header-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--sn-space-2);
+      background: var(--sn-primary);
+      color: #fff;
+      font-size: var(--sn-text-sm);
+      font-weight: 700;
+      padding: var(--sn-space-2) var(--sn-space-4);
+      border-radius: var(--sn-radius-pill);
+      text-decoration: none;
+      min-height: var(--sn-tap-min);
+      transition: background var(--sn-dur-fast) var(--sn-ease);
+    }
+    .header-cta:hover { background: var(--sn-primary-dark); }
+
+    /* ヒーローセクション */
+    .hero {
+      background: linear-gradient(135deg, #f0f4ff 0%, #fdf2f8 50%, #f5f3ff 100%);
+      padding: var(--sn-space-16) 0 var(--sn-space-12);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: "";
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle at 30% 50%, rgba(99,102,241,0.06) 0%, transparent 50%),
+                  radial-gradient(circle at 70% 30%, rgba(236,72,153,0.06) 0%, transparent 50%);
+      pointer-events: none;
+    }
+    .hero-badge {
+      display: inline-block;
+      background: var(--sn-primary-bg);
+      color: var(--sn-primary);
+      font-size: var(--sn-text-sm);
+      font-weight: 700;
+      padding: var(--sn-space-1) var(--sn-space-4);
+      border-radius: var(--sn-radius-pill);
+      margin-bottom: var(--sn-space-4);
+      letter-spacing: 0.05em;
+    }
+    .hero-title {
+      font-family: var(--sn-font-rounded);
+      font-size: clamp(2rem, 5vw, 3rem);
+      font-weight: 700;
+      color: var(--sn-text);
+      line-height: 1.3;
+      margin-bottom: var(--sn-space-3);
+    }
+    .hero-title span {
+      background: linear-gradient(135deg, var(--sn-primary) 0%, var(--sn-secondary) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero-sub {
+      font-size: var(--sn-text-lg);
+      color: var(--sn-muted);
+      margin-bottom: var(--sn-space-6);
+    }
+    .hero-concept {
+      max-width: 600px;
+      margin: 0 auto var(--sn-space-8);
+      font-size: var(--sn-text-base);
+      color: var(--sn-text-soft);
+      line-height: var(--sn-leading-relaxed);
+    }
+    .hero-cta-group {
+      display: flex;
+      gap: var(--sn-space-3);
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--sn-space-2);
+      background: var(--sn-primary);
+      color: #fff;
+      font-size: var(--sn-text-lg);
+      font-weight: 700;
+      padding: var(--sn-space-4) var(--sn-space-8);
+      border-radius: var(--sn-radius-pill);
+      text-decoration: none;
+      min-height: var(--sn-tap-min);
+      box-shadow: var(--sn-shadow-md);
+      transition: all var(--sn-dur-base) var(--sn-ease);
+    }
+    .btn-primary:hover {
+      background: var(--sn-primary-dark);
+      box-shadow: var(--sn-shadow-lg);
+      transform: translateY(-2px);
+    }
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--sn-space-2);
+      background: #fff;
+      color: var(--sn-primary);
+      font-size: var(--sn-text-base);
+      font-weight: 700;
+      padding: var(--sn-space-3) var(--sn-space-6);
+      border-radius: var(--sn-radius-pill);
+      text-decoration: none;
+      border: 2px solid var(--sn-primary);
+      min-height: var(--sn-tap-min);
+      transition: all var(--sn-dur-base) var(--sn-ease);
+    }
+    .btn-secondary:hover {
+      background: var(--sn-primary-bg);
+    }
+    .hero-social-proof {
+      margin-top: var(--sn-space-8);
+      font-size: var(--sn-text-sm);
+      color: var(--sn-muted);
+    }
+
+    /* セクション共通 */
+    .section {
+      padding: var(--sn-space-16) 0;
+    }
+    .section-alt {
+      background: var(--sn-primary-bg);
+    }
+    .section-title {
+      font-family: var(--sn-font-rounded);
+      font-size: var(--sn-text-2xl);
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: var(--sn-space-2);
+    }
+    .section-sub {
+      text-align: center;
+      color: var(--sn-muted);
+      margin-bottom: var(--sn-space-8);
+    }
+
+    /* 3つの理由 */
+    .reasons-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: var(--sn-space-6);
+    }
+    .reason-card {
+      background: var(--sn-bg-white);
+      border-radius: var(--sn-radius);
+      padding: var(--sn-space-8);
+      box-shadow: var(--sn-shadow-sm);
+      text-align: center;
+    }
+    .reason-number {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: var(--sn-primary);
+      color: #fff;
+      font-family: var(--sn-font-rounded);
+      font-size: var(--sn-text-xl);
+      font-weight: 700;
+      margin-bottom: var(--sn-space-4);
+    }
+    .reason-title {
+      font-size: var(--sn-text-lg);
+      font-weight: 700;
+      margin-bottom: var(--sn-space-3);
+    }
+    .reason-desc {
+      font-size: var(--sn-text-sm);
+      color: var(--sn-muted);
+      line-height: var(--sn-leading-relaxed);
+    }
+
+    /* 8診断グリッド */
+    .diag-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: var(--sn-space-4);
+    }
+    .diag-card {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--sn-space-3);
+      background: var(--sn-bg-white);
+      border-radius: var(--sn-radius);
+      padding: var(--sn-space-5);
+      text-decoration: none;
+      color: inherit;
+      box-shadow: var(--sn-shadow-sm);
+      border: 1px solid var(--sn-border);
+      transition: all var(--sn-dur-base) var(--sn-ease);
+    }
+    .diag-card:hover {
+      box-shadow: var(--sn-shadow-md);
+      transform: translateY(-2px);
+      border-color: var(--sn-primary-light);
+    }
+    .diag-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--sn-radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      flex-shrink: 0;
+    }
+    .diag-name {
+      font-size: var(--sn-text-base);
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .diag-desc {
+      font-size: var(--sn-text-sm);
+      color: var(--sn-muted);
+    }
+
+    /* 5シーン軸 */
+    .scenes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: var(--sn-space-4);
+    }
+    .scene-card {
+      border-radius: var(--sn-radius);
+      padding: var(--sn-space-6);
+      text-align: center;
+    }
+    .scene-icon {
+      font-size: 2rem;
+      margin-bottom: var(--sn-space-2);
+    }
+    .scene-label {
+      font-size: var(--sn-text-lg);
+      font-weight: 700;
+      margin-bottom: var(--sn-space-2);
+    }
+    .scene-desc {
+      font-size: var(--sn-text-sm);
+      line-height: var(--sn-leading-relaxed);
+    }
+
+    /* 統合プロファイル訴求 */
+    .profile-flow {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: var(--sn-space-4);
+      margin: var(--sn-space-8) 0;
+    }
+    .profile-step {
+      background: var(--sn-bg-white);
+      border-radius: var(--sn-radius);
+      padding: var(--sn-space-5) var(--sn-space-6);
+      text-align: center;
+      box-shadow: var(--sn-shadow-sm);
+      min-width: 160px;
+    }
+    .profile-step-num {
+      font-size: var(--sn-text-sm);
+      color: var(--sn-muted);
+      margin-bottom: var(--sn-space-1);
+    }
+    .profile-step-label {
+      font-size: var(--sn-text-base);
+      font-weight: 700;
+    }
+    .profile-arrow {
+      font-size: 1.5rem;
+      color: var(--sn-primary);
+    }
+
+    /* 料金プラン */
+    .plans-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: var(--sn-space-6);
+      align-items: start;
+    }
+    .plan-card {
+      background: var(--sn-bg-white);
+      border-radius: var(--sn-radius-lg);
+      padding: var(--sn-space-8);
+      box-shadow: var(--sn-shadow-sm);
+      border: 2px solid var(--sn-border);
+      position: relative;
+    }
+    .plan-card.highlight {
+      border-color: var(--sn-pro-color);
+      box-shadow: var(--sn-shadow-lg);
+    }
+    .plan-badge {
+      position: absolute;
+      top: -12px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--sn-pro-gradient);
+      color: #fff;
+      font-size: var(--sn-text-xs);
+      font-weight: 700;
+      padding: 4px 16px;
+      border-radius: var(--sn-radius-pill);
+      white-space: nowrap;
+    }
+    .plan-name {
+      font-family: var(--sn-font-rounded);
+      font-size: var(--sn-text-xl);
+      font-weight: 700;
+      margin-bottom: var(--sn-space-2);
+    }
+    .plan-price {
+      font-size: var(--sn-text-3xl);
+      font-weight: 700;
+      margin-bottom: var(--sn-space-1);
+    }
+    .plan-period {
+      font-size: var(--sn-text-sm);
+      color: var(--sn-muted);
+      margin-bottom: var(--sn-space-5);
+    }
+    .plan-features {
+      list-style: none;
+      margin-bottom: var(--sn-space-6);
+    }
+    .plan-features li {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--sn-space-2);
+      font-size: var(--sn-text-sm);
+      padding: var(--sn-space-2) 0;
+      border-bottom: 1px solid var(--sn-border-soft);
+    }
+    .plan-features li::before {
+      content: "✓";
+      color: var(--sn-success);
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .plan-cta {
+      display: block;
+      text-align: center;
+      font-weight: 700;
+      padding: var(--sn-space-3) var(--sn-space-6);
+      border-radius: var(--sn-radius-pill);
+      text-decoration: none;
+      min-height: var(--sn-tap-min);
+      line-height: var(--sn-tap-min);
+      transition: all var(--sn-dur-base) var(--sn-ease);
+    }
+
+    /* バイラル訴求 */
+    .viral-box {
+      background: linear-gradient(135deg, var(--sn-primary) 0%, var(--sn-secondary) 100%);
+      color: #fff;
+      border-radius: var(--sn-radius-xl);
+      padding: var(--sn-space-12) var(--sn-space-8);
+      text-align: center;
+    }
+    .viral-title {
+      font-family: var(--sn-font-rounded);
+      font-size: var(--sn-text-2xl);
+      font-weight: 700;
+      margin-bottom: var(--sn-space-4);
+    }
+    .viral-desc {
+      font-size: var(--sn-text-base);
+      opacity: 0.9;
+      margin-bottom: var(--sn-space-6);
+      max-width: 500px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .viral-flow {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: var(--sn-space-3);
+      margin-bottom: var(--sn-space-6);
+      font-size: var(--sn-text-sm);
+    }
+    .viral-step {
+      background: rgba(255,255,255,0.2);
+      border-radius: var(--sn-radius-sm);
+      padding: var(--sn-space-2) var(--sn-space-4);
+    }
+    .btn-white {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--sn-space-2);
+      background: #fff;
+      color: var(--sn-primary);
+      font-weight: 700;
+      padding: var(--sn-space-3) var(--sn-space-8);
+      border-radius: var(--sn-radius-pill);
+      text-decoration: none;
+      min-height: var(--sn-tap-min);
+      transition: all var(--sn-dur-base) var(--sn-ease);
+    }
+    .btn-white:hover { opacity: 0.9; transform: translateY(-1px); }
+
+    /* FAQ */
+    .faq-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--sn-space-4);
+      max-width: 700px;
+      margin: 0 auto;
+    }
+    .faq-item {
+      background: var(--sn-bg-white);
+      border-radius: var(--sn-radius);
+      padding: var(--sn-space-5) var(--sn-space-6);
+      box-shadow: var(--sn-shadow-sm);
+    }
+    .faq-q {
+      font-weight: 700;
+      margin-bottom: var(--sn-space-2);
+      display: flex;
+      align-items: flex-start;
+      gap: var(--sn-space-2);
+    }
+    .faq-q::before {
+      content: "Q";
+      color: var(--sn-primary);
+      font-family: var(--sn-font-rounded);
+      flex-shrink: 0;
+    }
+    .faq-a {
+      font-size: var(--sn-text-sm);
+      color: var(--sn-text-soft);
+      line-height: var(--sn-leading-relaxed);
+      padding-left: calc(var(--sn-text-base) + var(--sn-space-2));
+    }
+
+    /* フッター */
+    .site-footer {
+      background: var(--sn-text);
+      color: rgba(255,255,255,0.7);
+      padding: var(--sn-space-12) 0 var(--sn-space-8);
+      margin-top: var(--sn-space-16);
+    }
+    .footer-inner {
+      max-width: var(--sn-max-w);
+      margin: 0 auto;
+      padding: 0 var(--sn-space-4);
+    }
+    .footer-logo {
+      font-family: var(--sn-font-rounded);
+      font-size: var(--sn-text-xl);
+      color: #fff;
+      font-weight: 700;
+      text-decoration: none;
+      display: block;
+      margin-bottom: var(--sn-space-2);
+    }
+    .footer-tagline {
+      font-size: var(--sn-text-sm);
+      margin-bottom: var(--sn-space-8);
+    }
+    .footer-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--sn-space-6);
+      margin-bottom: var(--sn-space-8);
+    }
+    .footer-links a {
+      color: rgba(255,255,255,0.6);
+      text-decoration: none;
+      font-size: var(--sn-text-sm);
+      transition: color var(--sn-dur-fast);
+    }
+    .footer-links a:hover { color: #fff; }
+    .footer-bottom {
+      font-size: var(--sn-text-xs);
+      border-top: 1px solid rgba(255,255,255,0.1);
+      padding-top: var(--sn-space-6);
+    }
+
+    /* レスポンシブ */
+    @media (max-width: 600px) {
+      .hero { padding: var(--sn-space-10) 0 var(--sn-space-8); }
+      .hero-cta-group { flex-direction: column; align-items: center; }
+      .plans-grid { grid-template-columns: 1fr; }
+      .scenes-grid { grid-template-columns: repeat(2, 1fr); }
+      .profile-flow { flex-direction: column; }
+      .profile-arrow { transform: rotate(90deg); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ヘッダー -->
+  <header class="site-header">
+    <div class="inner">
+      <a href="/" class="logo">
+        🧠 診断ナビ
+        <span class="logo-badge">8診断統合</span>
+      </a>
+      <a href="/personality/multiple-int/" class="header-cta">
+        ✨ 無料で診断スタート
+      </a>
+    </div>
+  </header>
+
+  <!-- ヒーローセクション -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero-badge">✨ 8診断×5シーン 自己理解プラットフォーム</div>
+      <h1 class="hero-title">
+        <span>8診断で、</span>あなたを統合する。
+      </h1>
+      <p class="hero-sub">MBTIだけじゃ、あなたは語れない。</p>
+      <p class="hero-concept">
+        MBTI・血液型・多重知能・完璧主義・DiSC・恋愛スタイル・星座・金銭感覚。<br />
+        どれか1つでは、あなたは語りきれない。<br />
+        8つの診断を統合して、仕事・恋愛・友人・家族・学校。<br />
+        5つのシーンで、あなたへの具体的なアドバイスをお届けします。
+      </p>
+      <div class="hero-cta-group">
+        <a href="/personality/multiple-int/" class="btn-primary">
+          🎯 無料で診断スタート
+        </a>
+        <a href="/about/" class="btn-secondary">
+          📖 サービスについて
+        </a>
+      </div>
+      <p class="hero-social-proof">
+        完全無料・登録不要で診断スタート ｜ 2026-05-20 公開
+      </p>
+    </div>
+  </section>
+
+  <!-- このページでわかること（AIO対応） -->
+  <section class="section">
+    <div class="container">
+      <blockquote style="
+        background: var(--sn-primary-bg);
+        border-left: 4px solid var(--sn-primary);
+        border-radius: 0 var(--sn-radius-sm) var(--sn-radius-sm) 0;
+        padding: var(--sn-space-5) var(--sn-space-6);
+        max-width: 700px;
+        margin: 0 auto;
+      ">
+        <p style="font-weight:700; margin-bottom: var(--sn-space-3);">このページでわかること</p>
+        <ul style="list-style:none; display:flex; flex-direction:column; gap:var(--sn-space-2);">
+          <li>✅ 8診断統合サービス「診断ナビ」の機能・特徴（無料・¥390 PASS・¥590/月 PRO）</li>
+          <li>✅ MBTI・血液型・多重知能など8診断の内容と仕事・恋愛・友人・家族・学校への活用法</li>
+          <li>✅ 招待相性診断・タイムカプセル機能など特徴的な機能の詳細と料金プランの比較</li>
+        </ul>
+      </blockquote>
+    </div>
+  </section>
+
+  <!-- 3つの理由 -->
+  <section class="section section-alt">
+    <div class="container">
+      <h2 class="section-title">🏆 診断ナビが選ばれる3つの理由</h2>
+      <p class="section-sub">単なる性格診断サイトとは、ここが違います</p>
+      <div class="reasons-grid">
+        <div class="reason-card">
+          <div class="reason-number">1</div>
+          <h3 class="reason-title">8診断を統合するのはここだけ</h3>
+          <p class="reason-desc">
+            MBTI・血液型・多重知能・完璧主義・DiSC・恋愛スタイル・星座・金銭感覚。<br />
+            8つの視点から「統合プロファイル」を自動生成します。<br />
+            どれか1つの診断では見えなかった、あなたの全体像が見えてきます。
+          </p>
+        </div>
+        <div class="reason-card">
+          <div class="reason-number">2</div>
+          <h3 class="reason-title">5シーン別に「使える」アドバイス</h3>
+          <p class="reason-desc">
+            「タイプ説明」で終わる診断サイトとは違います。<br />
+            仕事・恋愛・友人・家族・学校。5つのシーンで、<br />
+            あなたのタイプ×状況に合わせた具体的な行動指針を提供します。
+          </p>
+        </div>
+        <div class="reason-card">
+          <div class="reason-number">3</div>
+          <h3 class="reason-title">「変化するあなた」を記録・追跡</h3>
+          <p class="reason-desc">
+            性格は変わります。転職・恋愛・ライフイベントで人は変化します。<br />
+            時系列変化グラフとタイムカプセル機能で、<br />
+            「過去の自分」と「今の自分」の成長を可視化します。
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8診断ピックアップ -->
+  <section class="section">
+    <div class="container">
+      <h2 class="section-title">🎯 8つの診断で多角的に解明</h2>
+      <p class="section-sub">全て無料・登録不要で受診できます</p>
+      <div class="diag-grid">
+        {diagnoses.map((d) => (
+          <a href={d.href} class="diag-card">
+            <div class="diag-icon" style={`background:${d.bg};`}>
+              {d.emoji}
+            </div>
+            <div>
+              <div class="diag-name">{d.name}</div>
+              <div class="diag-desc">{d.desc}</div>
+            </div>
+          </a>
+        ))}
+      </div>
+      <div style="text-align:center; margin-top: var(--sn-space-8);">
+        <a href="/personality/" class="btn-primary">
+          🧠 診断一覧を見る
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5シーン軸アウトプット -->
+  <section class="section section-alt">
+    <div class="container">
+      <h2 class="section-title">📊 5つのシーンで「使える」アドバイスを</h2>
+      <p class="section-sub">
+        あなたの性格タイプ×シーンで、具体的な行動指針を提供します
+      </p>
+      <div class="scenes-grid">
+        {scenes.map((s) => (
+          <div class="scene-card" style={`background:${s.bg};`}>
+            <div class="scene-icon">{s.icon}</div>
+            <div class="scene-label" style={`color:${s.color};`}>{s.label}</div>
+            <div class="scene-desc">{s.desc}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- 統合プロファイルの価値訴求 -->
+  <section class="section">
+    <div class="container">
+      <h2 class="section-title">🔮 統合プロファイルで「あなた全体」を解明</h2>
+      <p class="section-sub">
+        個別診断は「入口」です。本当の価値は統合したところにあります
+      </p>
+
+      <div class="profile-flow">
+        <div class="profile-step">
+          <div class="profile-step-num">STEP 1</div>
+          <div class="profile-step-label">8診断を受ける</div>
+        </div>
+        <div class="profile-arrow">→</div>
+        <div class="profile-step">
+          <div class="profile-step-num">STEP 2</div>
+          <div class="profile-step-label">統合プロファイル生成</div>
+        </div>
+        <div class="profile-arrow">→</div>
+        <div class="profile-step">
+          <div class="profile-step-num">STEP 3</div>
+          <div class="profile-step-label">5シーンの行動指針</div>
+        </div>
+        <div class="profile-arrow">→</div>
+        <div class="profile-step">
+          <div class="profile-step-num">PRO</div>
+          <div class="profile-step-label">AIプロンプトカード</div>
+        </div>
+      </div>
+
+      <div style="
+        background: var(--sn-primary-bg);
+        border-radius: var(--sn-radius-lg);
+        padding: var(--sn-space-8);
+        max-width: 640px;
+        margin: 0 auto;
+      ">
+        <h3 style="font-size: var(--sn-text-lg); font-weight:700; margin-bottom: var(--sn-space-4);">
+          💡 AIプロンプトカードとは？（PRO限定）
+        </h3>
+        <p style="font-size: var(--sn-text-sm); color: var(--sn-text-soft); line-height: var(--sn-leading-relaxed); margin-bottom: var(--sn-space-3);">
+          あなたの統合プロファイルを、ChatGPT・Claude・Gemini それぞれに最適化した形式でカード化します。
+        </p>
+        <p style="font-size: var(--sn-text-sm); color: var(--sn-text-soft); line-height: var(--sn-leading-relaxed);">
+          AIに「私はこういう性格で…」と説明する手間がなくなります。カードを貼り付けるだけで、あなたに合わせた回答が返ってきます。月次で自動更新されるので、あなたの変化も反映されます。
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- バイラル・SNSシェア訴求 -->
+  <section class="section" style="background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%); color:#fff;">
+    <div class="container">
+      <div class="viral-box" style="background:none; padding:0;">
+        <h2 class="viral-title">👥 友達と相性チェックしてみよう</h2>
+        <p class="viral-desc">
+          招待相性診断は、完全無料・登録不要で使えます。<br />
+          LINEで送るだけ。相手が診断を受けると、相性スコアが届きます。
+        </p>
+        <div class="viral-flow">
+          <div class="viral-step">🎯 あなたが診断</div>
+          <span>→</span>
+          <div class="viral-step">📩 友達にLINEで送る</div>
+          <span>→</span>
+          <div class="viral-step">💕 相性スコア確認</div>
+          <span>→</span>
+          <div class="viral-step">🔁 友達が別の友達に招待</div>
+        </div>
+        <div style="margin-bottom: var(--sn-space-4); font-size: var(--sn-text-sm); opacity:0.8;">
+          ✨ こっそりモード（相手にバレない）も選べます
+        </div>
+        <a href="/compatibility/" class="btn-white">
+          💕 相性診断を試す（無料）
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 料金プラン -->
+  <section class="section">
+    <div class="container">
+      <h2 class="section-title">💳 料金プラン</h2>
+      <p class="section-sub">
+        まずは無料から。もっと知りたくなったら¥390から始められます
+      </p>
+      <div class="plans-grid">
+        {plans.map((plan) => (
+          <div class={`plan-card${plan.highlight ? " highlight" : ""}`}>
+            {plan.highlight && (
+              <div class="plan-badge">🌟 最人気プラン</div>
+            )}
+            <div class="plan-name" style={`color:${plan.color};`}>{plan.name}</div>
+            <div class="plan-price" style={`color:${plan.color};`}>{plan.price}</div>
+            <div class="plan-period">{plan.period}</div>
+            <ul class="plan-features">
+              {plan.features.map((f) => <li>{f}</li>)}
+            </ul>
+            <a
+              href={plan.ctaHref}
+              class="plan-cta"
+              style={
+                plan.highlight
+                  ? `background: var(--sn-pro-gradient); color:#fff; box-shadow: var(--sn-shadow-md);`
+                  : `background: var(--sn-primary-bg); color: var(--sn-primary); border: 2px solid var(--sn-primary);`
+              }
+            >
+              {plan.cta}
+            </a>
+          </div>
+        ))}
+      </div>
+      <p style="text-align:center; font-size: var(--sn-text-xs); color: var(--sn-muted); margin-top: var(--sn-space-4);">
+        ※ 価格は税込表示です ｜ ¥590/月 PRO はいつでも解約可能
+      </p>
+    </div>
+  </section>
+
+  <!-- FAQ抜粋 -->
+  <section class="section section-alt">
+    <div class="container">
+      <h2 class="section-title">❓ よくある質問</h2>
+      <div class="faq-list">
+        {faqTop.map((item) => (
+          <div class="faq-item">
+            <div class="faq-q">{item.q}</div>
+            <div class="faq-a">{item.a}</div>
+          </div>
+        ))}
+      </div>
+      <div style="text-align:center; margin-top: var(--sn-space-8);">
+        <a href="/faq/" class="btn-secondary">
+          📋 すべてのFAQを見る
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 最終CTA -->
+  <section class="section" style="background: linear-gradient(135deg, var(--sn-primary) 0%, #8b5cf6 100%); color:#fff;">
+    <div class="container" style="text-align:center;">
+      <h2 style="font-family: var(--sn-font-rounded); font-size: var(--sn-text-2xl); font-weight:700; margin-bottom: var(--sn-space-4);">
+        まず1つ、診断してみよう
+      </h2>
+      <p style="opacity:0.9; margin-bottom: var(--sn-space-6); font-size: var(--sn-text-base);">
+        完全無料・登録不要。3〜5分でできます。<br />
+        最初の1診断が、自己理解への最初の一歩です。
+      </p>
+      <a href="/personality/multiple-int/" class="btn-white" style="font-size: var(--sn-text-lg); padding: var(--sn-space-4) var(--sn-space-10);">
+        🧠 多重知能テストから始める（推奨）
+      </a>
+      <p style="font-size: var(--sn-text-sm); opacity:0.7; margin-top: var(--sn-space-4);">
+        最優先推奨診断｜VOL 18,100｜難易度低め
+      </p>
+    </div>
+  </section>
+
+  <!-- フッター -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <a href="/" class="footer-logo">🧠 診断ナビ</a>
+      <p class="footer-tagline">8診断統合で、あなたを統合する。</p>
+      <div class="footer-links">
+        <a href="/about/">運営者情報</a>
+        <a href="/editorial-policy/">編集ポリシー</a>
+        <a href="/contact/">お問い合わせ</a>
+        <a href="/faq/">よくある質問</a>
+        <a href="/privacy/">プライバシーポリシー</a>
+        <a href="/terms/">利用規約</a>
+        <a href="/disclaimer/">免責事項</a>
+      </div>
+      <div class="footer-links" style="margin-top: calc(var(--sn-space-8) * -0.5);">
+        <span style="font-size: var(--sn-text-sm); color: rgba(255,255,255,0.4);">姉妹サイト:</span>
+        <a href="https://keisan-navi.jp" target="_blank" rel="noopener">計算ナビ</a>
+        <a href="https://template-free.jp" target="_blank" rel="noopener">テンプレート無料</a>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2026 診断ナビ ｜ 運営: zawalab.info@gmail.com</p>
+        <p style="margin-top: var(--sn-space-2);">
+          本サービスは性格分類の参考情報を提供するものです。占い・医療・法的アドバイスは一切提供しません。<br />
+          最終更新: 2026-05-20
+        </p>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

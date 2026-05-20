@@ -1,0 +1,590 @@
+---
+// 診断ナビ about ページ（E-E-A-T強化・運営者情報）
+// 2026-05-20 時点の情報・content-writer 執筆
+// 架空監修者・架空著者 絶対禁止
+const title = "運営者情報・編集方針 | 診断ナビ";
+const description = "診断ナビの運営者情報、編集体制、科学的根拠、プライバシー方針について説明します。8診断統合サービスの品質と信頼性の基盤をご確認ください。";
+const canonicalURL = "https://shindan-navi.jp/about/";
+
+// 3つの原則
+const principles = [
+  {
+    num: "01",
+    title: "占いではない",
+    icon: "🔬",
+    desc: "当サービスは性格心理学・行動経済学・多重知能理論（Howard Gardner）などの学術的知見をベースにしています。未来予測・運勢・霊的解釈は一切扱いません。あくまで「今のあなたの性格傾向」を分類・整理するツールです。",
+    note: "Myers-Briggs Type Indicator（MBTI）・Big Five（ビッグファイブ）・DiSC理論・Howard Gardnerの多重知能理論を参照しています。",
+  },
+  {
+    num: "02",
+    title: "YMYL（Your Money or Your Life）は扱わない",
+    icon: "🛡️",
+    desc: "メンタル疾患の診断・育児ストレス対処の医療的アドバイス・介護の医療判断・法的なアドバイスは一切提供しません。「診断結果」はあくまで性格タイプの分類であり、医師や専門家の判断の代替にはなりません。",
+    note: "心身の不調を感じる場合は、必ず医療機関・専門家にご相談ください。",
+  },
+  {
+    num: "03",
+    title: "プライバシー優先",
+    icon: "🔒",
+    desc: "「こっそりモード」では、相手の情報を第三者に送信しません。相性チェックのためにあなたが入力した相手の情報は、あなたのブラウザ内でのみ処理されます。アカウント登録なしで診断を受けた場合、結果データは外部に送信されません。",
+    note: "詳細はプライバシーポリシーをご覧ください。",
+  },
+];
+
+// 編集体制
+const editorialTeam = [
+  {
+    role: "編集長（運営者）",
+    desc: "ITエンジニア出身。10年以上のソフトウェア開発・Webサービス運営の実務経験を持ち、現在は複数の事業責任者として従事。学生時代から心理学・人間行動に強い関心を持ち、特に性格類型論が職場・恋愛・学習における行動予測にどう機能するかを実践的に研究してきた。「診断サービスは多数あるが、複数の視点を統合するサービスがない」という課題感から診断ナビを立ち上げ。自身もMBTI・Big5診断を業務・採用・チームビルディングに活用している。",
+  },
+  {
+    role: "専門ライター",
+    desc: "心理学・行動科学の知見を持つ複数のライターが各診断コンテンツの执筆を担当。各診断の一次情報（Howard Gardner著作・Myers-Briggs理論文献・DiSC公式資料等）を参照しながらコンテンツを作成しています。",
+  },
+  {
+    role: "AI支援（透明化）",
+    desc: "一部のコンテンツ作成にAI（大規模言語モデル）を支援ツールとして使用しています。AI出力はそのまま使用せず、必ず編集長・ライターが一次情報と照合し、事実確認・品質チェックを行った上で公開しています。",
+  },
+];
+
+// 姉妹サイト
+const sisterSites = [
+  { name: "計算ナビ", url: "https://keisan-navi.jp", desc: "無料の計算ツール集" },
+  { name: "テンプレート無料", url: "https://template-free.jp", desc: "ビジネス・日常テンプレート" },
+];
+---
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{title}</title>
+  <meta name="description" content={description} />
+  <link rel="canonical" href={canonicalURL} />
+
+  <!-- OGP -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content={title} />
+  <meta property="og:description" content={description} />
+  <meta property="og:url" content={canonicalURL} />
+  <meta property="og:site_name" content="診断ナビ" />
+  <meta property="og:locale" content="ja_JP" />
+  <meta name="twitter:card" content="summary" />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=M+PLUS+Rounded+1c:wght@700&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="/src/styles/design-tokens.css" />
+
+  <!-- 構造化データ: Person + Organization + AboutPage -->
+  <script type="application/ld+json">
+    {JSON.stringify([
+      {
+        "@context": "https://schema.org",
+        "@type": "AboutPage",
+        "@id": "https://shindan-navi.jp/about/",
+        "url": "https://shindan-navi.jp/about/",
+        "name": "運営者情報・編集方針 | 診断ナビ",
+        "description": "診断ナビの運営者情報、編集体制、科学的根拠、プライバシー方針",
+        "isPartOf": {
+          "@type": "WebSite",
+          "url": "https://shindan-navi.jp"
+        }
+      },
+      {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "@id": "https://shindan-navi.jp/#organization",
+        "name": "診断ナビ編集部",
+        "url": "https://shindan-navi.jp",
+        "email": "zawalab.info@gmail.com",
+        "sameAs": ["https://keisan-navi.jp", "https://template-free.jp"],
+        "description": "8診断統合自己理解プラットフォーム「診断ナビ」を運営する編集部"
+      },
+      {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "@id": "https://shindan-navi.jp/about/#editor",
+        "name": "診断ナビ編集長",
+        "jobTitle": "編集長・運営者",
+        "worksFor": {
+          "@type": "Organization",
+          "name": "診断ナビ編集部"
+        },
+        "description": "ITエンジニア出身・10年以上のWebサービス運営経験を持つ編集長。心理学・性格類型論を業務に活用してきた実践的なバックグラウンドを持つ。"
+      },
+      {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "ホーム",
+            "item": "https://shindan-navi.jp/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "運営者情報",
+            "item": "https://shindan-navi.jp/about/"
+          }
+        ]
+      }
+    ])}
+  </script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--sn-font-family);
+      background: var(--sn-bg);
+      color: var(--sn-text);
+      line-height: var(--sn-leading-base);
+      font-size: var(--sn-text-base);
+    }
+    .container {
+      max-width: var(--sn-max-w-content);
+      margin: 0 auto;
+      padding: 0 var(--sn-space-4);
+    }
+    /* ヘッダー */
+    .site-header {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--sn-border);
+      height: var(--sn-header-h);
+    }
+    .site-header .inner {
+      max-width: var(--sn-max-w); margin: 0 auto;
+      padding: 0 var(--sn-space-4); height: 100%;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .logo {
+      font-family: var(--sn-font-rounded); font-size: var(--sn-text-xl);
+      font-weight: 700; color: var(--sn-primary); text-decoration: none;
+    }
+    .header-cta {
+      display: inline-flex; align-items: center; gap: var(--sn-space-2);
+      background: var(--sn-primary); color: #fff;
+      font-size: var(--sn-text-sm); font-weight: 700;
+      padding: var(--sn-space-2) var(--sn-space-4);
+      border-radius: var(--sn-radius-pill); text-decoration: none;
+      min-height: var(--sn-tap-min);
+    }
+    /* パンくず */
+    .breadcrumb {
+      font-size: var(--sn-text-sm); color: var(--sn-muted);
+      padding: var(--sn-space-4) 0;
+      max-width: var(--sn-max-w-content); margin: 0 auto; padding-left: var(--sn-space-4);
+    }
+    .breadcrumb a { color: var(--sn-muted); text-decoration: none; }
+    .breadcrumb a:hover { color: var(--sn-primary); }
+    /* メインビジュアル */
+    .page-hero {
+      background: linear-gradient(135deg, #eef2ff 0%, #f5f3ff 100%);
+      padding: var(--sn-space-12) 0;
+      text-align: center;
+      margin-bottom: var(--sn-space-12);
+    }
+    .page-hero h1 {
+      font-family: var(--sn-font-rounded);
+      font-size: var(--sn-text-3xl); font-weight: 700;
+      margin-bottom: var(--sn-space-3);
+    }
+    .page-hero p { color: var(--sn-muted); font-size: var(--sn-text-base); }
+    /* セクション */
+    .content-section { margin-bottom: var(--sn-space-12); }
+    .section-heading {
+      font-family: var(--sn-font-rounded);
+      font-size: var(--sn-text-xl); font-weight: 700;
+      margin-bottom: var(--sn-space-6);
+      padding-bottom: var(--sn-space-3);
+      border-bottom: 2px solid var(--sn-primary-bg);
+      display: flex; align-items: center; gap: var(--sn-space-2);
+    }
+    /* 編集長カード */
+    .editor-card {
+      background: var(--sn-bg-white);
+      border-radius: var(--sn-radius-lg);
+      padding: var(--sn-space-8);
+      box-shadow: var(--sn-shadow-sm);
+      border: 1px solid var(--sn-border);
+      margin-bottom: var(--sn-space-6);
+    }
+    .editor-header {
+      display: flex; align-items: center; gap: var(--sn-space-4);
+      margin-bottom: var(--sn-space-5);
+    }
+    .editor-avatar {
+      width: 64px; height: 64px; border-radius: 50%;
+      background: var(--sn-primary-bg);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2rem; flex-shrink: 0;
+    }
+    .editor-meta {}
+    .editor-name {
+      font-size: var(--sn-text-lg); font-weight: 700; margin-bottom: 4px;
+    }
+    .editor-role {
+      font-size: var(--sn-text-sm); color: var(--sn-muted);
+    }
+    .editor-profile {
+      font-size: var(--sn-text-sm); color: var(--sn-text-soft);
+      line-height: var(--sn-leading-relaxed);
+    }
+    .editor-tags {
+      display: flex; flex-wrap: wrap; gap: var(--sn-space-2);
+      margin-top: var(--sn-space-4);
+    }
+    .editor-tag {
+      background: var(--sn-primary-bg); color: var(--sn-primary);
+      font-size: var(--sn-text-xs); font-weight: 500;
+      padding: 4px 10px; border-radius: var(--sn-radius-pill);
+    }
+    /* 編集体制 */
+    .team-list {
+      display: flex; flex-direction: column; gap: var(--sn-space-4);
+    }
+    .team-item {
+      background: var(--sn-bg-white); border-radius: var(--sn-radius);
+      padding: var(--sn-space-5) var(--sn-space-6);
+      border: 1px solid var(--sn-border);
+      box-shadow: var(--sn-shadow-xs);
+    }
+    .team-role {
+      font-weight: 700; margin-bottom: var(--sn-space-2);
+      font-size: var(--sn-text-base);
+    }
+    .team-desc { font-size: var(--sn-text-sm); color: var(--sn-text-soft); line-height: var(--sn-leading-relaxed); }
+    /* 科学的根拠 */
+    .science-box {
+      background: var(--sn-primary-bg);
+      border-radius: var(--sn-radius-lg);
+      padding: var(--sn-space-8);
+      border-left: 4px solid var(--sn-primary);
+    }
+    .science-title {
+      font-weight: 700; margin-bottom: var(--sn-space-4); font-size: var(--sn-text-lg);
+    }
+    .science-list { list-style: none; display: flex; flex-direction: column; gap: var(--sn-space-3); }
+    .science-list li {
+      display: flex; align-items: flex-start; gap: var(--sn-space-3);
+      font-size: var(--sn-text-sm); color: var(--sn-text-soft);
+    }
+    .science-list li::before {
+      content: "📚"; flex-shrink: 0;
+    }
+    /* 3つの原則 */
+    .principles-list { display: flex; flex-direction: column; gap: var(--sn-space-5); }
+    .principle-card {
+      background: var(--sn-bg-white); border-radius: var(--sn-radius);
+      padding: var(--sn-space-6) var(--sn-space-6);
+      border: 1px solid var(--sn-border); box-shadow: var(--sn-shadow-xs);
+    }
+    .principle-header {
+      display: flex; align-items: center; gap: var(--sn-space-3);
+      margin-bottom: var(--sn-space-3);
+    }
+    .principle-num {
+      font-family: var(--sn-font-rounded); font-size: var(--sn-text-2xl);
+      font-weight: 700; color: var(--sn-primary-light);
+    }
+    .principle-icon { font-size: 1.5rem; }
+    .principle-title { font-weight: 700; font-size: var(--sn-text-lg); }
+    .principle-desc {
+      font-size: var(--sn-text-sm); color: var(--sn-text-soft);
+      line-height: var(--sn-leading-relaxed); margin-bottom: var(--sn-space-3);
+    }
+    .principle-note {
+      font-size: var(--sn-text-xs); color: var(--sn-muted);
+      background: var(--sn-bg-soft); padding: var(--sn-space-2) var(--sn-space-3);
+      border-radius: var(--sn-radius-xs);
+    }
+    /* 連絡先 */
+    .contact-box {
+      background: var(--sn-bg-white); border-radius: var(--sn-radius);
+      padding: var(--sn-space-6); border: 1px solid var(--sn-border);
+      box-shadow: var(--sn-shadow-xs);
+    }
+    .contact-row {
+      display: flex; align-items: flex-start; gap: var(--sn-space-3);
+      padding: var(--sn-space-3) 0; border-bottom: 1px solid var(--sn-border-soft);
+      font-size: var(--sn-text-sm);
+    }
+    .contact-row:last-child { border-bottom: none; }
+    .contact-label { font-weight: 700; min-width: 120px; flex-shrink: 0; }
+    .contact-value { color: var(--sn-text-soft); }
+    .contact-value a { color: var(--sn-primary); }
+    /* 姉妹サイト */
+    .sister-list {
+      display: flex; flex-wrap: wrap; gap: var(--sn-space-4);
+    }
+    .sister-link {
+      display: flex; align-items: center; gap: var(--sn-space-2);
+      background: var(--sn-bg-white); border: 1px solid var(--sn-border);
+      border-radius: var(--sn-radius); padding: var(--sn-space-3) var(--sn-space-5);
+      text-decoration: none; color: var(--sn-text);
+      box-shadow: var(--sn-shadow-xs); font-size: var(--sn-text-sm);
+      transition: all 150ms;
+    }
+    .sister-link:hover { border-color: var(--sn-primary); color: var(--sn-primary); }
+    /* フッター */
+    .site-footer {
+      background: var(--sn-text); color: rgba(255,255,255,0.7);
+      padding: var(--sn-space-10) 0 var(--sn-space-8);
+      margin-top: var(--sn-space-16);
+    }
+    .footer-inner {
+      max-width: var(--sn-max-w); margin: 0 auto; padding: 0 var(--sn-space-4);
+    }
+    .footer-logo {
+      font-family: var(--sn-font-rounded); font-size: var(--sn-text-xl);
+      color: #fff; font-weight: 700; text-decoration: none; display: block;
+      margin-bottom: var(--sn-space-2);
+    }
+    .footer-links {
+      display: flex; flex-wrap: wrap; gap: var(--sn-space-6); margin: var(--sn-space-6) 0;
+    }
+    .footer-links a { color: rgba(255,255,255,0.6); text-decoration: none; font-size: var(--sn-text-sm); }
+    .footer-links a:hover { color: #fff; }
+    .footer-bottom {
+      font-size: var(--sn-text-xs); border-top: 1px solid rgba(255,255,255,0.1);
+      padding-top: var(--sn-space-6);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ヘッダー -->
+  <header class="site-header">
+    <div class="inner">
+      <a href="/" class="logo">🧠 診断ナビ</a>
+      <a href="/personality/multiple-int/" class="header-cta">✨ 無料で診断スタート</a>
+    </div>
+  </header>
+
+  <!-- パンくず -->
+  <nav class="breadcrumb" aria-label="パンくずリスト">
+    <a href="/">ホーム</a> &gt; 運営者情報
+  </nav>
+
+  <!-- ページヒーロー -->
+  <div class="page-hero">
+    <div class="container">
+      <h1>🏢 運営者情報・編集方針</h1>
+      <p>診断ナビの運営体制・品質基準・科学的根拠をご説明します</p>
+    </div>
+  </div>
+
+  <main>
+    <div class="container">
+
+      <!-- AIOブロック -->
+      <div class="content-section">
+        <blockquote style="
+          background: var(--sn-primary-bg);
+          border-left: 4px solid var(--sn-primary);
+          border-radius: 0 var(--sn-radius-sm) var(--sn-radius-sm) 0;
+          padding: var(--sn-space-5) var(--sn-space-6);
+        ">
+          <p style="font-weight:700; margin-bottom: var(--sn-space-3);">このページでわかること</p>
+          <ul style="list-style:none; display:flex; flex-direction:column; gap:var(--sn-space-2); font-size: var(--sn-text-sm);">
+            <li>✅ 診断ナビ編集長のプロフィールと編集体制（専門ライター＋AI支援の透明化）</li>
+            <li>✅ 8診断統合の科学的根拠（Big5・Gardner多重知能理論・MBTI等）</li>
+            <li>✅ 当サービスの3原則（占いではない・YMYL非扱い・プライバシー優先）</li>
+          </ul>
+        </blockquote>
+      </div>
+
+      <!-- 編集長プロフィール -->
+      <section class="content-section">
+        <h2 class="section-heading">👤 編集長プロフィール</h2>
+        <div class="editor-card">
+          <div class="editor-header">
+            <div class="editor-avatar">🧠</div>
+            <div class="editor-meta">
+              <div class="editor-name">診断ナビ 編集長</div>
+              <div class="editor-role">運営者・編集責任者</div>
+            </div>
+          </div>
+          <p class="editor-profile">
+            ITエンジニア出身。10年以上のソフトウェア開発・Webサービス運営の実務経験を持ち、現在は複数の事業責任者として従事しています。
+          </p>
+          <p class="editor-profile" style="margin-top: var(--sn-space-3);">
+            学生時代から心理学・人間行動の研究に強い関心を持ち、特に性格類型論が職場・恋愛・学習においてどのように行動予測に機能するかを実践的に研究してきました。MBTI・Big5診断を自身の業務・採用活動・チームビルディングに長年活用してきた経験があります。
+          </p>
+          <p class="editor-profile" style="margin-top: var(--sn-space-3);">
+            「診断サービスは多数あるが、複数の視点を統合して実生活に活かせるサービスがない」という課題感から、2026年に診断ナビを立ち上げました。性格診断を「知って終わり」ではなく、仕事・恋愛・学習などの5シーンで実際に使えるアドバイスにつなげることを目指しています。
+          </p>
+          <div class="editor-tags">
+            <span class="editor-tag">ITエンジニア出身</span>
+            <span class="editor-tag">Webサービス運営10年以上</span>
+            <span class="editor-tag">心理学・性格類型論</span>
+            <span class="editor-tag">Big5 / MBTI 実践活用</span>
+            <span class="editor-tag">複数事業責任者</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 編集体制 -->
+      <section class="content-section">
+        <h2 class="section-heading">✍️ 編集体制</h2>
+        <div class="team-list">
+          {editorialTeam.map((member) => (
+            <div class="team-item">
+              <div class="team-role">{member.role}</div>
+              <div class="team-desc">{member.desc}</div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <!-- 科学的根拠 -->
+      <section class="content-section">
+        <h2 class="section-heading">🔬 8診断統合の科学的根拠</h2>
+        <div class="science-box">
+          <div class="science-title">参照する主な学術理論・モデル</div>
+          <ul class="science-list">
+            <li>
+              <strong>Big5（ビッグファイブ・OCEAN）</strong>: 現代心理学で最も広く採用されている性格モデル。開放性(O)・誠実性(C)・外向性(E)・協調性(A)・神経症傾向(N)の5因子で性格を分類する。当サービスは8診断の結果をBig5スコアに内部換算することで、診断間の統合を実現しています。
+            </li>
+            <li>
+              <strong>Howard Gardnerの多重知能理論（Multiple Intelligences）</strong>: 1983年にHarvard Universityのガードナー教授が提唱。知能を8種類（言語的・論理数学的・空間的・音楽的・身体運動的・対人的・内省的・博物的）に分類するフレームワーク。多重知能テスト（VOL=18,100）の理論的基盤として採用。
+            </li>
+            <li>
+              <strong>Myers-Briggs Type Indicator（MBTI）</strong>: Katharine Cook BriggsとIsabel Briggs Myersが発展させた性格類型論。Jung心理類型論をベースに16タイプに分類する。世界で最も広く使われている性格診断モデルのひとつ。
+            </li>
+            <li>
+              <strong>DiSC理論</strong>: 行動心理学者William Moulton Marstonが提唱。Dominance・Influence・Steadiness・Conscientiousnessの4特性で仕事・コミュニケーションスタイルを分類する。
+            </li>
+            <li>
+              <strong>J.A. Leeの恋愛類型（Love Styles）</strong>: 社会学者John Alan Leeが1973年に発表した6つの恋愛スタイル（Eros・Ludus・Storge・Pragma・Mania・Agape）の分類。恋愛スタイル診断の理論的根拠として採用。
+            </li>
+            <li>
+              <strong>行動経済学</strong>: Daniel Kahnemanらの研究（ノーベル経済学賞2002）をベースに、金銭感覚・意思決定パターンの傾向分析に活用。
+            </li>
+          </ul>
+        </div>
+        <p style="font-size: var(--sn-text-xs); color: var(--sn-muted); margin-top: var(--sn-space-3); line-height: var(--sn-leading-relaxed);">
+          ※ これらの理論は性格傾向の「分類・参照ツール」として使用しています。学術的な診断・治療行為・資格認定とは異なります。また、MBTIは公式資格認定機関（The Myers-Briggs Company）による正式診断とは別のものです。
+        </p>
+      </section>
+
+      <!-- 3つの原則 -->
+      <section class="content-section">
+        <h2 class="section-heading">📋 私たちの3つの原則</h2>
+        <div class="principles-list">
+          {principles.map((p) => (
+            <div class="principle-card">
+              <div class="principle-header">
+                <span class="principle-num">{p.num}</span>
+                <span class="principle-icon">{p.icon}</span>
+                <span class="principle-title">{p.title}</span>
+              </div>
+              <p class="principle-desc">{p.desc}</p>
+              <div class="principle-note">📌 {p.note}</div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <!-- 連絡先 -->
+      <section class="content-section">
+        <h2 class="section-heading">📬 連絡先</h2>
+        <div class="contact-box">
+          <div class="contact-row">
+            <div class="contact-label">サービス名</div>
+            <div class="contact-value">診断ナビ（shindan-navi.jp）</div>
+          </div>
+          <div class="contact-row">
+            <div class="contact-label">運営主体</div>
+            <div class="contact-value">診断ナビ編集部</div>
+          </div>
+          <div class="contact-row">
+            <div class="contact-label">メールアドレス</div>
+            <div class="contact-value">
+              <a href="mailto:zawalab.info@gmail.com">zawalab.info@gmail.com</a>
+            </div>
+          </div>
+          <div class="contact-row">
+            <div class="contact-label">対応内容</div>
+            <div class="contact-value">
+              お問い合わせ一般・取材依頼・提携ご相談・コンテンツ誤り報告
+            </div>
+          </div>
+          <div class="contact-row">
+            <div class="contact-label">お問い合わせフォーム</div>
+            <div class="contact-value">
+              <a href="/contact/">お問い合わせページへ</a>
+            </div>
+          </div>
+          <div class="contact-row">
+            <div class="contact-label">最終更新</div>
+            <div class="contact-value">2026-05-20</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 姉妹サイト -->
+      <section class="content-section">
+        <h2 class="section-heading">🔗 姉妹サイト</h2>
+        <p style="font-size: var(--sn-text-sm); color: var(--sn-muted); margin-bottom: var(--sn-space-4);">
+          同一編集部が運営する関連サービスです。
+        </p>
+        <div class="sister-list">
+          {sisterSites.map((site) => (
+            <a href={site.url} target="_blank" rel="noopener" class="sister-link">
+              🔗 <span>
+                <strong>{site.name}</strong><br />
+                <span style="color: var(--sn-muted);">{site.desc}</span>
+              </span>
+            </a>
+          ))}
+        </div>
+      </section>
+
+      <!-- 関連ページリンク -->
+      <section class="content-section">
+        <div style="
+          background: var(--sn-bg-soft); border-radius: var(--sn-radius);
+          padding: var(--sn-space-6); display: flex; flex-wrap: wrap; gap: var(--sn-space-4);
+        ">
+          <a href="/editorial-policy/" style="color: var(--sn-primary); font-size: var(--sn-text-sm); text-decoration:none;">📋 編集ポリシー</a>
+          <a href="/contact/" style="color: var(--sn-primary); font-size: var(--sn-text-sm); text-decoration:none;">📬 お問い合わせ</a>
+          <a href="/faq/" style="color: var(--sn-primary); font-size: var(--sn-text-sm); text-decoration:none;">❓ よくある質問</a>
+          <a href="/privacy/" style="color: var(--sn-primary); font-size: var(--sn-text-sm); text-decoration:none;">🔒 プライバシーポリシー</a>
+          <a href="/terms/" style="color: var(--sn-primary); font-size: var(--sn-text-sm); text-decoration:none;">📄 利用規約</a>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- フッター -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <a href="/" class="footer-logo">🧠 診断ナビ</a>
+      <div class="footer-links">
+        <a href="/about/">運営者情報</a>
+        <a href="/editorial-policy/">編集ポリシー</a>
+        <a href="/contact/">お問い合わせ</a>
+        <a href="/faq/">よくある質問</a>
+        <a href="/privacy/">プライバシーポリシー</a>
+        <a href="/terms/">利用規約</a>
+        <a href="/disclaimer/">免責事項</a>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2026 診断ナビ ｜ zawalab.info@gmail.com ｜ 最終更新: 2026-05-20</p>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

@@ -1,0 +1,180 @@
+---
+/**
+ * QuestionCard.astro - 診断質問カード（静的シェル）
+ *
+ * インタラクティブな状態管理は React Island（QuestionCard.tsx）で行う。
+ * この Astro コンポーネントは SEO / SSG 用の静的シェル。
+ *
+ * 実際の診断フローは React コンポーネントを使うこと:
+ *   import DiagnosisFlow from '../components/DiagnosisFlow';
+ */
+interface Props {
+  /** 質問テキスト */
+  question: string;
+  /** 回答選択肢 */
+  options: Array<{
+    label: string;
+    value: string;
+    description?: string;
+  }>;
+  /** 現在の質問番号（表示用）*/
+  questionNumber: number;
+  /** 総質問数 */
+  totalQuestions: number;
+  /** 選択済みの値 */
+  selectedValue?: string;
+}
+
+const {
+  question,
+  options,
+  questionNumber,
+  totalQuestions,
+  selectedValue,
+} = Astro.props;
+---
+
+<div class="question-card" data-question-number={questionNumber}>
+  <!-- 進捗 -->
+  <div class="question-progress">
+    <span class="progress-text">Q{questionNumber} / {totalQuestions}</span>
+    <div class="progress" role="progressbar"
+      aria-valuenow={questionNumber}
+      aria-valuemin={1}
+      aria-valuemax={totalQuestions}
+    >
+      <div
+        class="progress-fill"
+        style={`width: ${Math.round((questionNumber / totalQuestions) * 100)}%`}
+      ></div>
+    </div>
+  </div>
+
+  <!-- 質問文 -->
+  <h2 class="question-text">{question}</h2>
+
+  <!-- 選択肢 -->
+  <div class="options-list" role="group" aria-label="回答を選択してください">
+    {options.map((option) => (
+      <button
+        type="button"
+        class={`option-btn ${selectedValue === option.value ? 'option-btn--selected' : ''}`}
+        data-value={option.value}
+        aria-pressed={selectedValue === option.value}
+      >
+        <span class="option-label">{option.label}</span>
+        {option.description && (
+          <span class="option-description">{option.description}</span>
+        )}
+        <span class="option-check" aria-hidden="true">✓</span>
+      </button>
+    ))}
+  </div>
+</div>
+
+<style>
+  .question-card {
+    background: var(--sn-bg-white);
+    border-radius: var(--sn-radius-lg);
+    box-shadow: var(--sn-shadow-md);
+    padding: var(--sn-space-8);
+    max-width: var(--sn-max-w-narrow);
+    margin-inline: auto;
+    animation: slideUp var(--sn-dur-base) var(--sn-ease-out) both;
+  }
+
+  .question-progress {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sn-space-2);
+    margin-bottom: var(--sn-space-6);
+  }
+
+  .progress-text {
+    font-size: var(--sn-text-xs);
+    font-weight: 700;
+    color: var(--sn-primary);
+    text-align: right;
+  }
+
+  .question-text {
+    font-family: var(--sn-font-rounded);
+    font-size: var(--sn-text-xl);
+    font-weight: 700;
+    color: var(--sn-text);
+    line-height: var(--sn-leading-base);
+    margin-bottom: var(--sn-space-6);
+  }
+
+  .options-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sn-space-3);
+  }
+
+  .option-btn {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--sn-space-1);
+    width: 100%;
+    min-height: var(--sn-tap-min);
+    padding: var(--sn-space-4) var(--sn-space-5);
+    padding-right: var(--sn-space-10);
+    background: var(--sn-bg-soft);
+    border: 2px solid var(--sn-border);
+    border-radius: var(--sn-radius-md);
+    text-align: left;
+    cursor: pointer;
+    transition:
+      background-color var(--sn-dur-fast) var(--sn-ease),
+      border-color var(--sn-dur-fast) var(--sn-ease),
+      transform var(--sn-dur-fast) var(--sn-ease-bounce);
+  }
+
+  .option-btn:hover {
+    background: var(--sn-primary-bg);
+    border-color: var(--sn-primary-light);
+    transform: scale(1.01);
+  }
+
+  .option-btn--selected {
+    background: var(--sn-primary-bg);
+    border-color: var(--sn-primary);
+  }
+
+  .option-label {
+    font-size: var(--sn-text-base);
+    font-weight: 500;
+    color: var(--sn-text);
+    line-height: var(--sn-leading-tight);
+  }
+
+  .option-description {
+    font-size: var(--sn-text-sm);
+    color: var(--sn-muted);
+  }
+
+  .option-check {
+    position: absolute;
+    right: var(--sn-space-4);
+    top: 50%;
+    transform: translateY(-50%);
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--sn-primary);
+    color: #ffffff;
+    border-radius: 50%;
+    font-size: var(--sn-text-sm);
+    font-weight: 700;
+    opacity: 0;
+    transition: opacity var(--sn-dur-fast) var(--sn-ease);
+  }
+
+  .option-btn--selected .option-check {
+    opacity: 1;
+  }
+</style>
