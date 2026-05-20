@@ -1,0 +1,1295 @@
+---
+/**
+ * 友達相性診断 ランディングページ
+ * KW: 友達相性診断（★最大穴場・VOL2,900/SD17・Phase 1第4優先）
+ * 学術根拠: Big Five (Costa & McCrae 1992) + FIRO-B (Schutz 1958) +
+ *           Hartup (1996) 友情研究 + Selman (1980) 対人理解発達理論
+ * 確認日: 2026-05-20
+ *
+ * SEO/AIO対応:
+ * - JSON-LD: WebApplication + Quiz + FAQPage + BreadcrumbList
+ * - AIOブロック: 「このページでわかること」
+ * - YMYL回避: 医学的診断ゼロ。傾向把握のみ
+ * - 6タイプ（ムードメーカー/聴き上手/仕切り屋/一匹狼/同調型/知性派）
+ * - ★招待バイラル機能: 完全無料・無制限を明示
+ */
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Container from '../../../components/Container.astro';
+import DiagnosisFlow from '../../../components/DiagnosisFlow';
+import { meta } from '../../../data/diagnoses/friend-compat/meta';
+import { questions } from '../../../data/diagnoses/friend-compat/questions';
+import { calculateResultTypeId } from '../../../data/diagnoses/friend-compat/results';
+
+const SITE_URL = 'https://shindan-navi.jp';
+const PAGE_URL = `${SITE_URL}/diagnosis/friend-compat/`;
+
+// DiagnosisFlow に渡す questions を diagnosis.ts の Question 型に変換
+const flowQuestions = questions.map((q) => ({
+  id: String(q.id),
+  text: q.text,
+}));
+
+// JSON-LD: WebApplication
+const jsonLdWebApp = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  '@id': `${PAGE_URL}#webapp`,
+  name: '友達相性診断【無料・5分・24問】',
+  url: PAGE_URL,
+  applicationCategory: 'EducationalApplication',
+  operatingSystem: 'Web',
+  description:
+    'Big Five・FIRO-B・Hartup友情研究に基づく無料の友達相性診断。24問で6タイプを判定し、友達との相性スコアと解説がわかります。招待機能で友達と相性チェックができます。',
+  offers: {
+    '@type': 'Offer',
+    price: '0',
+    priceCurrency: 'JPY',
+    availability: 'https://schema.org/InStock',
+  },
+  author: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+    name: '診断ナビ',
+    url: SITE_URL,
+  },
+  publisher: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+  },
+};
+
+// JSON-LD: Quiz（citation に学術文献を配置）
+const jsonLdQuiz = {
+  '@context': 'https://schema.org',
+  '@type': 'Quiz',
+  '@id': `${PAGE_URL}#quiz`,
+  name: '友達相性診断（24問）',
+  url: PAGE_URL,
+  about: {
+    '@type': 'Thing',
+    name: '友情・対人関係 心理学',
+    description: 'Big Five特性理論・FIRO-B・Hartup友情発達研究に基づく友達タイプ分類',
+    sameAs: 'https://doi.org/10.2307/1131834',
+  },
+  educationalLevel: 'HighSchool',
+  numberOfQuestions: meta.questionCount,
+  assesses: '友達タイプ・グループでの役割・6タイプ間の相性',
+  dateCreated: meta.publishedAt,
+  dateModified: meta.updatedAt,
+  inLanguage: 'ja',
+  citation: meta.references.map((ref) => ({
+    '@type': 'ScholarlyArticle',
+    name: ref.title,
+    author: ref.author,
+    datePublished: String(ref.year),
+    url: ref.url,
+  })),
+};
+
+// JSON-LD: FAQPage（8問）
+const faqs = [
+  {
+    question: '友達相性診断は何回でも受けられますか？',
+    answer:
+      '何回でも受けられます。登録不要・完全無料です。時期や状況によって結果が変わることもあるため、気が向いたときにいつでも試してください。回答データはブラウザに7日間保存されます（サーバーには送信されません）。',
+  },
+  {
+    question: '招待モードの違いは何ですか？',
+    answer:
+      '招待モードは4種類あります。「こっそりモード」は相手に自分のタイプを知らせずに相性確認できます。「招待モード」は相手にも診断してもらい、双方の結果で相性を確認します。「片方向モード」は自分の結果だけを相手に見せます。「完全共有モード」は両者の詳細結果と相性スコアを共有します。すべて完全無料・無制限でご利用いただけます。',
+  },
+  {
+    question: '友達にバレずに相性チェックできますか？',
+    answer:
+      '「こっそりモード」を使えば、相手に自分のタイプを知らせずに相性を確認できます。相手に通知が行くことはありません。相手のタイプを先に知っている場合（本人に聞いた場合や、相手が公開している場合）は、自分だけで相性をチェックすることも可能です。',
+  },
+  {
+    question: 'グループ全員の相性を一覧できますか？',
+    answer:
+      'グループ全員が診断を受けた場合、それぞれの結果ページで「6タイプ別相性グリッド」を確認できます。グループ全体の相性マップ機能は現在準備中です。全員で同時に診断して結果を見比べる使い方も楽しめます。',
+  },
+  {
+    question: '6タイプはどう決まるのですか？',
+    answer:
+      '24問の回答から「外向性・共感性・主導性・独立性」の4つの特性スコアを計算し、スコアの組み合わせによって6タイプのいずれかに分類されます。Big Five心理学（Costa & McCrae 1992）とFIRO-B理論（Schutz 1958）をもとに設計したオリジナル分類システムです。',
+  },
+  {
+    question: 'MBTIや血液型との違いは何ですか？',
+    answer:
+      '本診断はMBTI・血液型とは完全に独立した独自システムです。「友達関係・グループ・学校・サークル」というシーンに特化した4軸で分類しています。MBTIが16タイプの性格分類なのに対し、本診断は友情・対人関係の特性に絞った6タイプ分類です。',
+  },
+  {
+    question: '同じタイプ同士の相性はどうですか？',
+    answer:
+      '同じタイプ同士は「共感しやすい」という強みがある一方で、「似たような傾向が重なる」弱点もあります。例えば聴き上手型同士は共感力が高くて安心できますが、両者が話すのを遠慮しすぎて本音が言いにくくなることも。各タイプの相性は結果ページの「相性グリッド」で詳しく確認できます。',
+  },
+  {
+    question: '友達招待は本当に無料・無制限ですか？',
+    answer:
+      '完全無料・無制限です。招待コードの発行回数に制限はありません。友達を何人招待しても、何度使っても、料金は一切かかりません。アカウント登録も不要です。「招待したら課金される」という仕組みは一切ありません。',
+  },
+];
+
+const jsonLdFAQ = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  '@id': `${PAGE_URL}#faq`,
+  mainEntity: faqs.map(({ question, answer }) => ({
+    '@type': 'Question',
+    name: question,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: answer,
+    },
+  })),
+};
+
+// JSON-LD: BreadcrumbList
+const jsonLdBreadcrumb = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'ホーム', item: SITE_URL },
+    { '@type': 'ListItem', position: 2, name: '診断一覧', item: `${SITE_URL}/diagnosis/` },
+    { '@type': 'ListItem', position: 3, name: '友達相性診断', item: PAGE_URL },
+  ],
+};
+
+const jsonLdAll = [jsonLdWebApp, jsonLdQuiz, jsonLdFAQ, jsonLdBreadcrumb];
+
+// 6タイプカード用データ
+const typeCards = [
+  {
+    id: 'mood-maker',
+    name: 'ムードメーカー型',
+    nameEn: 'Mood Maker',
+    catchphrase: '場を明るくする、みんなの太陽',
+    emoji: '🎉',
+    color: '#f59e0b',
+  },
+  {
+    id: 'listener',
+    name: '聴き上手型',
+    nameEn: 'Compassionate Listener',
+    catchphrase: '話してよかった、と思わせる安心の存在',
+    emoji: '👂',
+    color: '#3b82f6',
+  },
+  {
+    id: 'leader',
+    name: '仕切り屋型',
+    nameEn: 'Natural Leader',
+    catchphrase: 'みんなを動かす、頼れる旗振り役',
+    emoji: '📣',
+    color: '#ef4444',
+  },
+  {
+    id: 'lone-wolf',
+    name: '一匹狼型',
+    nameEn: 'Independent Spirit',
+    catchphrase: '少数の深い絆を大切にする、自分軸の人',
+    emoji: '🐺',
+    color: '#6366f1',
+  },
+  {
+    id: 'harmonizer',
+    name: '同調型',
+    nameEn: 'Empathetic Harmonizer',
+    catchphrase: '空気を読んで、みんなをつなぐ縁の下の力持ち',
+    emoji: '🕊️',
+    color: '#10b981',
+  },
+  {
+    id: 'analyst',
+    name: '知性派型',
+    nameEn: 'Thoughtful Analyst',
+    catchphrase: '深く考え、本質を語る。静かなる洞察者',
+    emoji: '🔭',
+    color: '#8b5cf6',
+  },
+];
+---
+
+<BaseLayout
+  title={meta.title}
+  description={meta.description}
+  canonical={PAGE_URL}
+  jsonLd={jsonLdAll}
+  ogType="website"
+  publishDate={meta.publishedAt}
+  lastUpdated={meta.updatedAt}
+  breadcrumbs={[
+    { name: '診断一覧', url: '/diagnosis/' },
+    { name: '友達相性診断', url: '/diagnosis/friend-compat/' },
+  ]}
+>
+  {/* ========== ヒーローセクション ========== */}
+  <section class="fc-hero" aria-labelledby="fc-hero-h1">
+    <div class="fc-hero-inner">
+      <div class="fc-hero-badge">Big Five + FIRO-B + Hartup友情研究に基づく</div>
+      <h1 id="fc-hero-h1" class="fc-hero-h1">
+        友達相性診断<br />
+        <span class="fc-hero-meta">【無料・5分・24問】</span>
+      </h1>
+      <p class="fc-hero-catch">
+        あなたはどの友達タイプ？<br />
+        6タイプ分類で友情グループでの役割と相性がわかる
+      </p>
+      <div class="fc-hero-stats">
+        <span class="fc-stat"><strong>24</strong>問</span>
+        <span class="fc-stat-sep">・</span>
+        <span class="fc-stat">約<strong>5</strong>分</span>
+        <span class="fc-stat-sep">・</span>
+        <span class="fc-stat"><strong>6</strong>タイプ</span>
+        <span class="fc-stat-sep">・</span>
+        <span class="fc-stat">無料</span>
+        <span class="fc-stat-sep">・</span>
+        <span class="fc-stat">招待機能付き</span>
+      </div>
+      <a href="#diagnosis-flow" class="fc-cta-btn">
+        <span>診断スタート</span>
+        <span class="fc-cta-arrow" aria-hidden="true">↓</span>
+      </a>
+      <p class="fc-hero-sub">登録不要・所要時間5分・友達招待は何人でも無料</p>
+    </div>
+  </section>
+
+  <Container>
+    {/* ========== AIOブロック（このページでわかること） ========== */}
+    <div class="fc-aio-block" role="note" aria-label="このページでわかること">
+      <p class="fc-aio-title">このページでわかること</p>
+      <ul class="fc-aio-list">
+        <li>24問・4軸で分類する独自6タイプ（Big Five + FIRO-B + Hartup 1996年友情研究に基づく）</li>
+        <li>タイプ別のグループポジション・友情エピソード・気をつけたい傾向</li>
+        <li>6タイプ × 6タイプの相性スコア一覧と招待機能の使い方</li>
+      </ul>
+      <p class="fc-aio-updated">
+        <time datetime={meta.updatedAt}>{meta.updatedAt}</time> 時点の情報。
+        <a href="https://doi.org/10.2307/1131834" target="_blank" rel="noopener noreferrer">
+          Hartup (1996) 友情研究原著
+        </a>
+        を確認済。
+      </p>
+    </div>
+
+    {/* ========== 友達相性診断とは ========== */}
+    <section class="fc-section" aria-labelledby="fc-what-h2">
+      <h2 id="fc-what-h2" class="fc-h2">友達相性診断とは</h2>
+      <p class="fc-lead">
+        友達相性診断は、Big Five特性理論（Costa &amp; McCrae 1992）・FIRO-B対人欲求理論（Schutz 1958）・
+        Hartup（1996）の友情発達研究を組み合わせた独自の6タイプ分類システムです。
+      </p>
+      <p class="fc-body">
+        MBTIや血液型に依存しない独自の「友情特性」4軸（外向性・共感性・主導性・独立性）で分類します。
+        学校・サークル・職場の友人グループに特化した設計で、
+        「グループの中で自分はどんな役割か」「どのタイプと相性がいいか」がわかります
+        （<a href="https://doi.org/10.2307/1131834" target="_blank" rel="noopener noreferrer">Hartup, 1996</a>、2026-05-20確認）。
+      </p>
+      <div class="fc-info-table-wrap">
+        <table class="fc-info-table">
+          <caption class="fc-table-caption">友達相性診断の概要</caption>
+          <tbody>
+            <tr>
+              <th scope="row">理論の根拠</th>
+              <td>Big Five (Costa &amp; McCrae 1992) + FIRO-B (Schutz 1958) + Hartup (1996) + Selman (1980)</td>
+            </tr>
+            <tr>
+              <th scope="row">問題数</th>
+              <td>24問（4軸 × 6問）</td>
+            </tr>
+            <tr>
+              <th scope="row">回答方式</th>
+              <td>5段階リッカートスケール（1=全く当てはまらない〜5=とても当てはまる）</td>
+            </tr>
+            <tr>
+              <th scope="row">所要時間</th>
+              <td>約5分</td>
+            </tr>
+            <tr>
+              <th scope="row">結果タイプ数</th>
+              <td>6タイプ（ムードメーカー・聴き上手・仕切り屋・一匹狼・同調型・知性派）</td>
+            </tr>
+            <tr>
+              <th scope="row">招待機能</th>
+              <td>無料・無制限。4つのモード（こっそり/招待/片方向/完全共有）</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    {/* ========== 4軸の概念図 ========== */}
+    <section class="fc-section" aria-labelledby="fc-axes-h2">
+      <h2 id="fc-axes-h2" class="fc-h2">診断を構成する4つの特性軸</h2>
+      <p class="fc-lead">
+        24問の回答から以下の4軸のスコアを計算し、組み合わせで6タイプに分類します。
+      </p>
+      <div class="fc-axes-grid">
+        <div class="fc-axis-card">
+          <div class="fc-axis-icon" aria-hidden="true">🌐</div>
+          <h3 class="fc-axis-name">外向性</h3>
+          <p class="fc-axis-desc">人と一緒にいることへの心地よさ・積極性。高いほど社交的でにぎやかな環境を好む。</p>
+        </div>
+        <div class="fc-axis-card">
+          <div class="fc-axis-icon" aria-hidden="true">💙</div>
+          <h3 class="fc-axis-name">共感性</h3>
+          <p class="fc-axis-desc">相手の気持ちを察する力・感情サポート傾向。高いほど「聴く」ことを得意とする。</p>
+        </div>
+        <div class="fc-axis-card">
+          <div class="fc-axis-icon" aria-hidden="true">⚡</div>
+          <h3 class="fc-axis-name">主導性</h3>
+          <p class="fc-axis-desc">グループをまとめ・計画を立てる傾向。高いほどリーダーシップを発揮しやすい。</p>
+        </div>
+        <div class="fc-axis-card">
+          <div class="fc-axis-icon" aria-hidden="true">🧘</div>
+          <h3 class="fc-axis-name">独立性</h3>
+          <p class="fc-axis-desc">自分のペース重視・一人時間の必要性。高いほど少数深交流型の友情を好む。</p>
+        </div>
+      </div>
+      <div class="fc-axes-figure" role="figure" aria-labelledby="fc-axes-caption">
+        <div class="fc-axes-visual" aria-hidden="true">
+          <div class="fc-axes-row">
+            <div class="fc-axes-label fc-axes-label--left">外向性</div>
+            <div class="fc-axes-bar-wrap">
+              <div class="fc-axes-bar-bg">
+                <div class="fc-axes-dot fc-axes-dot--ext" style="left: 85%"></div>
+                <div class="fc-axes-dot fc-axes-dot--ana" style="left: 18%"></div>
+              </div>
+            </div>
+            <div class="fc-axes-label fc-axes-label--right">内向性</div>
+          </div>
+          <div class="fc-axes-row">
+            <div class="fc-axes-label fc-axes-label--left">共感高</div>
+            <div class="fc-axes-bar-wrap">
+              <div class="fc-axes-bar-bg">
+                <div class="fc-axes-dot fc-axes-dot--lis" style="left: 88%"></div>
+                <div class="fc-axes-dot fc-axes-dot--ldr" style="left: 52%"></div>
+              </div>
+            </div>
+            <div class="fc-axes-label fc-axes-label--right">共感低</div>
+          </div>
+          <div class="fc-axes-row">
+            <div class="fc-axes-label fc-axes-label--left">主導高</div>
+            <div class="fc-axes-bar-wrap">
+              <div class="fc-axes-bar-bg">
+                <div class="fc-axes-dot fc-axes-dot--ldr" style="left: 78%"></div>
+                <div class="fc-axes-dot fc-axes-dot--har" style="left: 32%"></div>
+              </div>
+            </div>
+            <div class="fc-axes-label fc-axes-label--right">主導低</div>
+          </div>
+          <div class="fc-axes-row">
+            <div class="fc-axes-label fc-axes-label--left">独立高</div>
+            <div class="fc-axes-bar-wrap">
+              <div class="fc-axes-bar-bg">
+                <div class="fc-axes-dot fc-axes-dot--lwf" style="left: 82%"></div>
+                <div class="fc-axes-dot fc-axes-dot--har" style="left: 25%"></div>
+              </div>
+            </div>
+            <div class="fc-axes-label fc-axes-label--right">独立低</div>
+          </div>
+        </div>
+        <p id="fc-axes-caption" class="fc-axes-caption">
+          【図1】4軸上の各タイプの概念的位置（Big Five外向性・協調性次元とFIRO-B包含・支配欲求に対応）。
+          研究傾向値を概念化したもの。個人差があります。確認日: 2026-05-20。
+        </p>
+      </div>
+    </section>
+
+    {/* ========== 6タイプ紹介 ========== */}
+    <section class="fc-section" aria-labelledby="fc-types-h2">
+      <h2 id="fc-types-h2" class="fc-h2">6つの友達タイプ</h2>
+      <p class="fc-lead">
+        どのタイプも「良い・悪い」はありません。それぞれが友情グループで異なる価値を生みます。
+        Hartup（1996）の研究では、多様なタイプが混在するグループほど友情が長続きしやすいことが示されています。
+      </p>
+      <div class="fc-types-grid">
+        {typeCards.map((tc) => (
+          <article class="fc-type-card" style={`--type-color: ${tc.color}`}>
+            <div class="fc-type-emoji" aria-hidden="true">{tc.emoji}</div>
+            <h3 class="fc-type-name">{tc.name}</h3>
+            <p class="fc-type-name-en">{tc.nameEn}</p>
+            <p class="fc-type-desc">{tc.catchphrase}</p>
+            <a href={`/diagnosis/friend-compat/result/${tc.id}/`} class="fc-type-link">
+              {tc.name}の詳細を見る
+              <span aria-hidden="true">→</span>
+            </a>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    {/* ========== ★招待バイラル機能の説明セクション（重要） ========== */}
+    <section class="fc-section fc-invite-section" aria-labelledby="fc-invite-h2">
+      <h2 id="fc-invite-h2" class="fc-h2">友達相性を一緒にチェック（招待機能）</h2>
+      <div class="fc-invite-badge">完全無料・無制限・登録不要</div>
+      <p class="fc-lead">
+        診断後に表示される招待コードを使えば、友達を何人でも無料で招待できます。
+        招待コードの発行回数に制限はなく、お金は一切かかりません。
+      </p>
+      <div class="fc-invite-modes">
+        <h3 class="fc-invite-modes-title">4つの招待モード</h3>
+        <div class="fc-modes-grid">
+          <div class="fc-mode-card">
+            <div class="fc-mode-icon" aria-hidden="true">🤫</div>
+            <h4 class="fc-mode-name">こっそりモード</h4>
+            <p class="fc-mode-desc">
+              相手のタイプを自分だけ確認できる。
+              自分のタイプは相手に伝わらない。
+              気になる人の相性をこっそりチェック。
+            </p>
+          </div>
+          <div class="fc-mode-card">
+            <div class="fc-mode-icon" aria-hidden="true">🔗</div>
+            <h4 class="fc-mode-name">招待モード</h4>
+            <p class="fc-mode-desc">
+              友達にも診断してもらい、
+              双方の結果から相性スコアを算出。
+              一緒に盛り上がれる定番モード。
+            </p>
+          </div>
+          <div class="fc-mode-card">
+            <div class="fc-mode-icon" aria-hidden="true">📤</div>
+            <h4 class="fc-mode-name">片方向モード</h4>
+            <p class="fc-mode-desc">
+              自分のタイプ結果だけを友達に見せる。
+              相手の結果は受け取らない。
+              自己紹介として使いやすい。
+            </p>
+          </div>
+          <div class="fc-mode-card">
+            <div class="fc-mode-icon" aria-hidden="true">🤝</div>
+            <h4 class="fc-mode-name">完全共有モード</h4>
+            <p class="fc-mode-desc">
+              双方の詳細結果と相性スコアを完全に共有。
+              グループ全員で確認するときに最適。
+              深い友情をもっと深める使い方。
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="fc-invite-flow">
+        <h3 class="fc-invite-flow-title">招待の流れ（3ステップ）</h3>
+        <ol class="fc-invite-steps">
+          <li class="fc-invite-step">
+            <div class="fc-invite-step-num" aria-hidden="true">1</div>
+            <div>
+              <p class="fc-invite-step-text">自分が診断を完了する（5分・24問）</p>
+            </div>
+          </li>
+          <li class="fc-invite-step">
+            <div class="fc-invite-step-num" aria-hidden="true">2</div>
+            <div>
+              <p class="fc-invite-step-text">結果ページで招待モードを選択し、招待URLを生成する</p>
+            </div>
+          </li>
+          <li class="fc-invite-step">
+            <div class="fc-invite-step-num" aria-hidden="true">3</div>
+            <div>
+              <p class="fc-invite-step-text">LINEやDMで友達に送る。相手は登録不要でそのままチェックできる</p>
+            </div>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    {/* ========== 使い方（3ステップ） ========== */}
+    <section class="fc-section" aria-labelledby="fc-how-h2">
+      <h2 id="fc-how-h2" class="fc-h2">使い方（3ステップ）</h2>
+      <ol class="fc-steps">
+        <li class="fc-step">
+          <div class="fc-step-num" aria-hidden="true">1</div>
+          <div class="fc-step-body">
+            <h3 class="fc-step-title">「診断スタート」をタップ</h3>
+            <p class="fc-step-desc">
+              登録・インストール不要。ブラウザですぐ始められます。
+              途中で閉じても7日以内なら再開できます。
+            </p>
+          </div>
+        </li>
+        <li class="fc-step">
+          <div class="fc-step-num" aria-hidden="true">2</div>
+          <div class="fc-step-body">
+            <h3 class="fc-step-title">24問に回答する（約5分）</h3>
+            <p class="fc-step-desc">
+              各質問に「1（全く当てはまらない）〜5（とても当てはまる）」で答えます。
+              正解・不正解はありません。今の自分に正直に答えてください。
+            </p>
+          </div>
+        </li>
+        <li class="fc-step">
+          <div class="fc-step-num" aria-hidden="true">3</div>
+          <div class="fc-step-body">
+            <h3 class="fc-step-title">タイプと相性グリッドを確認・友達に送る</h3>
+            <p class="fc-step-desc">
+              6タイプのいずれかに分類され、他タイプとの相性スコアが表示されます。
+              招待機能で友達と相性チェックしてみましょう（完全無料・無制限）。
+            </p>
+          </div>
+        </li>
+      </ol>
+    </section>
+
+    {/* ========== 診断フロー（React島） ========== */}
+    <section class="fc-section fc-section--flow" id="diagnosis-flow" aria-labelledby="fc-flow-h2">
+      <h2 id="fc-flow-h2" class="fc-h2 fc-h2--center">診断を始める</h2>
+      <p class="fc-flow-lead">
+        全24問・約5分。今の自分に正直に答えてください。
+      </p>
+      <div class="fc-flow-wrapper">
+        <DiagnosisFlow
+          client:load
+          diagnosisId="friend-compat"
+          questions={flowQuestions}
+          resultPath={(typeId: string) => `/diagnosis/friend-compat/result/${typeId}/`}
+          calculateResult={calculateResultTypeId}
+        />
+      </div>
+    </section>
+
+    {/* ========== 精度・科学的根拠 ========== */}
+    <section class="fc-section" aria-labelledby="fc-science-h2">
+      <h2 id="fc-science-h2" class="fc-h2">診断の根拠・参考文献</h2>
+      <p class="fc-lead">
+        本診断は友情・対人関係に関する学術研究をもとに設計しています。
+        傾向把握のための自己理解ツールであり、医学的・臨床的な診断ではありません。
+      </p>
+      <div class="fc-science-grid">
+        <div class="fc-science-card">
+          <div class="fc-science-icon" aria-hidden="true">📚</div>
+          <h3 class="fc-science-title">主要参考文献</h3>
+          <ul class="fc-ref-list">
+            {meta.references.map((ref) => (
+              <li class="fc-ref-item">
+                <a href={ref.url} target="_blank" rel="noopener noreferrer" class="fc-ref-link">
+                  {ref.author} ({ref.year}). {ref.title}.
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div class="fc-science-card">
+          <div class="fc-science-icon" aria-hidden="true">⚠️</div>
+          <h3 class="fc-science-title">ご注意</h3>
+          <p class="fc-science-body">
+            本診断は性格傾向・友情スタイルを把握するための参考ツールです。
+            医学的な診断・臨床的な判断は行いません。
+            「このタイプだから友達ができない」等の心理的決定論的な解釈はしないでください。
+          </p>
+        </div>
+        <div class="fc-science-card">
+          <div class="fc-science-icon" aria-hidden="true">🔄</div>
+          <h3 class="fc-science-title">更新・鮮度管理</h3>
+          <p class="fc-science-body">
+            理論・参考文献情報は定期的に確認しています。
+            最終確認日: <time datetime={meta.updatedAt}>{meta.updatedAt}</time>。
+            情報の誤りを見つけた場合は
+            <a href="/contact/">お問い合わせ</a>
+            からご連絡ください。
+          </p>
+        </div>
+      </div>
+    </section>
+
+    {/* ========== 関連診断 ========== */}
+    <section class="fc-section" aria-labelledby="fc-related-h2">
+      <h2 id="fc-related-h2" class="fc-h2">関連診断</h2>
+      <ul class="fc-related-list">
+        <li class="fc-related-item">
+          <a href="/diagnosis/mbti-compat/" class="fc-related-link">
+            <span class="fc-related-icon" aria-hidden="true">🧩</span>
+            <span class="fc-related-body">
+              <span class="fc-related-title">MBTI相性診断</span>
+              <span class="fc-related-desc">16タイプ同士の相性を256通り解説</span>
+            </span>
+          </a>
+        </li>
+        <li class="fc-related-item">
+          <a href="/diagnosis/multi-int/" class="fc-related-link">
+            <span class="fc-related-icon" aria-hidden="true">🦉</span>
+            <span class="fc-related-body">
+              <span class="fc-related-title">多重知能テスト</span>
+              <span class="fc-related-desc">8つの知能から「強みのかたち」を64問で発見</span>
+            </span>
+          </a>
+        </li>
+        <li class="fc-related-item">
+          <a href="/diagnosis/perfectionism/" class="fc-related-link">
+            <span class="fc-related-icon" aria-hidden="true">🔱</span>
+            <span class="fc-related-body">
+              <span class="fc-related-title">完璧主義診断</span>
+              <span class="fc-related-desc">4タイプで仕事・恋愛・友人関係の向き合い方を発見</span>
+            </span>
+          </a>
+        </li>
+        <li class="fc-related-item">
+          <a href="/diagnosis/disc/" class="fc-related-link">
+            <span class="fc-related-icon" aria-hidden="true">💼</span>
+            <span class="fc-related-body">
+              <span class="fc-related-title">DiSC診断</span>
+              <span class="fc-related-desc">職場・グループでの行動スタイルを4軸で分析</span>
+            </span>
+          </a>
+        </li>
+      </ul>
+    </section>
+
+    {/* ========== FAQ ========== */}
+    <section class="fc-section" aria-labelledby="fc-faq-h2">
+      <h2 id="fc-faq-h2" class="fc-h2">よくある質問</h2>
+      <dl class="fc-faq-list">
+        {faqs.map(({ question, answer }) => (
+          <div class="fc-faq-item">
+            <dt class="fc-faq-q">{question}</dt>
+            <dd class="fc-faq-a">{answer}</dd>
+          </div>
+        ))}
+      </dl>
+    </section>
+  </Container>
+</BaseLayout>
+
+<style>
+/* ========== ヒーロー ========== */
+.fc-hero {
+  background: linear-gradient(135deg, #f59e0b 0%, #ef4444 50%, #8b5cf6 100%);
+  color: #fff;
+  padding-block: 3.5rem 4rem;
+  text-align: center;
+}
+.fc-hero-inner {
+  max-width: 700px;
+  margin: 0 auto;
+  padding-inline: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+.fc-hero-badge {
+  display: inline-block;
+  background: rgba(255 255 255 / 0.2);
+  border: 1px solid rgba(255 255 255 / 0.4);
+  border-radius: 2rem;
+  padding: 0.25rem 1rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+}
+.fc-hero-h1 {
+  font-size: clamp(1.75rem, 5vw, 2.5rem);
+  font-family: var(--sn-font-rounded, sans-serif);
+  font-weight: 700;
+  line-height: 1.3;
+  margin: 0;
+}
+.fc-hero-meta {
+  display: block;
+  font-size: clamp(1rem, 3vw, 1.4rem);
+  opacity: 0.9;
+}
+.fc-hero-catch {
+  font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+  opacity: 0.92;
+  line-height: 1.7;
+  margin: 0;
+}
+.fc-hero-stats {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  font-size: 0.85rem;
+  opacity: 0.85;
+}
+.fc-stat strong {
+  font-size: 1.4em;
+  font-weight: 700;
+}
+.fc-stat-sep {
+  color: rgba(255 255 255 / 0.5);
+}
+.fc-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #fff;
+  color: #f59e0b;
+  font-weight: 700;
+  font-size: 1.1rem;
+  padding: 0.85rem 2.5rem;
+  border-radius: 3rem;
+  text-decoration: none;
+  transition: transform 0.15s, box-shadow 0.15s;
+  margin-top: 0.5rem;
+}
+.fc-cta-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0 0 0 / 0.2);
+}
+.fc-cta-arrow {
+  font-size: 1.2em;
+}
+.fc-hero-sub {
+  font-size: 0.8rem;
+  opacity: 0.75;
+  margin: 0;
+}
+
+/* ========== AIOブロック ========== */
+.fc-aio-block {
+  background: #fef3c7;
+  border-left: 4px solid #f59e0b;
+  border-radius: 0 0.5rem 0.5rem 0;
+  padding: 1.25rem 1.5rem;
+  margin-block: 2rem;
+}
+.fc-aio-title {
+  font-weight: 700;
+  margin: 0 0 0.5rem;
+  font-size: 0.9rem;
+  color: #92400e;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.fc-aio-list {
+  margin: 0 0 0.75rem;
+  padding-left: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.fc-aio-list li {
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+.fc-aio-updated {
+  font-size: 0.75rem;
+  color: #92400e;
+  margin: 0;
+  opacity: 0.75;
+}
+
+/* ========== セクション共通 ========== */
+.fc-section {
+  margin-block: 3rem;
+}
+.fc-section--flow {
+  background: #fffbf0;
+  padding: 2rem 1.5rem;
+  border-radius: 1rem;
+  margin-inline: -1rem;
+  border: 2px solid #fde68a;
+}
+.fc-h2 {
+  font-size: clamp(1.3rem, 4vw, 1.75rem);
+  font-family: var(--sn-font-rounded, sans-serif);
+  font-weight: 700;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #f59e0b;
+}
+.fc-h2--center {
+  text-align: center;
+  border-bottom: none;
+}
+.fc-lead {
+  font-size: 1rem;
+  line-height: 1.8;
+  margin-bottom: 1rem;
+  color: #374151;
+}
+.fc-body {
+  font-size: 0.95rem;
+  line-height: 1.8;
+  margin-bottom: 1rem;
+  color: #374151;
+}
+.fc-flow-lead {
+  text-align: center;
+  color: var(--sn-muted, #6b7280);
+  font-size: 0.9rem;
+  margin-bottom: 1.5rem;
+}
+.fc-flow-wrapper {
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+/* ========== 情報テーブル ========== */
+.fc-info-table-wrap {
+  overflow-x: auto;
+  margin-top: 1.5rem;
+}
+.fc-info-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+.fc-info-table th,
+.fc-info-table td {
+  padding: 0.6rem 1rem;
+  border: 1px solid #e5e7eb;
+  text-align: left;
+  line-height: 1.5;
+}
+.fc-info-table th {
+  background: #fef3c7;
+  font-weight: 600;
+  white-space: nowrap;
+  width: 9rem;
+  color: #92400e;
+}
+.fc-table-caption {
+  font-size: 0.8rem;
+  color: var(--sn-muted, #6b7280);
+  text-align: left;
+  padding: 0.25rem 0 0.5rem;
+}
+
+/* ========== 4軸グリッド ========== */
+.fc-axes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-block: 1.5rem;
+}
+.fc-axis-card {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 1rem;
+}
+.fc-axis-icon {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+.fc-axis-name {
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin: 0 0 0.4rem;
+  color: #374151;
+}
+.fc-axis-desc {
+  font-size: 0.82rem;
+  line-height: 1.6;
+  color: #6b7280;
+  margin: 0;
+}
+
+/* ========== 4軸概念図 ========== */
+.fc-axes-figure {
+  margin-block: 2rem;
+}
+.fc-axes-visual {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.fc-axes-row {
+  display: grid;
+  grid-template-columns: 5rem 1fr 5rem;
+  align-items: center;
+  gap: 0.75rem;
+}
+.fc-axes-label {
+  font-size: 0.75rem;
+  color: #6b7280;
+  font-weight: 600;
+}
+.fc-axes-label--right {
+  text-align: right;
+}
+.fc-axes-bar-wrap {
+  position: relative;
+}
+.fc-axes-bar-bg {
+  background: #e5e7eb;
+  border-radius: 1rem;
+  height: 0.5rem;
+  position: relative;
+}
+.fc-axes-dot {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 1rem;
+  height: 1rem;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  box-shadow: 0 1px 3px rgba(0 0 0 / 0.2);
+}
+.fc-axes-dot--ext { background: #f59e0b; }
+.fc-axes-dot--lis { background: #3b82f6; }
+.fc-axes-dot--ldr { background: #ef4444; }
+.fc-axes-dot--lwf { background: #6366f1; }
+.fc-axes-dot--har { background: #10b981; }
+.fc-axes-dot--ana { background: #8b5cf6; }
+.fc-axes-caption {
+  font-size: 0.78rem;
+  color: var(--sn-muted, #6b7280);
+  line-height: 1.6;
+}
+
+/* ========== 6タイプグリッド ========== */
+.fc-types-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1rem;
+  margin-block: 1.5rem;
+}
+.fc-type-card {
+  border: 2px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  transition: box-shadow 0.15s, transform 0.15s;
+  border-top: 4px solid var(--type-color);
+}
+.fc-type-card:hover {
+  box-shadow: 0 4px 16px rgba(0 0 0 / 0.1);
+  transform: translateY(-2px);
+}
+.fc-type-emoji {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+.fc-type-name {
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 0 0 0.2rem;
+  color: var(--type-color);
+}
+.fc-type-name-en {
+  font-size: 0.7rem;
+  color: var(--sn-muted, #6b7280);
+  margin: 0 0 0.5rem;
+}
+.fc-type-desc {
+  font-size: 0.83rem;
+  line-height: 1.6;
+  color: #4b5563;
+  margin: 0 0 0.75rem;
+}
+.fc-type-link {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--type-color);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+.fc-type-link:hover {
+  text-decoration: underline;
+}
+
+/* ========== 招待セクション ========== */
+.fc-invite-section {
+  background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%);
+  border: 2px solid #86efac;
+  border-radius: 1rem;
+  padding: 2rem 1.5rem;
+  margin-inline: -1rem;
+}
+.fc-invite-section .fc-h2 {
+  border-bottom-color: #22c55e;
+}
+.fc-invite-badge {
+  display: inline-block;
+  background: #22c55e;
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 0.25rem 1rem;
+  border-radius: 2rem;
+  margin-bottom: 1rem;
+}
+.fc-invite-modes {
+  margin-top: 1.5rem;
+}
+.fc-invite-modes-title {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+.fc-modes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+.fc-mode-card {
+  background: #fff;
+  border: 1px solid #bbf7d0;
+  border-radius: 0.75rem;
+  padding: 1rem;
+}
+.fc-mode-icon {
+  font-size: 1.5rem;
+  margin-bottom: 0.4rem;
+}
+.fc-mode-name {
+  font-size: 0.9rem;
+  font-weight: 700;
+  margin: 0 0 0.4rem;
+  color: #15803d;
+}
+.fc-mode-desc {
+  font-size: 0.82rem;
+  line-height: 1.6;
+  color: #374151;
+  margin: 0;
+}
+.fc-invite-flow {
+  background: #fff;
+  border: 1px solid #bbf7d0;
+  border-radius: 0.75rem;
+  padding: 1.25rem 1.5rem;
+  margin-top: 1rem;
+}
+.fc-invite-flow-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: #15803d;
+}
+.fc-invite-steps {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.fc-invite-step {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+.fc-invite-step-num {
+  flex-shrink: 0;
+  width: 2rem;
+  height: 2rem;
+  background: #22c55e;
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+.fc-invite-step-text {
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin: 0;
+  color: #374151;
+}
+
+/* ========== ステップ ========== */
+.fc-steps {
+  list-style: none;
+  padding: 0;
+  margin: 1.5rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+.fc-step {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+.fc-step-num {
+  flex-shrink: 0;
+  width: 2.5rem;
+  height: 2.5rem;
+  background: #f59e0b;
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+.fc-step-title {
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 0 0 0.25rem;
+}
+.fc-step-desc {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: #4b5563;
+  margin: 0;
+}
+
+/* ========== 科学的根拠 ========== */
+.fc-science-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+.fc-science-card {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+}
+.fc-science-icon {
+  font-size: 1.75rem;
+  margin-bottom: 0.5rem;
+}
+.fc-science-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem;
+}
+.fc-science-body {
+  font-size: 0.85rem;
+  line-height: 1.7;
+  color: #4b5563;
+  margin: 0;
+}
+.fc-ref-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.fc-ref-item {
+  font-size: 0.78rem;
+  line-height: 1.5;
+}
+.fc-ref-link {
+  color: #d97706;
+  text-decoration: none;
+  word-break: break-word;
+}
+.fc-ref-link:hover {
+  text-decoration: underline;
+}
+
+/* ========== 関連リンク ========== */
+.fc-related-list {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.fc-related-link {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.fc-related-link:hover {
+  border-color: #f59e0b;
+  box-shadow: 0 2px 8px rgba(245 158 11 / 0.1);
+}
+.fc-related-icon {
+  font-size: 1.75rem;
+  flex-shrink: 0;
+}
+.fc-related-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+.fc-related-title {
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+.fc-related-desc {
+  font-size: 0.8rem;
+  color: var(--sn-muted, #6b7280);
+}
+
+/* ========== FAQ ========== */
+.fc-faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+.fc-faq-item {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+.fc-faq-q {
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 1rem 1.25rem;
+  background: #fef3c7;
+  margin: 0;
+  display: block;
+}
+.fc-faq-q::before {
+  content: 'Q. ';
+  color: #d97706;
+}
+.fc-faq-a {
+  font-size: 0.9rem;
+  line-height: 1.7;
+  padding: 1rem 1.25rem;
+  margin: 0;
+  color: #4b5563;
+}
+.fc-faq-a::before {
+  content: 'A. ';
+  font-weight: 700;
+  color: #16a34a;
+}
+
+/* ========== レスポンシブ ========== */
+@media (max-width: 640px) {
+  .fc-types-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .fc-axes-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .fc-science-grid {
+    grid-template-columns: 1fr;
+  }
+  .fc-modes-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .fc-section--flow {
+    margin-inline: -0.5rem;
+    padding: 1.5rem 1rem;
+  }
+  .fc-invite-section {
+    margin-inline: -0.5rem;
+    padding: 1.5rem 1rem;
+  }
+  .fc-axes-row {
+    grid-template-columns: 4rem 1fr 4rem;
+  }
+}
+@media (max-width: 400px) {
+  .fc-types-grid {
+    grid-template-columns: 1fr;
+  }
+  .fc-modes-grid {
+    grid-template-columns: 1fr;
+  }
+}
+</style>

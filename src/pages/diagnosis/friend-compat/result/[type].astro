@@ -1,0 +1,1206 @@
+---
+/**
+ * 友達相性診断 結果ページ（動的ルート）
+ * 6タイプ分の結果ページを静的生成する
+ *
+ * URL: /diagnosis/friend-compat/result/{typeId}/
+ * タイプID: mood-maker / listener / leader / lone-wolf / harmonizer / analyst
+ *
+ * SEO/AIO:
+ * - JSON-LD: WebApplication + Article + BreadcrumbList
+ * - タイプ別メタタイトル・ディスクリプション
+ * - 6タイプ別相性ミニグリッド
+ * - ★招待モード CTA（重要・大きく）
+ * - YMYL回避: 医学的判断ゼロ
+ *
+ * 確認日: 2026-05-20
+ */
+import ResultLayout from '../../../../layouts/ResultLayout.astro';
+import Container from '../../../../components/Container.astro';
+import { types } from '../../../../data/diagnoses/friend-compat/types';
+import { meta } from '../../../../data/diagnoses/friend-compat/meta';
+import {
+  getCompatibility,
+  CATEGORY_LABELS,
+  CATEGORY_COLORS,
+} from '../../../../data/diagnoses/friend-compat/compatibility';
+import type { FriendType } from '../../../../data/diagnoses/friend-compat/questions';
+
+export function getStaticPaths() {
+  return Object.keys(types).map((typeId) => ({
+    params: { type: typeId },
+    props: { typeId: typeId as FriendType, typeData: types[typeId as FriendType] },
+  }));
+}
+
+const { typeId, typeData } = Astro.props;
+
+const SITE_URL = 'https://shindan-navi.jp';
+const PAGE_URL = `${SITE_URL}/diagnosis/friend-compat/result/${typeId}/`;
+
+// 思考傾向グラフ用ラベル（Big5/OCEAN/ビッグファイブ表記禁止）
+const traitLabels = [
+  { key: 'O', label: '好奇心・探求' },
+  { key: 'C', label: '計画性・丁寧さ' },
+  { key: 'E', label: '行動力・積極性' },
+  { key: 'A', label: '共感力・協調性' },
+  { key: 'N', label: '感情の繊細さ' },
+] as const;
+
+// 全タイプとの相性データを取得
+const compatibilities = (Object.keys(types) as FriendType[]).map((otherType) => ({
+  otherType,
+  otherData: types[otherType],
+  compat: getCompatibility(typeId as FriendType, otherType),
+}));
+
+// FAQs（タイプ別）
+const faqs = [
+  {
+    question: `${typeData.japaneseName}はどんな友達グループに向いていますか？`,
+    answer: typeData.bestRoleInGroup,
+  },
+  {
+    question: `${typeData.japaneseName}の友達としての強みは？`,
+    answer: typeData.friendStrengths.slice(0, 3).join('。また、') + '。',
+  },
+  {
+    question: `${typeData.japaneseName}が気をつけたい傾向は？`,
+    answer: typeData.friendWeaknesses.slice(0, 2).join('。さらに、') + '。状況を理解することで、より良い友情を育てられます。',
+  },
+  {
+    question: `${typeData.japaneseName}と最も相性がいいタイプは？`,
+    answer: (() => {
+      const sorted = [...compatibilities].sort((a, b) => b.compat.score - a.compat.score);
+      const top2 = sorted.slice(0, 2);
+      return `${typeData.japaneseName}と相性がいいのは「${top2[0].otherData.japaneseName}」（スコア${top2[0].compat.score}）と「${top2[1].otherData.japaneseName}」（スコア${top2[1].compat.score}）です。${top2[0].compat.oneLineSummary}という関係です。詳しくは下の相性グリッドをご確認ください。`;
+    })(),
+  },
+  {
+    question: '招待機能はどう使うの？',
+    answer:
+      '結果ページ下部の「友達と相性チェック」ボタンから招待URLを生成できます。LINEやDMで友達に送るだけで、相手は登録不要でそのまま診断・相性確認ができます。招待は何回でも、何人でも完全無料です。',
+  },
+];
+
+// JSON-LD: WebApplication
+const jsonLdWebApp = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  '@id': `${PAGE_URL}#webapp`,
+  name: `友達相性診断 - ${typeData.japaneseName}の結果`,
+  url: PAGE_URL,
+  applicationCategory: 'EducationalApplication',
+  operatingSystem: 'Web',
+  offers: {
+    '@type': 'Offer',
+    price: '0',
+    priceCurrency: 'JPY',
+    availability: 'https://schema.org/InStock',
+  },
+};
+
+// JSON-LD: Article
+const jsonLdArticle = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  '@id': `${PAGE_URL}#article`,
+  headline: `${typeData.japaneseName}（${typeData.nameEn}）の特徴・グループポジション・相性完全ガイド`,
+  url: PAGE_URL,
+  description: `友達相性診断の結果「${typeData.japaneseName}」。${typeData.catchphrase} グループでの役割・6タイプ別相性・友情エピソードを詳しく解説。`,
+  datePublished: meta.publishedAt,
+  dateModified: meta.updatedAt,
+  author: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+    name: '診断ナビ',
+    url: SITE_URL,
+  },
+  publisher: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+    name: '診断ナビ',
+    url: SITE_URL,
+  },
+  about: {
+    '@type': 'Thing',
+    name: '友情・対人関係 心理学',
+    sameAs: 'https://doi.org/10.2307/1131834',
+  },
+};
+
+// JSON-LD: BreadcrumbList
+const jsonLdBreadcrumb = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'ホーム', item: SITE_URL },
+    { '@type': 'ListItem', position: 2, name: '診断一覧', item: `${SITE_URL}/diagnosis/` },
+    { '@type': 'ListItem', position: 3, name: '友達相性診断', item: `${SITE_URL}/diagnosis/friend-compat/` },
+    { '@type': 'ListItem', position: 4, name: typeData.japaneseName, item: PAGE_URL },
+  ],
+};
+
+const jsonLdAll = [jsonLdWebApp, jsonLdArticle, jsonLdBreadcrumb];
+
+// 関連診断
+const relatedDiagnoses = [
+  { title: 'MBTI相性診断', href: '/diagnosis/mbti-compat/', icon: '🧩', badge: '人気' },
+  { title: '多重知能テスト', href: '/diagnosis/multi-int/', icon: '🦉' },
+  { title: '完璧主義診断', href: '/diagnosis/perfectionism/', icon: '🔱' },
+  { title: 'DiSC診断', href: '/diagnosis/disc/', icon: '💼' },
+];
+
+// 招待用URLモック（実装はui-ux-designerが担当）
+const inviteBaseUrl = `${SITE_URL}/invite/friend-compat/?from=${typeId}`;
+---
+
+<ResultLayout
+  diagnosisId="friend-compat"
+  typeId={typeId}
+  typeName={typeData.japaneseName}
+  diagnosisName="友達相性診断"
+  characterEmoji={typeData.emoji}
+  characterName={typeData.nameEn}
+  tagline={typeData.catchphrase}
+  shareUrl={PAGE_URL}
+  pageTitle={`${typeData.japaneseName}【友達相性診断】特徴・グループ役割・6タイプ相性 | 診断ナビ`}
+  pageDescription={`友達相性診断の結果は「${typeData.japaneseName}」。${typeData.catchphrase} グループでの役割・友情エピソード・6タイプ別相性スコアを詳しく解説。招待機能で友達と無料で相性チェック。`}
+  relatedDiagnoses={relatedDiagnoses}
+  jsonLd={jsonLdAll}
+>
+  {/* ========== 概要タブ ========== */}
+  <Fragment slot="overview">
+    <div class="fcr-overview">
+      <div class="fcr-aio-block">
+        <p class="fcr-aio-title">このページでわかること</p>
+        <ul class="fcr-aio-list">
+          <li>{typeData.japaneseName}（{typeData.nameEn}）の傾向・グループでの役割・友情エピソード</li>
+          <li>友達としての強み4項目・気をつけたい傾向4項目</li>
+          <li>6タイプ別相性スコアと招待機能の使い方（完全無料・無制限）</li>
+        </ul>
+      </div>
+
+      <div class="fcr-description">
+        {typeData.description.split('\n').filter((s: string) => s.trim()).map((para: string) => (
+          <p class="fcr-body">{para.trim()}</p>
+        ))}
+      </div>
+
+      <div class="fcr-role-block">
+        <h3 class="fcr-h3">グループでの理想ポジション</h3>
+        <div class="fcr-role-content">
+          {typeData.bestRoleInGroup.split('\n').filter((s: string) => s.trim()).map((para: string) => (
+            <p class="fcr-body">{para.trim()}</p>
+          ))}
+        </div>
+      </div>
+
+      <div class="fcr-theory-note">
+        <p>
+          この診断結果はBig Five特性理論（Costa &amp; McCrae 1992）・FIRO-B（Schutz 1958）・
+          Hartup（1996）友情研究
+          （<a href="https://doi.org/10.2307/1131834" target="_blank" rel="noopener noreferrer">doi:10.2307/1131834</a>、2026-05-20確認）
+          に基づく傾向把握のための参考情報です。
+          医学的・臨床的な診断ではありません。
+        </p>
+      </div>
+
+      <div class="fcr-freshness">
+        <time datetime={meta.updatedAt}>{meta.updatedAt}</time> 時点の情報。
+        月1回以上の鮮度確認を実施しています。
+      </div>
+    </div>
+  </Fragment>
+
+  {/* ========== 強みタブ ========== */}
+  <Fragment slot="strengths">
+    <div class="fcr-strengths">
+      <h3 class="fcr-section-h3">{typeData.japaneseName}の友達としての4つの強み</h3>
+      <ul class="fcr-strength-list">
+        {typeData.friendStrengths.map((s: string) => (
+          <li class="fcr-strength-item">
+            <span class="fcr-strength-icon" aria-hidden="true">✅</span>
+            <span>{s}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </Fragment>
+
+  {/* ========== 注意点タブ ========== */}
+  <Fragment slot="weaknesses">
+    <div class="fcr-weaknesses">
+      <h3 class="fcr-section-h3">気をつけたい4つの傾向</h3>
+      <ul class="fcr-weakness-list">
+        {typeData.friendWeaknesses.map((w: string) => (
+          <li class="fcr-weakness-item">
+            <span class="fcr-weakness-icon" aria-hidden="true">⚡</span>
+            <span>{w}</span>
+          </li>
+        ))}
+      </ul>
+      <div class="fcr-weakness-note">
+        気をつけたい傾向は「直すべき欠点」ではなく、「強みと表裏一体の特性」です。
+        傾向を知ることで、より良い友情の築き方が見えてきます。
+      </div>
+    </div>
+  </Fragment>
+
+  {/* ========== 友人タブ（友情エピソード・フル公開） ========== */}
+  <Fragment slot="friend">
+    <div class="fcr-friend">
+      <h3 class="fcr-section-h3">{typeData.japaneseName}のよくある友情エピソード</h3>
+      <div class="fcr-scenes">
+        {typeData.typicalScenes.map((scene: { title: string; content: string }) => (
+          <div class="fcr-scene-card">
+            <h4 class="fcr-scene-title">{scene.title}</h4>
+            <p class="fcr-scene-content">{scene.content}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </Fragment>
+
+  {/* ========== 仕事タブ（PASS壁） ========== */}
+  <Fragment slot="work">
+    <div class="fcr-work">
+      <div class="fcr-pass-cta">
+        <p class="fcr-pass-desc">
+          {typeData.japaneseName}が活きやすい職場環境・仕事スタイル・向いている職種の詳細は
+          ¥390 PASSで確認できます。
+        </p>
+        <a href="/pass/" class="fcr-pass-btn">
+          <span>¥390 PASSで仕事レポートを読む</span>
+          <span aria-hidden="true">→</span>
+        </a>
+        <p class="fcr-pass-sub">買切 / 全診断に使用可 / 登録不要</p>
+      </div>
+    </div>
+  </Fragment>
+
+  {/* ========== 恋愛タブ（PASS壁） ========== */}
+  <Fragment slot="love">
+    <div class="fcr-love">
+      <div class="fcr-pass-cta">
+        <p class="fcr-pass-desc">
+          {typeData.japaneseName}の恋愛傾向・相性タイプ・パートナーとの関係の詳細は¥390 PASSで確認できます。
+        </p>
+        <a href="/pass/" class="fcr-pass-btn">
+          <span>¥390 PASSで恋愛レポートを読む</span>
+          <span aria-hidden="true">→</span>
+        </a>
+      </div>
+    </div>
+  </Fragment>
+
+  {/* ========== 家族タブ（PASS壁） ========== */}
+  <Fragment slot="family">
+    <div class="fcr-family">
+      <div class="fcr-pass-cta">
+        <p class="fcr-pass-desc">
+          {typeData.japaneseName}の家族関係・親子・兄弟との関わり方の詳細は¥390 PASSで確認できます。
+        </p>
+        <a href="/pass/" class="fcr-pass-btn">
+          <span>¥390 PASSで家族レポートを読む</span>
+          <span aria-hidden="true">→</span>
+        </a>
+      </div>
+    </div>
+  </Fragment>
+
+  {/* ========== 学校タブ（PASS壁） ========== */}
+  <Fragment slot="school">
+    <div class="fcr-school">
+      <div class="fcr-pass-cta">
+        <p class="fcr-pass-desc">
+          {typeData.japaneseName}に合ったクラス・部活・サークルでの立ち回り方は¥390 PASSで確認できます。
+        </p>
+        <a href="/pass/" class="fcr-pass-btn">
+          <span>¥390 PASSで学校レポートを読む</span>
+          <span aria-hidden="true">→</span>
+        </a>
+      </div>
+    </div>
+  </Fragment>
+
+  {/* ========== 有名人タブ（架空類型） ========== */}
+  <Fragment slot="celebrity">
+    <div class="fcr-celebrity">
+      <h3 class="fcr-section-h3">{typeData.japaneseName}の友情スタイル類型</h3>
+      <p class="fcr-celebrity-note">
+        以下は{typeData.japaneseName}の傾向が見られる行動パターンの例です。
+        架空の類型であり、特定の個人を指すものではありません。
+      </p>
+      <ul class="fcr-famous-list">
+        {typeData.typicalScenes.map((scene: { title: string; content: string }) => (
+          <li class="fcr-famous-item">
+            <h4 class="fcr-famous-title">{scene.title}</h4>
+            <p class="fcr-famous-note">{scene.content}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </Fragment>
+
+  {/* ========== 成長タブ（PASS壁） ========== */}
+  <Fragment slot="growth">
+    <div class="fcr-growth">
+      <div class="fcr-pass-cta">
+        <p class="fcr-pass-desc">
+          {typeData.japaneseName}が友情をさらに深めるための実践Tips・週次プランは¥390 PASSで確認できます。
+        </p>
+        <a href="/pass/" class="fcr-pass-btn">
+          <span>¥390 PASSで成長プランを読む</span>
+          <span aria-hidden="true">→</span>
+        </a>
+        <p class="fcr-pass-sub">AIプロンプトカード付き・複数診断の統合管理</p>
+      </div>
+    </div>
+  </Fragment>
+</ResultLayout>
+
+{/* ========== 結果ページ追加コンテンツ（ResultLayout外） ========== */}
+<Container>
+  {/* ========== 6タイプ別相性ミニグリッド ========== */}
+  <section class="fcr-compat-section" aria-labelledby="fcr-compat-h2">
+    <h2 id="fcr-compat-h2" class="fcr-compat-h2">6タイプ別 相性グリッド</h2>
+    <p class="fcr-compat-note">
+      {typeData.japaneseName}と他の全タイプとの相性スコアです。
+      Hartup（1996）の友情研究に基づく傾向値です。「相性が低い」のではなく「学び合いが多いペア」として理解してください。
+    </p>
+    <div class="fcr-compat-grid">
+      {compatibilities.map(({ otherType, otherData, compat }) => (
+        <div
+          class={`fcr-compat-card fcr-compat-card--${compat.category} ${otherType === typeId ? 'fcr-compat-card--self' : ''}`}
+        >
+          <div class="fcr-compat-header">
+            <span class="fcr-compat-emoji" aria-hidden="true">{otherData.emoji}</span>
+            <div>
+              <p class="fcr-compat-name">{otherData.japaneseName}</p>
+              {otherType === typeId && <span class="fcr-compat-self-badge">あなた</span>}
+            </div>
+            <div class="fcr-compat-score-wrap">
+              <span
+                class="fcr-compat-category"
+                style={`background: ${CATEGORY_COLORS[compat.category]}`}
+              >
+                {CATEGORY_LABELS[compat.category]}
+              </span>
+              <span class="fcr-compat-score">{compat.score}</span>
+            </div>
+          </div>
+          <div class="fcr-compat-bar-bg">
+            <div
+              class="fcr-compat-bar-fill"
+              style={`width: ${compat.score}%; background: ${CATEGORY_COLORS[compat.category]}`}
+            ></div>
+          </div>
+          <p class="fcr-compat-summary">{compat.oneLineSummary}</p>
+          {otherType !== typeId && (
+            <a href={`/diagnosis/friend-compat/result/${otherType}/`} class="fcr-compat-link">
+              {otherData.japaneseName}の詳細 →
+            </a>
+          )}
+        </div>
+      ))}
+    </div>
+    <p class="fcr-compat-disclaimer">
+      ※相性スコアは傾向値です。実際の友情は経験・環境・コミュニケーションによって大きく変わります。
+    </p>
+  </section>
+
+  {/* ========== ★招待モード CTA（重要・大きく） ========== */}
+  <section class="fcr-invite-section" aria-labelledby="fcr-invite-h2">
+    <h2 id="fcr-invite-h2" class="fcr-invite-h2">友達と相性チェック（招待機能）</h2>
+    <div class="fcr-invite-badge">完全無料・無制限・登録不要</div>
+    <p class="fcr-invite-lead">
+      この相性表を友達に見せて、一緒に相性を確かめてみましょう。
+      招待は何人でも・何回でも無料です。
+    </p>
+
+    {/* 招待モード選択UI */}
+    <div class="fcr-invite-modes">
+      <div class="fcr-invite-mode-grid">
+        <a
+          href={`${inviteBaseUrl}&mode=secret`}
+          class="fcr-invite-mode-btn fcr-invite-mode-btn--secret"
+        >
+          <span class="fcr-invite-mode-icon" aria-hidden="true">🤫</span>
+          <span class="fcr-invite-mode-label">こっそりモード</span>
+          <span class="fcr-invite-mode-desc">相手に自分のタイプを知らせずにチェック</span>
+        </a>
+        <a
+          href={`${inviteBaseUrl}&mode=invite`}
+          class="fcr-invite-mode-btn fcr-invite-mode-btn--invite"
+        >
+          <span class="fcr-invite-mode-icon" aria-hidden="true">🔗</span>
+          <span class="fcr-invite-mode-label">招待モード</span>
+          <span class="fcr-invite-mode-desc">友達も診断して双方の相性スコアを確認</span>
+        </a>
+        <a
+          href={`${inviteBaseUrl}&mode=one-way`}
+          class="fcr-invite-mode-btn fcr-invite-mode-btn--oneway"
+        >
+          <span class="fcr-invite-mode-icon" aria-hidden="true">📤</span>
+          <span class="fcr-invite-mode-label">片方向モード</span>
+          <span class="fcr-invite-mode-desc">自分の結果だけを友達に見せる</span>
+        </a>
+        <a
+          href={`${inviteBaseUrl}&mode=full`}
+          class="fcr-invite-mode-btn fcr-invite-mode-btn--full"
+        >
+          <span class="fcr-invite-mode-icon" aria-hidden="true">🤝</span>
+          <span class="fcr-invite-mode-label">完全共有モード</span>
+          <span class="fcr-invite-mode-desc">双方の詳細結果と相性スコアを完全共有</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="fcr-invite-share">
+      <p class="fcr-invite-share-label">この結果をシェアする</p>
+      <div class="fcr-invite-share-btns">
+        <a
+          href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(`友達相性診断で「${typeData.japaneseName}」でした！${typeData.catchphrase} あなたも試してみて`)}&url=${encodeURIComponent(PAGE_URL)}&hashtags=友達相性診断,診断ナビ`}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="fcr-share-btn fcr-share-btn--x"
+        >
+          <span aria-hidden="true">𝕏</span> Xでシェア
+        </a>
+        <a
+          href={`https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(PAGE_URL)}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="fcr-share-btn fcr-share-btn--line"
+        >
+          <span aria-hidden="true">💬</span> LINEで送る
+        </a>
+      </div>
+    </div>
+  </section>
+
+  {/* ========== 思考傾向グラフ（Big5非開示） ========== */}
+  <section class="fcr-trait-section" aria-labelledby="fcr-trait-h2">
+    <h2 id="fcr-trait-h2" class="fcr-trait-h2">特性傾向グラフ</h2>
+    <p class="fcr-trait-note">
+      {typeData.japaneseName}の研究傾向値をグラフ化したものです。
+      個人差があります（参考値）。
+    </p>
+    <div class="fcr-trait-bars" role="list" aria-label="特性傾向グラフ">
+      {traitLabels.map(({ key, label }) => {
+        const score = typeData.big5[key as keyof typeof typeData.big5];
+        return (
+          <div class="fcr-trait-row" role="listitem">
+            <span class="fcr-trait-label">{label}</span>
+            <div
+              class="fcr-trait-bar-bg"
+              role="meter"
+              aria-valuenow={score}
+              aria-valuemin={0}
+              aria-valuemax={100}
+              aria-label={`${label}: ${score}%`}
+            >
+              <div class="fcr-trait-bar-fill" style={`width: ${score}%`}></div>
+            </div>
+            <span class="fcr-trait-val">{score}</span>
+          </div>
+        );
+      })}
+    </div>
+  </section>
+
+  {/* ========== もう一度診断する ========== */}
+  <section class="fcr-retake-section">
+    <h2 class="fcr-retake-h2">診断をやり直す</h2>
+    <p class="fcr-retake-desc">
+      回答を変えると違うタイプになる場合があります。
+      複数回試して、自分の傾向を確認するのもひとつの使い方です。
+    </p>
+    <a href="/diagnosis/friend-compat/" class="fcr-retake-btn">
+      もう一度友達相性診断をする
+    </a>
+  </section>
+
+  {/* ========== 他タイプを見る ========== */}
+  <section class="fcr-other-types-section" aria-labelledby="fcr-other-h2">
+    <h2 id="fcr-other-h2" class="fcr-other-h2">他の友達タイプを見る</h2>
+    <div class="fcr-other-types-grid">
+      {(Object.keys(types) as FriendType[])
+        .filter((id) => id !== typeId)
+        .map((id) => {
+          const data = types[id];
+          return (
+            <a href={`/diagnosis/friend-compat/result/${id}/`} class="fcr-other-type-card">
+              <span class="fcr-other-emoji" aria-hidden="true">{data.emoji}</span>
+              <span class="fcr-other-name">{data.japaneseName}</span>
+              <span class="fcr-other-catch">{data.catchphrase.slice(0, 18)}…</span>
+            </a>
+          );
+        })
+      }
+    </div>
+  </section>
+
+  {/* ========== FAQ ========== */}
+  <section class="fcr-faq-section" aria-labelledby="fcr-faq-h2">
+    <h2 id="fcr-faq-h2" class="fcr-faq-h2">よくある質問</h2>
+    <dl class="fcr-faq-list">
+      {faqs.map(({ question, answer }) => (
+        <div class="fcr-faq-item">
+          <dt class="fcr-faq-q">{question}</dt>
+          <dd class="fcr-faq-a">{answer}</dd>
+        </div>
+      ))}
+    </dl>
+  </section>
+</Container>
+
+<style>
+/* ========== 概要 ========== */
+.fcr-aio-block {
+  background: #fef3c7;
+  border-left: 4px solid #f59e0b;
+  border-radius: 0 0.5rem 0.5rem 0;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.25rem;
+}
+.fcr-aio-title {
+  font-weight: 700;
+  font-size: 0.8rem;
+  color: #92400e;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0 0 0.5rem;
+}
+.fcr-aio-list {
+  margin: 0;
+  padding-left: 1.5rem;
+  font-size: 0.85rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+.fcr-body {
+  font-size: 0.95rem;
+  line-height: 1.8;
+  color: #374151;
+  margin: 0 0 0.75rem;
+}
+.fcr-description {
+  margin-bottom: 1.5rem;
+}
+.fcr-h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 0 0 0.75rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+.fcr-role-block {
+  margin-top: 1.5rem;
+}
+.fcr-role-content {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 0.5rem;
+  padding: 1rem 1.25rem;
+}
+.fcr-theory-note {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+  font-size: 0.8rem;
+  color: #6b7280;
+  line-height: 1.6;
+  margin-top: 1.5rem;
+}
+.fcr-theory-note p {
+  margin: 0;
+}
+.fcr-freshness {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  margin-top: 0.75rem;
+}
+
+/* ========== 強み・弱み ========== */
+.fcr-section-h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 0 0 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+.fcr-strength-list,
+.fcr-weakness-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.fcr-strength-item,
+.fcr-weakness-item {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+.fcr-strength-icon,
+.fcr-weakness-icon {
+  flex-shrink: 0;
+  font-size: 1.1em;
+}
+.fcr-weakness-note {
+  margin-top: 1.25rem;
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+  font-size: 0.85rem;
+  color: #92400e;
+  line-height: 1.6;
+}
+
+/* ========== 友情エピソード ========== */
+.fcr-scenes {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+.fcr-scene-card {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 0.75rem;
+  padding: 1rem 1.25rem;
+}
+.fcr-scene-title {
+  font-size: 0.9rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem;
+  color: #15803d;
+}
+.fcr-scene-content {
+  font-size: 0.88rem;
+  line-height: 1.7;
+  color: #374151;
+  margin: 0;
+}
+
+/* ========== PASSプレビュー ========== */
+.fcr-pass-cta {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  color: #fff;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+.fcr-pass-desc {
+  font-size: 0.875rem;
+  opacity: 0.9;
+  line-height: 1.6;
+  margin: 0;
+}
+.fcr-pass-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #fff;
+  color: #d97706;
+  font-weight: 700;
+  font-size: 1rem;
+  padding: 0.75rem 1.75rem;
+  border-radius: 3rem;
+  text-decoration: none;
+  transition: transform 0.15s;
+}
+.fcr-pass-btn:hover {
+  transform: translateY(-1px);
+}
+.fcr-pass-sub {
+  font-size: 0.75rem;
+  opacity: 0.75;
+  margin: 0;
+}
+
+/* ========== 架空類型 ========== */
+.fcr-celebrity-note {
+  font-size: 0.8rem;
+  color: #6b7280;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+}
+.fcr-famous-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.fcr-famous-item {
+  padding: 0.75rem 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  background: #fafafa;
+}
+.fcr-famous-title {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #374151;
+  margin: 0 0 0.4rem;
+}
+.fcr-famous-note {
+  font-size: 0.85rem;
+  color: #4b5563;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* ========== 相性グリッド ========== */
+.fcr-compat-section {
+  padding: 2rem 1rem;
+  border-top: 1px solid #e5e7eb;
+}
+.fcr-compat-h2 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+.fcr-compat-note {
+  font-size: 0.85rem;
+  color: #6b7280;
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
+}
+.fcr-compat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 0.75rem;
+}
+.fcr-compat-card {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.fcr-compat-card--self {
+  border: 2px solid #f59e0b;
+  background: #fffbf0;
+}
+.fcr-compat-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.fcr-compat-emoji {
+  font-size: 1.75rem;
+  flex-shrink: 0;
+}
+.fcr-compat-name {
+  font-size: 0.9rem;
+  font-weight: 700;
+  margin: 0;
+  color: #374151;
+}
+.fcr-compat-self-badge {
+  display: inline-block;
+  background: #f59e0b;
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 0.1rem 0.4rem;
+  border-radius: 0.25rem;
+  margin-left: 0.25rem;
+}
+.fcr-compat-score-wrap {
+  margin-left: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.2rem;
+}
+.fcr-compat-category {
+  display: inline-block;
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 0.1rem 0.4rem;
+  border-radius: 0.25rem;
+}
+.fcr-compat-score {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #374151;
+  line-height: 1;
+}
+.fcr-compat-bar-bg {
+  background: #e5e7eb;
+  border-radius: 1rem;
+  height: 0.5rem;
+  overflow: hidden;
+}
+.fcr-compat-bar-fill {
+  height: 100%;
+  border-radius: 1rem;
+  transition: width 0.5s ease;
+}
+.fcr-compat-summary {
+  font-size: 0.82rem;
+  color: #4b5563;
+  margin: 0;
+  line-height: 1.5;
+}
+.fcr-compat-link {
+  font-size: 0.78rem;
+  color: #d97706;
+  text-decoration: none;
+  font-weight: 600;
+}
+.fcr-compat-link:hover {
+  text-decoration: underline;
+}
+.fcr-compat-disclaimer {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  margin-top: 1rem;
+  line-height: 1.5;
+}
+
+/* ========== 招待セクション ========== */
+.fcr-invite-section {
+  padding: 2rem 1rem;
+  border-top: 1px solid #e5e7eb;
+  background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%);
+  border-radius: 1rem;
+  margin-block: 1rem;
+}
+.fcr-invite-h2 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  color: #15803d;
+}
+.fcr-invite-badge {
+  display: inline-block;
+  background: #22c55e;
+  color: #fff;
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 0.25rem 0.8rem;
+  border-radius: 2rem;
+  margin-bottom: 0.75rem;
+}
+.fcr-invite-lead {
+  font-size: 0.9rem;
+  line-height: 1.7;
+  color: #374151;
+  margin-bottom: 1.5rem;
+}
+.fcr-invite-modes {
+  margin-bottom: 1.5rem;
+}
+.fcr-invite-mode-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 0.75rem;
+}
+.fcr-invite-mode-btn {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  padding: 1rem;
+  border-radius: 0.75rem;
+  text-decoration: none;
+  border: 2px solid transparent;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.fcr-invite-mode-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0 0 0 / 0.12);
+}
+.fcr-invite-mode-btn--secret {
+  background: #f5f3ff;
+  border-color: #8b5cf6;
+}
+.fcr-invite-mode-btn--invite {
+  background: #eff6ff;
+  border-color: #3b82f6;
+}
+.fcr-invite-mode-btn--oneway {
+  background: #fff7ed;
+  border-color: #f59e0b;
+}
+.fcr-invite-mode-btn--full {
+  background: #f0fdf4;
+  border-color: #22c55e;
+}
+.fcr-invite-mode-icon {
+  font-size: 1.5rem;
+}
+.fcr-invite-mode-label {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #374151;
+}
+.fcr-invite-mode-desc {
+  font-size: 0.78rem;
+  color: #6b7280;
+  line-height: 1.4;
+}
+.fcr-invite-share {
+  text-align: center;
+}
+.fcr-invite-share-label {
+  font-size: 0.85rem;
+  color: #6b7280;
+  margin-bottom: 0.75rem;
+}
+.fcr-invite-share-btns {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.fcr-share-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.5rem;
+  border-radius: 2rem;
+  font-weight: 700;
+  font-size: 0.9rem;
+  text-decoration: none;
+  transition: opacity 0.15s;
+}
+.fcr-share-btn:hover {
+  opacity: 0.85;
+}
+.fcr-share-btn--x {
+  background: #000;
+  color: #fff;
+}
+.fcr-share-btn--line {
+  background: #06c755;
+  color: #fff;
+}
+
+/* ========== 特性グラフ ========== */
+.fcr-trait-section {
+  padding: 2rem 1rem;
+  border-top: 1px solid #e5e7eb;
+}
+.fcr-trait-h2 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+.fcr-trait-note {
+  font-size: 0.8rem;
+  color: #6b7280;
+  margin-bottom: 1.25rem;
+  line-height: 1.5;
+}
+.fcr-trait-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.fcr-trait-row {
+  display: grid;
+  grid-template-columns: 8rem 1fr 2.5rem;
+  align-items: center;
+  gap: 0.75rem;
+}
+.fcr-trait-label {
+  font-size: 0.85rem;
+  color: #374151;
+  white-space: nowrap;
+}
+.fcr-trait-bar-bg {
+  background: #e5e7eb;
+  border-radius: 1rem;
+  height: 0.625rem;
+  overflow: hidden;
+}
+.fcr-trait-bar-fill {
+  background: #f59e0b;
+  height: 100%;
+  border-radius: 1rem;
+  transition: width 0.5s ease;
+}
+.fcr-trait-val {
+  font-size: 0.8rem;
+  color: #6b7280;
+  text-align: right;
+}
+
+/* ========== もう一度 ========== */
+.fcr-retake-section {
+  text-align: center;
+  padding: 2rem 1rem;
+  border-top: 1px solid #e5e7eb;
+  margin-top: 1rem;
+}
+.fcr-retake-h2 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+.fcr-retake-desc {
+  font-size: 0.9rem;
+  color: #6b7280;
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}
+.fcr-retake-btn {
+  display: inline-block;
+  background: #f59e0b;
+  color: #fff;
+  font-weight: 700;
+  padding: 0.75rem 2rem;
+  border-radius: 3rem;
+  text-decoration: none;
+  font-size: 0.95rem;
+  transition: opacity 0.15s;
+}
+.fcr-retake-btn:hover {
+  opacity: 0.88;
+}
+
+/* ========== 他タイプ ========== */
+.fcr-other-types-section {
+  padding: 2rem 1rem;
+  border-top: 1px solid #e5e7eb;
+}
+.fcr-other-h2 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+.fcr-other-types-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 0.75rem;
+}
+.fcr-other-type-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
+  text-align: center;
+}
+.fcr-other-type-card:hover {
+  border-color: #f59e0b;
+  box-shadow: 0 2px 8px rgba(245 158 11 / 0.1);
+  transform: translateY(-2px);
+}
+.fcr-other-emoji {
+  font-size: 1.75rem;
+}
+.fcr-other-name {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #d97706;
+}
+.fcr-other-catch {
+  font-size: 0.7rem;
+  color: #6b7280;
+  line-height: 1.4;
+}
+
+/* ========== FAQ ========== */
+.fcr-faq-section {
+  padding: 2rem 1rem;
+  border-top: 1px solid #e5e7eb;
+}
+.fcr-faq-h2 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 1.25rem;
+}
+.fcr-faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.fcr-faq-item {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+.fcr-faq-q {
+  font-weight: 700;
+  font-size: 0.9rem;
+  padding: 0.875rem 1.25rem;
+  background: #fef3c7;
+  margin: 0;
+  display: block;
+}
+.fcr-faq-q::before {
+  content: 'Q. ';
+  color: #d97706;
+}
+.fcr-faq-a {
+  font-size: 0.875rem;
+  line-height: 1.7;
+  padding: 0.875rem 1.25rem;
+  margin: 0;
+  color: #4b5563;
+}
+.fcr-faq-a::before {
+  content: 'A. ';
+  font-weight: 700;
+  color: #16a34a;
+}
+
+/* ========== レスポンシブ ========== */
+@media (max-width: 480px) {
+  .fcr-trait-row {
+    grid-template-columns: 6rem 1fr 2rem;
+  }
+  .fcr-trait-label {
+    font-size: 0.75rem;
+  }
+  .fcr-other-types-grid {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+  .fcr-compat-grid {
+    grid-template-columns: 1fr;
+  }
+  .fcr-invite-mode-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+@media (max-width: 360px) {
+  .fcr-other-types-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .fcr-invite-mode-grid {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
