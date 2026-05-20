@@ -1,0 +1,1221 @@
+---
+/**
+ * MBTI恋愛相性 16タイプ別ページ（動的生成）
+ * KW: {タイプ} 恋愛相性（各タイプ）
+ * Phase 1 第5優先
+ *
+ * 学術根拠:
+ *   - Keirsey D (1998) Please Understand Me II
+ *   - Jung CG (1921) Psychological Types
+ *   - Beebe J (2017) Energies and Patterns in Psychological Type
+ *   - Myers IB (1998) MBTI Manual
+ *   - Sternberg RJ (1986) A triangular theory of love. Psychological Review, 93(2), 119-135
+ *     https://doi.org/10.1037/0033-295X.93.2.119
+ *
+ * SEO/AIO対応:
+ * - JSON-LD: Article + FAQPage + BreadcrumbList（@id連結）
+ * - 16タイプ × 恋愛特性・強み・注意点
+ * - 15タイプとの恋愛相性ランキング（loveCompat スコア順）
+ * - ソウルメイト系TOP3・学び合いペアTOP3・同タイプ同士
+ * - YMYL回避: 医学的診断・治療表記ゼロ
+ * - 「相性悪い」NG → 「成長機会の多いペア」表現
+ *
+ * 確認日: 2026-05-20
+ */
+import BaseLayout from '../../../../../layouts/BaseLayout.astro';
+import Container from '../../../../../components/Container.astro';
+import { MBTI_TYPES } from '../../../../../data/diagnoses/mbti-compat/meta';
+import type { MBTIType } from '../../../../../data/diagnoses/mbti-compat/meta';
+import { meta as mbtiCompatMeta } from '../../../../../data/diagnoses/mbti-compat/meta';
+import { typesDetail } from '../../../../../data/diagnoses/mbti-compat/types-detail';
+import {
+  getAllPairsForType,
+  getCompatibility,
+  getCategoryLabel,
+  getCategoryColor,
+} from '../../../../../data/diagnoses/mbti-compat/results';
+
+export async function getStaticPaths() {
+  return MBTI_TYPES.map((type) => ({
+    params: { type },
+  }));
+}
+
+const { type } = Astro.params as { type: MBTIType };
+const detail = typesDetail[type];
+
+const SITE_URL = 'https://shindan-navi.jp';
+const PAGE_URL = `${SITE_URL}/diagnosis/mbti-compat/love/${type}/`;
+const PARENT_URL = `${SITE_URL}/diagnosis/mbti-compat/love/`;
+
+const PUBLISHED_AT = '2026-05-20';
+const UPDATED_AT = '2026-05-20';
+
+// 15タイプとの恋愛相性（スコア降順）
+const allPairs = getAllPairsForType(type).sort((a, b) => b.score - a.score);
+
+// ソウルメイト系（スコア上位3・85点以上が理想だが少ない場合は上位3固定）
+const soulmatePairs = allPairs.slice(0, 3);
+
+// 学び合いペア（スコア下位3）
+const growthPairs = [...allPairs].sort((a, b) => a.score - b.score).slice(0, 3);
+
+// 同タイプ同士
+const selfPair = getCompatibility(type, type);
+
+// 気質バッジ色マッピング
+const tempColor: Record<string, string> = {
+  NT: '#4f46e5',
+  NF: '#059669',
+  SJ: '#b45309',
+  SP: '#dc2626',
+};
+
+// タイプ別 恋愛文脈の強み（機能スタック視点）
+const loveLensDesc: Record<string, string> = {
+  INTJ: `Ni（内向的直観）主導の長期ビジョンで、パートナーシップも深く設計します。感情表現は少なめですが、信頼した相手への誠実さは揺るぎないものがあります。`,
+  INTP: `Ti（内向的思考）の論理構造を通じて愛情を表現する傾向があります。知的共鳴のある相手への深い献身と、自分の思考空間を尊重してくれる関係が合います。`,
+  ENTJ: `Te（外向的思考）とNi（内向的直観）の組み合わせで、関係を能動的に構築します。対等なパートナーシップを求め、共に目標を持てる関係に充実感を覚えます。`,
+  ENTP: `Ne（外向的直観）の豊かなアイデアで関係に刺激をもたらします。知的な議論を楽しめる相手との関係が長続きしやすく、退屈を嫌うため変化と新鮮さが大切です。`,
+  INFJ: `Ni（内向的直観）とFe（外向的感情）の組み合わせで、深い感情的なつながりを求めます。相手の内面を直感的に感じ取り、魂レベルの共鳴を大切にします。`,
+  INFP: `Fi（内向的感情）の深い価値観体系が恋愛の基盤です。真の自己を受け入れてくれる相手との深い精神的な絆を最重視します。`,
+  ENFJ: `Fe（外向的感情）主導で、パートナーの成長と幸福を深く気にかけます。感情的なサポートが自然にできる半面、自分のニーズを後回しにしがちな点に注意が必要です。`,
+  ENFP: `Ne（外向的直観）とFi（内向的感情）の組み合わせで、理想の関係に強い情熱を持ちます。相手の可能性を信じ、ともに成長する関係に深い充実感を覚えます。`,
+  ISTJ: `Si（内向的感覚）主導の安定性と誠実さが恋愛の基盤です。言葉より行動で愛情を示し、長期的なコミットメントと責任感が際立ちます。`,
+  ISFJ: `Si（内向的感覚）とFe（外向的感情）の組み合わせで、献身的なサポートが自然にできます。相手の細かなニーズに気づき、安定した温かい関係を大切にします。`,
+  ESTJ: `Te（外向的思考）主導で関係を能動的に管理します。責任感と明確なコミットメントを大切にし、長期的な安定を基盤にした関係を築きます。`,
+  ESFJ: `Fe（外向的感情）主導で、調和と相手への配慮を最優先にします。感情的な温かさと実際的なサポートで、パートナーに安心感をもたらします。`,
+  ISTP: `Ti（内向的思考）とSe（外向的感覚）の組み合わせで、現実的な問題解決と実際的なサポートを示します。束縛より自由を好み、お互いの独立性を尊重する関係が合います。`,
+  ISFP: `Fi（内向的感情）の深い価値観と、Se（外向的感覚）の今この瞬間の体験を大切にします。真の自己表現ができる安全な関係を求めます。`,
+  ESTP: `Se（外向的感覚）主導で、今この瞬間の楽しさと刺激を大切にします。行動でサポートを示し、体験を共有することで絆を深める傾向があります。`,
+  ESFP: `Se（外向的感覚）とFe（外向的感情）の組み合わせで、ともに楽しむことへの強い情熱があります。自発的な楽しさと温かさで関係に活力をもたらします。`,
+};
+
+// 恋愛文脈の注意点
+const loveCautionDesc: Record<string, string> = {
+  INTJ: `感情表現が少なく、愛情が伝わりにくい場合があります。パートナーの感情ニーズを定期的に確認する意識が、関係の安定につながります。`,
+  INTP: `感情より論理を優先しすぎる場面があります。パートナーの感情的なニーズを論理で解決しようとせず、まず「聴く」姿勢が大切です。`,
+  ENTJ: `主導的な姿勢がパートナーの自律性を損なう場合があります。支配より協力を意識し、相手の意見を積極的に取り入れる対話が重要です。`,
+  ENTP: `アイデアや議論への熱中が、パートナーとの感情的なつながりを後回しにする場合があります。定期的に感情面の対話を意識することが関係を深めます。`,
+  INFJ: `理想が高く、現実とのギャップに傷つきやすい面があります。完璧な関係より「成長する関係」という視点が、長期的な充実につながります。`,
+  INFP: `理想化しすぎて、現実のパートナーとの差にがっかりする場合があります。相手の実際の姿を大切にする視点と、適切な期待値の調整が重要です。`,
+  ENFJ: `自分の感情ニーズを後回しにして疲弊する場合があります。与えるだけでなく「受け取ること」も関係の健全さに必要だと意識することが大切です。`,
+  ENFP: `理想の関係を追い求めすぎて、現実の関係の価値を見落とす場合があります。「今ここにある関係」を丁寧に育てる視点が長続きの鍵です。`,
+  ISTJ: `変化への抵抗が、パートナーの成長や変化のニーズと摩擦を生む場合があります。柔軟性を意識し、新しい経験を共に試みる開放性が関係を豊かにします。`,
+  ISFJ: `自分の意見・感情・限界を伝えにくい傾向があります。遠慮なく自分のニーズを伝えることが、より対等で健全な関係につながります。`,
+  ESTJ: `効率や論理でパートナーを評価してしまう場合があります。愛情は「成果」でなく「存在」に向けるという視点が、深い関係を育てます。`,
+  ESFJ: `批判を過剰に気にして、自分の意見を言えない場合があります。適切に自己主張することが、より対等で充実した関係を作ります。`,
+  ISTP: `感情表現が少なく、パートナーに「つながっている感覚」を感じさせにくい場合があります。定期的に気持ちを言葉にする練習が関係の深化につながります。`,
+  ISFP: `批判を個人攻撃として受け取りやすく、傷つきやすい面があります。フィードバックと批判を区別し、建設的な対話を育てる姿勢が大切です。`,
+  ESTP: `長期的なコミットメントより刺激を優先しがちな面があります。関係の安定性をパートナーが必要としているサインに気づく観察力が大切です。`,
+  ESFP: `衝動的な楽しさを優先して、パートナーとの将来計画を後回しにする場合があります。定期的に関係の方向性について対話する時間を持つことが重要です。`,
+};
+
+// FAQ 3問（各タイプ固有）
+const faqs = [
+  {
+    question: `${type}の恋愛相性が最も高いタイプはどれですか？`,
+    answer:
+      `スコア上位のペアは${soulmatePairs.map((d) => (d.type1 === type ? d.type2 : d.type1)).join('・')}です。Beebe（2017）の機能スタック理論とKeirsey（1998）の気質分析に基づく傾向値であり、個人差があります。詳細な相性内容は各ペアの相性チェックツールでご確認ください。`,
+  },
+  {
+    question: `${type}と相性スコアが低いタイプとの恋愛は難しいですか？`,
+    answer:
+      `スコアが低いペアは「成長機会の多いペア」として捉えていただければ幸いです。Sternberg（1986）の愛の三角形理論が示すように、恋愛関係の質は「親密性・情熱・コミットメント」の意識的な積み重ねによって決まります。スコアは出発点の傾向であり、関係の質を決定するものではありません。`,
+  },
+  {
+    question: `${type}同士（${type}×${type}）の恋愛相性はどうですか？`,
+    answer:
+      `同タイプ同士の相性スコアは${selfPair.score}点（${getCategoryLabel(selfPair.category)}）です。価値観・思考スタイルが近いため初期の共感度は高い傾向がありますが、Beebe（2017）の機能スタック理論では、同タイプは補完関係を持たないため互いの盲点が重なりやすい点に注意が必要です。`,
+  },
+];
+
+// JSON-LD: Article
+const jsonLdArticle = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  '@id': `${PAGE_URL}#article`,
+  mainEntityOfPage: { '@type': 'WebPage', '@id': PAGE_URL },
+  headline: `【${type}】の恋愛相性 完全ガイド｜全15タイプとのランキング`,
+  description: `${type}（${detail.name}）の恋愛傾向・15タイプとの恋愛相性ランキング。Keirsey・Jung・Beebe・Sternberg理論に基づく傾向値。`,
+  url: PAGE_URL,
+  datePublished: PUBLISHED_AT,
+  dateModified: UPDATED_AT,
+  inLanguage: 'ja',
+  author: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+    name: '診断ナビ',
+  },
+  publisher: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+    name: '診断ナビ',
+  },
+  citation: [
+    ...mbtiCompatMeta.references.map((ref) => ({
+      '@type': 'Book',
+      name: ref.title,
+      author: ref.author,
+      datePublished: String(ref.year),
+      publisher: ref.publisher,
+      url: ref.url,
+    })),
+    {
+      '@type': 'ScholarlyArticle',
+      name: 'A triangular theory of love',
+      author: 'Sternberg RJ',
+      datePublished: '1986',
+      publisher: 'Psychological Review',
+      url: 'https://doi.org/10.1037/0033-295X.93.2.119',
+    },
+  ],
+};
+
+// JSON-LD: FAQPage
+const jsonLdFAQ = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  '@id': `${PAGE_URL}#faq`,
+  mainEntity: faqs.map(({ question, answer }) => ({
+    '@type': 'Question',
+    name: question,
+    acceptedAnswer: { '@type': 'Answer', text: answer },
+  })),
+};
+
+// JSON-LD: BreadcrumbList
+const jsonLdBreadcrumb = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  '@id': `${PAGE_URL}#breadcrumb`,
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'ホーム', item: SITE_URL },
+    { '@type': 'ListItem', position: 2, name: '診断一覧', item: `${SITE_URL}/diagnosis/` },
+    { '@type': 'ListItem', position: 3, name: 'MBTI相性一覧', item: `${SITE_URL}/diagnosis/mbti-compat/` },
+    { '@type': 'ListItem', position: 4, name: 'MBTI恋愛相性', item: PARENT_URL },
+    { '@type': 'ListItem', position: 5, name: `${type}の恋愛相性`, item: PAGE_URL },
+  ],
+};
+
+const jsonLdAll = [jsonLdArticle, jsonLdFAQ, jsonLdBreadcrumb];
+
+const pageTitle = `${type}の恋愛相性【全15タイプ別ランキング】｜診断ナビ`;
+const pageDesc = `${type}（${detail.name}）の恋愛傾向・${type}との相性が高いタイプ・成長機会のあるペアを全15タイプ別に解説。Keirsey・Jung・Beebe・Sternberg理論に基づく傾向値。無料・登録不要。`;
+
+// temp color for this type
+const myTempColor = tempColor[detail.temperament] ?? '#6d28d9';
+---
+
+<BaseLayout
+  title={pageTitle}
+  description={pageDesc}
+  canonical={PAGE_URL}
+  jsonLd={jsonLdAll}
+  ogType="article"
+  publishDate={PUBLISHED_AT}
+  lastUpdated={UPDATED_AT}
+  breadcrumbs={[
+    { name: '診断一覧', url: '/diagnosis/' },
+    { name: 'MBTI相性一覧', url: '/diagnosis/mbti-compat/' },
+    { name: 'MBTI恋愛相性', url: '/diagnosis/mbti-compat/love/' },
+    { name: `${type}の恋愛相性`, url: `/diagnosis/mbti-compat/love/${type}/` },
+  ]}
+>
+  {/* ========== ヒーロー ========== */}
+  <section class="mlt-hero" aria-labelledby="mlt-hero-h1" style={`--type-color: ${myTempColor}`}>
+    <div class="mlt-hero-inner">
+      <div class="mlt-hero-badge">Keirsey / Jung / Beebe / Sternberg 理論</div>
+      <div class="mlt-hero-type" aria-hidden="true">{type}</div>
+      <h1 id="mlt-hero-h1" class="mlt-hero-h1">
+        【{type}】の恋愛相性<br />
+        <span class="mlt-hero-meta">完全ガイド｜全15タイプ別ランキング</span>
+      </h1>
+      <p class="mlt-hero-catch">
+        {detail.name}（{type}）の恋愛傾向と、15タイプとの相性を詳しく解説します。
+        気質理論・機能スタック・愛の三角形理論から傾向を分析しています。
+      </p>
+      <div class="mlt-hero-cta-group">
+        <a href={`/diagnosis/mbti-compat/tool/?t1=${type}`} class="mlt-cta-btn mlt-cta-btn--primary">
+          相手タイプと相性チェック →
+        </a>
+        <a href="/diagnosis/mbti-compat/love/" class="mlt-cta-btn mlt-cta-btn--secondary">
+          16タイプ一覧に戻る
+        </a>
+      </div>
+      <p class="mlt-hero-sub">
+        <time datetime={UPDATED_AT}>{UPDATED_AT}</time> 時点の情報・月1回更新
+      </p>
+    </div>
+  </section>
+
+  <Container>
+    {/* ========== AIOブロック ========== */}
+    <div class="mlt-aio-block" role="note" aria-label="このページでわかること">
+      <p class="mlt-aio-title">このページでわかること</p>
+      <ul class="mlt-aio-list">
+        <li>{type}（{detail.name}）の恋愛傾向・loveStyle（Beebe 2017 / Keirsey 1998理論）</li>
+        <li>15タイプとの恋愛相性スコアランキング（降順）</li>
+        <li>恋愛文脈での強み・気をつけたい傾向</li>
+        <li>ソウルメイト系TOP3・学び合いペアTOP3・同タイプ同士の相性</li>
+      </ul>
+      <p class="mlt-aio-updated">
+        学術根拠:
+        <a href="https://keirsey.com/product/please-understand-me-ii/" target="_blank" rel="noopener noreferrer">Keirsey（1998）</a>・
+        <a href="https://press.princeton.edu/books/paperback/9780691018133/psychological-types" target="_blank" rel="noopener noreferrer">Jung（1921）</a>・
+        <a href="https://www.routledge.com/Energies-and-Patterns-in-Psychological-Type-The-reservoir-of-consciousness/Beebe/p/book/9781138859760" target="_blank" rel="noopener noreferrer">Beebe（2017）</a>・
+        <a href="https://doi.org/10.1037/0033-295X.93.2.119" target="_blank" rel="noopener noreferrer">Sternberg（1986）</a>
+        を確認済。
+      </p>
+    </div>
+
+    {/* ========== タイプ基本情報 ========== */}
+    <section class="mlt-section" aria-labelledby="mlt-profile-h2">
+      <h2 id="mlt-profile-h2" class="mlt-h2" style={`border-bottom-color: ${myTempColor}`}>
+        {type}（{detail.name}）の基本プロフィール
+      </h2>
+      <div class="mlt-profile-grid">
+        <div class="mlt-profile-main">
+          <div class="mlt-profile-head">
+            <span class="mlt-type-badge" style={`background: ${myTempColor}`}>{type}</span>
+            <div class="mlt-profile-names">
+              <span class="mlt-profile-name">{detail.name}</span>
+              <span class="mlt-profile-nick">別名: {detail.nickname}</span>
+            </div>
+            <span class="mlt-temp-tag" style={`background: ${myTempColor}22; color: ${myTempColor}; border: 1px solid ${myTempColor}44`}>
+              {detail.temperament}気質
+            </span>
+          </div>
+          <div class="mlt-func-stack">
+            <span class="mlt-func-label">機能スタック（Beebe 2017）:</span>
+            <span class="mlt-func-item mlt-func-d">主機能: {detail.functionStack.dominant}</span>
+            <span class="mlt-func-item mlt-func-a">補助: {detail.functionStack.auxiliary}</span>
+            <span class="mlt-func-item mlt-func-t">三次: {detail.functionStack.tertiary}</span>
+            <span class="mlt-func-item mlt-func-i">劣等: {detail.functionStack.inferior}</span>
+          </div>
+        </div>
+        <div class="mlt-profile-desc">
+          <p class="mlt-lead">{detail.description}</p>
+        </div>
+      </div>
+    </section>
+
+    {/* ========== 恋愛特性 ========== */}
+    <section class="mlt-section" aria-labelledby="mlt-love-h2">
+      <h2 id="mlt-love-h2" class="mlt-h2" style={`border-bottom-color: ${myTempColor}`}>
+        {type}の恋愛傾向
+      </h2>
+      <div class="mlt-love-block">
+        <p class="mlt-love-style">{detail.loveStyle}</p>
+        <p class="mlt-love-lens">{loveLensDesc[type]}</p>
+      </div>
+      <div class="mlt-love-cards">
+        <div class="mlt-love-card mlt-love-card--strength">
+          <h3 class="mlt-love-card-title">恋愛における強み</h3>
+          <ul class="mlt-love-list">
+            {detail.strengths.map((s) => (
+              <li class="mlt-love-item mlt-love-item--strength">{s}</li>
+            ))}
+          </ul>
+        </div>
+        <div class="mlt-love-card mlt-love-card--caution">
+          <h3 class="mlt-love-card-title">気をつけたい傾向</h3>
+          <p class="mlt-love-caution-desc">{loveCautionDesc[type]}</p>
+          <ul class="mlt-love-list">
+            {detail.weaknesses.map((w) => (
+              <li class="mlt-love-item mlt-love-item--caution">{w}</li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    {/* ========== ソウルメイト系 TOP3 ========== */}
+    <section class="mlt-section" aria-labelledby="mlt-soulmate-h2">
+      <h2 id="mlt-soulmate-h2" class="mlt-h2" style={`border-bottom-color: ${myTempColor}`}>
+        {type}との恋愛相性 ソウルメイト系TOP3
+      </h2>
+      <p class="mlt-lead">
+        Beebe（2017）の機能スタック理論とKeirsey（1998）の気質分析で
+        補完性・類似性が高い上位3タイプです。
+        スコアは傾向値であり、個人差があります。
+      </p>
+      <div class="mlt-soulmate-cards">
+        {soulmatePairs.map((d, i) => {
+          const partner = d.type1 === type ? d.type2 : d.type1;
+          const partnerDetail = typesDetail[partner];
+          const color = getCategoryColor(d.category);
+          return (
+            <div class="mlt-soulmate-card">
+              <div class="mlt-soulmate-rank" aria-hidden="true">#{i + 1}</div>
+              <div class="mlt-soulmate-head">
+                <span class="mlt-soulmate-type" style={`background: ${tempColor[partnerDetail.temperament] ?? '#6b7280'}`}>
+                  {partner}
+                </span>
+                <span class="mlt-soulmate-name">{partnerDetail.name}</span>
+                <span class="mlt-soulmate-score" style={`background: ${color}22; color: ${color}`}>
+                  {d.score}点
+                </span>
+                <span class="mlt-soulmate-cat" style={`color: ${color}`}>
+                  {getCategoryLabel(d.category)}
+                </span>
+              </div>
+              <p class="mlt-soulmate-summary">{d.oneLineSummary}</p>
+              <p class="mlt-soulmate-love">{d.loveCompat}</p>
+              <a
+                href={`/diagnosis/mbti-compat/tool/?t1=${type}&t2=${partner}`}
+                class="mlt-soulmate-link"
+                style={`color: ${color}`}
+              >
+                {type}×{partner} の詳細相性を見る →
+              </a>
+            </div>
+          );
+        })}
+      </div>
+    </section>
+
+    {/* ========== 15タイプ全ランキング ========== */}
+    <section class="mlt-section" aria-labelledby="mlt-all-h2">
+      <h2 id="mlt-all-h2" class="mlt-h2" style={`border-bottom-color: ${myTempColor}`}>
+        {type}との恋愛相性 全15タイプランキング
+      </h2>
+      <p class="mlt-lead">
+        Beebe（2017）の機能スタック整合度・Keirsey（1998）の気質分析に基づく
+        全15タイプとの恋愛相性スコア一覧です。スコアは傾向値であり、個人差があります。
+      </p>
+      <div class="mlt-all-table-wrap" role="region" aria-label={`${type}との恋愛相性ランキング`}>
+        <table class="mlt-all-table">
+          <caption class="mlt-table-caption">
+            {type}との恋愛相性ランキング（Beebe 2017 / Keirsey 1998理論に基づく傾向値・{UPDATED_AT}時点）
+          </caption>
+          <thead>
+            <tr>
+              <th scope="col" class="mlt-th mlt-th--rank">順位</th>
+              <th scope="col" class="mlt-th mlt-th--type">タイプ</th>
+              <th scope="col" class="mlt-th mlt-th--score">スコア</th>
+              <th scope="col" class="mlt-th mlt-th--cat">カテゴリ</th>
+              <th scope="col" class="mlt-th mlt-th--summary">一言サマリー</th>
+              <th scope="col" class="mlt-th mlt-th--cta">詳細</th>
+            </tr>
+          </thead>
+          <tbody>
+            {allPairs.map((d, i) => {
+              const partner = d.type1 === type ? d.type2 : d.type1;
+              const partnerDetail = typesDetail[partner];
+              const color = getCategoryColor(d.category);
+              return (
+                <tr class="mlt-tr">
+                  <td class="mlt-td mlt-td--rank">{i + 1}</td>
+                  <td class="mlt-td mlt-td--type">
+                    <span class="mlt-rank-type" style={`background: ${tempColor[partnerDetail.temperament] ?? '#6b7280'}`}>
+                      {partner}
+                    </span>
+                    <span class="mlt-rank-name">{partnerDetail.name}</span>
+                  </td>
+                  <td class="mlt-td mlt-td--score">
+                    <span class="mlt-score-badge" style={`background: ${color}22; color: ${color}`}>
+                      {d.score}点
+                    </span>
+                  </td>
+                  <td class="mlt-td mlt-td--cat">
+                    <span class="mlt-cat-text" style={`color: ${color}`}>
+                      {getCategoryLabel(d.category)}
+                    </span>
+                  </td>
+                  <td class="mlt-td mlt-td--summary">{d.oneLineSummary}</td>
+                  <td class="mlt-td mlt-td--cta">
+                    <a
+                      href={`/diagnosis/mbti-compat/tool/?t1=${type}&t2=${partner}`}
+                      class="mlt-check-link"
+                    >
+                      詳細 →
+                    </a>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+      <p class="mlt-table-note">
+        ※ スコアは傾向値です。個人差・関係の深さ・環境によって大きく変わります。
+      </p>
+    </section>
+
+    {/* ========== 学び合いペア TOP3 ========== */}
+    <section class="mlt-section" aria-labelledby="mlt-growth-h2">
+      <h2 id="mlt-growth-h2" class="mlt-h2" style={`border-bottom-color: ${myTempColor}`}>
+        学び合いペア TOP3（対極で成長機会の多いペア）
+      </h2>
+      <p class="mlt-lead">
+        スコアが低いペアは「成長機会の多いペア」です。
+        Jung（1921）の個性化理論では、最も認知スタイルが異なる相手から
+        最大の気づきと成長が得られるとされています。
+        意識的な対話と相互尊重が関係の鍵になります。
+      </p>
+      <div class="mlt-growth-cards">
+        {growthPairs.map((d) => {
+          const partner = d.type1 === type ? d.type2 : d.type1;
+          const partnerDetail = typesDetail[partner];
+          const color = getCategoryColor(d.category);
+          return (
+            <div class="mlt-growth-card">
+              <div class="mlt-growth-head">
+                <span class="mlt-growth-type" style={`background: ${tempColor[partnerDetail.temperament] ?? '#6b7280'}`}>
+                  {partner}
+                </span>
+                <span class="mlt-growth-name">{partnerDetail.name}</span>
+                <span class="mlt-growth-score" style={`background: ${color}22; color: ${color}`}>
+                  {d.score}点
+                </span>
+              </div>
+              <p class="mlt-growth-point">{d.growthPoint}</p>
+              <a
+                href={`/diagnosis/mbti-compat/tool/?t1=${type}&t2=${partner}`}
+                class="mlt-growth-link"
+              >
+                {type}×{partner} の相性詳細 →
+              </a>
+            </div>
+          );
+        })}
+      </div>
+    </section>
+
+    {/* ========== 同タイプ同士 ========== */}
+    <section class="mlt-section" aria-labelledby="mlt-same-h2">
+      <h2 id="mlt-same-h2" class="mlt-h2" style={`border-bottom-color: ${myTempColor}`}>
+        {type}×{type}（同タイプ同士）の恋愛相性
+      </h2>
+      <div class="mlt-same-block">
+        <div class="mlt-same-score-wrap">
+          <span
+            class="mlt-same-score"
+            style={`background: ${getCategoryColor(selfPair.category)}22; color: ${getCategoryColor(selfPair.category)}`}
+          >
+            {selfPair.score}点
+          </span>
+          <span class="mlt-same-cat" style={`color: ${getCategoryColor(selfPair.category)}`}>
+            {getCategoryLabel(selfPair.category)}
+          </span>
+        </div>
+        <p class="mlt-same-summary">{selfPair.oneLineSummary}</p>
+        <p class="mlt-same-desc">
+          同タイプ同士は価値観・思考スタイルが近いため、初期の共感度は高い傾向があります。
+          一方、Beebe（2017）の機能スタック理論では、補完関係を持たないため
+          互いの盲点（劣等機能）が重なりやすい点に注意が必要です。
+          定期的に外部からの視点を取り入れる工夫が、長期的な関係の活性化につながります。
+        </p>
+        <a
+          href={`/diagnosis/mbti-compat/tool/?t1=${type}&t2=${type}`}
+          class="mlt-same-link"
+          style={`color: ${myTempColor}`}
+        >
+          {type}×{type} の詳細相性を見る →
+        </a>
+      </div>
+    </section>
+
+    {/* ========== CTA ========== */}
+    <section class="mlt-cta-section" aria-labelledby="mlt-cta-h2">
+      <h2 id="mlt-cta-h2" class="mlt-h2 mlt-h2--center">詳しく相性を調べる</h2>
+      <div class="mlt-cta-cards">
+        <a href={`/diagnosis/mbti-compat/tool/?t1=${type}`} class="mlt-cta-card">
+          <div class="mlt-cta-icon" aria-hidden="true">&#10084;</div>
+          <div class="mlt-cta-card-body">
+            <h3 class="mlt-cta-card-title">パートナーのタイプで相性チェック</h3>
+            <p class="mlt-cta-card-desc">
+              相手のタイプを選ぶだけでスコア・恋愛相性・成長ポイントを即表示。
+              URLで結果を共有できます。
+            </p>
+            <span class="mlt-cta-card-link" aria-hidden="true">相性をチェックする →</span>
+          </div>
+        </a>
+        <a href="/diagnosis/mbti-compat/love/" class="mlt-cta-card">
+          <div class="mlt-cta-icon" aria-hidden="true">&#128202;</div>
+          <div class="mlt-cta-card-body">
+            <h3 class="mlt-cta-card-title">16タイプ別 恋愛相性一覧</h3>
+            <p class="mlt-cta-card-desc">
+              全16タイプの恋愛傾向・ベスト3・4気質別パターンを
+              一覧で確認できます。
+            </p>
+            <span class="mlt-cta-card-link" aria-hidden="true">一覧を見る →</span>
+          </div>
+        </a>
+        <a href="/diagnosis/mbti-compat/table/" class="mlt-cta-card">
+          <div class="mlt-cta-icon" aria-hidden="true">&#128203;</div>
+          <div class="mlt-cta-card-body">
+            <h3 class="mlt-cta-card-title">16×16 相性マトリクス</h3>
+            <p class="mlt-cta-card-desc">
+              全256組み合わせをカラーコード付きの表で一覧表示。
+              自分のタイプ行を横に見れば全タイプの相性が一目でわかります。
+            </p>
+            <span class="mlt-cta-card-link" aria-hidden="true">マトリクスを見る →</span>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    {/* ========== 関連診断 ========== */}
+    <section class="mlt-section" aria-labelledby="mlt-related-h2">
+      <h2 id="mlt-related-h2" class="mlt-h2" style={`border-bottom-color: ${myTempColor}`}>
+        関連ページ・診断
+      </h2>
+      <ul class="mlt-related-list">
+        <li class="mlt-related-item">
+          <a href="/diagnosis/mbti-compat/" class="mlt-related-link">
+            <span class="mlt-related-icon" aria-hidden="true">&#128203;</span>
+            <span class="mlt-related-body">
+              <span class="mlt-related-title">MBTI相性一覧（総合）</span>
+              <span class="mlt-related-desc">仕事相性・友人相性を含む256通りの全相性データ</span>
+            </span>
+          </a>
+        </li>
+        <li class="mlt-related-item">
+          <a href="/diagnosis/mbti-compat/tool/" class="mlt-related-link">
+            <span class="mlt-related-icon" aria-hidden="true">&#128269;</span>
+            <span class="mlt-related-body">
+              <span class="mlt-related-title">MBTI相性診断ツール</span>
+              <span class="mlt-related-desc">2タイプを選んで相性スコアを即確認できる無料ツール</span>
+            </span>
+          </a>
+        </li>
+        <li class="mlt-related-item">
+          <a href="/diagnosis/multi-int/" class="mlt-related-link">
+            <span class="mlt-related-icon" aria-hidden="true">&#129504;</span>
+            <span class="mlt-related-body">
+              <span class="mlt-related-title">多重知能テスト</span>
+              <span class="mlt-related-desc">Gardner理論で8つの知能プロファイルを発見</span>
+            </span>
+          </a>
+        </li>
+      </ul>
+    </section>
+
+    {/* ========== FAQ ========== */}
+    <section class="mlt-section" aria-labelledby="mlt-faq-h2">
+      <h2 id="mlt-faq-h2" class="mlt-h2" style={`border-bottom-color: ${myTempColor}`}>よくある質問</h2>
+      <dl class="mlt-faq-list">
+        {faqs.map(({ question, answer }) => (
+          <div class="mlt-faq-item">
+            <dt class="mlt-faq-q">{question}</dt>
+            <dd class="mlt-faq-a">{answer}</dd>
+          </div>
+        ))}
+      </dl>
+    </section>
+  </Container>
+</BaseLayout>
+
+<style>
+/* ========== ヒーロー ========== */
+.mlt-hero {
+  background: linear-gradient(135deg, var(--type-color, #be185d) 0%, #9333ea 100%);
+  color: #fff;
+  padding-block: 3.5rem 4rem;
+  text-align: center;
+}
+.mlt-hero-inner {
+  max-width: 800px;
+  margin-inline: auto;
+  padding-inline: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+.mlt-hero-badge {
+  display: inline-block;
+  background: rgba(255 255 255 / 0.2);
+  border: 1px solid rgba(255 255 255 / 0.4);
+  border-radius: 2rem;
+  padding: 0.25rem 1rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+}
+.mlt-hero-type {
+  font-size: 3rem;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  opacity: 0.3;
+  line-height: 1;
+}
+.mlt-hero-h1 {
+  font-size: clamp(1.6rem, 5vw, 2.2rem);
+  font-family: var(--sn-font-rounded, sans-serif);
+  font-weight: 700;
+  line-height: 1.35;
+  margin: 0;
+}
+.mlt-hero-meta {
+  display: block;
+  font-size: clamp(0.85rem, 2.5vw, 1.1rem);
+  opacity: 0.9;
+}
+.mlt-hero-catch {
+  font-size: clamp(0.875rem, 2.5vw, 1rem);
+  opacity: 0.92;
+  line-height: 1.7;
+  margin: 0;
+}
+.mlt-hero-cta-group {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 0.5rem;
+}
+.mlt-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-weight: 700;
+  font-size: 1rem;
+  padding: 0.8rem 2rem;
+  border-radius: 3rem;
+  text-decoration: none;
+  transition: transform 0.15s, box-shadow 0.15s;
+  min-height: 44px;
+}
+.mlt-cta-btn--primary { background: #fff; color: #be185d; }
+.mlt-cta-btn--secondary {
+  background: rgba(255 255 255 / 0.15);
+  color: #fff;
+  border: 1px solid rgba(255 255 255 / 0.5);
+}
+.mlt-cta-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0 0 0 / 0.2); }
+.mlt-hero-sub { font-size: 0.8rem; opacity: 0.7; margin: 0; }
+
+/* ========== AIOブロック ========== */
+.mlt-aio-block {
+  background: #fdf2f8;
+  border-left: 4px solid #be185d;
+  border-radius: 0 0.5rem 0.5rem 0;
+  padding: 1.25rem 1.5rem;
+  margin-block: 2rem;
+}
+.mlt-aio-title {
+  font-weight: 700;
+  margin: 0 0 0.5rem;
+  font-size: 0.9rem;
+  color: #be185d;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.mlt-aio-list {
+  margin: 0 0 0.75rem;
+  padding-left: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.mlt-aio-list li { font-size: 0.9rem; line-height: 1.5; }
+.mlt-aio-updated { font-size: 0.75rem; color: var(--sn-muted, #6b7280); margin: 0; }
+
+/* ========== セクション共通 ========== */
+.mlt-section { margin-block: 3rem; }
+.mlt-h2 {
+  font-size: clamp(1.25rem, 4vw, 1.65rem);
+  font-family: var(--sn-font-rounded, sans-serif);
+  font-weight: 700;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #be185d;
+}
+.mlt-h2--center { text-align: center; border-bottom: none; }
+.mlt-lead {
+  font-size: 1rem;
+  line-height: 1.8;
+  margin-bottom: 1.25rem;
+  color: #374151;
+}
+
+/* ========== プロフィール ========== */
+.mlt-profile-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-top: 1.25rem;
+}
+.mlt-profile-main {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.mlt-profile-head {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+.mlt-type-badge {
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: #fff;
+  padding: 0.3rem 0.75rem;
+  border-radius: 0.5rem;
+  letter-spacing: 0.05em;
+}
+.mlt-profile-names {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+.mlt-profile-name { font-size: 1.1rem; font-weight: 700; color: #1f2937; }
+.mlt-profile-nick { font-size: 0.8rem; color: var(--sn-muted, #6b7280); }
+.mlt-temp-tag {
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 0.2rem 0.6rem;
+  border-radius: 0.4rem;
+}
+.mlt-func-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+.mlt-func-label { font-size: 0.78rem; color: var(--sn-muted, #6b7280); font-weight: 600; }
+.mlt-func-item {
+  font-size: 0.8rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 0.3rem;
+  border-left: 3px solid;
+}
+.mlt-func-d { background: #ede9fe; border-color: #8B5CF6; color: #5b21b6; }
+.mlt-func-a { background: #d1fae5; border-color: #10B981; color: #065f46; }
+.mlt-func-t { background: #dbeafe; border-color: #3B82F6; color: #1e40af; }
+.mlt-func-i { background: #fef9c3; border-color: #F59E0B; color: #92400e; }
+.mlt-profile-desc {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+}
+.mlt-profile-desc .mlt-lead {
+  margin: 0;
+  white-space: pre-line;
+  font-size: 0.9rem;
+}
+
+/* ========== 恋愛特性 ========== */
+.mlt-love-block {
+  background: #fdf2f8;
+  border: 1px solid #fbcfe8;
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  margin-bottom: 1.25rem;
+}
+.mlt-love-style {
+  font-size: 1rem;
+  line-height: 1.8;
+  color: #374151;
+  margin: 0 0 0.75rem;
+  font-weight: 600;
+  white-space: pre-line;
+}
+.mlt-love-lens {
+  font-size: 0.9rem;
+  line-height: 1.75;
+  color: #4b5563;
+  margin: 0;
+}
+.mlt-love-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+.mlt-love-card {
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+}
+.mlt-love-card--strength {
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+}
+.mlt-love-card--caution {
+  background: #fffbeb;
+  border: 1px solid #fcd34d;
+}
+.mlt-love-card-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin: 0 0 0.75rem;
+  color: #1f2937;
+}
+.mlt-love-caution-desc {
+  font-size: 0.85rem;
+  line-height: 1.7;
+  color: #4b5563;
+  margin: 0 0 0.75rem;
+}
+.mlt-love-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.mlt-love-item {
+  font-size: 0.85rem;
+  line-height: 1.5;
+  padding: 0.25rem 0 0.25rem 1.2rem;
+  position: relative;
+}
+.mlt-love-item::before {
+  position: absolute;
+  left: 0;
+  top: 0.3rem;
+  font-size: 0.7rem;
+}
+.mlt-love-item--strength::before { content: '✓'; color: #059669; }
+.mlt-love-item--caution::before { content: '!'; color: #b45309; font-weight: 700; }
+
+/* ========== ソウルメイトカード ========== */
+.mlt-soulmate-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+.mlt-soulmate-card {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  position: relative;
+}
+.mlt-soulmate-rank {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: #e5e7eb;
+}
+.mlt-soulmate-head {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.75rem;
+}
+.mlt-soulmate-type {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #fff;
+  padding: 0.2rem 0.5rem;
+  border-radius: 0.35rem;
+}
+.mlt-soulmate-name { font-size: 0.95rem; font-weight: 600; color: #1f2937; }
+.mlt-soulmate-score {
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 0.15rem 0.5rem;
+  border-radius: 0.3rem;
+}
+.mlt-soulmate-cat { font-size: 0.8rem; font-weight: 600; }
+.mlt-soulmate-summary {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #374151;
+  margin: 0 0 0.5rem;
+}
+.mlt-soulmate-love {
+  font-size: 0.875rem;
+  line-height: 1.7;
+  color: #4b5563;
+  margin: 0 0 0.75rem;
+}
+.mlt-soulmate-link {
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+.mlt-soulmate-link:hover { text-decoration: underline; }
+
+/* ========== 全ランキングテーブル ========== */
+.mlt-all-table-wrap {
+  overflow-x: auto;
+  margin-block: 1.5rem;
+  contain: layout;
+}
+.mlt-all-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  min-width: 640px;
+}
+.mlt-table-caption {
+  font-size: 0.78rem;
+  color: var(--sn-muted, #6b7280);
+  text-align: left;
+  padding: 0.25rem 0 0.5rem;
+}
+.mlt-th {
+  background: #be185d;
+  color: #fff;
+  font-weight: 600;
+  padding: 0.6rem 0.8rem;
+  text-align: left;
+  white-space: nowrap;
+}
+.mlt-th--rank { width: 3.5rem; }
+.mlt-th--score { width: 5rem; }
+.mlt-th--cat { width: 9rem; }
+.mlt-th--cta { width: 5rem; }
+.mlt-tr:nth-child(even) { background: #fafafa; }
+.mlt-tr:hover { background: #fdf2f8; }
+.mlt-td {
+  padding: 0.6rem 0.8rem;
+  border: 1px solid #e5e7eb;
+  vertical-align: middle;
+}
+.mlt-td--rank { text-align: center; font-weight: 700; color: var(--sn-muted, #6b7280); }
+.mlt-td--type {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  border: none;
+  border-bottom: 1px solid #e5e7eb;
+  border-right: 1px solid #e5e7eb;
+}
+.mlt-rank-type {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #fff;
+  padding: 0.1rem 0.4rem;
+  border-radius: 0.3rem;
+  white-space: nowrap;
+}
+.mlt-rank-name { font-size: 0.85rem; color: #374151; }
+.mlt-score-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.15rem 0.5rem;
+  border-radius: 0.3rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.mlt-cat-text { font-size: 0.82rem; font-weight: 600; }
+.mlt-td--summary { font-size: 0.82rem; line-height: 1.5; color: #4b5563; }
+.mlt-check-link {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #be185d;
+  text-decoration: none;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+}
+.mlt-check-link:hover { text-decoration: underline; }
+.mlt-table-note {
+  font-size: 0.8rem;
+  color: var(--sn-muted, #6b7280);
+  line-height: 1.6;
+  margin-top: 0.75rem;
+}
+
+/* ========== 学び合いカード ========== */
+.mlt-growth-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+.mlt-growth-card {
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.mlt-growth-head {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+.mlt-growth-type {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #fff;
+  padding: 0.15rem 0.45rem;
+  border-radius: 0.3rem;
+}
+.mlt-growth-name { font-size: 0.9rem; font-weight: 600; color: #1f2937; flex: 1; }
+.mlt-growth-score {
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 0.1rem 0.4rem;
+  border-radius: 0.3rem;
+}
+.mlt-growth-point {
+  font-size: 0.85rem;
+  line-height: 1.7;
+  color: #4b5563;
+  margin: 0;
+}
+.mlt-growth-link {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #b45309;
+  text-decoration: none;
+  margin-top: auto;
+}
+.mlt-growth-link:hover { text-decoration: underline; }
+
+/* ========== 同タイプ同士 ========== */
+.mlt-same-block {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.mlt-same-score-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+.mlt-same-score {
+  font-size: 1.2rem;
+  font-weight: 700;
+  padding: 0.2rem 0.75rem;
+  border-radius: 0.4rem;
+}
+.mlt-same-cat { font-size: 0.95rem; font-weight: 700; }
+.mlt-same-summary { font-size: 0.95rem; font-weight: 600; color: #1f2937; margin: 0; }
+.mlt-same-desc {
+  font-size: 0.875rem;
+  line-height: 1.75;
+  color: #4b5563;
+  margin: 0;
+}
+.mlt-same-link {
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+.mlt-same-link:hover { text-decoration: underline; }
+
+/* ========== CTAセクション ========== */
+.mlt-cta-section {
+  margin-block: 3rem;
+  padding: 2rem 1.5rem;
+  background: #fdf2f8;
+  border-radius: 1rem;
+}
+.mlt-cta-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+.mlt-cta-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1.25rem;
+  background: #fff;
+  border: 1px solid #fbcfe8;
+  border-radius: 0.75rem;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.mlt-cta-card:hover {
+  border-color: #be185d;
+  box-shadow: 0 4px 12px rgba(190 24 93 / 0.15);
+}
+.mlt-cta-icon { font-size: 2rem; flex-shrink: 0; }
+.mlt-cta-card-body { display: flex; flex-direction: column; gap: 0.3rem; }
+.mlt-cta-card-title { font-size: 1rem; font-weight: 700; margin: 0; color: #be185d; }
+.mlt-cta-card-desc { font-size: 0.85rem; line-height: 1.6; color: #4b5563; margin: 0; }
+.mlt-cta-card-link { font-size: 0.85rem; font-weight: 600; color: #be185d; }
+
+/* ========== 関連リンク ========== */
+.mlt-related-list {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.mlt-related-link {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.mlt-related-link:hover {
+  border-color: #be185d;
+  box-shadow: 0 2px 8px rgba(190 24 93 / 0.1);
+}
+.mlt-related-icon { font-size: 1.75rem; flex-shrink: 0; }
+.mlt-related-body { display: flex; flex-direction: column; gap: 0.2rem; }
+.mlt-related-title { font-weight: 700; font-size: 0.95rem; }
+.mlt-related-desc { font-size: 0.8rem; color: var(--sn-muted, #6b7280); }
+
+/* ========== FAQ ========== */
+.mlt-faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+.mlt-faq-item {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+.mlt-faq-q {
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 1rem 1.25rem;
+  background: #fdf2f8;
+  margin: 0;
+  display: block;
+}
+.mlt-faq-q::before { content: 'Q. '; color: #be185d; }
+.mlt-faq-a {
+  font-size: 0.9rem;
+  line-height: 1.7;
+  padding: 1rem 1.25rem;
+  margin: 0;
+  color: #4b5563;
+}
+.mlt-faq-a::before { content: 'A. '; font-weight: 700; color: #16a34a; }
+
+/* ========== レスポンシブ ========== */
+@media (max-width: 768px) {
+  .mlt-profile-grid { grid-template-columns: 1fr; }
+  .mlt-love-cards { grid-template-columns: 1fr; }
+  .mlt-cta-cards { grid-template-columns: 1fr; }
+  .mlt-hero-cta-group { flex-direction: column; align-items: center; }
+  .mlt-cta-btn { width: 100%; max-width: 320px; justify-content: center; }
+  .mlt-td--type { display: table-cell; }
+}
+@media (max-width: 480px) {
+  .mlt-growth-cards { grid-template-columns: 1fr; }
+}
+</style>

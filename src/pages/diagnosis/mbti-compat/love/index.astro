@@ -1,0 +1,1166 @@
+---
+/**
+ * MBTI恋愛相性 メインハブページ
+ * KW: MBTI 恋愛相性（VOL: 1,900 / SD: 11）
+ * Phase 1 第5優先
+ *
+ * 学術根拠:
+ *   - Keirsey D (1998) Please Understand Me II
+ *   - Jung CG (1921) Psychological Types
+ *   - Beebe J (2017) Energies and Patterns in Psychological Type
+ *   - Myers IB (1998) MBTI Manual
+ *   - Sternberg RJ (1986) A triangular theory of love. Psychological Review, 93(2), 119-135
+ *     https://doi.org/10.1037/0033-295X.93.2.119
+ *
+ * SEO/AIO対応:
+ * - JSON-LD: WebApplication + Article + FAQPage + BreadcrumbList（@id連結）
+ * - 16タイプ × 恋愛特性表（loveStyle）
+ * - 4気質グループ別 恋愛パターン
+ * - 16タイプ × 恋愛loveCompat ベスト3 一覧テーブル
+ * - FAQ 7問
+ * - YMYL回避: 医学的診断・治療表記ゼロ
+ * - 「相性悪い」NG → 「成長機会の多いペア」「補完関係」表現
+ * - 占い口調・運命論・心理的決定論NG
+ *
+ * 確認日: 2026-05-20
+ */
+import BaseLayout from '../../../../layouts/BaseLayout.astro';
+import Container from '../../../../components/Container.astro';
+import { MBTI_TYPES } from '../../../../data/diagnoses/mbti-compat/meta';
+import { meta as mbtiCompatMeta } from '../../../../data/diagnoses/mbti-compat/meta';
+import { typesDetail } from '../../../../data/diagnoses/mbti-compat/types-detail';
+import {
+  getAllPairsForType,
+  getBestMatches,
+  getCategoryLabel,
+  getCategoryColor,
+} from '../../../../data/diagnoses/mbti-compat/results';
+import { temperamentGroups } from '../../../../data/diagnoses/mbti-compat/groups';
+
+const SITE_URL = 'https://shindan-navi.jp';
+const PAGE_URL = `${SITE_URL}/diagnosis/mbti-compat/love/`;
+
+const PUBLISHED_AT = '2026-05-20';
+const UPDATED_AT = '2026-05-20';
+
+// 16タイプ × 恋愛loveCompat ベスト3（スコア順）
+const allLoveRankings = MBTI_TYPES.map((type) => {
+  const allPairs = getAllPairsForType(type);
+  const sorted = [...allPairs].sort((a, b) => b.score - a.score).slice(0, 3);
+  return { type, top3: sorted };
+});
+
+// 4気質グループ（表示順）
+const temperamentOrder = ['NT', 'NF', 'SJ', 'SP'] as const;
+
+// 恋愛コンテキスト別 気質グループ説明
+const loveTempDesc: Record<string, { title: string; desc: string }> = {
+  NT: {
+    title: 'NT合理主義者の恋愛パターン',
+    desc: `知的刺激と対等なパートナーシップを最も重視します。
+「なぜ好きなのか」を理論的に語れる相手に深く惹かれる傾向があります。
+感情表現は少なめですが、信頼した相手へのコミットは揺るぎないものがあります。`,
+  },
+  NF: {
+    title: 'NF理想主義者の恋愛パターン',
+    desc: `魂レベルの深いつながりと精神的な共鳴を求めます。
+相手の潜在的な可能性を信じ、ともに成長する関係を大切にします。
+理想が高い分、現実とのギャップに敏感になる傾向もあります。`,
+  },
+  SJ: {
+    title: 'SJ保護者の恋愛パターン',
+    desc: `安定・誠実さ・責任感を恋愛の基盤とします。
+言葉より行動でパートナーへの愛情を示す傾向があります。
+伝統的な家族観を大切にし、長期的な関係の構築に強みがあります。`,
+  },
+  SP: {
+    title: 'SP職人の恋愛パターン',
+    desc: `今この瞬間の楽しさと自発性を大切にします。
+束縛より自由を好み、一緒にいる時間を思い切り楽しむ関係が合います。
+行動でサポートを示し、体験を共有することで絆を深める傾向があります。`,
+  },
+};
+
+// FAQ 7問（恋愛文脈特化）
+const faqs = [
+  {
+    question: 'MBTI恋愛相性に科学的根拠はありますか？',
+    answer:
+      'Keirsey（1998）の気質理論・Jung（1921）の認知機能論・Beebe（2017）の機能スタック理論を恋愛・パートナーシップ視点で組み合わせた分析です。Sternberg（1986）の愛の三角形理論（親密性・情熱・コミットメントの3軸）も参照しています。ただし、相性は「傾向」であり、個人差・環境・関係の深さによって大きく変わります。本ツールは傾向把握のための参考情報であり、科学的測定ではありません。',
+  },
+  {
+    question: '恋愛相性スコアが低いタイプとは絶対にうまくいかないのですか？',
+    answer:
+      'そうではありません。スコアは「補完性の傾向」を示す参考値であり、低いスコアは「成長機会の多いペア」を意味します。Jung（1921）の個性化理論では、最も認知スタイルが異なる相手から最大の気づきと成長が得られるとされています。相互理解への意識的な努力が、深い絆につながる場合もあります。',
+  },
+  {
+    question: '同じタイプ同士（例: INFJ×INFJ）の恋愛相性はどうですか？',
+    answer:
+      '価値観や思考スタイルが近いため、初期の共感度は高い傾向があります。一方、Beebe（2017）の機能スタック理論では、同タイプは補完関係を持たないため、互いの盲点（劣等機能）が重なりやすい点に注意が必要です。同タイプ同士の相性詳細は各タイプ別ページでご確認ください。',
+  },
+  {
+    question: 'INFJとINTJの恋愛相性はどうですか？',
+    answer:
+      'INFJとINTJはともに内向的直観（Ni）を主機能に持ち、長期的ビジョンと深い思考を共有します。Jung（1921）の認知機能論では、Ni主体同士は価値観レベルの共鳴が起きやすいとされています。一方、INFJはFeにより感情共鳴を重視し、INTJはTeにより論理効率を優先する違いがあり、その差を意識的に補い合うことが関係の鍵になります。',
+  },
+  {
+    question: 'MBTI相性と血液型相性、どちらが恋愛相性の参考として適切ですか？',
+    answer:
+      'MBTIは心理学的な認知機能・気質理論（Jung 1921 / Keirsey 1998 / Beebe 2017）を根拠とする性格分類であり、研究知見の蓄積があります。一方、血液型と性格の関連を支持する科学的根拠は現時点では確認されていません。どちらも傾向把握の参考として活用し、個人を決めつけないことが重要です。',
+  },
+  {
+    question: '自分のMBTIタイプがわからない場合はどうすれば良いですか？',
+    answer:
+      '無料で試せる方法として16Personalities（https://www.16personalities.com/ja）が代表的です。より精度を求める場合は、MBTI公式の認定資格保有者によるセッションをお勧めします。タイプが特定できたら、各タイプ別恋愛相性ページ（/diagnosis/mbti-compat/love/[タイプ]/）で詳細な相性ランキングをご確認いただけます。',
+  },
+  {
+    question: '恋愛が長続きしやすいMBTIの組み合わせはありますか？',
+    answer:
+      'Beebe（2017）の機能スタック理論が示す補完的ペアは、互いの強みと課題が補い合いやすいため、長期的な関係でも刺激と安定の両方が生まれやすいとされています。ただし、Sternberg（1986）の愛の三角形理論が示すように、親密性・情熱・コミットメントのバランスは関係の意識的な努力によって大きく変わります。タイプ相性は出発点の傾向であり、関係の質は日々の対話と理解の積み重ねによって決まります。',
+  },
+];
+
+// JSON-LD: WebApplication
+const jsonLdWebApp = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  '@id': `${PAGE_URL}#webapp`,
+  name: 'MBTI恋愛相性【全16タイプ・公式根拠付】',
+  url: PAGE_URL,
+  applicationCategory: 'EducationalApplication',
+  operatingSystem: 'Web',
+  description:
+    'Keirsey・Jung・Beebe理論とSternberg愛の三角形理論に基づく16タイプ性格分類（MBTI®）の恋愛相性。各タイプの恋愛特性・4気質別パターン・全16タイプの恋愛相性ベスト3を完全収録。',
+  offers: {
+    '@type': 'Offer',
+    price: '0',
+    priceCurrency: 'JPY',
+    availability: 'https://schema.org/InStock',
+  },
+  author: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+    name: '診断ナビ',
+    url: SITE_URL,
+  },
+  publisher: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+  },
+};
+
+// JSON-LD: Article
+const jsonLdArticle = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  '@id': `${PAGE_URL}#article`,
+  mainEntityOfPage: { '@type': 'WebPage', '@id': PAGE_URL },
+  headline: 'MBTI恋愛相性【全16タイプ・公式根拠付】',
+  description:
+    'Keirsey（1998）・Jung（1921）・Beebe（2017）・Sternberg（1986）の理論に基づくMBTI恋愛相性。16タイプ別恋愛特性・4気質グループパターン・恋愛loveCompatベスト3を完全収録。',
+  url: PAGE_URL,
+  datePublished: PUBLISHED_AT,
+  dateModified: UPDATED_AT,
+  inLanguage: 'ja',
+  author: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+    name: '診断ナビ',
+  },
+  publisher: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+    name: '診断ナビ',
+  },
+  citation: [
+    ...mbtiCompatMeta.references.map((ref) => ({
+      '@type': 'Book',
+      name: ref.title,
+      author: ref.author,
+      datePublished: String(ref.year),
+      publisher: ref.publisher,
+      url: ref.url,
+    })),
+    {
+      '@type': 'ScholarlyArticle',
+      name: 'A triangular theory of love',
+      author: 'Sternberg RJ',
+      datePublished: '1986',
+      publisher: 'Psychological Review',
+      url: 'https://doi.org/10.1037/0033-295X.93.2.119',
+    },
+  ],
+};
+
+// JSON-LD: FAQPage
+const jsonLdFAQ = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  '@id': `${PAGE_URL}#faq`,
+  mainEntity: faqs.map(({ question, answer }) => ({
+    '@type': 'Question',
+    name: question,
+    acceptedAnswer: { '@type': 'Answer', text: answer },
+  })),
+};
+
+// JSON-LD: BreadcrumbList
+const jsonLdBreadcrumb = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  '@id': `${PAGE_URL}#breadcrumb`,
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'ホーム', item: SITE_URL },
+    { '@type': 'ListItem', position: 2, name: '診断一覧', item: `${SITE_URL}/diagnosis/` },
+    { '@type': 'ListItem', position: 3, name: 'MBTI相性一覧', item: `${SITE_URL}/diagnosis/mbti-compat/` },
+    { '@type': 'ListItem', position: 4, name: 'MBTI恋愛相性', item: PAGE_URL },
+  ],
+};
+
+const jsonLdAll = [jsonLdWebApp, jsonLdArticle, jsonLdFAQ, jsonLdBreadcrumb];
+
+// カテゴリ色
+const categoryColorVar: Record<string, string> = {
+  soulmate: 'var(--ml-soulmate)',
+  good: 'var(--ml-good)',
+  neutral: 'var(--ml-neutral)',
+  tough: 'var(--ml-tough)',
+  opposite: 'var(--ml-opposite)',
+};
+---
+
+<BaseLayout
+  title="MBTI恋愛相性【全16タイプ・公式根拠付】｜診断ナビ"
+  description="Keirsey・Jung・Beebe理論とSternberg愛の三角形理論に基づくMBTI恋愛相性。16タイプ別恋愛傾向・4気質別恋愛パターン・全タイプの恋愛相性ランキングを完全収録。無料・登録不要。"
+  canonical={PAGE_URL}
+  jsonLd={jsonLdAll}
+  ogType="website"
+  publishDate={PUBLISHED_AT}
+  lastUpdated={UPDATED_AT}
+  breadcrumbs={[
+    { name: '診断一覧', url: '/diagnosis/' },
+    { name: 'MBTI相性一覧', url: '/diagnosis/mbti-compat/' },
+    { name: 'MBTI恋愛相性', url: '/diagnosis/mbti-compat/love/' },
+  ]}
+>
+  {/* ========== ヒーロー ========== */}
+  <section class="ml-hero" aria-labelledby="ml-hero-h1">
+    <div class="ml-hero-inner">
+      <div class="ml-hero-badge">Keirsey / Jung / Beebe / Sternberg 理論に基づく恋愛相性分析</div>
+      <h1 id="ml-hero-h1" class="ml-hero-h1">
+        MBTI恋愛相性<br />
+        <span class="ml-hero-meta">【全16タイプ・公式根拠付】</span>
+      </h1>
+      <p class="ml-hero-catch">
+        あなたのタイプと相手のタイプ、恋愛ではどんな関係性が生まれやすい？<br />
+        気質理論・機能スタック・愛の三角形理論から傾向を徹底解説
+      </p>
+      <div class="ml-hero-stats">
+        <span class="ml-stat"><strong>16</strong>タイプ</span>
+        <span class="ml-stat-sep">×</span>
+        <span class="ml-stat"><strong>16</strong>通り</span>
+        <span class="ml-stat-sep">・</span>
+        <span class="ml-stat">無料</span>
+        <span class="ml-stat-sep">・</span>
+        <span class="ml-stat">登録不要</span>
+      </div>
+      <div class="ml-hero-cta-group">
+        <a href="/diagnosis/mbti-compat/love/INTJ/" class="ml-cta-btn ml-cta-btn--primary">
+          自分のタイプを選ぶ →
+        </a>
+        <a href="/diagnosis/mbti-compat/tool/?context=love" class="ml-cta-btn ml-cta-btn--secondary">
+          パートナーと相性チェック
+        </a>
+      </div>
+      <p class="ml-hero-sub">
+        <time datetime={UPDATED_AT}>{UPDATED_AT}</time> 時点の情報・月1回更新
+      </p>
+    </div>
+  </section>
+
+  <Container>
+    {/* ========== AIOブロック ========== */}
+    <div class="ml-aio-block" role="note" aria-label="このページでわかること">
+      <p class="ml-aio-title">このページでわかること</p>
+      <ul class="ml-aio-list">
+        <li>16タイプそれぞれの恋愛傾向・スタイル（Beebe 2017 / Keirsey 1998理論）</li>
+        <li>NT・NF・SJ・SP 4気質グループ別の恋愛パターン概観</li>
+        <li>各タイプの恋愛相性ベスト3タイプと成長機会ペアの一覧表</li>
+        <li>Sternberg（1986）愛の三角形理論との関係</li>
+      </ul>
+      <p class="ml-aio-updated">
+        学術根拠:
+        <a href="https://keirsey.com/product/please-understand-me-ii/" target="_blank" rel="noopener noreferrer">Keirsey（1998）</a>・
+        <a href="https://press.princeton.edu/books/paperback/9780691018133/psychological-types" target="_blank" rel="noopener noreferrer">Jung（1921）</a>・
+        <a href="https://www.routledge.com/Energies-and-Patterns-in-Psychological-Type-The-reservoir-of-consciousness/Beebe/p/book/9781138859760" target="_blank" rel="noopener noreferrer">Beebe（2017）</a>・
+        <a href="https://doi.org/10.1037/0033-295X.93.2.119" target="_blank" rel="noopener noreferrer">Sternberg（1986）</a>
+        を確認済。
+      </p>
+    </div>
+
+    {/* ========== 恋愛相性を見る前に ========== */}
+    <section class="ml-section" aria-labelledby="ml-premise-h2">
+      <h2 id="ml-premise-h2" class="ml-h2">恋愛相性スコアを読む前に</h2>
+      <p class="ml-lead">
+        本ページの相性スコアは「補完性・類似性の傾向値」であり、
+        恋愛の成否を決定するものではありません。
+        Sternberg（1986）の愛の三角形理論が示すように、
+        恋愛関係の質は「親密性・情熱・コミットメント」の意識的な積み重ねによって決まります。
+        タイプ相性は出発点の傾向把握として活用してください。
+      </p>
+      <div class="ml-premise-cards">
+        <div class="ml-premise-card">
+          <div class="ml-premise-icon" aria-hidden="true">&#10084;</div>
+          <h3 class="ml-premise-title">親密性（Intimacy）</h3>
+          <p class="ml-premise-desc">
+            Sternberg（1986）が示す愛の第1軸。
+            深い理解・信頼・感情的なつながりを育てる要素です。
+            タイプ相性にかかわらず、対話の積み重ねで高められます。
+          </p>
+        </div>
+        <div class="ml-premise-card">
+          <div class="ml-premise-icon" aria-hidden="true">&#9889;</div>
+          <h3 class="ml-premise-title">情熱（Passion）</h3>
+          <p class="ml-premise-desc">
+            愛の第2軸。惹かれる感覚・性的魅力・強い感情的高揚。
+            補完的な認知機能を持つペア（Beebe 2017）で
+            強まりやすい傾向が指摘されています。
+          </p>
+        </div>
+        <div class="ml-premise-card">
+          <div class="ml-premise-icon" aria-hidden="true">&#128141;</div>
+          <h3 class="ml-premise-title">コミットメント（Commitment）</h3>
+          <p class="ml-premise-desc">
+            愛の第3軸。関係を続けようとする意志・決意。
+            タイプ特性が影響しますが、最終的には個人の選択と行動で決まります。
+          </p>
+        </div>
+      </div>
+    </section>
+
+    {/* ========== 16タイプ × 恋愛特性まとめ表 ========== */}
+    <section class="ml-section" aria-labelledby="ml-typetable-h2">
+      <h2 id="ml-typetable-h2" class="ml-h2">16タイプ別 恋愛傾向一覧</h2>
+      <p class="ml-lead">
+        Beebe（2017）の機能スタック理論とKeirsey（1998）の気質分析から読み解く、
+        各タイプの恋愛傾向です。個人差があります。
+        詳細は各タイプ別ページでご確認ください。
+      </p>
+      <div class="ml-type-grid" role="region" aria-label="16タイプ別恋愛傾向">
+        {MBTI_TYPES.map((type) => {
+          const detail = typesDetail[type];
+          const temp = detail.temperament;
+          return (
+            <a href={`/diagnosis/mbti-compat/love/${type}/`} class="ml-type-card" data-temp={temp}>
+              <div class="ml-type-card-head">
+                <span class="ml-type-id" data-temp={temp}>{type}</span>
+                <span class="ml-type-name">{detail.name}</span>
+                <span class="ml-temp-badge" data-temp={temp}>{temp}</span>
+              </div>
+              <p class="ml-type-love">{detail.loveStyle}</p>
+              <span class="ml-type-link" aria-hidden="true">恋愛相性ランキングを見る →</span>
+            </a>
+          );
+        })}
+      </div>
+    </section>
+
+    {/* ========== 4気質グループ別 恋愛パターン ========== */}
+    <section class="ml-section" aria-labelledby="ml-temperament-h2">
+      <h2 id="ml-temperament-h2" class="ml-h2">4気質グループ別 恋愛パターン</h2>
+      <p class="ml-lead">
+        Keirsey（1998）は16タイプをNT・NF・SJ・SPの4気質グループに分類しました。
+        同じ気質内では恋愛観が近いため理解しやすく、
+        異なる気質との関係では新たな刺激と成長が生まれやすいとされています。
+      </p>
+      {temperamentOrder.map((tempId) => {
+        const group = temperamentGroups[tempId];
+        const loveDesc = loveTempDesc[tempId];
+        return (
+          <div class="ml-temp-block" data-temp={tempId}>
+            <h3 class="ml-temp-h3">
+              <span class="ml-temp-badge-lg" data-temp={tempId}>{tempId}</span>
+              {group.name}（{group.nameEn}）の恋愛パターン
+            </h3>
+            <p class="ml-temp-types">対象タイプ: {group.types.join(' / ')}</p>
+            <p class="ml-temp-desc">{loveDesc.desc}</p>
+            <div class="ml-temp-links">
+              {group.types.map((t) => (
+                <a href={`/diagnosis/mbti-compat/love/${t}/`} class="ml-temp-link" data-temp={tempId}>
+                  {t}の恋愛相性 →
+                </a>
+              ))}
+            </div>
+          </div>
+        );
+      })}
+    </section>
+
+    {/* ========== 16タイプ × 恋愛相性ベスト3 一覧表 ========== */}
+    <section class="ml-section" aria-labelledby="ml-ranktable-h2">
+      <h2 id="ml-ranktable-h2" class="ml-h2">16タイプ別 恋愛相性ベスト3 一覧</h2>
+      <p class="ml-lead">
+        各タイプの相性スコア上位3組を恋愛視点でまとめています。
+        スコアはBeebe（2017）の機能スタック整合度・Keirsey（1998）の気質分析に基づく傾向値です。
+        クリックすると詳細な相性チェックができます。
+      </p>
+      <div class="ml-rank-table-wrap" role="region" aria-label="16タイプ別恋愛相性ベスト3">
+        <table class="ml-rank-table">
+          <caption class="ml-table-caption">
+            16タイプ別 恋愛相性ベスト3（Keirsey 1998 / Beebe 2017理論に基づく傾向値・{UPDATED_AT}時点）
+          </caption>
+          <thead>
+            <tr>
+              <th scope="col" class="ml-th ml-th--type">タイプ</th>
+              <th scope="col" class="ml-th ml-th--best">恋愛相性ベスト3（スコア順）</th>
+              <th scope="col" class="ml-th ml-th--detail">詳細</th>
+            </tr>
+          </thead>
+          <tbody>
+            {allLoveRankings.map(({ type, top3 }) => (
+              <tr class="ml-tr">
+                <th scope="row" class="ml-td ml-td--type">
+                  <a href={`/diagnosis/mbti-compat/love/${type}/`} class="ml-type-link">
+                    {type}
+                  </a>
+                </th>
+                <td class="ml-td">
+                  <ul class="ml-pair-list">
+                    {top3.map((d) => {
+                      const partner = d.type1 === type ? d.type2 : d.type1;
+                      const color = getCategoryColor(d.category);
+                      return (
+                        <li>
+                          <a
+                            href={`/diagnosis/mbti-compat/tool/?t1=${type}&t2=${partner}`}
+                            class="ml-pair-link"
+                          >
+                            <span
+                              class="ml-pair-score"
+                              style={`background: ${color}22; color: ${color}`}
+                            >
+                              {d.score}点
+                            </span>
+                            <span class="ml-pair-name">{partner}</span>
+                            <span class="ml-pair-cat">{getCategoryLabel(d.category)}</span>
+                          </a>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </td>
+                <td class="ml-td ml-td--cta">
+                  <a href={`/diagnosis/mbti-compat/love/${type}/`} class="ml-detail-link">
+                    全15タイプとの相性 →
+                  </a>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p class="ml-table-note">
+        ※ スコアは傾向値です。個人差・関係の深さ・環境によって大きく変わります。
+        詳細な相性チェックは
+        <a href="/diagnosis/mbti-compat/tool/?context=love">MBTI相性診断ツール</a>
+        でご確認ください。
+      </p>
+    </section>
+
+    {/* ========== CTA ========== */}
+    <section class="ml-cta-section" aria-labelledby="ml-cta-h2">
+      <h2 id="ml-cta-h2" class="ml-h2 ml-h2--center">さらに詳しく恋愛相性を調べる</h2>
+      <div class="ml-cta-cards">
+        <a href="/diagnosis/mbti-compat/tool/?context=love" class="ml-cta-card">
+          <div class="ml-cta-icon" aria-hidden="true">&#10084;</div>
+          <div class="ml-cta-card-body">
+            <h3 class="ml-cta-card-title">自分とパートナーで相性チェック</h3>
+            <p class="ml-cta-card-desc">
+              2タイプを選ぶだけで恋愛相性スコア・相性の特徴・
+              学び合いポイントを即表示。URLで結果を共有できます。
+            </p>
+            <span class="ml-cta-card-link" aria-hidden="true">相性をチェックする →</span>
+          </div>
+        </a>
+        <a href="/diagnosis/mbti-compat/table/" class="ml-cta-card">
+          <div class="ml-cta-icon" aria-hidden="true">&#128200;</div>
+          <div class="ml-cta-card-body">
+            <h3 class="ml-cta-card-title">16×16 相性マトリクスを見る</h3>
+            <p class="ml-cta-card-desc">
+              全256組み合わせをカラーコード付きの表で一覧表示。
+              自分のタイプ行を横に見れば全タイプとの相性が一目でわかります。
+            </p>
+            <span class="ml-cta-card-link" aria-hidden="true">マトリクスを見る →</span>
+          </div>
+        </a>
+        <a href="/diagnosis/mbti-compat/" class="ml-cta-card">
+          <div class="ml-cta-icon" aria-hidden="true">&#128203;</div>
+          <div class="ml-cta-card-body">
+            <h3 class="ml-cta-card-title">MBTI相性一覧（総合）</h3>
+            <p class="ml-cta-card-desc">
+              恋愛だけでなく、仕事相性・友人関係・
+              成長ポイントを含む総合相性データを確認できます。
+            </p>
+            <span class="ml-cta-card-link" aria-hidden="true">総合相性を見る →</span>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    {/* ========== 学術根拠 ========== */}
+    <section class="ml-section" aria-labelledby="ml-refs-h2">
+      <h2 id="ml-refs-h2" class="ml-h2">学術根拠・参考文献</h2>
+      <p class="ml-lead">
+        本ページの相性データは以下の学術文献・理論に基づいています。
+        傾向把握のための参考情報であり、医学的・臨床的な診断ではありません。
+      </p>
+      <div class="ml-refs-grid">
+        {mbtiCompatMeta.references.map((ref) => (
+          <div class="ml-ref-card">
+            <p class="ml-ref-title">
+              <a href={ref.url} target="_blank" rel="noopener noreferrer">{ref.title}</a>
+            </p>
+            <p class="ml-ref-meta">{ref.author}（{ref.year}）/ {ref.publisher}</p>
+          </div>
+        ))}
+        <div class="ml-ref-card">
+          <p class="ml-ref-title">
+            <a href="https://doi.org/10.1037/0033-295X.93.2.119" target="_blank" rel="noopener noreferrer">
+              A triangular theory of love. Psychological Review, 93(2), 119-135
+            </a>
+          </p>
+          <p class="ml-ref-meta">Sternberg RJ（1986）/ American Psychological Association</p>
+        </div>
+      </div>
+      <p class="ml-ref-note">
+        本ツールは自己理解・コミュニケーション改善のための参考情報を提供するものです。
+        MBTI® は The Myers-Briggs Company の登録商標です。
+        精神疾患・臨床診断・治療の判断は医師・臨床心理士にご相談ください。
+      </p>
+    </section>
+
+    {/* ========== 関連診断 ========== */}
+    <section class="ml-section" aria-labelledby="ml-related-h2">
+      <h2 id="ml-related-h2" class="ml-h2">関連診断・ページ</h2>
+      <ul class="ml-related-list">
+        <li class="ml-related-item">
+          <a href="/diagnosis/mbti-compat/" class="ml-related-link">
+            <span class="ml-related-icon" aria-hidden="true">&#128203;</span>
+            <span class="ml-related-body">
+              <span class="ml-related-title">MBTI相性一覧（総合）</span>
+              <span class="ml-related-desc">256通りの全相性データ・仕事相性・成長ポイントを完全収録</span>
+            </span>
+          </a>
+        </li>
+        <li class="ml-related-item">
+          <a href="/diagnosis/mbti-compat/tool/" class="ml-related-link">
+            <span class="ml-related-icon" aria-hidden="true">&#128269;</span>
+            <span class="ml-related-body">
+              <span class="ml-related-title">MBTI相性診断ツール</span>
+              <span class="ml-related-desc">2タイプを選んで相性スコアを即確認できる無料ツール</span>
+            </span>
+          </a>
+        </li>
+        <li class="ml-related-item">
+          <a href="/diagnosis/multi-int/" class="ml-related-link">
+            <span class="ml-related-icon" aria-hidden="true">&#129504;</span>
+            <span class="ml-related-body">
+              <span class="ml-related-title">多重知能テスト</span>
+              <span class="ml-related-desc">Gardner理論で8つの知能プロファイルを発見</span>
+            </span>
+          </a>
+        </li>
+      </ul>
+    </section>
+
+    {/* ========== FAQ ========== */}
+    <section class="ml-section" aria-labelledby="ml-faq-h2">
+      <h2 id="ml-faq-h2" class="ml-h2">よくある質問</h2>
+      <dl class="ml-faq-list">
+        {faqs.map(({ question, answer }) => (
+          <div class="ml-faq-item">
+            <dt class="ml-faq-q">{question}</dt>
+            <dd class="ml-faq-a">{answer}</dd>
+          </div>
+        ))}
+      </dl>
+    </section>
+  </Container>
+</BaseLayout>
+
+<style>
+/* ========== CSS変数（恋愛相性カラー） ========== */
+:root {
+  --ml-soulmate: #8B5CF6;
+  --ml-good: #10B981;
+  --ml-neutral: #3B82F6;
+  --ml-tough: #F59E0B;
+  --ml-opposite: #EF4444;
+}
+
+/* ========== ヒーロー ========== */
+.ml-hero {
+  background: linear-gradient(135deg, #be185d 0%, #9333ea 100%);
+  color: #fff;
+  padding-block: 3.5rem 4rem;
+  text-align: center;
+}
+.ml-hero-inner {
+  max-width: 800px;
+  margin-inline: auto;
+  padding-inline: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+.ml-hero-badge {
+  display: inline-block;
+  background: rgba(255 255 255 / 0.2);
+  border: 1px solid rgba(255 255 255 / 0.4);
+  border-radius: 2rem;
+  padding: 0.25rem 1rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+}
+.ml-hero-h1 {
+  font-size: clamp(1.75rem, 5vw, 2.5rem);
+  font-family: var(--sn-font-rounded, sans-serif);
+  font-weight: 700;
+  line-height: 1.3;
+  margin: 0;
+}
+.ml-hero-meta {
+  display: block;
+  font-size: clamp(0.9rem, 2.5vw, 1.2rem);
+  opacity: 0.9;
+}
+.ml-hero-catch {
+  font-size: clamp(0.9rem, 2.5vw, 1.05rem);
+  opacity: 0.92;
+  line-height: 1.7;
+  margin: 0;
+}
+.ml-hero-stats {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  font-size: 0.9rem;
+  opacity: 0.85;
+}
+.ml-stat strong { font-size: 1.4em; font-weight: 700; }
+.ml-stat-sep { color: rgba(255 255 255 / 0.5); }
+.ml-hero-cta-group {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 0.5rem;
+}
+.ml-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-weight: 700;
+  font-size: 1rem;
+  padding: 0.8rem 2rem;
+  border-radius: 3rem;
+  text-decoration: none;
+  transition: transform 0.15s, box-shadow 0.15s;
+  min-height: 44px;
+}
+.ml-cta-btn--primary {
+  background: #fff;
+  color: #be185d;
+}
+.ml-cta-btn--secondary {
+  background: rgba(255 255 255 / 0.15);
+  color: #fff;
+  border: 1px solid rgba(255 255 255 / 0.5);
+}
+.ml-cta-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0 0 0 / 0.2);
+}
+.ml-hero-sub {
+  font-size: 0.8rem;
+  opacity: 0.7;
+  margin: 0;
+}
+
+/* ========== AIOブロック ========== */
+.ml-aio-block {
+  background: #fdf2f8;
+  border-left: 4px solid #be185d;
+  border-radius: 0 0.5rem 0.5rem 0;
+  padding: 1.25rem 1.5rem;
+  margin-block: 2rem;
+}
+.ml-aio-title {
+  font-weight: 700;
+  margin: 0 0 0.5rem;
+  font-size: 0.9rem;
+  color: #be185d;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.ml-aio-list {
+  margin: 0 0 0.75rem;
+  padding-left: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.ml-aio-list li { font-size: 0.9rem; line-height: 1.5; }
+.ml-aio-updated { font-size: 0.75rem; color: var(--sn-muted, #6b7280); margin: 0; }
+
+/* ========== セクション共通 ========== */
+.ml-section { margin-block: 3rem; }
+.ml-h2 {
+  font-size: clamp(1.3rem, 4vw, 1.75rem);
+  font-family: var(--sn-font-rounded, sans-serif);
+  font-weight: 700;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #be185d;
+}
+.ml-h2--center { text-align: center; border-bottom: none; }
+.ml-lead {
+  font-size: 1rem;
+  line-height: 1.8;
+  margin-bottom: 1.25rem;
+  color: #374151;
+}
+
+/* ========== 恋愛前提カード ========== */
+.ml-premise-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+.ml-premise-card {
+  background: #fdf2f8;
+  border: 1px solid #fbcfe8;
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  text-align: center;
+}
+.ml-premise-icon {
+  font-size: 2rem;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+.ml-premise-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #be185d;
+  margin: 0 0 0.5rem;
+}
+.ml-premise-desc {
+  font-size: 0.85rem;
+  line-height: 1.7;
+  color: #4b5563;
+  margin: 0;
+}
+
+/* ========== 16タイプ恋愛グリッド ========== */
+.ml-type-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+.ml-type-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1.25rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  min-height: 44px;
+}
+.ml-type-card:hover {
+  border-color: #be185d;
+  box-shadow: 0 4px 12px rgba(190 24 93 / 0.12);
+}
+.ml-type-card-head {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+.ml-type-id {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #fff;
+  padding: 0.15rem 0.5rem;
+  border-radius: 0.4rem;
+}
+[data-temp="NT"] .ml-type-id,
+.ml-type-id[data-temp="NT"] { background: #4f46e5; }
+[data-temp="NF"] .ml-type-id,
+.ml-type-id[data-temp="NF"] { background: #059669; }
+[data-temp="SJ"] .ml-type-id,
+.ml-type-id[data-temp="SJ"] { background: #b45309; }
+[data-temp="SP"] .ml-type-id,
+.ml-type-id[data-temp="SP"] { background: #dc2626; }
+.ml-type-name {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #1f2937;
+  flex: 1;
+}
+.ml-temp-badge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.1rem 0.4rem;
+  border-radius: 0.3rem;
+  color: #fff;
+}
+.ml-temp-badge[data-temp="NT"] { background: #4f46e5; }
+.ml-temp-badge[data-temp="NF"] { background: #059669; }
+.ml-temp-badge[data-temp="SJ"] { background: #b45309; }
+.ml-temp-badge[data-temp="SP"] { background: #dc2626; }
+.ml-type-love {
+  font-size: 0.85rem;
+  line-height: 1.65;
+  color: #4b5563;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.ml-type-link {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #be185d;
+  margin-top: auto;
+}
+
+/* ========== 気質グループ ========== */
+.ml-temp-block {
+  margin-block: 2rem;
+  padding: 1.5rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 1rem;
+}
+.ml-temp-h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+.ml-temp-badge-lg {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.2rem 0.6rem;
+  border-radius: 0.4rem;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #fff;
+}
+.ml-temp-badge-lg[data-temp="NT"] { background: #4f46e5; }
+.ml-temp-badge-lg[data-temp="NF"] { background: #059669; }
+.ml-temp-badge-lg[data-temp="SJ"] { background: #b45309; }
+.ml-temp-badge-lg[data-temp="SP"] { background: #dc2626; }
+.ml-temp-types {
+  font-size: 0.8rem;
+  color: var(--sn-muted, #6b7280);
+  margin: 0 0 0.75rem;
+}
+.ml-temp-desc {
+  font-size: 0.9rem;
+  line-height: 1.75;
+  color: #374151;
+  margin-bottom: 1rem;
+  white-space: pre-line;
+}
+.ml-temp-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.ml-temp-link {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.35rem 0.85rem;
+  border-radius: 2rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-decoration: none;
+  border: 1px solid;
+  min-height: 36px;
+  transition: background 0.15s;
+}
+.ml-temp-link[data-temp="NT"] { color: #4f46e5; border-color: #c7d2fe; background: #eef2ff; }
+.ml-temp-link[data-temp="NT"]:hover { background: #c7d2fe; }
+.ml-temp-link[data-temp="NF"] { color: #059669; border-color: #a7f3d0; background: #ecfdf5; }
+.ml-temp-link[data-temp="NF"]:hover { background: #a7f3d0; }
+.ml-temp-link[data-temp="SJ"] { color: #b45309; border-color: #fcd34d; background: #fffbeb; }
+.ml-temp-link[data-temp="SJ"]:hover { background: #fcd34d; }
+.ml-temp-link[data-temp="SP"] { color: #dc2626; border-color: #fca5a5; background: #fef2f2; }
+.ml-temp-link[data-temp="SP"]:hover { background: #fca5a5; }
+
+/* ========== ランキングテーブル ========== */
+.ml-rank-table-wrap {
+  overflow-x: auto;
+  margin-block: 1.5rem;
+  contain: layout;
+}
+.ml-rank-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  min-width: 580px;
+}
+.ml-table-caption {
+  font-size: 0.78rem;
+  color: var(--sn-muted, #6b7280);
+  text-align: left;
+  padding: 0.25rem 0 0.5rem;
+}
+.ml-th {
+  background: #be185d;
+  color: #fff;
+  font-weight: 600;
+  padding: 0.6rem 0.8rem;
+  text-align: left;
+  white-space: nowrap;
+}
+.ml-th--type { width: 5rem; }
+.ml-th--detail { width: 9rem; }
+.ml-tr:nth-child(even) { background: #fafafa; }
+.ml-tr:hover { background: #fdf2f8; }
+.ml-td {
+  padding: 0.6rem 0.8rem;
+  border: 1px solid #e5e7eb;
+  vertical-align: top;
+}
+.ml-td--type { font-weight: 700; white-space: nowrap; }
+.ml-td--cta { vertical-align: middle; white-space: nowrap; }
+.ml-type-link {
+  color: #be185d;
+  text-decoration: none;
+  font-weight: 700;
+}
+.ml-type-link:hover { text-decoration: underline; }
+.ml-pair-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+.ml-pair-link {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  text-decoration: none;
+  color: inherit;
+  font-size: 0.85rem;
+  flex-wrap: wrap;
+}
+.ml-pair-link:hover .ml-pair-name { text-decoration: underline; }
+.ml-pair-score {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 3.5rem;
+  padding: 0.1rem 0.4rem;
+  border-radius: 0.3rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.ml-pair-name { font-weight: 600; }
+.ml-pair-cat {
+  font-size: 0.75rem;
+  color: var(--sn-muted, #6b7280);
+}
+.ml-detail-link {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #be185d;
+  text-decoration: none;
+  min-height: 36px;
+}
+.ml-detail-link:hover { text-decoration: underline; }
+.ml-table-note {
+  font-size: 0.8rem;
+  color: var(--sn-muted, #6b7280);
+  line-height: 1.6;
+  margin-top: 0.75rem;
+}
+
+/* ========== CTAセクション ========== */
+.ml-cta-section {
+  margin-block: 3rem;
+  padding: 2rem 1.5rem;
+  background: #fdf2f8;
+  border-radius: 1rem;
+}
+.ml-cta-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+.ml-cta-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1.25rem;
+  background: #fff;
+  border: 1px solid #fbcfe8;
+  border-radius: 0.75rem;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.ml-cta-card:hover {
+  border-color: #be185d;
+  box-shadow: 0 4px 12px rgba(190 24 93 / 0.15);
+}
+.ml-cta-icon {
+  font-size: 2rem;
+  flex-shrink: 0;
+}
+.ml-cta-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+.ml-cta-card-title {
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 0;
+  color: #be185d;
+}
+.ml-cta-card-desc {
+  font-size: 0.85rem;
+  line-height: 1.6;
+  color: #4b5563;
+  margin: 0;
+}
+.ml-cta-card-link {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #be185d;
+}
+
+/* ========== 参考文献 ========== */
+.ml-refs-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-block: 1.25rem;
+}
+.ml-ref-card {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+}
+.ml-ref-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin: 0 0 0.25rem;
+  line-height: 1.5;
+}
+.ml-ref-meta {
+  font-size: 0.78rem;
+  color: var(--sn-muted, #6b7280);
+  margin: 0;
+}
+.ml-ref-note {
+  font-size: 0.8rem;
+  color: var(--sn-muted, #6b7280);
+  line-height: 1.6;
+  margin-top: 1rem;
+}
+
+/* ========== 関連リンク ========== */
+.ml-related-list {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.ml-related-link {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.ml-related-link:hover {
+  border-color: #be185d;
+  box-shadow: 0 2px 8px rgba(190 24 93 / 0.1);
+}
+.ml-related-icon { font-size: 1.75rem; flex-shrink: 0; }
+.ml-related-body { display: flex; flex-direction: column; gap: 0.2rem; }
+.ml-related-title { font-weight: 700; font-size: 0.95rem; }
+.ml-related-desc { font-size: 0.8rem; color: var(--sn-muted, #6b7280); }
+
+/* ========== FAQ ========== */
+.ml-faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+.ml-faq-item {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+.ml-faq-q {
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 1rem 1.25rem;
+  background: #fdf2f8;
+  margin: 0;
+  display: block;
+}
+.ml-faq-q::before { content: 'Q. '; color: #be185d; }
+.ml-faq-a {
+  font-size: 0.9rem;
+  line-height: 1.7;
+  padding: 1rem 1.25rem;
+  margin: 0;
+  color: #4b5563;
+}
+.ml-faq-a::before { content: 'A. '; font-weight: 700; color: #16a34a; }
+
+/* ========== レスポンシブ ========== */
+@media (max-width: 768px) {
+  .ml-type-grid { grid-template-columns: 1fr 1fr; }
+  .ml-premise-cards { grid-template-columns: 1fr; }
+  .ml-cta-cards { grid-template-columns: 1fr; }
+  .ml-hero-cta-group { flex-direction: column; align-items: center; }
+  .ml-cta-btn { width: 100%; max-width: 320px; justify-content: center; }
+}
+@media (max-width: 480px) {
+  .ml-type-grid { grid-template-columns: 1fr; }
+}
+</style>
