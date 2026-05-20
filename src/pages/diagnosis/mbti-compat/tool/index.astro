@@ -1,0 +1,992 @@
+---
+/**
+ * MBTI相性診断ツール ページ
+ * KW: MBTI相性診断（VOL: 1,600 / SD: 15-16）
+ * 学術根拠:
+ *   - Beebe J (2017) Energies and Patterns in Psychological Type
+ *   - Keirsey D (1998) Please Understand Me II
+ *   - Jung CG (1921) Psychological Types
+ * 確認日: 2026-05-20
+ *
+ * SEO/AIO対応:
+ * - JSON-LD: WebApplication + BreadcrumbList + HowTo
+ * - React Island: MbtiCompatTool（client:load）
+ * - URL パラメータ連動（?t1=INTJ&t2=ENFP）
+ * - YMYL回避: 医学的診断・治療表記ゼロ
+ */
+import BaseLayout from '../../../../layouts/BaseLayout.astro';
+import Container from '../../../../components/Container.astro';
+import MbtiCompatTool from '../../../../components/MbtiCompatTool';
+import { meta } from '../../../../data/diagnoses/mbti-compat/meta';
+
+const SITE_URL = 'https://shindan-navi.jp';
+const PAGE_URL = `${SITE_URL}/diagnosis/mbti-compat/tool/`;
+
+// JSON-LD: WebApplication
+const jsonLdWebApp = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  '@id': `${PAGE_URL}#webapp`,
+  name: 'MBTI相性診断ツール【16タイプ選んで即表示】',
+  url: PAGE_URL,
+  applicationCategory: 'EducationalApplication',
+  operatingSystem: 'Web',
+  description:
+    '16タイプから2つ選ぶだけでMBTI相性スコア・仕事相性・恋愛相性・成長ポイントを即表示。Beebe（2017）機能スタック理論とKeirsey（1998）気質理論に基づく相性分析ツール。無料・登録不要。',
+  offers: {
+    '@type': 'Offer',
+    price: '0',
+    priceCurrency: 'JPY',
+    availability: 'https://schema.org/InStock',
+  },
+  author: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+    name: '診断ナビ',
+    url: SITE_URL,
+  },
+  publisher: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+  },
+};
+
+// JSON-LD: BreadcrumbList
+const jsonLdBreadcrumb = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  '@id': `${PAGE_URL}#breadcrumb`,
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'ホーム', item: SITE_URL },
+    { '@type': 'ListItem', position: 2, name: '診断一覧', item: `${SITE_URL}/diagnosis/` },
+    {
+      '@type': 'ListItem',
+      position: 3,
+      name: 'MBTI相性一覧',
+      item: `${SITE_URL}/diagnosis/mbti-compat/`,
+    },
+    { '@type': 'ListItem', position: 4, name: 'MBTI相性診断ツール', item: PAGE_URL },
+  ],
+};
+
+// JSON-LD: HowTo（使い方）
+const jsonLdHowTo = {
+  '@context': 'https://schema.org',
+  '@type': 'HowTo',
+  '@id': `${PAGE_URL}#howto`,
+  name: 'MBTI相性診断ツールの使い方',
+  description:
+    '2つのMBTIタイプを選んで相性スコアを確認する方法。',
+  totalTime: 'PT1M',
+  step: [
+    {
+      '@type': 'HowToStep',
+      name: 'タイプ1を選択',
+      text: 'ドロップダウンから自分のMBTIタイプ（タイプ1）を選びます。4気質グループ（NT/NF/SJ/SP）でグループ化されています。',
+      position: 1,
+    },
+    {
+      '@type': 'HowToStep',
+      name: 'タイプ2を選択',
+      text: '相手のMBTIタイプ（タイプ2）を選びます。',
+      position: 2,
+    },
+    {
+      '@type': 'HowToStep',
+      name: '「相性を見る」をタップ',
+      text: 'ボタンをタップすると、相性スコア・カテゴリ・仕事相性・恋愛相性・成長ポイントが即表示されます。',
+      position: 3,
+    },
+    {
+      '@type': 'HowToStep',
+      name: '結果をシェア',
+      text: 'X（旧Twitter）・LINE・URLコピーボタンで結果を共有できます。URLには選択したタイプ情報が含まれ、同じ結果を直接開けます。',
+      position: 4,
+    },
+  ],
+};
+
+const jsonLdAll = [jsonLdWebApp, jsonLdBreadcrumb, jsonLdHowTo];
+
+// よく見られる相性ペア TOP5
+const popularPairs = [
+  { t1: 'INFJ', t2: 'ENTP', label: 'INFJ × ENTP（ソウルメイト型の代表例）' },
+  { t1: 'INTJ', t2: 'ENFP', label: 'INTJ × ENFP（補完型の人気ペア）' },
+  { t1: 'INFP', t2: 'ENTJ', label: 'INFP × ENTJ（機能スタック補完ペア）' },
+  { t1: 'ISFJ', t2: 'ESTP', label: 'ISFJ × ESTP（Si主機能補完ペア）' },
+  { t1: 'ISTJ', t2: 'ESFP', label: 'ISTJ × ESFP（SJ × SP 異気質ペア）' },
+];
+---
+
+<BaseLayout
+  title="MBTI相性診断ツール【16タイプ選んで即表示】｜診断ナビ"
+  description="自分と相手のMBTIタイプを選ぶだけで相性スコア・仕事相性・恋愛相性・成長ポイントを即表示。Beebe（2017）機能スタック理論に基づく無料ツール。登録不要。"
+  canonical={PAGE_URL}
+  jsonLd={jsonLdAll}
+  ogType="website"
+  publishDate={meta.publishedAt}
+  lastUpdated={meta.updatedAt}
+  breadcrumbs={[
+    { name: '診断一覧', url: '/diagnosis/' },
+    { name: 'MBTI相性一覧', url: '/diagnosis/mbti-compat/' },
+    { name: 'MBTI相性診断ツール', url: '/diagnosis/mbti-compat/tool/' },
+  ]}
+>
+  {/* ========== ヒーロー ========== */}
+  <section class="mct-hero" aria-labelledby="mct-hero-h1">
+    <Container>
+      <div class="mct-hero-inner">
+        <div class="mct-hero-badge">Beebe（2017）機能スタック理論 × Keirsey（1998）気質理論</div>
+        <h1 id="mct-hero-h1" class="mct-hero-h1">
+          MBTI相性診断ツール<br />
+          <span class="mct-hero-meta">【タイプを選ぶだけで即わかる】</span>
+        </h1>
+        <p class="mct-hero-catch">
+          2つのMBTIタイプを選択 → 相性スコア・仕事・恋愛・成長ポイントを即表示<br />
+          URLで結果を共有できます
+        </p>
+        <div class="mct-hero-stats">
+          <span>16タイプ対応</span>
+          <span class="mct-sep" aria-hidden="true">・</span>
+          <span>256通りの相性データ</span>
+          <span class="mct-sep" aria-hidden="true">・</span>
+          <span>無料・登録不要</span>
+        </div>
+        <p class="mct-hero-updated">
+          <time datetime={meta.updatedAt}>{meta.updatedAt}</time> 時点の情報
+        </p>
+      </div>
+    </Container>
+  </section>
+
+  <Container>
+    {/* ========== AIOブロック ========== */}
+    <div class="mct-aio-block" role="note" aria-label="このページでわかること">
+      <p class="mct-aio-title">このツールでわかること</p>
+      <ul class="mct-aio-list">
+        <li>2つのMBTIタイプの相性スコア（0〜100点）とカテゴリ（ソウルメイト〜最大成長機会）</li>
+        <li>仕事でのコラボレーション特性・恋愛関係での補完パターン</li>
+        <li>Beebe（2017）機能スタック理論に基づく成長ポイントとコミュニケーションヒント</li>
+      </ul>
+    </div>
+
+    {/* ========== React Island ツール本体 ========== */}
+    <section class="mct-tool-section" aria-labelledby="mct-tool-h2" id="tool">
+      <h2 id="mct-tool-h2" class="mct-h2">タイプを選んで相性を調べる</h2>
+      <div class="mct-tool-wrap">
+        <MbtiCompatTool client:load />
+      </div>
+    </section>
+
+    {/* ========== 使い方説明 ========== */}
+    <section class="mct-section" aria-labelledby="mct-how-h2">
+      <h2 id="mct-how-h2" class="mct-h2">ツールの使い方</h2>
+      <ol class="mct-steps">
+        <li class="mct-step">
+          <div class="mct-step-num" aria-hidden="true">1</div>
+          <div class="mct-step-body">
+            <h3 class="mct-step-title">タイプ1（あなたのタイプ）を選択</h3>
+            <p class="mct-step-desc">
+              ドロップダウンからあなたのMBTIタイプを選びます。
+              NT・NF・SJ・SPの4気質グループでまとめられています。
+              タイプがわからない場合は
+              <a href="https://www.16personalities.com/ja" target="_blank" rel="noopener noreferrer">16Personalities</a>
+              で事前に確認できます。
+            </p>
+          </div>
+        </li>
+        <li class="mct-step">
+          <div class="mct-step-num" aria-hidden="true">2</div>
+          <div class="mct-step-body">
+            <h3 class="mct-step-title">タイプ2（相手のタイプ）を選択</h3>
+            <p class="mct-step-desc">
+              相性を調べたい相手のMBTIタイプを選びます。
+              同じタイプ同士（例: INTJ × INTJ）も選択できます。
+            </p>
+          </div>
+        </li>
+        <li class="mct-step">
+          <div class="mct-step-num" aria-hidden="true">3</div>
+          <div class="mct-step-body">
+            <h3 class="mct-step-title">「相性を見る」をタップ</h3>
+            <p class="mct-step-desc">
+              スコア・カテゴリ・仕事相性・恋愛相性・成長ポイント・コミュニケーションヒントが即座に表示されます。
+              スコアは0〜100点で、高いほど補完性が高い傾向を示します。
+            </p>
+          </div>
+        </li>
+        <li class="mct-step">
+          <div class="mct-step-num" aria-hidden="true">4</div>
+          <div class="mct-step-body">
+            <h3 class="mct-step-title">結果をシェア・保存</h3>
+            <p class="mct-step-desc">
+              X（旧Twitter）・LINE・URLコピーボタンで結果を共有できます。
+              URLには選択タイプ情報（?t1=INTJ&amp;t2=ENFP）が含まれ、
+              相手が同じURLを開くと同じ結果ページが表示されます。
+            </p>
+          </div>
+        </li>
+      </ol>
+    </section>
+
+    {/* ========== 機能スタック理論の解説 ========== */}
+    <section class="mct-section" aria-labelledby="mct-theory-h2">
+      <h2 id="mct-theory-h2" class="mct-h2">機能スタック理論とは（Beebe 2017）</h2>
+      <p class="mct-lead">
+        本ツールの相性スコアは、John Beebe（2017）が体系化した「機能スタック理論」を
+        主要な計算軸としています。
+      </p>
+      <div class="mct-theory-grid">
+        <div class="mct-theory-card">
+          <div class="mct-theory-icon" aria-hidden="true">1️⃣</div>
+          <h3 class="mct-theory-title">主機能（Dominant）</h3>
+          <p class="mct-theory-body">
+            各タイプで最も発達した認知機能。
+            例: INTJの主機能はNi（内向的直観）。
+            この機能が相手の劣等機能を補完するペアは、
+            深い相互理解が育ちやすい傾向があります。
+          </p>
+        </div>
+        <div class="mct-theory-card">
+          <div class="mct-theory-icon" aria-hidden="true">2️⃣</div>
+          <h3 class="mct-theory-title">補助機能（Auxiliary）</h3>
+          <p class="mct-theory-body">
+            主機能を支える第二の機能。
+            内向型と外向型でバランスをとる役割を持ちます。
+            補助機能の組み合わせも相性に影響します
+            （Beebe 2017）。
+          </p>
+        </div>
+        <div class="mct-theory-card">
+          <div class="mct-theory-icon" aria-hidden="true">4️⃣</div>
+          <h3 class="mct-theory-title">劣等機能（Inferior）</h3>
+          <p class="mct-theory-body">
+            最も意識から遠い第四の機能。
+            Jung（1921）によれば、劣等機能は無意識のストレスの源であり、
+            相手の主機能がここを補うペアは強い魅力と成長の機会が生まれます。
+          </p>
+        </div>
+        <div class="mct-theory-card">
+          <div class="mct-theory-icon" aria-hidden="true">🔄</div>
+          <h3 class="mct-theory-title">補完関係の8パターン</h3>
+          <p class="mct-theory-body">
+            Ni-Se / Ne-Si / Ti-Fe / Te-Fiが「補完ペア」（Jung 1921）。
+            例: NiとSeは互いを補完し合い、
+            INTJ（Ni主機能）とENFP（Ne主機能 + Se補完）は
+            高いスコアになりやすい傾向があります。
+          </p>
+        </div>
+      </div>
+    </section>
+
+    {/* ========== よく見られるペア TOP5 ========== */}
+    <section class="mct-section" aria-labelledby="mct-popular-h2">
+      <h2 id="mct-popular-h2" class="mct-h2">よく見られる相性ペア TOP5</h2>
+      <p class="mct-lead">
+        以下のペアは検索数・関心度が高い組み合わせです。
+        クリックするとそのペアの相性結果を直接確認できます。
+      </p>
+      <ul class="mct-popular-list">
+        {popularPairs.map((pair, i) => (
+          <li>
+            <a
+              href={`/diagnosis/mbti-compat/tool/?t1=${pair.t1}&t2=${pair.t2}`}
+              class="mct-popular-link"
+            >
+              <span class="mct-popular-rank" aria-hidden="true">{i + 1}</span>
+              <span class="mct-popular-label">{pair.label}</span>
+              <span class="mct-popular-arrow" aria-hidden="true">→</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    {/* ========== 注意事項 ========== */}
+    <section class="mct-section" aria-labelledby="mct-notice-h2">
+      <h2 id="mct-notice-h2" class="mct-h2">ご注意・免責事項</h2>
+      <div class="mct-notice-block">
+        <ul class="mct-notice-list">
+          <li>本ツールはKeirsey（1998）・Beebe（2017）・Jung（1921）の学術理論に基づく傾向値を提供します。</li>
+          <li>スコアは「補完性・類似性の強さ」の傾向であり、個人差・環境・関係の深さによって大きく異なります。</li>
+          <li>「相性が良い/悪い」という断定的な判断は行っていません。全てのペアに補完性と成長機会があります。</li>
+          <li>精神疾患・発達障害等の医学的・臨床的な診断は行いません。専門家にご相談ください。</li>
+          <li>MBTI® は The Myers-Briggs Company の登録商標です。</li>
+        </ul>
+      </div>
+    </section>
+
+    {/* ========== 関連リンク ========== */}
+    <section class="mct-section" aria-labelledby="mct-related-h2">
+      <h2 id="mct-related-h2" class="mct-h2">関連ページ</h2>
+      <ul class="mct-related-list">
+        <li class="mct-related-item">
+          <a href="/diagnosis/mbti-compat/" class="mct-related-link">
+            <span class="mct-related-icon" aria-hidden="true">📋</span>
+            <span class="mct-related-body">
+              <span class="mct-related-title">MBTI相性一覧【全16タイプ】</span>
+              <span class="mct-related-desc">4気質グループ別概観・16タイプ×ベスト3一覧表</span>
+            </span>
+          </a>
+        </li>
+        <li class="mct-related-item">
+          <a href="/diagnosis/mbti-compat/table/" class="mct-related-link">
+            <span class="mct-related-icon" aria-hidden="true">📊</span>
+            <span class="mct-related-body">
+              <span class="mct-related-title">16×16 MBTI相性マトリクス</span>
+              <span class="mct-related-desc">全256組み合わせをカラーコード付き表で一覧表示</span>
+            </span>
+          </a>
+        </li>
+        <li class="mct-related-item">
+          <a href="/diagnosis/multi-int/" class="mct-related-link">
+            <span class="mct-related-icon" aria-hidden="true">🧠</span>
+            <span class="mct-related-body">
+              <span class="mct-related-title">多重知能テスト</span>
+              <span class="mct-related-desc">Gardner理論で8つの知能プロファイルを発見</span>
+            </span>
+          </a>
+        </li>
+      </ul>
+    </section>
+  </Container>
+</BaseLayout>
+
+<style>
+/* ========== ヒーロー ========== */
+.mct-hero {
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+  color: #fff;
+  padding-block: 3rem 3.5rem;
+  text-align: center;
+}
+.mct-hero-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+.mct-hero-badge {
+  display: inline-block;
+  background: rgba(255 255 255 / 0.2);
+  border: 1px solid rgba(255 255 255 / 0.4);
+  border-radius: 2rem;
+  padding: 0.25rem 1rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+}
+.mct-hero-h1 {
+  font-size: clamp(1.6rem, 4.5vw, 2.2rem);
+  font-family: var(--sn-font-rounded, sans-serif);
+  font-weight: 700;
+  line-height: 1.3;
+  margin: 0;
+}
+.mct-hero-meta {
+  display: block;
+  font-size: clamp(0.85rem, 2.5vw, 1.1rem);
+  opacity: 0.9;
+}
+.mct-hero-catch {
+  font-size: clamp(0.875rem, 2.5vw, 1rem);
+  opacity: 0.92;
+  line-height: 1.7;
+  margin: 0;
+}
+.mct-hero-stats {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  font-size: 0.85rem;
+  opacity: 0.85;
+}
+.mct-sep { color: rgba(255 255 255 / 0.5); }
+.mct-hero-updated {
+  font-size: 0.78rem;
+  opacity: 0.7;
+  margin: 0;
+}
+
+/* ========== AIOブロック ========== */
+.mct-aio-block {
+  background: #f5f3ff;
+  border-left: 4px solid #6d28d9;
+  border-radius: 0 0.5rem 0.5rem 0;
+  padding: 1.25rem 1.5rem;
+  margin-block: 2rem;
+}
+.mct-aio-title {
+  font-weight: 700;
+  margin: 0 0 0.5rem;
+  font-size: 0.85rem;
+  color: #6d28d9;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.mct-aio-list {
+  margin: 0;
+  padding-left: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+.mct-aio-list li {
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+/* ========== ツールセクション ========== */
+.mct-tool-section {
+  margin-block: 2rem;
+}
+.mct-h2 {
+  font-size: clamp(1.25rem, 3.5vw, 1.65rem);
+  font-family: var(--sn-font-rounded, sans-serif);
+  font-weight: 700;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #6d28d9;
+}
+.mct-tool-wrap {
+  background: #f9f7ff;
+  border: 1px solid #ddd6fe;
+  border-radius: 1rem;
+  padding: 2rem 1.5rem;
+  margin-top: 1rem;
+}
+
+/* ========== セクション共通 ========== */
+.mct-section {
+  margin-block: 3rem;
+}
+.mct-lead {
+  font-size: 1rem;
+  line-height: 1.8;
+  margin-bottom: 1.25rem;
+  color: #374151;
+}
+
+/* ========== ステップ ========== */
+.mct-steps {
+  list-style: none;
+  padding: 0;
+  margin: 1.5rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+.mct-step {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+.mct-step-num {
+  flex-shrink: 0;
+  width: 2.5rem;
+  height: 2.5rem;
+  background: #6d28d9;
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+.mct-step-title {
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 0 0 0.25rem;
+}
+.mct-step-desc {
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: #4b5563;
+  margin: 0;
+}
+
+/* ========== 理論グリッド ========== */
+.mct-theory-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+.mct-theory-card {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+}
+.mct-theory-icon {
+  font-size: 1.75rem;
+  margin-bottom: 0.5rem;
+}
+.mct-theory-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem;
+  color: #6d28d9;
+}
+.mct-theory-body {
+  font-size: 0.85rem;
+  line-height: 1.7;
+  color: #4b5563;
+  margin: 0;
+}
+
+/* ========== 人気ペア ========== */
+.mct-popular-list {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+.mct-popular-link {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.6rem;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.15s, background 0.15s;
+  min-height: 44px;
+}
+.mct-popular-link:hover {
+  border-color: #6d28d9;
+  background: #f5f3ff;
+}
+.mct-popular-rank {
+  flex-shrink: 0;
+  width: 1.75rem;
+  height: 1.75rem;
+  background: #6d28d9;
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+.mct-popular-label {
+  flex: 1;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #374151;
+}
+.mct-popular-arrow {
+  color: #6d28d9;
+  font-weight: 700;
+}
+
+/* ========== 注意事項 ========== */
+.mct-notice-block {
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  border-radius: 0.75rem;
+  padding: 1.25rem 1.5rem;
+}
+.mct-notice-list {
+  margin: 0;
+  padding-left: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.mct-notice-list li {
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: #92400e;
+}
+
+/* ========== 関連リンク ========== */
+.mct-related-list {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.mct-related-link {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.mct-related-link:hover {
+  border-color: #6d28d9;
+  box-shadow: 0 2px 8px rgba(109 40 217 / 0.1);
+}
+.mct-related-icon {
+  font-size: 1.75rem;
+  flex-shrink: 0;
+}
+.mct-related-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+.mct-related-title {
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+.mct-related-desc {
+  font-size: 0.8rem;
+  color: var(--sn-muted, #6b7280);
+}
+
+/* ========== レスポンシブ ========== */
+@media (max-width: 768px) {
+  .mct-tool-wrap {
+    padding: 1.5rem 1rem;
+  }
+  .mct-theory-grid {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
+
+<style is:global>
+/* ========== MbtiCompatTool React コンポーネント スタイル ========== */
+.mct-root {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* 選択UI */
+.mct-selector {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.mct-select-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.mct-select-block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  flex: 1;
+  min-width: 160px;
+}
+.mct-label {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #374151;
+}
+.mct-select {
+  width: 100%;
+  padding: 0.65rem 0.8rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  background: #fff;
+  color: #374151;
+  cursor: pointer;
+  min-height: 44px;
+  transition: border-color 0.15s;
+}
+.mct-select:focus {
+  outline: 2px solid #6d28d9;
+  outline-offset: 2px;
+  border-color: #6d28d9;
+}
+.mct-vs-badge {
+  flex-shrink: 0;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #6d28d9;
+  padding-bottom: 0.4rem;
+  align-self: flex-end;
+}
+.mct-error {
+  font-size: 0.875rem;
+  color: #dc2626;
+  background: #fee2e2;
+  border: 1px solid #fca5a5;
+  border-radius: 0.4rem;
+  padding: 0.5rem 0.75rem;
+  margin: 0;
+}
+.mct-btn {
+  width: 100%;
+  padding: 0.9rem 2rem;
+  background: #6d28d9;
+  color: #fff;
+  font-size: 1.05rem;
+  font-weight: 700;
+  border: none;
+  border-radius: 0.6rem;
+  cursor: pointer;
+  min-height: 44px;
+  transition: background 0.15s, transform 0.1s;
+  font-family: var(--sn-font-rounded, sans-serif);
+}
+.mct-btn:hover:not(:disabled) {
+  background: #5b21b6;
+  transform: translateY(-1px);
+}
+.mct-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.mct-btn:focus-visible {
+  outline: 2px solid #6d28d9;
+  outline-offset: 2px;
+}
+
+/* 結果エリア */
+.mct-result-area {
+  min-height: 200px;
+}
+.mct-result-card {
+  border: 2px solid;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+.mct-result-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+.mct-result-pair {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.mct-result-type {
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: #1f2937;
+}
+.mct-result-sep {
+  font-size: 1.5rem;
+  font-weight: 400;
+  color: #9ca3af;
+}
+.mct-score-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.4rem;
+}
+.mct-score-num {
+  font-size: 3rem;
+  font-weight: 900;
+  line-height: 1;
+}
+.mct-score-unit {
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+.mct-category-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.3rem 0.8rem;
+  border-radius: 2rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+.mct-one-liner {
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.6;
+  color: #374151;
+  margin: 0;
+  padding: 0.75rem 1rem;
+  background: rgba(255 255 255 / 0.6);
+  border-radius: 0.5rem;
+}
+.mct-detail-section {
+  background: rgba(255 255 255 / 0.6);
+  border-radius: 0.75rem;
+  padding: 1rem 1.25rem;
+}
+.mct-detail-h3 {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #374151;
+  margin: 0 0 0.5rem;
+}
+.mct-detail-body {
+  font-size: 0.875rem;
+  line-height: 1.8;
+  color: #4b5563;
+  margin: 0;
+}
+.mct-compat-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+.mct-compat-card {
+  background: rgba(255 255 255 / 0.7);
+  border-radius: 0.6rem;
+  padding: 0.85rem 1rem;
+}
+.mct-compat-icon {
+  font-size: 1.25rem;
+  margin-bottom: 0.3rem;
+}
+.mct-compat-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #374151;
+  margin: 0 0 0.4rem;
+}
+.mct-compat-body {
+  font-size: 0.82rem;
+  line-height: 1.6;
+  color: #4b5563;
+  margin: 0;
+}
+.mct-growth-block {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem;
+  border: 2px solid;
+  border-radius: 0.75rem;
+  background: rgba(255 255 255 / 0.6);
+}
+.mct-growth-icon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+  margin-top: 0.1rem;
+}
+.mct-growth-title {
+  font-size: 0.9rem;
+  font-weight: 700;
+  margin: 0 0 0.4rem;
+}
+.mct-growth-body {
+  font-size: 0.85rem;
+  line-height: 1.6;
+  color: #4b5563;
+  margin: 0;
+}
+.mct-caution-block {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem;
+  background: rgba(255 255 255 / 0.6);
+  border-radius: 0.75rem;
+  border: 1px solid #e5e7eb;
+}
+.mct-caution-icon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+  margin-top: 0.1rem;
+}
+.mct-caution-title {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #374151;
+  margin: 0 0 0.4rem;
+}
+.mct-caution-body {
+  font-size: 0.85rem;
+  line-height: 1.6;
+  color: #4b5563;
+  margin: 0;
+}
+.mct-share-row {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+.mct-share-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.5rem 1rem;
+  border-radius: 0.4rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+  border: none;
+  min-height: 40px;
+  transition: opacity 0.15s, transform 0.1s;
+  font-family: var(--sn-font-rounded, inherit);
+}
+.mct-share-btn:hover { opacity: 0.85; transform: translateY(-1px); }
+.mct-share-btn:focus-visible { outline: 2px solid #6d28d9; outline-offset: 2px; }
+.mct-share-btn--x { background: #000; color: #fff; }
+.mct-share-btn--line { background: #06c755; color: #fff; }
+.mct-share-btn--copy { background: #6b7280; color: #fff; }
+.mct-disclaimer {
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin: 0;
+  line-height: 1.5;
+}
+.mct-result-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 120px;
+  border: 2px dashed #d1d5db;
+  border-radius: 0.75rem;
+  background: #f9fafb;
+}
+.mct-placeholder-text {
+  font-size: 0.9rem;
+  color: #9ca3af;
+  text-align: center;
+  margin: 0;
+  padding: 1.5rem;
+}
+
+/* レスポンシブ */
+@media (max-width: 600px) {
+  .mct-select-row {
+    flex-direction: column;
+  }
+  .mct-vs-badge {
+    align-self: center;
+    padding-bottom: 0;
+  }
+  .mct-result-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .mct-score-wrap {
+    align-items: flex-start;
+  }
+  .mct-compat-grid {
+    grid-template-columns: 1fr;
+  }
+  .mct-share-row {
+    flex-direction: column;
+  }
+  .mct-share-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+</style>
