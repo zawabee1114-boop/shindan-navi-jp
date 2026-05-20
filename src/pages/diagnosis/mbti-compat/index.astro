@@ -1,0 +1,1098 @@
+---
+/**
+ * MBTI相性一覧 メインハブページ
+ * KW: MBTI相性一覧（VOL: 9,900 / SD: 11-12）
+ * 学術根拠:
+ *   - Keirsey D (1998) Please Understand Me II
+ *   - Jung CG (1921) Psychological Types
+ *   - Beebe J (2017) Energies and Patterns in Psychological Type
+ *   - Myers IB (1998) MBTI Manual
+ * 確認日: 2026-05-20
+ *
+ * SEO/AIO対応:
+ * - JSON-LD: WebApplication + Article + FAQPage + BreadcrumbList
+ * - @id連結: エンティティグラフ形成
+ * - 全16タイプ × ベスト3 / 成長機会3ペア 動的生成
+ * - 4気質グループ別相性概観
+ * - FAQ 8問
+ * - YMYL回避: 医学的診断・治療表記ゼロ
+ */
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Container from '../../../components/Container.astro';
+import { meta, MBTI_TYPES } from '../../../data/diagnoses/mbti-compat/meta';
+import {
+  getBestMatches,
+  getWorstMatches,
+  getCategoryLabel,
+  getCategoryColor,
+} from '../../../data/diagnoses/mbti-compat/results';
+import { temperamentGroups } from '../../../data/diagnoses/mbti-compat/groups';
+
+const SITE_URL = 'https://shindan-navi.jp';
+const PAGE_URL = `${SITE_URL}/diagnosis/mbti-compat/`;
+
+// 16タイプ × ベスト3 / 成長機会3 を静的生成時に計算
+const allTypesData = MBTI_TYPES.map((type) => ({
+  type,
+  best: getBestMatches(type, 3),
+  growth: getWorstMatches(type, 3),
+}));
+
+// 気質グループ配列（表示順）
+const temperamentOrder = ['NT', 'NF', 'SJ', 'SP'] as const;
+
+// FAQ 8問
+const faqs = [
+  {
+    question: 'MBTI相性に科学的根拠はありますか？',
+    answer:
+      'Keirsey（1998）の気質理論・Jung（1921）の認知機能論・Beebe（2017）の機能スタック理論を組み合わせた分析に基づいています。ただし、相性は「傾向」であり、個人差・環境・関係の深さによって大きく変わります。本ツールは傾向把握のための参考情報であり、科学的測定ではありません。',
+  },
+  {
+    question: '「成長機会が多いペア」とは絶対にうまくいかないのですか？',
+    answer:
+      'そうではありません。Jung（1921）の個性化理論では、最も異なる認知スタイルを持つ相手から最大の気づきと成長が得られると述べています。コミュニケーションの意識的な努力が必要ですが、深い相互理解に至れば強力な補完関係になれます。',
+  },
+  {
+    question: '同じタイプ同士（例: INTJ×INTJ）の相性はどうですか？',
+    answer:
+      '同タイプ同士は価値観や思考スタイルが近いため、初期の共感度は高い傾向があります。一方、Beebe（2017）の機能スタック理論では、補完関係がないため互いの盲点（劣等機能）が重なりやすい点に注意が必要です。本サイトの相性表では同タイプ同士のスコアも確認できます。',
+  },
+  {
+    question: '機能スタック（Beebe理論）とは何ですか？',
+    answer:
+      'Beebe（2017）が提唱した、各MBTIタイプが持つ8つの認知機能（Ni/Ne/Si/Se/Ti/Te/Fi/Fe）の優先順位モデルです。主機能（dominant）・補助機能（auxiliary）・三次機能（tertiary）・劣等機能（inferior）の4段階があり、補完的なペアが深い相互理解につながりやすいとされています。',
+  },
+  {
+    question: 'MBTI公式と16Personalitiesなど非公式テストの違いは何ですか？',
+    answer:
+      'MBTI®はThe Myers-Briggs Companyが管理する公式アセスメントで、認定資格保有者が実施します。16Personalities等の無料テストは類似の軸で測定しますが、結果が一致しないケースもあります。本サイトの相性データはMBTIの理論的枠組み（Jung/Myers/Keirsey）に基づいており、どちらのテストの結果にも対応しています。',
+  },
+  {
+    question: '自分のMBTIタイプがわからない場合はどうすれば良いですか？',
+    answer:
+      '無料で試せる方法として、16Personalities（https://www.16personalities.com/ja）が代表的です。より精度の高い結果を求める場合はMBTI公式の認定資格保有者によるセッションをお勧めします。本サイトでも将来的に自社主診断を追加予定です。',
+  },
+  {
+    question: '相性スコアの計算ロジックを教えてください。',
+    answer:
+      '機能スタック整合度（30点）・Keirsey気質一致（20点）・4文字中の一致数（20点）・J/P補完性（15点）・E/Iバランス（15点）の5軸合計100点で算出しています。90点以上をソウルメイト型・70-89点を良好型・50-69点をバランス型・30-49点を成長機会型・29点以下を最大成長機会型と分類しています。',
+  },
+  {
+    question: 'このサイトでMBTI診断そのものはできますか？',
+    answer:
+      '現時点ではMBTI相性の分析ツールを提供しています（/diagnosis/mbti-compat/tool/）。タイプ特定の診断については16Personalities（外部サービス）をご活用ください。自社主診断は将来追加予定です。',
+  },
+];
+
+// JSON-LD: WebApplication
+const jsonLdWebApp = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  '@id': `${PAGE_URL}#webapp`,
+  name: 'MBTI相性一覧【全16タイプ完全版】',
+  url: PAGE_URL,
+  applicationCategory: 'EducationalApplication',
+  operatingSystem: 'Web',
+  description: meta.description,
+  offers: {
+    '@type': 'Offer',
+    price: '0',
+    priceCurrency: 'JPY',
+    availability: 'https://schema.org/InStock',
+  },
+  author: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+    name: '診断ナビ',
+    url: SITE_URL,
+  },
+  publisher: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+  },
+};
+
+// JSON-LD: Article
+const jsonLdArticle = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  '@id': `${PAGE_URL}#article`,
+  mainEntityOfPage: { '@type': 'WebPage', '@id': PAGE_URL },
+  headline: 'MBTI相性一覧【全16タイプ完全版・公式根拠付】',
+  description: meta.description,
+  url: PAGE_URL,
+  datePublished: meta.publishedAt,
+  dateModified: meta.updatedAt,
+  inLanguage: 'ja',
+  author: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+    name: '診断ナビ',
+  },
+  publisher: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+    name: '診断ナビ',
+  },
+  citation: meta.references.map((ref) => ({
+    '@type': 'Book',
+    name: ref.title,
+    author: ref.author,
+    datePublished: String(ref.year),
+    publisher: ref.publisher,
+    url: ref.url,
+  })),
+};
+
+// JSON-LD: FAQPage
+const jsonLdFAQ = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  '@id': `${PAGE_URL}#faq`,
+  mainEntity: faqs.map(({ question, answer }) => ({
+    '@type': 'Question',
+    name: question,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: answer,
+    },
+  })),
+};
+
+// JSON-LD: BreadcrumbList
+const jsonLdBreadcrumb = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  '@id': `${PAGE_URL}#breadcrumb`,
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'ホーム', item: SITE_URL },
+    { '@type': 'ListItem', position: 2, name: '診断一覧', item: `${SITE_URL}/diagnosis/` },
+    { '@type': 'ListItem', position: 3, name: 'MBTI相性一覧', item: PAGE_URL },
+  ],
+};
+
+const jsonLdAll = [jsonLdWebApp, jsonLdArticle, jsonLdFAQ, jsonLdBreadcrumb];
+
+// カテゴリ色マッピング（CSS変数）
+const categoryColorVar: Record<string, string> = {
+  soulmate: 'var(--mc-soulmate)',
+  good: 'var(--mc-good)',
+  neutral: 'var(--mc-neutral)',
+  tough: 'var(--mc-tough)',
+  opposite: 'var(--mc-opposite)',
+};
+---
+
+<BaseLayout
+  title={meta.title}
+  description={meta.description}
+  canonical={PAGE_URL}
+  jsonLd={jsonLdAll}
+  ogType="website"
+  publishDate={meta.publishedAt}
+  lastUpdated={meta.updatedAt}
+  breadcrumbs={[
+    { name: '診断一覧', url: '/diagnosis/' },
+    { name: 'MBTI相性一覧', url: '/diagnosis/mbti-compat/' },
+  ]}
+>
+  {/* ========== ヒーロー ========== */}
+  <section class="mc-hero" aria-labelledby="mc-hero-h1">
+    <Container>
+      <div class="mc-hero-inner">
+        <div class="mc-hero-badge">Keirsey / Jung / Beebe 理論に基づく相性分析</div>
+        <h1 id="mc-hero-h1" class="mc-hero-h1">
+          MBTI相性一覧<br />
+          <span class="mc-hero-meta">【全16タイプ完全版・256組み合わせ収録】</span>
+        </h1>
+        <p class="mc-hero-catch">
+          あなたのタイプと相手のタイプ、どんな補完関係がある？<br />
+          気質理論・機能スタック理論から相性の傾向を徹底解説
+        </p>
+        <div class="mc-hero-stats">
+          <span class="mc-stat"><strong>16</strong>タイプ</span>
+          <span class="mc-stat-sep">×</span>
+          <span class="mc-stat"><strong>256</strong>通り</span>
+          <span class="mc-stat-sep">・</span>
+          <span class="mc-stat">無料</span>
+          <span class="mc-stat-sep">・</span>
+          <span class="mc-stat">登録不要</span>
+        </div>
+        <div class="mc-hero-cta-group">
+          <a href="/diagnosis/mbti-compat/tool/" class="mc-cta-btn mc-cta-btn--primary">
+            タイプを選んで相性を見る →
+          </a>
+          <a href="/diagnosis/mbti-compat/table/" class="mc-cta-btn mc-cta-btn--secondary">
+            16×16 相性マトリクスを見る
+          </a>
+        </div>
+        <p class="mc-hero-sub">
+          <time datetime={meta.updatedAt}>{meta.updatedAt}</time> 時点の情報・月1回更新
+        </p>
+      </div>
+    </Container>
+  </section>
+
+  <Container>
+    {/* ========== AIOブロック ========== */}
+    <div class="mc-aio-block" role="note" aria-label="このページでわかること">
+      <p class="mc-aio-title">このページでわかること</p>
+      <ul class="mc-aio-list">
+        <li>全16タイプ × 256組み合わせの相性スコアとカテゴリ（Keirsey 1998 / Beebe 2017理論）</li>
+        <li>NT・NF・SJ・SP 4気質グループ別の相性パターン概観</li>
+        <li>各タイプのベストマッチ3組・成長機会の多いペア3組の一覧表</li>
+        <li>相性スコアの計算ロジックと、スコアが高い・低いペアの特徴</li>
+      </ul>
+      <p class="mc-aio-updated">
+        学術根拠:
+        <a href="https://keirsey.com/product/please-understand-me-ii/" target="_blank" rel="noopener noreferrer">Keirsey（1998）</a>・
+        <a href="https://press.princeton.edu/books/paperback/9780691018133/psychological-types" target="_blank" rel="noopener noreferrer">Jung（1921）</a>・
+        <a href="https://www.routledge.com/Energies-and-Patterns-in-Psychological-Type-The-reservoir-of-consciousness/Beebe/p/book/9781138859760" target="_blank" rel="noopener noreferrer">Beebe（2017）</a>
+        を確認済。
+      </p>
+    </div>
+
+    {/* ========== 相性スコアの読み解き方 ========== */}
+    <section class="mc-section" aria-labelledby="mc-score-h2">
+      <h2 id="mc-score-h2" class="mc-h2">相性スコアの読み解き方</h2>
+      <p class="mc-lead">
+        本サイトの相性スコアは0〜100点で表示します。
+        スコアは「相性の優劣」ではなく「補完性・類似性の強さ」を表します。
+        Keirsey（1998）とBeebe（2017）の理論に基づき、5つのカテゴリで分類しています。
+      </p>
+      <div class="mc-category-grid">
+        <div class="mc-category-card" style={`border-left-color: var(--mc-soulmate)`}>
+          <div class="mc-category-score">90〜100点</div>
+          <div class="mc-category-label" style={`color: var(--mc-soulmate)`}>ソウルメイト型</div>
+          <p class="mc-category-desc">
+            Beebe（2017）の機能スタック理論が示す最も補完的なペア。
+            互いの主機能が相手の劣等機能を自然に補い、深い相互理解が育ちやすい。
+            Jung（1921）の認知機能補完関係に相当します。
+          </p>
+        </div>
+        <div class="mc-category-card" style={`border-left-color: var(--mc-good)`}>
+          <div class="mc-category-score">70〜89点</div>
+          <div class="mc-category-label" style={`color: var(--mc-good)`}>良好型</div>
+          <p class="mc-category-desc">
+            Keirsey（1998）の気質分析で近接する特性を持つペア。
+            自然な親和性と協力関係が生まれやすく、摩擦が少ない組み合わせ。
+            価値観の共有と異なる強みの補完が共存します。
+          </p>
+        </div>
+        <div class="mc-category-card" style={`border-left-color: var(--mc-neutral)`}>
+          <div class="mc-category-score">50〜69点</div>
+          <div class="mc-category-label" style={`color: var(--mc-neutral)`}>バランス型</div>
+          <p class="mc-category-desc">
+            意識的な対話で相互理解が深まるペア。
+            異なる強みをそれぞれ持ち、補完できる組み合わせ。
+            コミュニケーションへの意識的な投資で関係の質が上がります。
+          </p>
+        </div>
+        <div class="mc-category-card" style={`border-left-color: var(--mc-tough)`}>
+          <div class="mc-category-score">30〜49点</div>
+          <div class="mc-category-label" style={`color: var(--mc-tough)`}>成長機会型</div>
+          <p class="mc-category-desc">
+            アプローチの違いが多い分、学び合いの機会も豊富なペア。
+            Jung（1921）の個性化プロセスが促進される組み合わせ。
+            定期的な対話と理解の積み重ねが重要です。
+          </p>
+        </div>
+        <div class="mc-category-card" style={`border-left-color: var(--mc-opposite)`}>
+          <div class="mc-category-score">0〜29点</div>
+          <div class="mc-category-label" style={`color: var(--mc-opposite)`}>最大成長機会型</div>
+          <p class="mc-category-desc">
+            最も異なる認知スタイルを持つペア。
+            Beebe（2017）が示す「shadow functions」との接触は最大の自己理解を促します。
+            継続的な対話と相互尊重が鍵となる組み合わせです。
+          </p>
+        </div>
+      </div>
+    </section>
+
+    {/* ========== 4気質グループ別 相性概観 ========== */}
+    <section class="mc-section" aria-labelledby="mc-temperament-h2">
+      <h2 id="mc-temperament-h2" class="mc-h2">4気質グループ別 相性パターン概観</h2>
+      <p class="mc-lead">
+        Keirsey（1998）は16タイプをNT・NF・SJ・SPの4気質グループに分類しました。
+        同じ気質内では価値観が近いため理解しやすく、異なる気質との関係では新たな視点が得られます。
+        以下は各気質グループ間の相性パターンの概観です（個人差があります）。
+      </p>
+
+      {temperamentOrder.map((tempId) => {
+        const group = temperamentGroups[tempId];
+        return (
+          <div class="mc-temp-block" data-temp={tempId}>
+            <h3 class="mc-temp-h3">
+              <span class="mc-temp-badge" data-temp={tempId}>{tempId}</span>
+              {group.name}（{group.nameEn}）: {group.types.join(' / ')}
+            </h3>
+            <p class="mc-temp-desc">{group.description}</p>
+            <div class="mc-temp-compat-grid">
+              {temperamentOrder.map((targetId) => {
+                const targetGroup = temperamentGroups[targetId];
+                const isSame = tempId === targetId;
+                const isAdjacent =
+                  (tempId === 'NT' && targetId === 'NF') ||
+                  (tempId === 'NF' && targetId === 'NT') ||
+                  (tempId === 'SJ' && targetId === 'SP') ||
+                  (tempId === 'SP' && targetId === 'SJ');
+                const level = isSame ? 'same' : isAdjacent ? 'adjacent' : 'opposite';
+                const levelLabel = isSame ? '同気質・高共感' : isAdjacent ? '近接気質・親和性あり' : '異気質・相互補完';
+                return (
+                  <div class="mc-temp-compat-card" data-level={level}>
+                    <div class="mc-temp-compat-pair">
+                      <span class="mc-temp-badge mc-temp-badge--sm" data-temp={tempId}>{tempId}</span>
+                      <span class="mc-temp-compat-arrow" aria-hidden="true">×</span>
+                      <span class="mc-temp-badge mc-temp-badge--sm" data-temp={targetId}>{targetId}</span>
+                    </div>
+                    <div class="mc-temp-compat-label">{levelLabel}</div>
+                    <p class="mc-temp-compat-note">
+                      {isSame && `同気質のため価値観・優先事項が近く、初期の共感が高い傾向。一方、同じ盲点を持ちやすい点に注意が必要です。`}
+                      {isAdjacent && `${group.nameEn}と${targetGroup.nameEn}は近接する気質。共通の強みを持ちながら、異なるアプローチで補完し合える組み合わせです。`}
+                      {!isSame && !isAdjacent && `${group.nameEn}と${targetGroup.nameEn}は価値観の差が大きい分、互いに新鮮な視点をもたらします。意識的な対話が関係の鍵になります。`}
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        );
+      })}
+    </section>
+
+    {/* ========== 16タイプ別 ベスト3 / 成長機会3 一覧表 ========== */}
+    <section class="mc-section" aria-labelledby="mc-table-h2">
+      <h2 id="mc-table-h2" class="mc-h2">16タイプ別 ベストマッチ3組・成長機会ペア3組</h2>
+      <p class="mc-lead">
+        各タイプごとに、相性スコア上位3組（ベストマッチ）と
+        最も異なるアプローチを持つ3組（成長機会の多いペア）を一覧にまとめています。
+        Keirsey（1998）・Beebe（2017）の理論に基づく傾向値です。個人差があります。
+      </p>
+      <div class="mc-type-table-wrap" role="region" aria-label="16タイプ別相性一覧">
+        <table class="mc-type-table">
+          <caption class="mc-table-caption">
+            16タイプ別 相性傾向一覧（Keirsey 1998 / Beebe 2017理論に基づく傾向値・2026-05-20時点）
+          </caption>
+          <thead>
+            <tr>
+              <th scope="col" class="mc-th mc-th--type">タイプ</th>
+              <th scope="col" class="mc-th mc-th--best">ベストマッチ上位3組</th>
+              <th scope="col" class="mc-th mc-th--growth">成長機会の多いペア3組</th>
+            </tr>
+          </thead>
+          <tbody>
+            {allTypesData.map(({ type, best, growth }) => (
+              <tr class="mc-tr">
+                <th scope="row" class="mc-td mc-td--type">
+                  <a href={`/diagnosis/mbti-compat/tool/?t1=${type}`} class="mc-type-link">
+                    {type}
+                  </a>
+                </th>
+                <td class="mc-td">
+                  <ul class="mc-pair-list">
+                    {best.map((d) => {
+                      const partner = d.type1 === type ? d.type2 : d.type1;
+                      return (
+                        <li>
+                          <a
+                            href={`/diagnosis/mbti-compat/tool/?t1=${type}&t2=${partner}`}
+                            class="mc-pair-link"
+                          >
+                            <span
+                              class="mc-pair-score"
+                              style={`background: ${getCategoryColor(d.category)}22; color: ${getCategoryColor(d.category)}`}
+                            >
+                              {d.score}点
+                            </span>
+                            <span class="mc-pair-name">{partner}</span>
+                          </a>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </td>
+                <td class="mc-td">
+                  <ul class="mc-pair-list">
+                    {growth.map((d) => {
+                      const partner = d.type1 === type ? d.type2 : d.type1;
+                      return (
+                        <li>
+                          <a
+                            href={`/diagnosis/mbti-compat/tool/?t1=${type}&t2=${partner}`}
+                            class="mc-pair-link mc-pair-link--growth"
+                          >
+                            <span
+                              class="mc-pair-score"
+                              style={`background: ${getCategoryColor(d.category)}22; color: ${getCategoryColor(d.category)}`}
+                            >
+                              {d.score}点
+                            </span>
+                            <span class="mc-pair-name">{partner}</span>
+                          </a>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p class="mc-table-note">
+        ※ スコアは傾向値です。個人差・関係の深さ・環境によって大きく変わります。
+        詳細は
+        <a href="/diagnosis/mbti-compat/tool/">MBTI相性診断ツール</a>
+        または
+        <a href="/diagnosis/mbti-compat/table/">16×16相性マトリクス</a>
+        でご確認ください。
+      </p>
+    </section>
+
+    {/* ========== CTAセクション ========== */}
+    <section class="mc-cta-section" aria-labelledby="mc-cta-h2">
+      <h2 id="mc-cta-h2" class="mc-h2 mc-h2--center">さらに詳しく相性を調べる</h2>
+      <div class="mc-cta-cards">
+        <a href="/diagnosis/mbti-compat/tool/" class="mc-cta-card">
+          <div class="mc-cta-icon" aria-hidden="true">🔍</div>
+          <div class="mc-cta-card-body">
+            <h3 class="mc-cta-card-title">タイプ選択・相性診断ツール</h3>
+            <p class="mc-cta-card-desc">
+              自分と相手のタイプを選ぶだけで、スコア・仕事相性・恋愛相性・成長ポイントを即表示。
+              URLで結果を共有できます。
+            </p>
+            <span class="mc-cta-card-link" aria-hidden="true">相性を調べる →</span>
+          </div>
+        </a>
+        <a href="/diagnosis/mbti-compat/table/" class="mc-cta-card">
+          <div class="mc-cta-icon" aria-hidden="true">📊</div>
+          <div class="mc-cta-card-body">
+            <h3 class="mc-cta-card-title">16×16 相性マトリクス</h3>
+            <p class="mc-cta-card-desc">
+              全256組み合わせをカラーコード付きの表で一覧表示。
+              自分のタイプ行を横に見れば、全タイプとの相性が一目でわかります。
+            </p>
+            <span class="mc-cta-card-link" aria-hidden="true">マトリクスを見る →</span>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    {/* ========== 学術根拠セクション ========== */}
+    <section class="mc-section" aria-labelledby="mc-refs-h2">
+      <h2 id="mc-refs-h2" class="mc-h2">学術根拠・参考文献</h2>
+      <p class="mc-lead">
+        本サイトの相性データは以下の学術文献・理論に基づいています。
+        傾向把握のための参考情報であり、医学的・臨床的な診断ではありません。
+      </p>
+      <div class="mc-refs-grid">
+        {meta.references.map((ref) => (
+          <div class="mc-ref-card">
+            <p class="mc-ref-title">
+              <a href={ref.url} target="_blank" rel="noopener noreferrer">
+                {ref.title}
+              </a>
+            </p>
+            <p class="mc-ref-meta">{ref.author}（{ref.year}）/ {ref.publisher}</p>
+          </div>
+        ))}
+      </div>
+      <p class="mc-ref-note">
+        ⚠️ 本ツールは自己理解・コミュニケーション改善のための参考情報を提供するものです。
+        MBTI® は The Myers-Briggs Company の登録商標です。
+        精神疾患・臨床診断・治療の判断は医師・臨床心理士にご相談ください。
+      </p>
+    </section>
+
+    {/* ========== 関連診断 ========== */}
+    <section class="mc-section" aria-labelledby="mc-related-h2">
+      <h2 id="mc-related-h2" class="mc-h2">関連診断</h2>
+      <ul class="mc-related-list">
+        <li class="mc-related-item">
+          <a href="/diagnosis/multi-int/" class="mc-related-link">
+            <span class="mc-related-icon" aria-hidden="true">🧠</span>
+            <span class="mc-related-body">
+              <span class="mc-related-title">多重知能テスト</span>
+              <span class="mc-related-desc">Gardner理論で8つの知能プロファイルを発見</span>
+            </span>
+          </a>
+        </li>
+        <li class="mc-related-item">
+          <a href="/diagnosis/perfectionism/" class="mc-related-link">
+            <span class="mc-related-icon" aria-hidden="true">⭐</span>
+            <span class="mc-related-body">
+              <span class="mc-related-title">完璧主義タイプ診断</span>
+              <span class="mc-related-desc">Hewitt &amp; Flett理論で完璧主義の傾向と対処法を発見</span>
+            </span>
+          </a>
+        </li>
+        <li class="mc-related-item">
+          <a href="/diagnosis/disc/" class="mc-related-link">
+            <span class="mc-related-icon" aria-hidden="true">💼</span>
+            <span class="mc-related-body">
+              <span class="mc-related-title">DiSC診断</span>
+              <span class="mc-related-desc">職場でのリーダーシップ・行動スタイルを分析</span>
+            </span>
+          </a>
+        </li>
+      </ul>
+    </section>
+
+    {/* ========== FAQ ========== */}
+    <section class="mc-section" aria-labelledby="mc-faq-h2">
+      <h2 id="mc-faq-h2" class="mc-h2">よくある質問</h2>
+      <dl class="mc-faq-list">
+        {faqs.map(({ question, answer }) => (
+          <div class="mc-faq-item">
+            <dt class="mc-faq-q">{question}</dt>
+            <dd class="mc-faq-a">{answer}</dd>
+          </div>
+        ))}
+      </dl>
+    </section>
+  </Container>
+</BaseLayout>
+
+<style>
+/* ========== CSS変数（相性カテゴリカラー） ========== */
+:root {
+  --mc-soulmate: #8B5CF6;
+  --mc-good: #10B981;
+  --mc-neutral: #3B82F6;
+  --mc-tough: #F59E0B;
+  --mc-opposite: #EF4444;
+}
+
+/* ========== ヒーロー ========== */
+.mc-hero {
+  background: linear-gradient(135deg, #6d28d9 0%, #4f46e5 100%);
+  color: #fff;
+  padding-block: 3.5rem 4rem;
+  text-align: center;
+}
+.mc-hero-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+.mc-hero-badge {
+  display: inline-block;
+  background: rgba(255 255 255 / 0.2);
+  border: 1px solid rgba(255 255 255 / 0.4);
+  border-radius: 2rem;
+  padding: 0.25rem 1rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+}
+.mc-hero-h1 {
+  font-size: clamp(1.75rem, 5vw, 2.5rem);
+  font-family: var(--sn-font-rounded, sans-serif);
+  font-weight: 700;
+  line-height: 1.3;
+  margin: 0;
+}
+.mc-hero-meta {
+  display: block;
+  font-size: clamp(0.9rem, 2.5vw, 1.2rem);
+  opacity: 0.9;
+}
+.mc-hero-catch {
+  font-size: clamp(0.9rem, 2.5vw, 1.05rem);
+  opacity: 0.92;
+  line-height: 1.7;
+  margin: 0;
+}
+.mc-hero-stats {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  font-size: 0.9rem;
+  opacity: 0.85;
+}
+.mc-stat strong {
+  font-size: 1.4em;
+  font-weight: 700;
+}
+.mc-stat-sep { color: rgba(255 255 255 / 0.5); }
+.mc-hero-cta-group {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 0.5rem;
+}
+.mc-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-weight: 700;
+  font-size: 1rem;
+  padding: 0.8rem 2rem;
+  border-radius: 3rem;
+  text-decoration: none;
+  transition: transform 0.15s, box-shadow 0.15s;
+  min-height: 44px;
+}
+.mc-cta-btn--primary {
+  background: #fff;
+  color: #6d28d9;
+}
+.mc-cta-btn--secondary {
+  background: rgba(255 255 255 / 0.15);
+  color: #fff;
+  border: 1px solid rgba(255 255 255 / 0.5);
+}
+.mc-cta-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0 0 0 / 0.2);
+}
+.mc-hero-sub {
+  font-size: 0.8rem;
+  opacity: 0.7;
+  margin: 0;
+}
+
+/* ========== AIOブロック ========== */
+.mc-aio-block {
+  background: #f5f3ff;
+  border-left: 4px solid #6d28d9;
+  border-radius: 0 0.5rem 0.5rem 0;
+  padding: 1.25rem 1.5rem;
+  margin-block: 2rem;
+}
+.mc-aio-title {
+  font-weight: 700;
+  margin: 0 0 0.5rem;
+  font-size: 0.9rem;
+  color: #6d28d9;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.mc-aio-list {
+  margin: 0 0 0.75rem;
+  padding-left: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.mc-aio-list li {
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+.mc-aio-updated {
+  font-size: 0.75rem;
+  color: var(--sn-muted, #6b7280);
+  margin: 0;
+}
+
+/* ========== セクション共通 ========== */
+.mc-section {
+  margin-block: 3rem;
+}
+.mc-h2 {
+  font-size: clamp(1.3rem, 4vw, 1.75rem);
+  font-family: var(--sn-font-rounded, sans-serif);
+  font-weight: 700;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #6d28d9;
+}
+.mc-h2--center {
+  text-align: center;
+  border-bottom: none;
+}
+.mc-lead {
+  font-size: 1rem;
+  line-height: 1.8;
+  margin-bottom: 1.25rem;
+  color: #374151;
+}
+
+/* ========== カテゴリグリッド ========== */
+.mc-category-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+.mc-category-card {
+  border: 1px solid #e5e7eb;
+  border-left: 4px solid;
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+}
+.mc-category-score {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--sn-muted, #6b7280);
+  margin-bottom: 0.25rem;
+}
+.mc-category-label {
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+.mc-category-desc {
+  font-size: 0.85rem;
+  line-height: 1.7;
+  color: #4b5563;
+  margin: 0;
+}
+
+/* ========== 気質グループブロック ========== */
+.mc-temp-block {
+  margin-block: 2rem;
+  padding: 1.5rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 1rem;
+}
+.mc-temp-h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+.mc-temp-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.2rem 0.6rem;
+  border-radius: 0.4rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #fff;
+}
+.mc-temp-badge--sm {
+  font-size: 0.75rem;
+  padding: 0.15rem 0.5rem;
+}
+[data-temp="NT"] { background: #4f46e5; }
+[data-temp="NF"] { background: #059669; }
+[data-temp="SJ"] { background: #b45309; }
+[data-temp="SP"] { background: #dc2626; }
+.mc-temp-desc {
+  font-size: 0.875rem;
+  line-height: 1.7;
+  color: #4b5563;
+  margin-bottom: 1rem;
+  white-space: pre-line;
+}
+.mc-temp-compat-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.75rem;
+}
+.mc-temp-compat-card {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+}
+.mc-temp-compat-card[data-level="same"] { background: #f5f3ff; border-color: #c4b5fd; }
+.mc-temp-compat-card[data-level="adjacent"] { background: #f0fdf4; border-color: #86efac; }
+.mc-temp-compat-pair {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 0.4rem;
+}
+.mc-temp-compat-arrow {
+  font-size: 0.8rem;
+  color: var(--sn-muted, #6b7280);
+}
+.mc-temp-compat-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 0.4rem;
+}
+.mc-temp-compat-note {
+  font-size: 0.75rem;
+  line-height: 1.5;
+  color: #6b7280;
+  margin: 0;
+}
+
+/* ========== 16タイプ一覧テーブル ========== */
+.mc-type-table-wrap {
+  overflow-x: auto;
+  margin-block: 1.5rem;
+  contain: layout;
+}
+.mc-type-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  min-width: 600px;
+}
+.mc-table-caption {
+  font-size: 0.78rem;
+  color: var(--sn-muted, #6b7280);
+  text-align: left;
+  padding: 0.25rem 0 0.5rem;
+}
+.mc-th {
+  background: #6d28d9;
+  color: #fff;
+  font-weight: 600;
+  padding: 0.6rem 0.8rem;
+  text-align: left;
+  white-space: nowrap;
+}
+.mc-th--type { width: 5rem; }
+.mc-th--best, .mc-th--growth { width: auto; }
+.mc-tr:nth-child(even) { background: #fafafa; }
+.mc-tr:hover { background: #f5f3ff; }
+.mc-td {
+  padding: 0.6rem 0.8rem;
+  border: 1px solid #e5e7eb;
+  vertical-align: top;
+}
+.mc-td--type {
+  font-weight: 700;
+  white-space: nowrap;
+}
+.mc-type-link {
+  color: #6d28d9;
+  text-decoration: none;
+  font-weight: 700;
+}
+.mc-type-link:hover { text-decoration: underline; }
+.mc-pair-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+.mc-pair-link {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  text-decoration: none;
+  color: inherit;
+  font-size: 0.85rem;
+}
+.mc-pair-link:hover .mc-pair-name { text-decoration: underline; }
+.mc-pair-score {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 3.5rem;
+  padding: 0.1rem 0.4rem;
+  border-radius: 0.3rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.mc-pair-name {
+  font-weight: 600;
+}
+.mc-table-note {
+  font-size: 0.8rem;
+  color: var(--sn-muted, #6b7280);
+  line-height: 1.6;
+  margin-top: 0.75rem;
+}
+
+/* ========== CTAセクション ========== */
+.mc-cta-section {
+  margin-block: 3rem;
+  padding: 2rem 1.5rem;
+  background: #f5f3ff;
+  border-radius: 1rem;
+}
+.mc-cta-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+.mc-cta-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1.25rem;
+  background: #fff;
+  border: 1px solid #c4b5fd;
+  border-radius: 0.75rem;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.mc-cta-card:hover {
+  border-color: #6d28d9;
+  box-shadow: 0 4px 12px rgba(109 40 217 / 0.15);
+}
+.mc-cta-icon {
+  font-size: 2rem;
+  flex-shrink: 0;
+}
+.mc-cta-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+.mc-cta-card-title {
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 0;
+  color: #6d28d9;
+}
+.mc-cta-card-desc {
+  font-size: 0.85rem;
+  line-height: 1.6;
+  color: #4b5563;
+  margin: 0;
+}
+.mc-cta-card-link {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #6d28d9;
+}
+
+/* ========== 参考文献 ========== */
+.mc-refs-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-block: 1.25rem;
+}
+.mc-ref-card {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+}
+.mc-ref-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin: 0 0 0.25rem;
+  line-height: 1.5;
+}
+.mc-ref-meta {
+  font-size: 0.78rem;
+  color: var(--sn-muted, #6b7280);
+  margin: 0;
+}
+.mc-ref-note {
+  font-size: 0.8rem;
+  color: var(--sn-muted, #6b7280);
+  line-height: 1.6;
+  margin-top: 1rem;
+}
+
+/* ========== 関連リンク ========== */
+.mc-related-list {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.mc-related-link {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.mc-related-link:hover {
+  border-color: #6d28d9;
+  box-shadow: 0 2px 8px rgba(109 40 217 / 0.1);
+}
+.mc-related-icon {
+  font-size: 1.75rem;
+  flex-shrink: 0;
+}
+.mc-related-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+.mc-related-title {
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+.mc-related-desc {
+  font-size: 0.8rem;
+  color: var(--sn-muted, #6b7280);
+}
+
+/* ========== FAQ ========== */
+.mc-faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+.mc-faq-item {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+.mc-faq-q {
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 1rem 1.25rem;
+  background: #f9fafb;
+  margin: 0;
+  display: block;
+}
+.mc-faq-q::before {
+  content: 'Q. ';
+  color: #6d28d9;
+}
+.mc-faq-a {
+  font-size: 0.9rem;
+  line-height: 1.7;
+  padding: 1rem 1.25rem;
+  margin: 0;
+  color: #4b5563;
+}
+.mc-faq-a::before {
+  content: 'A. ';
+  font-weight: 700;
+  color: #16a34a;
+}
+
+/* ========== レスポンシブ ========== */
+@media (max-width: 768px) {
+  .mc-category-grid {
+    grid-template-columns: 1fr;
+  }
+  .mc-temp-compat-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .mc-cta-cards {
+    grid-template-columns: 1fr;
+  }
+  .mc-hero-cta-group {
+    flex-direction: column;
+    align-items: center;
+  }
+  .mc-cta-btn {
+    width: 100%;
+    max-width: 320px;
+    justify-content: center;
+  }
+}
+@media (max-width: 480px) {
+  .mc-temp-compat-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+</style>

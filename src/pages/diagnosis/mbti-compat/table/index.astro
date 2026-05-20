@@ -1,0 +1,1088 @@
+---
+/**
+ * MBTI相性表ビジュアル ページ（16×16マトリクス）
+ * KW: MBTI相性表（VOL: 8,100 / SD: 17）
+ * 学術根拠:
+ *   - Keirsey D (1998) Please Understand Me II
+ *   - Beebe J (2017) Energies and Patterns in Psychological Type
+ *   - Jung CG (1921) Psychological Types
+ * 確認日: 2026-05-20
+ *
+ * SEO/AIO対応:
+ * - JSON-LD: Article + FAQPage + BreadcrumbList + @id連結
+ * - 16×16 = 256セル全表示（静的生成）
+ * - ホバーツールチップ（CSS only）
+ * - クリックでツールページへジャンプ（?t1=X&t2=Y）
+ * - レスポンシブ: モバイルは横スクロール
+ * - CLS < 0.1: contain: layout でマトリクス領域を封じ込め
+ * - WCAG 2.1 AA: scope / aria-label / focus-visible
+ * - YMYL回避: 傾向値であることを明記
+ */
+import BaseLayout from '../../../../layouts/BaseLayout.astro';
+import Container from '../../../../components/Container.astro';
+import { meta, MBTI_TYPES } from '../../../../data/diagnoses/mbti-compat/meta';
+import {
+  getCompatibility,
+  getCategoryLabel,
+  getCategoryColor,
+  getBestMatches,
+  getWorstMatches,
+} from '../../../../data/diagnoses/mbti-compat/results';
+
+const SITE_URL = 'https://shindan-navi.jp';
+const PAGE_URL = `${SITE_URL}/diagnosis/mbti-compat/table/`;
+
+// 全256ペアのデータを静的生成
+const matrixData = MBTI_TYPES.map((rowType) =>
+  MBTI_TYPES.map((colType) => getCompatibility(rowType, colType))
+);
+
+// 高スコアペア TOP10（重複除外・ユニーク化）
+const allPairs: Array<{ score: number; t1: string; t2: string; category: string; summary: string }> = [];
+const seen = new Set<string>();
+for (const rowType of MBTI_TYPES) {
+  for (const colType of MBTI_TYPES) {
+    if (rowType === colType) continue;
+    const key = [rowType, colType].sort().join('-');
+    if (!seen.has(key)) {
+      seen.add(key);
+      const d = getCompatibility(rowType, colType);
+      allPairs.push({
+        score: d.score,
+        t1: rowType,
+        t2: colType,
+        category: d.category,
+        summary: d.oneLineSummary,
+      });
+    }
+  }
+}
+const sortedByScore = [...allPairs].sort((a, b) => b.score - a.score);
+const topHighPairs = sortedByScore.slice(0, 10);
+const topLowPairs = sortedByScore.slice(-10).reverse();
+
+// カテゴリ別CSS変数
+const catColorVar: Record<string, string> = {
+  soulmate: 'var(--mcm-soulmate)',
+  good: 'var(--mcm-good)',
+  neutral: 'var(--mcm-neutral)',
+  tough: 'var(--mcm-tough)',
+  opposite: 'var(--mcm-opposite)',
+};
+const catBgVar: Record<string, string> = {
+  soulmate: 'var(--mcm-soulmate-bg)',
+  good: 'var(--mcm-good-bg)',
+  neutral: 'var(--mcm-neutral-bg)',
+  tough: 'var(--mcm-tough-bg)',
+  opposite: 'var(--mcm-opposite-bg)',
+};
+
+
+// JSX内型キャスト回避ヘルパー
+function pairColor(category: string): string {
+  return catColorVar[category] ?? 'var(--mcm-neutral)';
+}
+function pairLabel(category: string): string {
+  const labels: Record<string, string> = {
+    soulmate: 'ソウルメイト型',
+    good: '相性の良いペア',
+    neutral: 'バランス型',
+    tough: '成長機会の多いペア',
+    opposite: '最大の成長機会ペア',
+  };
+  return labels[category] ?? category;
+}
+
+// FAQ
+const faqs = [
+  {
+    question: 'MBTI相性表の見方を教えてください。',
+    answer:
+      '縦列（行）が「タイプ1（自分）」、横列（列）が「タイプ2（相手）」です。交わるセルにスコアと色が表示されます。紫がソウルメイト型・緑が良好型・青がバランス型・黄が成長機会型・赤が最大成長機会型です。セルをクリックすると詳細が確認できます。',
+  },
+  {
+    question: '表のスコアは対称ですか（INTJ×ENFPとENFP×INTJは同じ？）。',
+    answer:
+      'はい、同じです。相性は双方向であり、INTJ×ENFPとENFP×INTJは同一のスコアと相性説明が表示されます。本サイトでは256セル全てをデータとして保持していますが、実質的なユニークペアは128通りです。',
+  },
+  {
+    question: '同タイプ同士（対角線）のスコアが高くないのはなぜですか？',
+    answer:
+      'Beebe（2017）の機能スタック理論では、同タイプ同士は主機能が同一のため「補完関係」が生まれにくい傾向があります。気質（Keirsey 1998）は一致しますが、J/P補完（15点）と機能スタック補完（30点）が加算されにくいため、中程度のスコアになりやすいです。',
+  },
+  {
+    question: '一番相性の良いタイプの組み合わせはどれですか？',
+    answer:
+      'Beebe（2017）の機能スタック補完理論から、INTJ×ENFP・INFJ×ENTP・ISTJ×ESFP・ISFJ×ESTPなどが高スコアになりやすい傾向があります。詳細は本ページの「高スコアペアTOP10」セクションをご覧ください。',
+  },
+  {
+    question: 'スコアが低いペアは本当に合わないのですか？',
+    answer:
+      'スコアは「補完性・類似性の強さ」の傾向値であり、相性の優劣ではありません。Jung（1921）の個性化理論では、最も異なる認知スタイルを持つ相手から最大の自己理解と成長が得られると述べています。全てのペアに価値があります。',
+  },
+];
+
+// JSON-LD
+const jsonLdArticle = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  '@id': `${PAGE_URL}#article`,
+  mainEntityOfPage: { '@type': 'WebPage', '@id': PAGE_URL },
+  headline: 'MBTI相性表【16×16全256組み合わせ・カラーマトリクス】',
+  description:
+    '全16タイプ×16タイプ=256通りのMBTI相性をカラーコード付きマトリクスで一覧表示。Keirsey（1998）・Beebe（2017）・Jung（1921）理論に基づく相性スコアと傾向値を収録。',
+  url: PAGE_URL,
+  datePublished: meta.publishedAt,
+  dateModified: meta.updatedAt,
+  inLanguage: 'ja',
+  author: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+    name: '診断ナビ',
+  },
+  publisher: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+    name: '診断ナビ',
+  },
+  citation: meta.references.map((ref) => ({
+    '@type': 'Book',
+    name: ref.title,
+    author: ref.author,
+    datePublished: String(ref.year),
+    publisher: ref.publisher,
+    url: ref.url,
+  })),
+};
+
+const jsonLdFAQ = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  '@id': `${PAGE_URL}#faq`,
+  mainEntity: faqs.map(({ question, answer }) => ({
+    '@type': 'Question',
+    name: question,
+    acceptedAnswer: { '@type': 'Answer', text: answer },
+  })),
+};
+
+const jsonLdBreadcrumb = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  '@id': `${PAGE_URL}#breadcrumb`,
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'ホーム', item: SITE_URL },
+    { '@type': 'ListItem', position: 2, name: '診断一覧', item: `${SITE_URL}/diagnosis/` },
+    { '@type': 'ListItem', position: 3, name: 'MBTI相性一覧', item: `${SITE_URL}/diagnosis/mbti-compat/` },
+    { '@type': 'ListItem', position: 4, name: 'MBTI相性表', item: PAGE_URL },
+  ],
+};
+
+const jsonLdAll = [jsonLdArticle, jsonLdFAQ, jsonLdBreadcrumb];
+---
+
+<BaseLayout
+  title="MBTI相性表【16×16全256組み合わせ・カラーマトリクス】｜診断ナビ"
+  description="全16タイプ×16タイプ=256通りのMBTI相性をカラーコード付き一覧表で比較。スコアをクリックすると相性詳細・仕事・恋愛・成長ポイントが確認できます。Keirsey/Beebe/Jung理論に基づく傾向値。"
+  canonical={PAGE_URL}
+  jsonLd={jsonLdAll}
+  ogType="article"
+  publishDate={meta.publishedAt}
+  lastUpdated={meta.updatedAt}
+  breadcrumbs={[
+    { name: '診断一覧', url: '/diagnosis/' },
+    { name: 'MBTI相性一覧', url: '/diagnosis/mbti-compat/' },
+    { name: 'MBTI相性表', url: '/diagnosis/mbti-compat/table/' },
+  ]}
+>
+  {/* ========== ヒーロー ========== */}
+  <section class="mcm-hero" aria-labelledby="mcm-hero-h1">
+    <Container>
+      <div class="mcm-hero-inner">
+        <div class="mcm-hero-badge">Keirsey（1998）× Beebe（2017）× Jung（1921）</div>
+        <h1 id="mcm-hero-h1" class="mcm-hero-h1">
+          MBTI相性表<br />
+          <span class="mcm-hero-meta">【16×16全256組み合わせ・カラーマトリクス】</span>
+        </h1>
+        <p class="mcm-hero-catch">
+          縦に自分のタイプ・横に相手のタイプを探してください。
+          交わるセルに相性スコアと色が表示されます。
+        </p>
+        <div class="mcm-hero-stats">
+          <span><strong>256</strong>通りのデータ収録</span>
+          <span class="mcm-sep" aria-hidden="true">・</span>
+          <span>カラーコード5段階</span>
+          <span class="mcm-sep" aria-hidden="true">・</span>
+          <span>クリックで詳細表示</span>
+        </div>
+        <p class="mcm-hero-updated">
+          <time datetime={meta.updatedAt}>{meta.updatedAt}</time> 時点の情報
+        </p>
+      </div>
+    </Container>
+  </section>
+
+  <Container>
+    {/* ========== AIOブロック ========== */}
+    <div class="mcm-aio-block" role="note" aria-label="このページでわかること">
+      <p class="mcm-aio-title">このページでわかること</p>
+      <ul class="mcm-aio-list">
+        <li>全16タイプ×16タイプ（256通り）の相性スコアをカラーコード付きマトリクスで一覧表示</li>
+        <li>各セルをクリックすると仕事・恋愛・成長ポイント詳細が確認できます</li>
+        <li>高スコアペアTOP10・成長機会の多いペアTOP10・同タイプ同士の傾向解説</li>
+        <li>Keirsey（1998）・Beebe（2017）・Jung（1921）理論に基づく傾向値</li>
+      </ul>
+    </div>
+
+    {/* ========== 凡例 ========== */}
+    <section class="mcm-section" aria-labelledby="mcm-legend-h2">
+      <h2 id="mcm-legend-h2" class="mcm-h2">カラー凡例</h2>
+      <div class="mcm-legend" role="list" aria-label="相性カテゴリのカラー凡例">
+        {[
+          { cat: 'soulmate', label: 'ソウルメイト型', score: '90〜100点', note: '機能スタック補完（Beebe 2017）' },
+          { cat: 'good',     label: '良好型',         score: '70〜89点',  note: '気質近接・自然な親和性（Keirsey 1998）' },
+          { cat: 'neutral',  label: 'バランス型',     score: '50〜69点',  note: '意識的な対話で深まるペア' },
+          { cat: 'tough',    label: '成長機会型',     score: '30〜49点',  note: '学び合い・個性化促進（Jung 1921）' },
+          { cat: 'opposite', label: '最大成長機会型', score: '0〜29点',   note: '最も異なる認知スタイル' },
+        ].map(({ cat, label, score, note }) => (
+          <div class="mcm-legend-item" role="listitem">
+            <div
+              class="mcm-legend-color"
+              style={`background: ${catBgVar[cat]}; border-color: ${catColorVar[cat]}`}
+            >
+              <span style={`color: ${catColorVar[cat]}`} class="mcm-legend-score-num">-</span>
+            </div>
+            <div class="mcm-legend-body">
+              <span class="mcm-legend-label" style={`color: ${catColorVar[cat]}`}>{label}</span>
+              <span class="mcm-legend-score">{score}</span>
+              <span class="mcm-legend-note">{note}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    {/* ========== 16×16 マトリクス ========== */}
+    <section class="mcm-section" aria-labelledby="mcm-matrix-h2">
+      <h2 id="mcm-matrix-h2" class="mcm-h2">16×16 MBTI相性マトリクス</h2>
+      <p class="mcm-lead">
+        縦（行）＝タイプ1（あなた）、横（列）＝タイプ2（相手）。
+        セルをクリックすると相性詳細ページへ移動します。
+        スコアは傾向値です（個人差あり）。
+      </p>
+      <div class="mcm-matrix-wrap" role="region" aria-label="MBTI相性マトリクス" style="contain: layout;">
+        <table class="mcm-matrix" role="grid">
+          <caption class="mcm-table-caption">
+            MBTI相性表（全16タイプ×16タイプ = 256通り・Keirsey 1998 / Beebe 2017理論・2026-05-20時点）
+          </caption>
+          <thead>
+            <tr>
+              <th scope="col" class="mcm-th mcm-th--corner">
+                <span aria-label="縦: あなたのタイプ / 横: 相手のタイプ">
+                  ↓ あなた<br />→ 相手
+                </span>
+              </th>
+              {MBTI_TYPES.map((colType) => (
+                <th scope="col" class="mcm-th mcm-th--header">
+                  {colType}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {MBTI_TYPES.map((rowType, rowIdx) => (
+              <tr>
+                <th scope="row" class="mcm-th mcm-th--row">
+                  {rowType}
+                </th>
+                {matrixData[rowIdx].map((cellData, colIdx) => {
+                  const colType = MBTI_TYPES[colIdx];
+                  const isSelf = rowType === colType;
+                  return (
+                    <td
+                      class="mcm-cell"
+                      data-category={cellData.category}
+                      data-self={isSelf ? 'true' : 'false'}
+                    >
+                      <a
+                        href={`/diagnosis/mbti-compat/tool/?t1=${rowType}&t2=${colType}`}
+                        class="mcm-cell-link"
+                        aria-label={`${rowType} × ${colType}: ${cellData.score}点 ${getCategoryLabel(cellData.category)}。${cellData.oneLineSummary}`}
+                        title={cellData.oneLineSummary}
+                      >
+                        <span class="mcm-cell-score">{cellData.score}</span>
+                      </a>
+                    </td>
+                  );
+                })}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p class="mcm-matrix-note">
+        ※ スコアは傾向値です。個人差・関係の深さ・環境によって大きく異なります。
+        全てのペアに補完性と成長機会があります。
+      </p>
+    </section>
+
+    {/* ========== 相性表の読み方 ========== */}
+    <section class="mcm-section" aria-labelledby="mcm-howread-h2">
+      <h2 id="mcm-howread-h2" class="mcm-h2">相性表の読み方</h2>
+      <p class="mcm-lead">
+        MBTI相性表を最大限に活用するための3つのポイントです。
+      </p>
+      <div class="mcm-howread-grid">
+        <div class="mcm-howread-card">
+          <div class="mcm-howread-icon" aria-hidden="true">1</div>
+          <h3 class="mcm-howread-title">自分のタイプの行を横に見る</h3>
+          <p class="mcm-howread-body">
+            自分のタイプが書かれた行を左から右に見ると、
+            16種類の相手タイプそれぞれとの相性スコアが一覧できます。
+            色が紫・緑のセルほど補完性が高い傾向です。
+          </p>
+        </div>
+        <div class="mcm-howread-card">
+          <div class="mcm-howread-icon" aria-hidden="true">2</div>
+          <h3 class="mcm-howread-title">対角線（同タイプ同士）の特徴</h3>
+          <p class="mcm-howread-body">
+            左上から右下への対角線は同タイプ同士のスコアです。
+            Beebe（2017）によると同タイプは気質（Keirsey 1998）が一致するため
+            理解はしやすいが、機能スタックの補完関係が生まれにくい傾向があります。
+          </p>
+        </div>
+        <div class="mcm-howread-card">
+          <div class="mcm-howread-icon" aria-hidden="true">3</div>
+          <h3 class="mcm-howread-title">表は対称（転置）です</h3>
+          <p class="mcm-howread-body">
+            INTJ行×ENFP列のスコアと、ENFP行×INTJ列のスコアは同じです。
+            相性は双方向であるため、視点を変えても同じ結果になります。
+          </p>
+        </div>
+      </div>
+    </section>
+
+    {/* ========== 高スコアペア TOP10 ========== */}
+    <section class="mcm-section" aria-labelledby="mcm-high-h2">
+      <h2 id="mcm-high-h2" class="mcm-h2">高スコアペア TOP10</h2>
+      <p class="mcm-lead">
+        Beebe（2017）の機能スタック補完とKeirsey（1998）の気質分析から導出した
+        相性スコア上位ペアです。傾向値であり個人差があります。
+      </p>
+      <ol class="mcm-ranking-list" aria-label="高スコアペアランキング">
+        {topHighPairs.map((pair, i) => (
+          <li class="mcm-ranking-item">
+            <span class="mcm-rank-num" data-rank={i < 3 ? 'top' : 'normal'} aria-hidden="true">
+              {i + 1}
+            </span>
+            <a
+              href={`/diagnosis/mbti-compat/tool/?t1=${pair.t1}&t2=${pair.t2}`}
+              class="mcm-ranking-link"
+            >
+              <span class="mcm-ranking-pair">
+                {pair.t1} × {pair.t2}
+              </span>
+              <span
+                class="mcm-ranking-score-badge"
+                style={`background: ${pairColor(pair.category)}22; color: ${pairColor(pair.category)}`}
+              >
+                {pair.score}点
+              </span>
+              <span class="mcm-ranking-label">
+                {pairLabel(pair.category)}
+              </span>
+            </a>
+            <p class="mcm-ranking-summary">{pair.summary}</p>
+          </li>
+        ))}
+      </ol>
+    </section>
+
+    {/* ========== 成長機会の多いペア TOP10 ========== */}
+    <section class="mcm-section" aria-labelledby="mcm-low-h2">
+      <h2 id="mcm-low-h2" class="mcm-h2">成長機会の多いペア TOP10</h2>
+      <p class="mcm-lead">
+        最もスコアが低いペアは、Jung（1921）の個性化理論において
+        最大の自己理解と成長をもたらす組み合わせとも言えます。
+        「合わない」ではなく「最も異なる視点を持つ」ペアです。
+      </p>
+      <ol class="mcm-ranking-list" aria-label="成長機会の多いペアランキング">
+        {topLowPairs.map((pair, i) => (
+          <li class="mcm-ranking-item">
+            <span class="mcm-rank-num" aria-hidden="true">{i + 1}</span>
+            <a
+              href={`/diagnosis/mbti-compat/tool/?t1=${pair.t1}&t2=${pair.t2}`}
+              class="mcm-ranking-link"
+            >
+              <span class="mcm-ranking-pair">
+                {pair.t1} × {pair.t2}
+              </span>
+              <span
+                class="mcm-ranking-score-badge"
+                style={`background: ${pairColor(pair.category)}22; color: ${pairColor(pair.category)}`}
+              >
+                {pair.score}点
+              </span>
+              <span class="mcm-ranking-label">
+                {pairLabel(pair.category)}
+              </span>
+            </a>
+            <p class="mcm-ranking-summary">{pair.summary}</p>
+          </li>
+        ))}
+      </ol>
+    </section>
+
+    {/* ========== 同タイプ同士の傾向 ========== */}
+    <section class="mcm-section" aria-labelledby="mcm-selfpair-h2">
+      <h2 id="mcm-selfpair-h2" class="mcm-h2">同タイプ同士（例: INTJ×INTJ）の相性パターン</h2>
+      <p class="mcm-lead">
+        同じMBTIタイプ同士はどんな特徴があるのでしょうか？
+        Beebe（2017）とKeirsey（1998）の理論から見えてくる傾向をまとめます。
+      </p>
+      <div class="mcm-selfpair-grid">
+        <div class="mcm-selfpair-card mcm-selfpair-card--pro">
+          <h3 class="mcm-selfpair-title">同タイプ同士の強み</h3>
+          <ul class="mcm-selfpair-list">
+            <li>同じ気質（NT/NF/SJ/SP）のため価値観・優先事項が近く、初期の共感・理解が速い</li>
+            <li>コミュニケーションスタイルが似ているため誤解が生まれにくい傾向</li>
+            <li>同じ認知スタイルを持つため、仕事上の意思決定や問題解決のアプローチが揃いやすい</li>
+          </ul>
+        </div>
+        <div class="mcm-selfpair-card mcm-selfpair-card--con">
+          <h3 class="mcm-selfpair-title">同タイプ同士の注意点</h3>
+          <ul class="mcm-selfpair-list">
+            <li>Beebe（2017）によると、同タイプは同一の「劣等機能（inferior function）」を共有するため、同じ盲点を持ちやすい</li>
+            <li>互いに異なる強みを補完する「機能スタック補完」が生まれにくい傾向</li>
+            <li>「共感はしやすいが刺激が少ない」と感じることがある（Jung 1921）</li>
+          </ul>
+        </div>
+      </div>
+      <p class="mcm-selfpair-note">
+        ※ 同タイプでも、育ち・環境・経験の違いによって大きく異なる個人が生まれます。
+        これはあくまでタイプ傾向の参考情報です。
+      </p>
+    </section>
+
+    {/* ========== 学術根拠 ========== */}
+    <section class="mcm-section" aria-labelledby="mcm-refs-h2">
+      <h2 id="mcm-refs-h2" class="mcm-h2">学術根拠・参考文献</h2>
+      <div class="mcm-refs-list">
+        {meta.references.map((ref) => (
+          <div class="mcm-ref-item">
+            <a href={ref.url} target="_blank" rel="noopener noreferrer" class="mcm-ref-link">
+              {ref.title}
+            </a>
+            <span class="mcm-ref-meta">{ref.author}（{ref.year}）/ {ref.publisher}</span>
+          </div>
+        ))}
+      </div>
+      <p class="mcm-ref-disclaimer">
+        ⚠️ 本ページのスコアは傾向値であり、個人差・環境・関係の深さによって大きく変わります。
+        医学的・臨床的な診断ではありません。MBTI® は The Myers-Briggs Company の登録商標です。
+      </p>
+    </section>
+
+    {/* ========== FAQ ========== */}
+    <section class="mcm-section" aria-labelledby="mcm-faq-h2">
+      <h2 id="mcm-faq-h2" class="mcm-h2">よくある質問</h2>
+      <dl class="mcm-faq-list">
+        {faqs.map(({ question, answer }) => (
+          <div class="mcm-faq-item">
+            <dt class="mcm-faq-q">{question}</dt>
+            <dd class="mcm-faq-a">{answer}</dd>
+          </div>
+        ))}
+      </dl>
+    </section>
+
+    {/* ========== 関連リンク ========== */}
+    <section class="mcm-section" aria-labelledby="mcm-related-h2">
+      <h2 id="mcm-related-h2" class="mcm-h2">関連ページ</h2>
+      <ul class="mcm-related-list">
+        <li class="mcm-related-item">
+          <a href="/diagnosis/mbti-compat/" class="mcm-related-link">
+            <span class="mcm-related-icon" aria-hidden="true">📋</span>
+            <span class="mcm-related-body">
+              <span class="mcm-related-title">MBTI相性一覧【全16タイプ】</span>
+              <span class="mcm-related-desc">4気質グループ別概観・16タイプ×ベスト3一覧表</span>
+            </span>
+          </a>
+        </li>
+        <li class="mcm-related-item">
+          <a href="/diagnosis/mbti-compat/tool/" class="mcm-related-link">
+            <span class="mcm-related-icon" aria-hidden="true">🔍</span>
+            <span class="mcm-related-body">
+              <span class="mcm-related-title">MBTI相性診断ツール（タイプ選択）</span>
+              <span class="mcm-related-desc">2タイプを選んで詳細な相性情報を即表示</span>
+            </span>
+          </a>
+        </li>
+        <li class="mcm-related-item">
+          <a href="/diagnosis/multi-int/" class="mcm-related-link">
+            <span class="mcm-related-icon" aria-hidden="true">🧠</span>
+            <span class="mcm-related-body">
+              <span class="mcm-related-title">多重知能テスト</span>
+              <span class="mcm-related-desc">Gardner理論で8つの知能プロファイルを発見</span>
+            </span>
+          </a>
+        </li>
+      </ul>
+    </section>
+  </Container>
+</BaseLayout>
+
+<style>
+/* ========== CSS変数（相性カテゴリカラー） ========== */
+:root {
+  --mcm-soulmate: #7c3aed;
+  --mcm-soulmate-bg: #f5f3ff;
+  --mcm-good: #059669;
+  --mcm-good-bg: #ecfdf5;
+  --mcm-neutral: #2563eb;
+  --mcm-neutral-bg: #eff6ff;
+  --mcm-tough: #d97706;
+  --mcm-tough-bg: #fffbeb;
+  --mcm-opposite: #dc2626;
+  --mcm-opposite-bg: #fff1f2;
+}
+
+/* ========== ヒーロー ========== */
+.mcm-hero {
+  background: linear-gradient(135deg, #4c1d95 0%, #1d4ed8 100%);
+  color: #fff;
+  padding-block: 3rem 3.5rem;
+  text-align: center;
+}
+.mcm-hero-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+.mcm-hero-badge {
+  display: inline-block;
+  background: rgba(255 255 255 / 0.2);
+  border: 1px solid rgba(255 255 255 / 0.4);
+  border-radius: 2rem;
+  padding: 0.25rem 1rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+}
+.mcm-hero-h1 {
+  font-size: clamp(1.6rem, 4.5vw, 2.2rem);
+  font-family: var(--sn-font-rounded, sans-serif);
+  font-weight: 700;
+  line-height: 1.3;
+  margin: 0;
+}
+.mcm-hero-meta {
+  display: block;
+  font-size: clamp(0.85rem, 2vw, 1rem);
+  opacity: 0.9;
+}
+.mcm-hero-catch {
+  font-size: clamp(0.875rem, 2.5vw, 1rem);
+  opacity: 0.92;
+  line-height: 1.7;
+  margin: 0;
+}
+.mcm-hero-stats {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  font-size: 0.85rem;
+  opacity: 0.85;
+}
+.mcm-sep { color: rgba(255 255 255 / 0.5); }
+.mcm-hero-updated {
+  font-size: 0.78rem;
+  opacity: 0.7;
+  margin: 0;
+}
+
+/* ========== AIOブロック ========== */
+.mcm-aio-block {
+  background: #f5f3ff;
+  border-left: 4px solid #7c3aed;
+  border-radius: 0 0.5rem 0.5rem 0;
+  padding: 1.25rem 1.5rem;
+  margin-block: 2rem;
+}
+.mcm-aio-title {
+  font-weight: 700;
+  margin: 0 0 0.5rem;
+  font-size: 0.85rem;
+  color: #7c3aed;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.mcm-aio-list {
+  margin: 0;
+  padding-left: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+.mcm-aio-list li {
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+/* ========== セクション共通 ========== */
+.mcm-section {
+  margin-block: 3rem;
+}
+.mcm-h2 {
+  font-size: clamp(1.25rem, 3.5vw, 1.65rem);
+  font-family: var(--sn-font-rounded, sans-serif);
+  font-weight: 700;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #7c3aed;
+}
+.mcm-lead {
+  font-size: 1rem;
+  line-height: 1.8;
+  margin-bottom: 1.25rem;
+  color: #374151;
+}
+
+/* ========== 凡例 ========== */
+.mcm-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+.mcm-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex: 1;
+  min-width: 180px;
+}
+.mcm-legend-color {
+  width: 3rem;
+  height: 3rem;
+  border: 2px solid;
+  border-radius: 0.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.mcm-legend-score-num {
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+.mcm-legend-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+.mcm-legend-label {
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+.mcm-legend-score {
+  font-size: 0.78rem;
+  color: #6b7280;
+}
+.mcm-legend-note {
+  font-size: 0.72rem;
+  color: #9ca3af;
+}
+
+/* ========== マトリクス ========== */
+.mcm-matrix-wrap {
+  overflow-x: auto;
+  margin-block: 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid #e5e7eb;
+  -webkit-overflow-scrolling: touch;
+}
+.mcm-matrix {
+  border-collapse: collapse;
+  font-size: 0.78rem;
+  width: max-content;
+}
+.mcm-table-caption {
+  font-size: 0.75rem;
+  color: #6b7280;
+  text-align: left;
+  padding: 0.3rem 0.5rem 0.5rem;
+  caption-side: top;
+}
+.mcm-th {
+  background: #7c3aed;
+  color: #fff;
+  font-weight: 700;
+  padding: 0.4rem 0.35rem;
+  text-align: center;
+  white-space: nowrap;
+  font-size: 0.72rem;
+  position: sticky;
+}
+.mcm-th--corner {
+  top: 0;
+  left: 0;
+  z-index: 3;
+  font-size: 0.62rem;
+  font-weight: 400;
+  line-height: 1.3;
+  min-width: 4.5rem;
+  background: #4c1d95;
+}
+.mcm-th--header {
+  top: 0;
+  z-index: 2;
+  min-width: 3.8rem;
+}
+.mcm-th--row {
+  left: 0;
+  z-index: 1;
+  min-width: 3.8rem;
+  background: #5b21b6;
+}
+
+/* セル */
+.mcm-cell {
+  padding: 0;
+  border: 1px solid rgba(255 255 255 / 0.15);
+  text-align: center;
+}
+.mcm-cell[data-category="soulmate"] { background: var(--mcm-soulmate-bg); }
+.mcm-cell[data-category="good"]     { background: var(--mcm-good-bg); }
+.mcm-cell[data-category="neutral"]  { background: var(--mcm-neutral-bg); }
+.mcm-cell[data-category="tough"]    { background: var(--mcm-tough-bg); }
+.mcm-cell[data-category="opposite"] { background: var(--mcm-opposite-bg); }
+.mcm-cell[data-self="true"] { outline: 2px solid #374151; outline-offset: -2px; }
+
+.mcm-cell-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  min-height: 2.8rem;
+  min-width: 3.8rem;
+  text-decoration: none;
+  transition: filter 0.1s;
+}
+.mcm-cell-link:hover {
+  filter: brightness(0.88);
+}
+.mcm-cell-link:focus-visible {
+  outline: 2px solid #6d28d9;
+  outline-offset: -2px;
+}
+
+.mcm-cell-score {
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+.mcm-cell[data-category="soulmate"] .mcm-cell-score { color: var(--mcm-soulmate); }
+.mcm-cell[data-category="good"] .mcm-cell-score     { color: var(--mcm-good); }
+.mcm-cell[data-category="neutral"] .mcm-cell-score  { color: var(--mcm-neutral); }
+.mcm-cell[data-category="tough"] .mcm-cell-score    { color: var(--mcm-tough); }
+.mcm-cell[data-category="opposite"] .mcm-cell-score { color: var(--mcm-opposite); }
+
+.mcm-matrix-note {
+  font-size: 0.78rem;
+  color: #6b7280;
+  line-height: 1.6;
+  margin-top: 0.75rem;
+}
+
+/* ========== 読み方グリッド ========== */
+.mcm-howread-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+.mcm-howread-card {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+}
+.mcm-howread-icon {
+  width: 2rem;
+  height: 2rem;
+  background: #7c3aed;
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+}
+.mcm-howread-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem;
+  color: #374151;
+}
+.mcm-howread-body {
+  font-size: 0.85rem;
+  line-height: 1.7;
+  color: #4b5563;
+  margin: 0;
+}
+
+/* ========== ランキングリスト ========== */
+.mcm-ranking-list {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+.mcm-ranking-item {
+  display: grid;
+  grid-template-columns: 2rem 1fr;
+  grid-template-rows: auto auto;
+  column-gap: 0.75rem;
+  row-gap: 0.2rem;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.6rem;
+  background: #fafafa;
+}
+.mcm-rank-num {
+  grid-row: 1 / span 2;
+  width: 2rem;
+  height: 2rem;
+  background: #e5e7eb;
+  color: #374151;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.mcm-rank-num[data-rank="top"] {
+  background: #7c3aed;
+  color: #fff;
+}
+.mcm-ranking-link {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  text-decoration: none;
+  color: inherit;
+}
+.mcm-ranking-pair {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #374151;
+}
+.mcm-ranking-score-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.1rem 0.5rem;
+  border-radius: 0.3rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+.mcm-ranking-label {
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+.mcm-ranking-summary {
+  grid-column: 2;
+  font-size: 0.8rem;
+  color: #6b7280;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* ========== 同タイプグリッド ========== */
+.mcm-selfpair-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-block: 1.25rem;
+}
+.mcm-selfpair-card {
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+}
+.mcm-selfpair-card--pro {
+  background: #ecfdf5;
+  border: 1px solid #6ee7b7;
+}
+.mcm-selfpair-card--con {
+  background: #fff7ed;
+  border: 1px solid #fdba74;
+}
+.mcm-selfpair-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin: 0 0 0.75rem;
+}
+.mcm-selfpair-card--pro .mcm-selfpair-title { color: #065f46; }
+.mcm-selfpair-card--con .mcm-selfpair-title { color: #92400e; }
+.mcm-selfpair-list {
+  margin: 0;
+  padding-left: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.mcm-selfpair-list li {
+  font-size: 0.85rem;
+  line-height: 1.6;
+  color: #4b5563;
+}
+.mcm-selfpair-note {
+  font-size: 0.8rem;
+  color: #6b7280;
+  line-height: 1.6;
+  margin-top: 0.75rem;
+}
+
+/* ========== 参考文献 ========== */
+.mcm-refs-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-block: 1.25rem;
+}
+.mcm-ref-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+}
+.mcm-ref-link {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #7c3aed;
+  line-height: 1.5;
+}
+.mcm-ref-meta {
+  font-size: 0.78rem;
+  color: #6b7280;
+}
+.mcm-ref-disclaimer {
+  font-size: 0.8rem;
+  color: #6b7280;
+  line-height: 1.6;
+  margin-top: 1rem;
+}
+
+/* ========== FAQ ========== */
+.mcm-faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+.mcm-faq-item {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+.mcm-faq-q {
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 1rem 1.25rem;
+  background: #f9fafb;
+  margin: 0;
+  display: block;
+}
+.mcm-faq-q::before {
+  content: 'Q. ';
+  color: #7c3aed;
+}
+.mcm-faq-a {
+  font-size: 0.9rem;
+  line-height: 1.7;
+  padding: 1rem 1.25rem;
+  margin: 0;
+  color: #4b5563;
+}
+.mcm-faq-a::before {
+  content: 'A. ';
+  font-weight: 700;
+  color: #16a34a;
+}
+
+/* ========== 関連リンク ========== */
+.mcm-related-list {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.mcm-related-link {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.mcm-related-link:hover {
+  border-color: #7c3aed;
+  box-shadow: 0 2px 8px rgba(124 58 237 / 0.1);
+}
+.mcm-related-icon {
+  font-size: 1.75rem;
+  flex-shrink: 0;
+}
+.mcm-related-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+.mcm-related-title {
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+.mcm-related-desc {
+  font-size: 0.8rem;
+  color: var(--sn-muted, #6b7280);
+}
+
+/* ========== レスポンシブ ========== */
+@media (max-width: 768px) {
+  .mcm-howread-grid {
+    grid-template-columns: 1fr;
+  }
+  .mcm-selfpair-grid {
+    grid-template-columns: 1fr;
+  }
+  .mcm-legend {
+    flex-direction: column;
+  }
+}
+@media (max-width: 480px) {
+  .mcm-ranking-item {
+    grid-template-columns: 1.75rem 1fr;
+  }
+  .mcm-ranking-link {
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+}
+</style>
