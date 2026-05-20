@@ -1,20 +1,1031 @@
 ---
 /**
- * 診断ページ スタブ（Phase 0）
- * content-writer が本文を執筆する。
- * ui-ux-designer が診断フローコンポーネントを実装する。
+ * 多重知能テスト ランディングページ
+ * KW: 多重知能テスト（VOL: 18,100 / SD: 10）
+ * 理論: Howard Gardner「Frames of Mind」(1983)
+ * 確認日: 2026-05-20
+ *
+ * SEO/AIO対応:
+ * - JSON-LD: WebApplication + Quiz + FAQPage + BreadcrumbList
+ * - AIOブロック: 「このページでわかること」
+ * - 競合比較: 64問・8軸バーグラフ・5シーン軸で差別化
  */
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Container from '../../../components/Container.astro';
-const diagName = 'この診断';
+import DiagnosisFlow from '../../../components/DiagnosisFlow';
+import { meta } from '../../../data/diagnoses/multi-int/meta';
+import { questions } from '../../../data/diagnoses/multi-int/questions';
+import { calculateResultTypeId } from '../../../data/diagnoses/multi-int/results';
+
+const SITE_URL = 'https://shindan-navi.jp';
+const PAGE_URL = `${SITE_URL}/diagnosis/multi-int/`;
+
+// DiagnosisFlow に渡す questions を diagnosis.ts の Question 型に変換
+const flowQuestions = questions.map((q) => ({
+  id: String(q.id),
+  text: q.text,
+}));
+
+// JSON-LD: WebApplication
+const jsonLdWebApp = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: '多重知能テスト【無料・64問】',
+  url: PAGE_URL,
+  applicationCategory: 'EducationalApplication',
+  operatingSystem: 'Web',
+  description:
+    'Howard Gardner理論に基づく多重知能テスト。64問に答えるだけで8つの知能プロファイルを無料で診断します。仕事・学習スタイル・向いている職種がわかります。',
+  offers: {
+    '@type': 'Offer',
+    price: '0',
+    priceCurrency: 'JPY',
+    availability: 'https://schema.org/InStock',
+  },
+  author: {
+    '@type': 'Organization',
+    name: '診断ナビ',
+    url: SITE_URL,
+  },
+};
+
+// JSON-LD: Quiz
+const jsonLdQuiz = {
+  '@context': 'https://schema.org',
+  '@type': 'Quiz',
+  name: '多重知能テスト（64問）',
+  url: PAGE_URL,
+  about: {
+    '@type': 'Thing',
+    name: '多重知能理論（Multiple Intelligences）',
+    description: 'Howard Gardnerが1983年に提唱した、8種類の知能領域があるという理論',
+    sameAs: 'https://www.pz.harvard.edu/projects/multiple-intelligences',
+  },
+  educationalLevel: 'HighSchool',
+  numberOfQuestions: 64,
+  assesses: '学習スタイル・向いている仕事・知能プロファイル',
+  dateCreated: '2026-05-20',
+  dateModified: '2026-05-20',
+  inLanguage: 'ja',
+};
+
+// JSON-LD: FAQPage
+const faqs = [
+  {
+    question: '多重知能テストとは何ですか？',
+    answer:
+      'ハーバード大学のHoward Gardner教授が1983年の著書「Frames of Mind」で提唱した「多重知能理論（MI理論）」に基づく自己診断テストです。言語・論理数学・視空間・身体運動・音楽・対人・内省・博物の8つの知能領域を測定します。',
+  },
+  {
+    question: '何問・何分かかりますか？',
+    answer:
+      '全64問で、目安は約5分です。各質問に「1（全く当てはまらない）〜5（とても当てはまる）」で回答します。途中で中断しても24時間以内なら再開できます。',
+  },
+  {
+    question: '診断結果は何種類ありますか？',
+    answer:
+      '8種類の知能タイプのうち最もスコアが高いものが「あなたの主要タイプ」として表示されます。さらに上位3タイプの組み合わせで、あなただけのプロファイルが形成されます。',
+  },
+  {
+    question: '仕事や学習にどう活かせますか？',
+    answer:
+      '各タイプごとに「向いている職種10選」「最適な学習スタイル」「得意な教科傾向」「進路ヒント」を提供しています。自分の強みを活かした仕事・勉強法の選択に役立ちます。',
+  },
+  {
+    question: 'IQテストと何が違いますか？',
+    answer:
+      '従来のIQテストは主に言語・数理能力を測定します。多重知能テストは8つの異なる知能領域を個別に評価するため、IQでは測れない強みを発見できます。音楽・スポーツ・自然観察などの才能も正当に評価されます。',
+  },
+  {
+    question: '何歳から受けられますか？',
+    answer:
+      '中学生以上を想定しています。質問文は平易な日本語で記載しており、保護者の方がお子さんの学習スタイル発見に使うケースも多くあります。ただし、本テストは医学的・心理学的診断ではなく、あくまで傾向把握のための参考ツールです。',
+  },
+  {
+    question: '無料で全機能使えますか？',
+    answer:
+      '基本診断（64問）と結果の概要・強み・注意点・有名人タイプは無料でご利用いただけます。仕事・恋愛・友人・家族・学校の5軸詳細レポートは¥390のPASSで解放されます。',
+  },
+];
+
+const jsonLdFAQ = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map(({ question, answer }) => ({
+    '@type': 'Question',
+    name: question,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: answer,
+    },
+  })),
+};
+
+// JSON-LD: BreadcrumbList
+const jsonLdBreadcrumb = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'ホーム', item: SITE_URL },
+    { '@type': 'ListItem', position: 2, name: '診断一覧', item: `${SITE_URL}/diagnosis/` },
+    { '@type': 'ListItem', position: 3, name: '多重知能テスト', item: PAGE_URL },
+  ],
+};
+
+const jsonLdAll = [jsonLdWebApp, jsonLdQuiz, jsonLdFAQ, jsonLdBreadcrumb];
 ---
-<BaseLayout title={`${diagName} - 診断ナビ`} description="診断説明（content-writerが執筆）">
+
+<BaseLayout
+  title={meta.title}
+  description={meta.description}
+  canonical={PAGE_URL}
+  jsonLd={jsonLdAll}
+  ogType="website"
+  publishDate={meta.publishedAt}
+  lastUpdated={meta.updatedAt}
+  breadcrumbs={[
+    { name: '診断一覧', url: '/diagnosis/' },
+    { name: '多重知能テスト', url: '/diagnosis/multi-int/' },
+  ]}
+>
+  {/* ========== ヒーローセクション ========== */}
+  <section class="mi-hero" aria-labelledby="mi-hero-h1">
+    <Container>
+      <div class="mi-hero-inner">
+        <div class="mi-hero-badge">Gardner理論に基づく科学的診断</div>
+        <h1 id="mi-hero-h1" class="mi-hero-h1">
+          多重知能テスト<br />
+          <span class="mi-hero-meta">【無料・5分・64問】</span>
+        </h1>
+        <p class="mi-hero-catch">
+          あなたが本当に得意なことはなに？<br />
+          8つの知能から「強みのかたち」を発見しよう
+        </p>
+        <div class="mi-hero-stats">
+          <span class="mi-stat"><strong>64</strong>問</span>
+          <span class="mi-stat-sep">・</span>
+          <span class="mi-stat">約<strong>5</strong>分</span>
+          <span class="mi-stat-sep">・</span>
+          <span class="mi-stat"><strong>8</strong>タイプ</span>
+          <span class="mi-stat-sep">・</span>
+          <span class="mi-stat">無料</span>
+        </div>
+        <a href="#diagnosis-flow" class="mi-cta-btn">
+          <span>診断スタート</span>
+          <span class="mi-cta-arrow" aria-hidden="true">↓</span>
+        </a>
+        <p class="mi-hero-sub">登録不要・所要時間5分・途中保存OK</p>
+      </div>
+    </Container>
+  </section>
+
   <Container>
-    <div style="padding-block: 4rem; text-align: center;">
-      <p style="font-size: 3rem; margin-bottom: 1rem;">🔮</p>
-      <h1 style="font-family: var(--sn-font-rounded); font-size: 1.5rem; margin-bottom: 1rem;">診断準備中</h1>
-      <p style="color: var(--sn-muted);">Phase 1 にてコンテンツ・診断フローを実装します</p>
-      <a href="/diagnosis/" style="display:inline-block; margin-top:2rem; color:var(--sn-primary);">← 診断一覧に戻る</a>
+    {/* ========== AIOブロック（このページでわかること） ========== */}
+    <div class="mi-aio-block" role="note" aria-label="このページでわかること">
+      <p class="mi-aio-title">このページでわかること</p>
+      <ul class="mi-aio-list">
+        <li>64問・5段階リッカートで測定する8知能の強み・弱みプロファイル（Howard Gardner 1983年理論）</li>
+        <li>仕事・恋愛・友人・家族・学校の5軸ごとの行動指針と向いている職種10選</li>
+        <li>他の診断（MBTI / DiSC / 完璧主義）との統合プロファイルへの連携方法</li>
+      </ul>
+      <p class="mi-aio-updated">
+        <time datetime="2026-05-20">2026-05-20</time> 時点の情報。
+        <a href="https://www.pz.harvard.edu/projects/multiple-intelligences" target="_blank" rel="noopener noreferrer">
+          ハーバード大学 Project Zero 公式
+        </a>
+        を確認済。
+      </p>
     </div>
+
+    {/* ========== 多重知能テストとは ========== */}
+    <section class="mi-section" aria-labelledby="mi-what-h2">
+      <h2 id="mi-what-h2" class="mi-h2">多重知能テストとは</h2>
+      <p class="mi-lead">
+        多重知能テストは、ハーバード大学の発達心理学者 Howard Gardner が
+        1983年の著書「Frames of Mind」で発表した「多重知能理論（MI理論）」をベースにした自己診断ツールです。
+      </p>
+      <p class="mi-body">
+        Gardner は「知能はひとつではない」と主張し、8つの独立した知能領域があることを示しました。
+        従来のIQテストが言語と数理の2軸しか測れないのに対し、MI理論は音楽・身体運動・自然観察など
+        多様な才能を平等に評価します
+        （<a href="https://www.pz.harvard.edu/projects/multiple-intelligences" target="_blank" rel="noopener noreferrer">ハーバード大学 Project Zero</a>、2026-05-20確認）。
+      </p>
+      <div class="mi-info-table-wrap">
+        <table class="mi-info-table">
+          <caption class="mi-table-caption">多重知能テストの概要</caption>
+          <tbody>
+            <tr>
+              <th scope="row">理論の提唱者</th>
+              <td>Howard Gardner（ハーバード大学名誉教授）</td>
+            </tr>
+            <tr>
+              <th scope="row">原著</th>
+              <td>「Frames of Mind: The Theory of Multiple Intelligences」（1983年）</td>
+            </tr>
+            <tr>
+              <th scope="row">知能の数</th>
+              <td>8種類（言語・論理数学・視空間・身体運動・音楽・対人・内省・博物）</td>
+            </tr>
+            <tr>
+              <th scope="row">問題数</th>
+              <td>64問（各知能8問 × 8知能）</td>
+            </tr>
+            <tr>
+              <th scope="row">回答方式</th>
+              <td>5段階リッカートスケール（1=全く当てはまらない〜5=とても当てはまる）</td>
+            </tr>
+            <tr>
+              <th scope="row">所要時間</th>
+              <td>約5分</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    {/* ========== 8つの知能 ========== */}
+    <section class="mi-section" aria-labelledby="mi-types-h2">
+      <h2 id="mi-types-h2" class="mi-h2">8つの知能タイプ</h2>
+      <p class="mi-lead">
+        Gardner理論では、以下の8つの知能が独立して存在し、人によって得意な領域が異なります。
+        どれが「高い・低い」ではなく、それぞれが異なる形の才能です。
+      </p>
+      <div class="mi-types-grid">
+        <article class="mi-type-card" data-type="linguistic">
+          <div class="mi-type-icon" aria-hidden="true">🦉</div>
+          <h3 class="mi-type-name">言語的知能</h3>
+          <p class="mi-type-desc">
+            言葉を読む・書く・話す・聞く力。作家・弁護士・ジャーナリスト・教師に多い傾向があります。
+          </p>
+          <p class="mi-type-jobs">向く職種: 作家・編集者・翻訳家・弁護士</p>
+        </article>
+        <article class="mi-type-card" data-type="logical">
+          <div class="mi-type-icon" aria-hidden="true">♟️</div>
+          <h3 class="mi-type-name">論理数学的知能</h3>
+          <p class="mi-type-desc">
+            数字・論理・パターン認識の力。データサイエンティスト・研究者・エンジニアに多い傾向があります。
+          </p>
+          <p class="mi-type-jobs">向く職種: データサイエンティスト・SE・公認会計士</p>
+        </article>
+        <article class="mi-type-card" data-type="spatial">
+          <div class="mi-type-icon" aria-hidden="true">🦎</div>
+          <h3 class="mi-type-name">視空間的知能</h3>
+          <p class="mi-type-desc">
+            空間・色・形・方向感覚の力。デザイナー・建築家・映像クリエイターに多い傾向があります。
+          </p>
+          <p class="mi-type-jobs">向く職種: デザイナー・建築家・映像クリエイター</p>
+        </article>
+        <article class="mi-type-card" data-type="kinesthetic">
+          <div class="mi-type-icon" aria-hidden="true">🐆</div>
+          <h3 class="mi-type-name">身体運動的知能</h3>
+          <p class="mi-type-desc">
+            体を使って考え・表現する力。スポーツ選手・外科医・ダンサー・大工に多い傾向があります。
+          </p>
+          <p class="mi-type-jobs">向く職種: アスリート・外科医・ダンサー・職人</p>
+        </article>
+        <article class="mi-type-card" data-type="musical">
+          <div class="mi-type-icon" aria-hidden="true">🎵</div>
+          <h3 class="mi-type-name">音楽的知能</h3>
+          <p class="mi-type-desc">
+            音・リズム・メロディーへの鋭い感覚。音楽家・作曲家・音響エンジニアに多い傾向があります。
+          </p>
+          <p class="mi-type-jobs">向く職種: 音楽家・作曲家・音響エンジニア・歌手</p>
+        </article>
+        <article class="mi-type-card" data-type="interpersonal">
+          <div class="mi-type-icon" aria-hidden="true">🦋</div>
+          <h3 class="mi-type-name">対人的知能</h3>
+          <p class="mi-type-desc">
+            他者の気持ちを読み・関係を築く力。カウンセラー・営業・政治家・教師に多い傾向があります。
+          </p>
+          <p class="mi-type-jobs">向く職種: カウンセラー・営業・政治家・HR</p>
+        </article>
+        <article class="mi-type-card" data-type="intrapersonal">
+          <div class="mi-type-icon" aria-hidden="true">🦅</div>
+          <h3 class="mi-type-name">内省的知能</h3>
+          <p class="mi-type-desc">
+            自分の感情・思考・強みを深く理解する力。哲学者・心理士・起業家・作家に多い傾向があります。
+          </p>
+          <p class="mi-type-jobs">向く職種: 哲学者・心理士・起業家・研究者</p>
+        </article>
+        <article class="mi-type-card" data-type="naturalist">
+          <div class="mi-type-icon" aria-hidden="true">🌿</div>
+          <h3 class="mi-type-name">博物的知能</h3>
+          <p class="mi-type-desc">
+            自然・生き物・環境のパターンを分類する力。生物学者・農業家・シェフ・ランドスケープデザイナーに多い傾向があります。
+          </p>
+          <p class="mi-type-jobs">向く職種: 生物学者・農業家・獣医師・シェフ</p>
+        </article>
+      </div>
+
+      {/* 8知能レーダーチャート説明（オリジナル図解） */}
+      <div class="mi-chart-figure" role="figure" aria-labelledby="mi-chart-caption">
+        <div class="mi-chart-visual" aria-hidden="true">
+          <div class="mi-radar-placeholder">
+            <div class="mi-radar-label mi-radar-label--top">言語的</div>
+            <div class="mi-radar-label mi-radar-label--top-right">論理数学</div>
+            <div class="mi-radar-label mi-radar-label--right">視空間</div>
+            <div class="mi-radar-label mi-radar-label--bottom-right">身体運動</div>
+            <div class="mi-radar-label mi-radar-label--bottom">音楽的</div>
+            <div class="mi-radar-label mi-radar-label--bottom-left">対人的</div>
+            <div class="mi-radar-label mi-radar-label--left">内省的</div>
+            <div class="mi-radar-label mi-radar-label--top-left">博物的</div>
+            <div class="mi-radar-center">あなたの<br/>知能プロファイル</div>
+          </div>
+        </div>
+        <p id="mi-chart-caption" class="mi-chart-caption">
+          【図1】多重知能プロファイル（8軸レーダーチャートイメージ）。
+          診断後に実際のスコアで表示されます。
+          出典: Gardner, H. (1983). Frames of Mind. Basic Books.
+        </p>
+      </div>
+    </section>
+
+    {/* ========== 使い方 ========== */}
+    <section class="mi-section" aria-labelledby="mi-how-h2">
+      <h2 id="mi-how-h2" class="mi-h2">使い方（3ステップ）</h2>
+      <ol class="mi-steps">
+        <li class="mi-step">
+          <div class="mi-step-num" aria-hidden="true">1</div>
+          <div class="mi-step-body">
+            <h3 class="mi-step-title">「診断スタート」をタップ</h3>
+            <p class="mi-step-desc">
+              登録・インストール不要。ブラウザですぐ始められます。
+              途中で閉じても24時間以内なら再開できます。
+            </p>
+          </div>
+        </li>
+        <li class="mi-step">
+          <div class="mi-step-num" aria-hidden="true">2</div>
+          <div class="mi-step-body">
+            <h3 class="mi-step-title">64問に回答する（約5分）</h3>
+            <p class="mi-step-desc">
+              各質問に「1（全く当てはまらない）〜5（とても当てはまる）」で答えます。
+              正解・不正解はありません。直感で答えてください。
+            </p>
+          </div>
+        </li>
+        <li class="mi-step">
+          <div class="mi-step-num" aria-hidden="true">3</div>
+          <div class="mi-step-body">
+            <h3 class="mi-step-title">8知能プロファイルと詳細結果を確認</h3>
+            <p class="mi-step-desc">
+              8軸のスコアと主要タイプが表示されます。
+              仕事・恋愛・友人・家族・学校の5軸詳細は¥390 PASSで解放。
+            </p>
+          </div>
+        </li>
+      </ol>
+    </section>
+
+    {/* ========== 診断フロー（React島） ========== */}
+    <section class="mi-section mi-section--flow" id="diagnosis-flow" aria-labelledby="mi-flow-h2">
+      <h2 id="mi-flow-h2" class="mi-h2 mi-h2--center">診断を始める</h2>
+      <p class="mi-flow-lead">
+        全64問・約5分。直感で答えてください。
+      </p>
+      <div class="mi-flow-wrapper">
+        <DiagnosisFlow
+          client:load
+          diagnosisId="multi-int"
+          questions={flowQuestions}
+          resultPath={(typeId: string) => `/diagnosis/multi-int/result/${typeId}/`}
+          calculateResult={calculateResultTypeId}
+        />
+      </div>
+    </section>
+
+    {/* ========== 精度・科学的根拠 ========== */}
+    <section class="mi-section" aria-labelledby="mi-science-h2">
+      <h2 id="mi-science-h2" class="mi-h2">テストの精度・科学的根拠</h2>
+      <p class="mi-lead">
+        本テストはHoward Gardnerの多重知能理論に基づいて設計されています。
+        傾向把握のための自己診断ツールであり、医学的・心理学的な能力測定ではありません。
+      </p>
+      <div class="mi-science-grid">
+        <div class="mi-science-card">
+          <div class="mi-science-icon" aria-hidden="true">📚</div>
+          <h3 class="mi-science-title">理論の出典</h3>
+          <p class="mi-science-body">
+            Gardner, H. (1983).
+            <em>Frames of Mind: The Theory of Multiple Intelligences.</em>
+            Basic Books. ISBN: 978-0-465-02433-9
+            <br />
+            2024年現在もハーバード大学 Project Zeroが理論の研究・普及を続けています
+            （<a href="https://www.pz.harvard.edu/projects/multiple-intelligences" target="_blank" rel="noopener noreferrer">Project Zero 公式</a>、2026-05-20確認）。
+          </p>
+        </div>
+        <div class="mi-science-card">
+          <div class="mi-science-icon" aria-hidden="true">⚠️</div>
+          <h3 class="mi-science-title">ご注意（YMYL）</h3>
+          <p class="mi-science-body">
+            本テストは自己理解・強み発見のための参考ツールです。
+            学習障害・発達障害等の医学的診断は行いません。
+            専門的なアドバイスが必要な場合は医師・臨床心理士にご相談ください。
+          </p>
+        </div>
+        <div class="mi-science-card">
+          <div class="mi-science-icon" aria-hidden="true">🔄</div>
+          <h3 class="mi-science-title">更新・鮮度管理</h3>
+          <p class="mi-science-body">
+            理論・参考文献情報は月1回以上確認しています。
+            最終確認日: 2026-05-20。
+            情報の誤りを見つけた場合は
+            <a href="/contact/">お問い合わせ</a>
+            からご連絡ください。
+          </p>
+        </div>
+      </div>
+    </section>
+
+    {/* ========== 他の診断との違い ========== */}
+    <section class="mi-section" aria-labelledby="mi-compare-h2">
+      <h2 id="mi-compare-h2" class="mi-h2">他の診断との違い</h2>
+      <div class="mi-compare-table-wrap">
+        <table class="mi-compare-table">
+          <caption class="mi-table-caption">多重知能テストと主要診断の比較（2026-05-20時点）</caption>
+          <thead>
+            <tr>
+              <th scope="col">診断名</th>
+              <th scope="col">測定軸</th>
+              <th scope="col">問題数</th>
+              <th scope="col">強み</th>
+              <th scope="col">用途</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">多重知能（本ページ）</th>
+              <td>8つの知能領域</td>
+              <td>64問</td>
+              <td>学習・仕事の強み発見</td>
+              <td>学習スタイル・職種選択</td>
+            </tr>
+            <tr>
+              <th scope="row"><a href="/diagnosis/mbti/">MBTI</a></th>
+              <td>性格4軸（16タイプ）</td>
+              <td>-</td>
+              <td>人間関係・コミュニケーション傾向</td>
+              <td>チームビルディング・恋愛相性</td>
+            </tr>
+            <tr>
+              <th scope="row"><a href="/diagnosis/disc/">DiSC</a></th>
+              <td>行動スタイル4軸</td>
+              <td>-</td>
+              <td>職場での行動パターン</td>
+              <td>リーダーシップ・部下育成</td>
+            </tr>
+            <tr>
+              <th scope="row">IQテスト（外部）</th>
+              <td>言語・数理の2軸</td>
+              <td>-</td>
+              <td>認知能力の測定</td>
+              <td>採用・教育選抜（参考値）</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="mi-compare-note">
+        <strong>おすすめの組み合わせ:</strong>
+        多重知能（才能の軸）× MBTI（性格の軸）× DiSC（行動の軸）を
+        組み合わせると、仕事・学習の総合的な自己理解が深まります。
+        <a href="/diagnosis/">他の診断を見る →</a>
+      </p>
+    </section>
+
+    {/* ========== 関連リンク ========== */}
+    <section class="mi-section" aria-labelledby="mi-related-h2">
+      <h2 id="mi-related-h2" class="mi-h2">関連診断</h2>
+      <ul class="mi-related-list">
+        <li class="mi-related-item">
+          <a href="/diagnosis/mbti/" class="mi-related-link">
+            <span class="mi-related-icon" aria-hidden="true">🧠</span>
+            <span class="mi-related-body">
+              <span class="mi-related-title">MBTI（16タイプ）診断</span>
+              <span class="mi-related-desc">性格・コミュニケーションスタイルを4軸で分析</span>
+            </span>
+          </a>
+        </li>
+        <li class="mi-related-item">
+          <a href="/diagnosis/disc/" class="mi-related-link">
+            <span class="mi-related-icon" aria-hidden="true">💼</span>
+            <span class="mi-related-body">
+              <span class="mi-related-title">DiSC診断</span>
+              <span class="mi-related-desc">職場でのリーダーシップ・行動スタイルを分析</span>
+            </span>
+          </a>
+        </li>
+        <li class="mi-related-item">
+          <a href="/diagnosis/perfectionism/" class="mi-related-link">
+            <span class="mi-related-icon" aria-hidden="true">⭐</span>
+            <span class="mi-related-body">
+              <span class="mi-related-title">完璧主義タイプ診断</span>
+              <span class="mi-related-desc">仕事・恋愛の完璧主義傾向と対処法を発見</span>
+            </span>
+          </a>
+        </li>
+        <li class="mi-related-item">
+          <a href="/diagnosis/ketsuekigata/" class="mi-related-link">
+            <span class="mi-related-icon" aria-hidden="true">🩸</span>
+            <span class="mi-related-body">
+              <span class="mi-related-title">血液型性格診断</span>
+              <span class="mi-related-desc">日本の血液型性格論をBig5心理学で再解釈</span>
+            </span>
+          </a>
+        </li>
+      </ul>
+    </section>
+
+    {/* ========== FAQ ========== */}
+    <section class="mi-section" aria-labelledby="mi-faq-h2">
+      <h2 id="mi-faq-h2" class="mi-h2">よくある質問</h2>
+      <dl class="mi-faq-list">
+        {faqs.map(({ question, answer }) => (
+          <div class="mi-faq-item">
+            <dt class="mi-faq-q">{question}</dt>
+            <dd class="mi-faq-a">{answer}</dd>
+          </div>
+        ))}
+      </dl>
+    </section>
   </Container>
 </BaseLayout>
+
+<style>
+/* ========== ヒーロー ========== */
+.mi-hero {
+  background: linear-gradient(135deg, var(--sn-primary) 0%, #7c3aed 100%);
+  color: #fff;
+  padding-block: 3.5rem 4rem;
+  text-align: center;
+}
+.mi-hero-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+.mi-hero-badge {
+  display: inline-block;
+  background: rgba(255 255 255 / 0.2);
+  border: 1px solid rgba(255 255 255 / 0.4);
+  border-radius: 2rem;
+  padding: 0.25rem 1rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+}
+.mi-hero-h1 {
+  font-size: clamp(1.75rem, 5vw, 2.5rem);
+  font-family: var(--sn-font-rounded, sans-serif);
+  font-weight: 700;
+  line-height: 1.3;
+  margin: 0;
+}
+.mi-hero-meta {
+  display: block;
+  font-size: clamp(1rem, 3vw, 1.4rem);
+  opacity: 0.9;
+}
+.mi-hero-catch {
+  font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+  opacity: 0.92;
+  line-height: 1.7;
+  margin: 0;
+}
+.mi-hero-stats {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  font-size: 0.9rem;
+  opacity: 0.85;
+}
+.mi-stat strong {
+  font-size: 1.4em;
+  font-weight: 700;
+}
+.mi-stat-sep {
+  color: rgba(255 255 255 / 0.5);
+}
+.mi-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #fff;
+  color: var(--sn-primary);
+  font-weight: 700;
+  font-size: 1.1rem;
+  padding: 0.85rem 2.5rem;
+  border-radius: 3rem;
+  text-decoration: none;
+  transition: transform 0.15s, box-shadow 0.15s;
+  margin-top: 0.5rem;
+}
+.mi-cta-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0 0 0 / 0.2);
+}
+.mi-cta-arrow {
+  font-size: 1.2em;
+}
+.mi-hero-sub {
+  font-size: 0.8rem;
+  opacity: 0.7;
+  margin: 0;
+}
+
+/* ========== AIOブロック ========== */
+.mi-aio-block {
+  background: #f0f4ff;
+  border-left: 4px solid var(--sn-primary);
+  border-radius: 0 0.5rem 0.5rem 0;
+  padding: 1.25rem 1.5rem;
+  margin-block: 2rem;
+}
+.mi-aio-title {
+  font-weight: 700;
+  margin: 0 0 0.5rem;
+  font-size: 0.9rem;
+  color: var(--sn-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.mi-aio-list {
+  margin: 0 0 0.75rem;
+  padding-left: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.mi-aio-list li {
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+.mi-aio-updated {
+  font-size: 0.75rem;
+  color: var(--sn-muted, #6b7280);
+  margin: 0;
+}
+
+/* ========== セクション共通 ========== */
+.mi-section {
+  margin-block: 3rem;
+}
+.mi-section--flow {
+  background: #f8f7ff;
+  padding: 2rem 1.5rem;
+  border-radius: 1rem;
+  margin-inline: -1rem;
+}
+.mi-h2 {
+  font-size: clamp(1.3rem, 4vw, 1.75rem);
+  font-family: var(--sn-font-rounded, sans-serif);
+  font-weight: 700;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--sn-primary);
+}
+.mi-h2--center {
+  text-align: center;
+  border-bottom: none;
+}
+.mi-lead {
+  font-size: 1rem;
+  line-height: 1.8;
+  margin-bottom: 1rem;
+  color: #374151;
+}
+.mi-body {
+  font-size: 0.95rem;
+  line-height: 1.8;
+  margin-bottom: 1rem;
+  color: #374151;
+}
+.mi-flow-lead {
+  text-align: center;
+  color: var(--sn-muted, #6b7280);
+  font-size: 0.9rem;
+  margin-bottom: 1.5rem;
+}
+.mi-flow-wrapper {
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+/* ========== 情報テーブル ========== */
+.mi-info-table-wrap {
+  overflow-x: auto;
+  margin-top: 1.5rem;
+}
+.mi-info-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+.mi-info-table th,
+.mi-info-table td {
+  padding: 0.6rem 1rem;
+  border: 1px solid #e5e7eb;
+  text-align: left;
+  line-height: 1.5;
+}
+.mi-info-table th {
+  background: #f3f4f6;
+  font-weight: 600;
+  white-space: nowrap;
+  width: 9rem;
+}
+.mi-table-caption {
+  font-size: 0.8rem;
+  color: var(--sn-muted, #6b7280);
+  text-align: left;
+  padding: 0.25rem 0 0.5rem;
+}
+
+/* ========== 8タイプグリッド ========== */
+.mi-types-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1rem;
+  margin-block: 1.5rem;
+}
+.mi-type-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  transition: box-shadow 0.15s;
+}
+.mi-type-card:hover {
+  box-shadow: 0 4px 12px rgba(0 0 0 / 0.08);
+}
+.mi-type-icon {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+.mi-type-name {
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem;
+  color: var(--sn-primary);
+}
+.mi-type-desc {
+  font-size: 0.85rem;
+  line-height: 1.6;
+  color: #4b5563;
+  margin: 0 0 0.5rem;
+}
+.mi-type-jobs {
+  font-size: 0.8rem;
+  color: var(--sn-muted, #6b7280);
+  margin: 0;
+}
+
+/* ========== レーダーチャート（プレースホルダー図解） ========== */
+.mi-chart-figure {
+  margin-block: 2rem;
+  text-align: center;
+}
+.mi-chart-visual {
+  display: inline-block;
+  position: relative;
+  width: 240px;
+  height: 240px;
+  background: radial-gradient(circle, #f0f4ff 0%, #e5e7eb 100%);
+  border-radius: 50%;
+  margin-bottom: 1rem;
+}
+.mi-radar-placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.mi-radar-center {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--sn-primary);
+  text-align: center;
+  line-height: 1.4;
+}
+.mi-radar-label {
+  position: absolute;
+  font-size: 0.65rem;
+  color: #4b5563;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.mi-radar-label--top { top: 8px; left: 50%; transform: translateX(-50%); }
+.mi-radar-label--top-right { top: 30px; right: 20px; }
+.mi-radar-label--right { right: 4px; top: 50%; transform: translateY(-50%); }
+.mi-radar-label--bottom-right { bottom: 30px; right: 20px; }
+.mi-radar-label--bottom { bottom: 8px; left: 50%; transform: translateX(-50%); }
+.mi-radar-label--bottom-left { bottom: 30px; left: 20px; }
+.mi-radar-label--left { left: 4px; top: 50%; transform: translateY(-50%); }
+.mi-radar-label--top-left { top: 30px; left: 20px; }
+.mi-chart-caption {
+  font-size: 0.8rem;
+  color: var(--sn-muted, #6b7280);
+  max-width: 480px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+/* ========== ステップ ========== */
+.mi-steps {
+  list-style: none;
+  padding: 0;
+  margin: 1.5rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+.mi-step {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+.mi-step-num {
+  flex-shrink: 0;
+  width: 2.5rem;
+  height: 2.5rem;
+  background: var(--sn-primary);
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+.mi-step-title {
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 0 0 0.25rem;
+}
+.mi-step-desc {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: #4b5563;
+  margin: 0;
+}
+
+/* ========== 科学的根拠 ========== */
+.mi-science-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+.mi-science-card {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+}
+.mi-science-icon {
+  font-size: 1.75rem;
+  margin-bottom: 0.5rem;
+}
+.mi-science-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem;
+}
+.mi-science-body {
+  font-size: 0.85rem;
+  line-height: 1.7;
+  color: #4b5563;
+  margin: 0;
+}
+
+/* ========== 比較テーブル ========== */
+.mi-compare-table-wrap {
+  overflow-x: auto;
+  margin-block: 1.5rem;
+}
+.mi-compare-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+.mi-compare-table th,
+.mi-compare-table td {
+  padding: 0.6rem 0.8rem;
+  border: 1px solid #e5e7eb;
+  text-align: left;
+  line-height: 1.5;
+}
+.mi-compare-table thead th {
+  background: var(--sn-primary);
+  color: #fff;
+  font-weight: 600;
+}
+.mi-compare-table tbody tr:first-child td,
+.mi-compare-table tbody tr:first-child th {
+  background: #f0f4ff;
+  font-weight: 600;
+}
+.mi-compare-table tbody tr:nth-child(even) {
+  background: #f9fafb;
+}
+.mi-compare-note {
+  font-size: 0.875rem;
+  color: #4b5563;
+  line-height: 1.6;
+  margin-top: 1rem;
+}
+
+/* ========== 関連リンク ========== */
+.mi-related-list {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.mi-related-link {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.mi-related-link:hover {
+  border-color: var(--sn-primary);
+  box-shadow: 0 2px 8px rgba(99 102 241 / 0.1);
+}
+.mi-related-icon {
+  font-size: 1.75rem;
+  flex-shrink: 0;
+}
+.mi-related-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+.mi-related-title {
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+.mi-related-desc {
+  font-size: 0.8rem;
+  color: var(--sn-muted, #6b7280);
+}
+
+/* ========== FAQ ========== */
+.mi-faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+.mi-faq-item {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+.mi-faq-q {
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 1rem 1.25rem;
+  background: #f9fafb;
+  margin: 0;
+  display: block;
+}
+.mi-faq-q::before {
+  content: 'Q. ';
+  color: var(--sn-primary);
+}
+.mi-faq-a {
+  font-size: 0.9rem;
+  line-height: 1.7;
+  padding: 1rem 1.25rem;
+  margin: 0;
+  color: #4b5563;
+}
+.mi-faq-a::before {
+  content: 'A. ';
+  font-weight: 700;
+  color: #16a34a;
+}
+
+/* ========== レスポンシブ ========== */
+@media (max-width: 640px) {
+  .mi-types-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .mi-science-grid {
+    grid-template-columns: 1fr;
+  }
+  .mi-section--flow {
+    margin-inline: -0.5rem;
+    padding: 1.5rem 1rem;
+  }
+}
+</style>

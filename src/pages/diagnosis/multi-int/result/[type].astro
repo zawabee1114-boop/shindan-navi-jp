@@ -1,0 +1,801 @@
+---
+/**
+ * 多重知能テスト 結果ページ（動的ルート）
+ * 8タイプ分の結果ページを静的生成する
+ *
+ * URL: /diagnosis/multi-int/result/{typeId}/
+ * タイプID: linguistic / logical / spatial / kinesthetic / musical / interpersonal / intrapersonal / naturalist
+ *
+ * SEO/AIO:
+ * - JSON-LD: Article + FAQPage + BreadcrumbList
+ * - タイプ別メタタイトル・ディスクリプション
+ * - 5軸（仕事/恋愛/友人/家族/学校）詳細
+ * - ¥390 PASS 誘導CTA
+ *
+ * 確認日: 2026-05-20
+ */
+import ResultLayout from '../../../../layouts/ResultLayout.astro';
+import Container from '../../../../components/Container.astro';
+import { types } from '../../../../data/diagnoses/multi-int/types';
+import { meta } from '../../../../data/diagnoses/multi-int/meta';
+
+import type { IntelligenceType } from '../../../../data/diagnoses/multi-int/questions';
+
+export function getStaticPaths() {
+  return Object.keys(types).map((typeId) => ({
+    params: { type: typeId },
+    props: { typeId: typeId as IntelligenceType, typeData: types[typeId as IntelligenceType] },
+  }));
+}
+
+const { typeId, typeData } = Astro.props;
+
+const SITE_URL = 'https://shindan-navi.jp';
+const PAGE_URL = `${SITE_URL}/diagnosis/multi-int/result/${typeId}/`;
+
+// FAQs（タイプ共通）
+const faqs = [
+  {
+    question: `${typeData.name}はどんな仕事が向いていますか？`,
+    answer: `${typeData.name}には「${typeData.work.jobs.slice(0, 5).join('・')}」などの職種が向いています。${typeData.work.environment}`,
+  },
+  {
+    question: `${typeData.name}の恋愛での特徴は？`,
+    answer: typeData.love.tendency,
+  },
+  {
+    question: `${typeData.name}の学習スタイルは？`,
+    answer: `${typeData.school.style} おすすめの勉強法は「${typeData.school.methods.slice(0, 3).join('・')}」などです。得意な教科は${typeData.school.subjects.join('・')}の傾向があります。`,
+  },
+  {
+    question: `${typeData.name}の強みを活かすには？`,
+    answer: typeData.growth.slice(0, 3).join('。また、') + '。',
+  },
+  {
+    question: '他の診断と組み合わせるとどうなりますか？',
+    answer: `多重知能（才能の軸）とMBTI（性格の軸）やDiSC（行動の軸）を組み合わせると、仕事・学習の自己理解がさらに深まります。統合プロファイル機能（無料登録後）で複数診断の結果をまとめて確認できます。`,
+  },
+];
+
+// JSON-LD: Article
+const jsonLdArticle = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: `${typeData.name}の特徴・仕事・恋愛・学習スタイル完全ガイド`,
+  url: PAGE_URL,
+  description: `${typeData.summary.slice(0, 100)}`,
+  datePublished: meta.publishedAt,
+  dateModified: meta.updatedAt,
+  author: {
+    '@type': 'Organization',
+    name: '診断ナビ',
+    url: SITE_URL,
+  },
+  publisher: {
+    '@type': 'Organization',
+    name: '診断ナビ',
+    url: SITE_URL,
+  },
+  about: {
+    '@type': 'Thing',
+    name: '多重知能理論',
+    sameAs: 'https://www.pz.harvard.edu/projects/multiple-intelligences',
+  },
+};
+
+// JSON-LD: FAQPage
+const jsonLdFAQ = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map(({ question, answer }) => ({
+    '@type': 'Question',
+    name: question,
+    acceptedAnswer: { '@type': 'Answer', text: answer },
+  })),
+};
+
+// JSON-LD: BreadcrumbList
+const jsonLdBreadcrumb = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'ホーム', item: SITE_URL },
+    { '@type': 'ListItem', position: 2, name: '診断一覧', item: `${SITE_URL}/diagnosis/` },
+    { '@type': 'ListItem', position: 3, name: '多重知能テスト', item: `${SITE_URL}/diagnosis/multi-int/` },
+    { '@type': 'ListItem', position: 4, name: typeData.name, item: PAGE_URL },
+  ],
+};
+
+const jsonLdAll = [jsonLdArticle, jsonLdFAQ, jsonLdBreadcrumb];
+
+// 関連診断
+const relatedDiagnoses = [
+  { title: 'MBTI診断', href: '/diagnosis/mbti/', icon: '🧠', badge: '人気' },
+  { title: 'DiSC診断', href: '/diagnosis/disc/', icon: '💼' },
+  { title: '完璧主義タイプ診断', href: '/diagnosis/perfectionism/', icon: '⭐' },
+  { title: '血液型性格診断', href: '/diagnosis/ketsuekigata/', icon: '🩸' },
+];
+---
+
+<ResultLayout
+  diagnosisId="multi-int"
+  typeId={typeId}
+  typeName={typeData.name}
+  diagnosisName="多重知能テスト"
+  characterEmoji={typeData.emoji}
+  characterName={typeData.character}
+  tagline={typeData.catchphrase}
+  shareUrl={PAGE_URL}
+  pageTitle={`${typeData.name}【多重知能】特徴・仕事・恋愛・学習スタイル | 診断ナビ`}
+  pageDescription={`${typeData.summary.slice(0, 80)}...仕事・恋愛・友人・家族・学校の5軸で詳しく解説。`}
+  relatedDiagnoses={relatedDiagnoses}
+  jsonLd={jsonLdAll}
+>
+  {/* ========== 概要タブ ========== */}
+  <Fragment slot="overview">
+    <div class="rt-overview">
+      <div class="rt-aio-block">
+        <p class="rt-aio-title">このページでわかること</p>
+        <ul class="rt-aio-list">
+          <li>{typeData.name}（{typeData.nameEn}）の特徴・強み・注意点</li>
+          <li>向いている職種・学習スタイル・5シーン軸別アドバイス</li>
+          <li>他タイプとの相性・統合プロファイルへの連携</li>
+        </ul>
+      </div>
+      <p class="rt-body">{typeData.summary}</p>
+      <div class="rt-theory-note">
+        <p>
+          この診断結果は Howard Gardner の多重知能理論
+          （<a href="https://www.pz.harvard.edu/projects/multiple-intelligences" target="_blank" rel="noopener noreferrer">Harvard Project Zero</a>、2026-05-20確認）
+          に基づいています。傾向把握のための参考情報です。
+        </p>
+      </div>
+    </div>
+  </Fragment>
+
+  {/* ========== 強みタブ ========== */}
+  <Fragment slot="strengths">
+    <div class="rt-strengths">
+      <h3 class="rt-section-h3">{typeData.name}の5つの強み</h3>
+      <ul class="rt-strength-list">
+        {typeData.strengths.map((s) => (
+          <li class="rt-strength-item">
+            <span class="rt-strength-icon" aria-hidden="true">✅</span>
+            <span>{s}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </Fragment>
+
+  {/* ========== 注意点タブ ========== */}
+  <Fragment slot="weaknesses">
+    <div class="rt-weaknesses">
+      <h3 class="rt-section-h3">成長のヒントになる5つの傾向</h3>
+      <ul class="rt-weakness-list">
+        {typeData.weaknesses.map((w) => (
+          <li class="rt-weakness-item">
+            <span class="rt-weakness-icon" aria-hidden="true">⚡</span>
+            <span>{w}</span>
+          </li>
+        ))}
+      </ul>
+      <div class="rt-weakness-note">
+        弱みは「改善すべき欠点」ではなく、「別の強みと表裏一体の傾向」です。
+        対処法は下の「成長」タブをご覧ください。
+      </div>
+    </div>
+  </Fragment>
+
+  {/* ========== 仕事タブ（PASS） ========== */}
+  <Fragment slot="work">
+    <div class="rt-work">
+      <div class="rt-pass-preview">
+        <h3 class="rt-section-h3">{typeData.name}の仕事・職場の特徴</h3>
+        <h4 class="rt-sub-h4">向いている職種 10選</h4>
+        <ul class="rt-jobs-list">
+          {typeData.work.jobs.slice(0, 3).map((job) => (
+            <li class="rt-job-item">{job}</li>
+          ))}
+          <li class="rt-job-item rt-job-item--locked">
+            <span class="rt-lock-icon" aria-hidden="true">🔒</span>
+            残り7職種は詳細レポートで確認
+          </li>
+        </ul>
+        <div class="rt-pass-cta">
+          <p class="rt-pass-desc">
+            仕事・職場の詳細レポート（マネジメントスタイル・ストレス源・向く環境も含む）は
+            ¥390 PASSで解放されます。
+          </p>
+          <a href="/pass/" class="rt-pass-btn">
+            <span>¥390 PASSで全文を読む</span>
+            <span aria-hidden="true">→</span>
+          </a>
+          <p class="rt-pass-sub">買切 / 全8診断のレポートに使用可 / 登録不要</p>
+        </div>
+      </div>
+    </div>
+  </Fragment>
+
+  {/* ========== 恋愛タブ（PASS） ========== */}
+  <Fragment slot="love">
+    <div class="rt-love">
+      <div class="rt-pass-preview">
+        <h3 class="rt-section-h3">{typeData.name}の恋愛スタイル</h3>
+        <div class="rt-love-free">
+          <p class="rt-body">{typeData.love.tendency}</p>
+          <div class="rt-compat-preview">
+            <p><strong>相性◎タイプ:</strong> {typeData.love.compatibleTypes.join('・')}</p>
+          </div>
+        </div>
+        <div class="rt-pass-cta">
+          <p class="rt-pass-desc">
+            アプローチ法・相性詳細・恋愛での注意点・相性×タイプの詳細は¥390 PASSで確認できます。
+          </p>
+          <a href="/pass/" class="rt-pass-btn">
+            <span>¥390 PASSで恋愛レポートを読む</span>
+            <span aria-hidden="true">→</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </Fragment>
+
+  {/* ========== 友人タブ（PASS） ========== */}
+  <Fragment slot="friend">
+    <div class="rt-friend">
+      <div class="rt-pass-preview">
+        <h3 class="rt-section-h3">{typeData.name}の友人関係</h3>
+        <div class="rt-friend-free">
+          <p class="rt-body">{typeData.friend.distance}</p>
+          <p><strong>友達グループでの立ち位置:</strong> {typeData.friend.position}</p>
+        </div>
+        <div class="rt-pass-cta">
+          <p class="rt-pass-desc">
+            長続きする友人タイプ・友人関係での強み活用法は¥390 PASSで確認できます。
+          </p>
+          <a href="/pass/" class="rt-pass-btn">
+            <span>¥390 PASSで友人レポートを読む</span>
+            <span aria-hidden="true">→</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </Fragment>
+
+  {/* ========== 家族タブ（PASS） ========== */}
+  <Fragment slot="family">
+    <div class="rt-family">
+      <div class="rt-pass-preview">
+        <h3 class="rt-section-h3">{typeData.name}の家族関係</h3>
+        <div class="rt-family-free">
+          <p class="rt-body">{typeData.family.parent.slice(0, 60)}...</p>
+        </div>
+        <div class="rt-pass-cta">
+          <p class="rt-pass-desc">
+            親子・夫婦・パートナーとの関係性の詳細アドバイスは¥390 PASSで確認できます。
+          </p>
+          <a href="/pass/" class="rt-pass-btn">
+            <span>¥390 PASSで家族レポートを読む</span>
+            <span aria-hidden="true">→</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </Fragment>
+
+  {/* ========== 学校タブ（PASS） ========== */}
+  <Fragment slot="school">
+    <div class="rt-school">
+      <div class="rt-pass-preview">
+        <h3 class="rt-section-h3">{typeData.name}の学習スタイル</h3>
+        <div class="rt-school-free">
+          <p class="rt-body">{typeData.school.style}</p>
+          <h4 class="rt-sub-h4">得意な教科傾向</h4>
+          <ul class="rt-subjects-list">
+            {typeData.school.subjects.map((s) => (
+              <li>{s}</li>
+            ))}
+          </ul>
+        </div>
+        <div class="rt-pass-cta">
+          <p class="rt-pass-desc">
+            おすすめ勉強法5選・進路ヒント・親御さん向け活かし方は¥390 PASSで確認できます。
+          </p>
+          <a href="/pass/" class="rt-pass-btn">
+            <span>¥390 PASSで学習レポートを読む</span>
+            <span aria-hidden="true">→</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </Fragment>
+
+  {/* ========== 有名人タブ（無料） ========== */}
+  <Fragment slot="celebrity">
+    <div class="rt-celebrity">
+      <h3 class="rt-section-h3">同タイプの有名人</h3>
+      <p class="rt-celebrity-note">
+        以下は公知の事実に基づく参考情報です。
+        多重知能は自己申告・公式発表がないため、研究者・メディアの一般的な評価を引用しています。
+      </p>
+      <ul class="rt-famous-list">
+        {typeData.famous.map((person) => (
+          <li class="rt-famous-item">
+            <div class="rt-famous-name">{person.name}</div>
+            <div class="rt-famous-note">{person.note}</div>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </Fragment>
+
+  {/* ========== 成長タブ（PASS） ========== */}
+  <Fragment slot="growth">
+    <div class="rt-growth">
+      <div class="rt-pass-preview">
+        <h3 class="rt-section-h3">{typeData.name}の成長のヒント</h3>
+        <div class="rt-growth-free">
+          <p class="rt-body">まず意識してほしいこと:</p>
+          <ul class="rt-growth-list">
+            {typeData.growth.slice(0, 2).map((g) => (
+              <li class="rt-growth-item">
+                <span class="rt-growth-icon" aria-hidden="true">🌱</span>
+                <span>{g}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div class="rt-pass-cta">
+          <p class="rt-pass-desc">
+            残り3つの成長ヒント＋週次実践プランは¥390 PASSで確認できます。
+          </p>
+          <a href="/pass/" class="rt-pass-btn">
+            <span>¥390 PASSで成長レポートを読む</span>
+            <span aria-hidden="true">→</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </Fragment>
+</ResultLayout>
+
+{/* ========== 結果ページ追加コンテンツ（ResultLayout外） ========== */}
+<Container>
+  {/* ========== もう一度診断する ========== */}
+  <section class="rt-retake-section">
+    <h2 class="rt-retake-h2">診断をやり直す</h2>
+    <p class="rt-retake-desc">
+      回答を変えると違うタイプになる場合があります。
+      複数回試してみると、より正確な自己理解につながります。
+    </p>
+    <a href="/diagnosis/multi-int/" class="rt-retake-btn">
+      もう一度診断する
+    </a>
+  </section>
+
+  {/* ========== Big5プロファイル（参考） ========== */}
+  <section class="rt-big5-section">
+    <h2 class="rt-big5-h2">Big5（OCEAN）傾向値</h2>
+    <p class="rt-big5-note">
+      以下はGardner理論の研究から推定される傾向値です。個人差があります（参考値）。
+    </p>
+    <div class="rt-big5-bars">
+      <div class="rt-big5-row">
+        <span class="rt-big5-label">開放性（O）</span>
+        <div class="rt-big5-bar-bg">
+          <div class="rt-big5-bar-fill" style={`width: ${typeData.big5.O}%`} aria-label={`${typeData.big5.O}%`}></div>
+        </div>
+        <span class="rt-big5-val">{typeData.big5.O}</span>
+      </div>
+      <div class="rt-big5-row">
+        <span class="rt-big5-label">誠実性（C）</span>
+        <div class="rt-big5-bar-bg">
+          <div class="rt-big5-bar-fill" style={`width: ${typeData.big5.C}%`} aria-label={`${typeData.big5.C}%`}></div>
+        </div>
+        <span class="rt-big5-val">{typeData.big5.C}</span>
+      </div>
+      <div class="rt-big5-row">
+        <span class="rt-big5-label">外向性（E）</span>
+        <div class="rt-big5-bar-bg">
+          <div class="rt-big5-bar-fill" style={`width: ${typeData.big5.E}%`} aria-label={`${typeData.big5.E}%`}></div>
+        </div>
+        <span class="rt-big5-val">{typeData.big5.E}</span>
+      </div>
+      <div class="rt-big5-row">
+        <span class="rt-big5-label">協調性（A）</span>
+        <div class="rt-big5-bar-bg">
+          <div class="rt-big5-bar-fill" style={`width: ${typeData.big5.A}%`} aria-label={`${typeData.big5.A}%`}></div>
+        </div>
+        <span class="rt-big5-val">{typeData.big5.A}</span>
+      </div>
+      <div class="rt-big5-row">
+        <span class="rt-big5-label">神経症傾向（N）</span>
+        <div class="rt-big5-bar-bg">
+          <div class="rt-big5-bar-fill" style={`width: ${typeData.big5.N}%`} aria-label={`${typeData.big5.N}%`}></div>
+        </div>
+        <span class="rt-big5-val">{typeData.big5.N}</span>
+      </div>
+    </div>
+  </section>
+
+  {/* ========== FAQ ========== */}
+  <section class="rt-faq-section">
+    <h2 class="rt-faq-h2">よくある質問</h2>
+    <dl class="rt-faq-list">
+      {faqs.map(({ question, answer }) => (
+        <div class="rt-faq-item">
+          <dt class="rt-faq-q">{question}</dt>
+          <dd class="rt-faq-a">{answer}</dd>
+        </div>
+      ))}
+    </dl>
+  </section>
+</Container>
+
+<style>
+/* ========== 概要 ========== */
+.rt-aio-block {
+  background: #f0f4ff;
+  border-left: 4px solid var(--sn-primary);
+  border-radius: 0 0.5rem 0.5rem 0;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.25rem;
+}
+.rt-aio-title {
+  font-weight: 700;
+  font-size: 0.8rem;
+  color: var(--sn-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0 0 0.5rem;
+}
+.rt-aio-list {
+  margin: 0;
+  padding-left: 1.5rem;
+  font-size: 0.85rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+.rt-body {
+  font-size: 0.95rem;
+  line-height: 1.8;
+  color: #374151;
+  margin: 0 0 1rem;
+}
+.rt-theory-note {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+  font-size: 0.8rem;
+  color: #6b7280;
+  line-height: 1.6;
+}
+.rt-theory-note p {
+  margin: 0;
+}
+
+/* ========== 強み ========== */
+.rt-section-h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 0 0 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+.rt-sub-h4 {
+  font-size: 0.9rem;
+  font-weight: 700;
+  margin: 1rem 0 0.5rem;
+  color: #374151;
+}
+.rt-strength-list,
+.rt-weakness-list,
+.rt-growth-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.rt-strength-item,
+.rt-weakness-item,
+.rt-growth-item {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+.rt-strength-icon,
+.rt-weakness-icon,
+.rt-growth-icon {
+  flex-shrink: 0;
+  font-size: 1.1em;
+}
+.rt-weakness-note {
+  margin-top: 1.25rem;
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+  font-size: 0.85rem;
+  color: #92400e;
+  line-height: 1.6;
+}
+
+/* ========== PASSプレビュー ========== */
+.rt-pass-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.rt-jobs-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.rt-job-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  font-size: 0.9rem;
+}
+.rt-job-item--locked {
+  background: #f3f4f6;
+  color: #9ca3af;
+  font-style: italic;
+}
+.rt-lock-icon {
+  font-size: 0.9em;
+}
+.rt-pass-cta {
+  background: linear-gradient(135deg, #6366f1 0%, #7c3aed 100%);
+  color: #fff;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+.rt-pass-desc {
+  font-size: 0.875rem;
+  opacity: 0.9;
+  line-height: 1.6;
+  margin: 0;
+}
+.rt-pass-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #fff;
+  color: var(--sn-primary);
+  font-weight: 700;
+  font-size: 1rem;
+  padding: 0.75rem 1.75rem;
+  border-radius: 3rem;
+  text-decoration: none;
+  transition: transform 0.15s;
+}
+.rt-pass-btn:hover {
+  transform: translateY(-1px);
+}
+.rt-pass-sub {
+  font-size: 0.75rem;
+  opacity: 0.75;
+  margin: 0;
+}
+
+/* ========== 恋愛 ========== */
+.rt-compat-preview {
+  background: #fdf2f8;
+  border: 1px solid #f0abfc;
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+}
+
+/* ========== 有名人 ========== */
+.rt-celebrity-note {
+  font-size: 0.8rem;
+  color: #6b7280;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+}
+.rt-famous-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.rt-famous-item {
+  padding: 0.75rem 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  background: #fafafa;
+}
+.rt-famous-name {
+  font-weight: 700;
+  font-size: 0.95rem;
+  margin-bottom: 0.25rem;
+}
+.rt-famous-note {
+  font-size: 0.8rem;
+  color: #6b7280;
+  line-height: 1.5;
+}
+
+/* ========== 学校 ========== */
+.rt-subjects-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0;
+  list-style: none;
+  margin: 0.5rem 0;
+}
+.rt-subjects-list li {
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 2rem;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.85rem;
+  color: #1d4ed8;
+}
+
+/* ========== もう一度 ========== */
+.rt-retake-section {
+  text-align: center;
+  padding: 2rem 1rem;
+  border-top: 1px solid #e5e7eb;
+  margin-top: 2rem;
+}
+.rt-retake-h2 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+.rt-retake-desc {
+  font-size: 0.9rem;
+  color: #6b7280;
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}
+.rt-retake-btn {
+  display: inline-block;
+  background: var(--sn-primary);
+  color: #fff;
+  font-weight: 700;
+  padding: 0.75rem 2rem;
+  border-radius: 3rem;
+  text-decoration: none;
+  font-size: 0.95rem;
+  transition: opacity 0.15s;
+}
+.rt-retake-btn:hover {
+  opacity: 0.88;
+}
+
+/* ========== Big5 ========== */
+.rt-big5-section {
+  padding: 2rem 1rem;
+  border-top: 1px solid #e5e7eb;
+}
+.rt-big5-h2 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+.rt-big5-note {
+  font-size: 0.8rem;
+  color: #6b7280;
+  margin-bottom: 1.25rem;
+  line-height: 1.5;
+}
+.rt-big5-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.rt-big5-row {
+  display: grid;
+  grid-template-columns: 8rem 1fr 2.5rem;
+  align-items: center;
+  gap: 0.75rem;
+}
+.rt-big5-label {
+  font-size: 0.85rem;
+  color: #374151;
+  white-space: nowrap;
+}
+.rt-big5-bar-bg {
+  background: #e5e7eb;
+  border-radius: 1rem;
+  height: 0.625rem;
+  overflow: hidden;
+}
+.rt-big5-bar-fill {
+  background: var(--sn-primary);
+  height: 100%;
+  border-radius: 1rem;
+  transition: width 0.5s ease;
+}
+.rt-big5-val {
+  font-size: 0.8rem;
+  color: #6b7280;
+  text-align: right;
+}
+
+/* ========== FAQ ========== */
+.rt-faq-section {
+  padding: 2rem 1rem;
+  border-top: 1px solid #e5e7eb;
+}
+.rt-faq-h2 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 1.25rem;
+}
+.rt-faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.rt-faq-item {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+.rt-faq-q {
+  font-weight: 700;
+  font-size: 0.9rem;
+  padding: 0.875rem 1.25rem;
+  background: #f9fafb;
+  margin: 0;
+  display: block;
+}
+.rt-faq-q::before {
+  content: 'Q. ';
+  color: var(--sn-primary);
+}
+.rt-faq-a {
+  font-size: 0.875rem;
+  line-height: 1.7;
+  padding: 0.875rem 1.25rem;
+  margin: 0;
+  color: #4b5563;
+}
+.rt-faq-a::before {
+  content: 'A. ';
+  font-weight: 700;
+  color: #16a34a;
+}
+
+/* ========== レスポンシブ ========== */
+@media (max-width: 480px) {
+  .rt-big5-row {
+    grid-template-columns: 6rem 1fr 2rem;
+  }
+  .rt-big5-label {
+    font-size: 0.75rem;
+  }
+}
+</style>
