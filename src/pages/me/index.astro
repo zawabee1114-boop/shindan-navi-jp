@@ -1,13 +1,322 @@
 ---
+/**
+ * /me/ - マイページ
+ * 受診済みカード・進捗バー・統合プロファイル・Big5キャラ・PRO会員プロモ
+ * noindex: 個人データページのため検索除外
+ * Phase 0: LocalStorage から受診履歴を読む
+ */
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Container from '../../components/Container.astro';
+import ProgressBar from '../../components/ProgressBar.astro';
+import CharacterDisplay from '../../components/CharacterDisplay.astro';
+import Big5MoodMeter from '../../components/Big5MoodMeter.astro';
+
+const TOTAL_DIAGNOSES = 8;
+
+const diagnoses = [
+  { id: 'mbti',          label: 'MBTI（16タイプ）',    icon: '🧠', href: '/diagnosis/mbti/',          color: 'var(--sn-diag-mbti)' },
+  { id: 'blood',         label: '血液型性格診断',         icon: '🩸', href: '/diagnosis/blood/',         color: 'var(--sn-diag-blood)' },
+  { id: 'multi-int',     label: '多重知能診断',           icon: '🎓', href: '/diagnosis/multi-int/',     color: 'var(--sn-diag-multi-int)' },
+  { id: 'perfectionism', label: '完璧主義タイプ診断',     icon: '⭐', href: '/diagnosis/perfectionism/', color: 'var(--sn-diag-perfectionism)' },
+  { id: 'disc',          label: 'DiSC診断',              icon: '📊', href: '/diagnosis/disc/',          color: 'var(--sn-diag-disc)' },
+  { id: 'love',          label: '恋愛スタイル診断',       icon: '💕', href: '/diagnosis/love/',          color: 'var(--sn-diag-love)' },
+  { id: 'seiza',         label: '星座性格診断',           icon: '⭐', href: '/diagnosis/seiza/',         color: 'var(--sn-diag-seiza)' },
+  { id: 'money',         label: '金銭感覚診断',           icon: '💰', href: '/diagnosis/money/',         color: 'var(--sn-diag-money)' },
+];
 ---
-<BaseLayout title="準備中 - 診断ナビ" description="準備中" noindex={true}>
-  <Container>
-    <div style="padding-block:4rem; text-align:center;">
-      <p style="font-size:3rem; margin-bottom:1rem;">🚧</p>
-      <h1 style="font-family:var(--sn-font-rounded); font-size:1.5rem;">準備中</h1>
-      <a href="/" style="display:inline-block; margin-top:2rem; color:var(--sn-primary);">← トップに戻る</a>
-    </div>
-  </Container>
+
+<BaseLayout
+  title="マイページ - 診断ナビ"
+  description="受診済み診断・統合プロファイル・Big5キャラを確認できます"
+  noindex={true}
+  breadcrumbs={[{ name: 'マイページ', url: '/me/' }]}
+>
+  <section class="me-header">
+    <Container>
+      <div class="me-header-inner">
+        <div class="me-avatar" aria-hidden="true">👤</div>
+        <div class="me-header-body">
+          <h1 class="me-title">マイページ</h1>
+          <p class="me-subtitle" id="me-progress-label">最初の診断を受けてプロファイルを作ろう</p>
+        </div>
+      </div>
+    </Container>
+  </section>
+
+  <section class="me-progress" aria-label="診断完成度">
+    <Container>
+      <div class="me-progress-inner">
+        <div class="me-progress-header">
+          <p class="me-progress-title">統合プロファイル完成度</p>
+          <span class="me-progress-pct" id="me-progress-pct" aria-live="polite">0%</span>
+        </div>
+        <ProgressBar
+          current={0}
+          total={TOTAL_DIAGNOSES}
+          label="診断完成度"
+          variant="primary"
+          showCount={true}
+          animated={true}
+        />
+        <p class="me-progress-note">8診断すべてを受けるとBig5キャラが解放されます</p>
+      </div>
+    </Container>
+  </section>
+
+  <section class="me-character" aria-label="Big5キャラクター">
+    <Container>
+      <h2 class="me-section-title">
+        <span aria-hidden="true">🦊</span>
+        あなたのBig5キャラ
+      </h2>
+      <div class="me-character-inner" id="me-character-area">
+        <div class="me-character-locked" aria-label="Big5キャラ未解放">
+          <CharacterDisplay
+            characterId="placeholder"
+            characterName="???"
+            emojiDummy="❓"
+            size="xl"
+            variant="lite"
+          />
+          <div class="me-character-lock-info">
+            <p class="me-character-lock-title">Big5キャラを解放しよう</p>
+            <p class="me-character-lock-desc">
+              3つ以上の診断を受けると、あなたのOCEANパターンからBig5キャラが判明します。
+            </p>
+            <a href="/diagnosis/" class="me-cta-btn me-cta-btn--primary">診断を受ける →</a>
+          </div>
+        </div>
+        <Big5MoodMeter nScore={50} variant="locked" />
+      </div>
+    </Container>
+  </section>
+
+  <section class="me-diagnoses" aria-label="受診済み診断一覧">
+    <Container>
+      <h2 class="me-section-title">
+        <span aria-hidden="true">📋</span>
+        8診断の受診状況
+      </h2>
+      <div class="me-diag-grid">
+        {diagnoses.map((d) => (
+          <div class="me-diag-card" data-diag-id={d.id} style={`--diag-color: ${d.color}`}>
+            <div class="me-diag-icon" aria-hidden="true">{d.icon}</div>
+            <div class="me-diag-body">
+              <p class="me-diag-label">{d.label}</p>
+              <span class="me-diag-status me-diag-status--pending" aria-label="未受診">未受診</span>
+            </div>
+            <a href={d.href} class="me-diag-action" aria-label={`${d.label}を受ける`}>受ける →</a>
+          </div>
+        ))}
+      </div>
+    </Container>
+  </section>
+
+  <section class="me-profile" aria-label="統合プロファイルサマリ">
+    <Container>
+      <h2 class="me-section-title">
+        <span aria-hidden="true">📊</span>
+        統合プロファイル
+      </h2>
+      <div class="me-profile-card" id="me-profile-area">
+        <div class="me-profile-locked">
+          <span class="me-profile-lock-icon" aria-hidden="true">🔒</span>
+          <p class="me-profile-lock-title">複数の診断を受けると解放されます</p>
+          <p class="me-profile-lock-desc">
+            3診断以上でBig5統合スコアが計算され、仕事・恋愛・友人・家族・学校の5軸行動指針が表示されます。
+          </p>
+          <a href="/diagnosis/" class="me-cta-btn me-cta-btn--primary">最初の診断を受ける</a>
+        </div>
+      </div>
+    </Container>
+  </section>
+
+  <section class="me-pro-promo" aria-label="PRO会員機能">
+    <Container>
+      <div class="me-pro-inner">
+        <div class="me-pro-header">
+          <span class="me-pro-badge">PRO</span>
+          <h2 class="me-pro-title">PRO会員でさらに深める</h2>
+        </div>
+        <ul class="me-pro-features" role="list">
+          <li class="me-pro-feature">
+            <span aria-hidden="true">⏳</span>
+            <strong>タイムカプセル機能</strong> — 今の自分を記録して、1年後の自分と比較
+          </li>
+          <li class="me-pro-feature">
+            <span aria-hidden="true">🤖</span>
+            <strong>AIプロンプトカード</strong> — ChatGPT/Claudeで自己分析を深める専用プロンプト（月次更新）
+          </li>
+          <li class="me-pro-feature">
+            <span aria-hidden="true">💕</span>
+            <strong>相性詳細レポート</strong> — 5軸の詳細分析＋AI行動提案
+          </li>
+          <li class="me-pro-feature">
+            <span aria-hidden="true">📈</span>
+            <strong>時系列変化追跡</strong> — N因子（気分）の週次変動グラフ
+          </li>
+          <li class="me-pro-feature">
+            <span aria-hidden="true">🚫</span>
+            <strong>広告非表示</strong> — すべての広告が消えてストレスゼロ
+          </li>
+        </ul>
+        <div class="me-pro-cta">
+          <a href="/pro/" class="me-cta-btn me-cta-btn--pro">PRO会員 ¥590/月 →</a>
+          <p class="me-pro-note">いつでも解約可能</p>
+        </div>
+      </div>
+    </Container>
+  </section>
 </BaseLayout>
+
+<script>
+  const TOTAL = 8;
+  const DIAG_IDS = ['mbti', 'blood', 'multi-int', 'perfectionism', 'disc', 'love', 'seiza', 'money'];
+
+  function getCompleted(): string[] {
+    try {
+      const raw = localStorage.getItem('sn_completed_diagnoses');
+      return raw ? JSON.parse(raw) : [];
+    } catch { return []; }
+  }
+
+  function init() {
+    const completed = getCompleted();
+    const count = completed.length;
+    const pct = Math.round((count / TOTAL) * 100);
+
+    const pctEl = document.getElementById('me-progress-pct');
+    const labelEl = document.getElementById('me-progress-label');
+    if (pctEl) pctEl.textContent = `${pct}%`;
+    if (labelEl) {
+      if (count === 0) labelEl.textContent = '最初の診断を受けてプロファイルを作ろう';
+      else if (count < TOTAL) labelEl.textContent = `${count}/${TOTAL} 診断完了 — あと${TOTAL - count}個`;
+      else labelEl.textContent = '全診断完了！統合プロファイルが完成しています';
+    }
+
+    DIAG_IDS.forEach((id) => {
+      const card = document.querySelector(`[data-diag-id="${id}"]`);
+      if (!card) return;
+      const statusEl = card.querySelector('.me-diag-status');
+      const actionEl = card.querySelector('.me-diag-action');
+      if (completed.includes(id)) {
+        card.classList.add('me-diag-card--done');
+        if (statusEl) {
+          statusEl.textContent = '受診済み';
+          statusEl.classList.remove('me-diag-status--pending');
+          statusEl.classList.add('me-diag-status--done');
+          statusEl.setAttribute('aria-label', '受診済み');
+        }
+        if (actionEl) actionEl.textContent = '結果を見る →';
+      }
+    });
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
+</script>
+
+<style>
+  .me-header {
+    background: linear-gradient(135deg, var(--sn-primary-bg) 0%, var(--sn-bg-soft) 100%);
+    padding-block: var(--sn-space-10) var(--sn-space-6);
+  }
+  .me-header-inner { display: flex; align-items: center; gap: var(--sn-space-5); }
+  .me-avatar {
+    font-size: 3.5rem;
+    width: 80px; height: 80px;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--sn-primary-bg);
+    border-radius: 50%;
+    border: 3px solid var(--sn-primary-light);
+    flex-shrink: 0;
+  }
+  .me-title { font-family: var(--sn-font-rounded); font-size: var(--sn-text-3xl); font-weight: 900; color: var(--sn-text); margin: 0; }
+  .me-subtitle { font-size: var(--sn-text-base); color: var(--sn-muted); margin: var(--sn-space-1) 0 0; }
+  .me-section-title {
+    display: flex; align-items: center; gap: var(--sn-space-2);
+    font-family: var(--sn-font-rounded); font-size: var(--sn-text-xl); font-weight: 900;
+    color: var(--sn-text); margin: 0 0 var(--sn-space-5);
+  }
+  .me-progress { padding-block: var(--sn-space-8); background: var(--sn-bg-white); border-bottom: 1px solid var(--sn-border); }
+  .me-progress-inner { display: flex; flex-direction: column; gap: var(--sn-space-3); }
+  .me-progress-header { display: flex; justify-content: space-between; align-items: center; }
+  .me-progress-title { font-size: var(--sn-text-sm); font-weight: 700; color: var(--sn-text-soft); margin: 0; }
+  .me-progress-pct { font-family: var(--sn-font-rounded); font-size: var(--sn-text-xl); font-weight: 900; color: var(--sn-primary); }
+  .me-progress-note { font-size: var(--sn-text-xs); color: var(--sn-muted); margin: 0; }
+  .me-character { padding-block: var(--sn-space-10); }
+  .me-character-inner { display: flex; flex-direction: column; gap: var(--sn-space-5); }
+  .me-character-locked {
+    display: flex; align-items: center; gap: var(--sn-space-6);
+    padding: var(--sn-space-6); background: var(--sn-bg-soft);
+    border-radius: var(--sn-radius-lg); border: 1px dashed var(--sn-border);
+  }
+  .me-character-lock-info { display: flex; flex-direction: column; gap: var(--sn-space-3); }
+  .me-character-lock-title { font-family: var(--sn-font-rounded); font-size: var(--sn-text-lg); font-weight: 700; color: var(--sn-text); margin: 0; }
+  .me-character-lock-desc { font-size: var(--sn-text-sm); color: var(--sn-muted); line-height: var(--sn-leading-base); margin: 0; }
+  .me-diagnoses { padding-block: var(--sn-space-10); background: var(--sn-bg-soft); }
+  .me-diag-grid { display: flex; flex-direction: column; gap: var(--sn-space-2); }
+  .me-diag-card {
+    display: flex; align-items: center; gap: var(--sn-space-4);
+    padding: var(--sn-space-4) var(--sn-space-5);
+    background: var(--sn-bg-white); border-radius: var(--sn-radius-md);
+    border: 1px solid var(--sn-border); border-left: 3px solid var(--diag-color);
+  }
+  .me-diag-card--done { border-left-color: var(--sn-success); background: color-mix(in srgb, var(--sn-success) 3%, var(--sn-bg-white)); }
+  .me-diag-icon { font-size: 1.5rem; line-height: 1; flex-shrink: 0; }
+  .me-diag-body { flex: 1; display: flex; align-items: center; gap: var(--sn-space-3); flex-wrap: wrap; }
+  .me-diag-label { font-size: var(--sn-text-sm); font-weight: 700; color: var(--sn-text); margin: 0; }
+  .me-diag-status { font-size: var(--sn-text-xs); font-weight: 700; padding: 2px 8px; border-radius: var(--sn-radius-pill); }
+  .me-diag-status--pending { background: var(--sn-bg-soft); color: var(--sn-muted); }
+  .me-diag-status--done { background: var(--sn-success-bg); color: var(--sn-success); }
+  .me-diag-action {
+    font-size: var(--sn-text-sm); font-weight: 700; color: var(--sn-primary);
+    text-decoration: none; white-space: nowrap;
+    min-height: var(--sn-tap-min); display: flex; align-items: center;
+    padding: var(--sn-space-2) var(--sn-space-3);
+  }
+  .me-diag-action:hover { text-decoration: underline; }
+  .me-profile { padding-block: var(--sn-space-10); }
+  .me-profile-card { background: var(--sn-bg-white); border-radius: var(--sn-radius-lg); border: 1px solid var(--sn-border); overflow: hidden; }
+  .me-profile-locked { display: flex; flex-direction: column; align-items: center; gap: var(--sn-space-4); padding: var(--sn-space-10); text-align: center; }
+  .me-profile-lock-icon { font-size: 2.5rem; }
+  .me-profile-lock-title { font-family: var(--sn-font-rounded); font-size: var(--sn-text-lg); font-weight: 700; color: var(--sn-text); margin: 0; }
+  .me-profile-lock-desc { font-size: var(--sn-text-sm); color: var(--sn-muted); line-height: var(--sn-leading-base); max-width: 360px; margin: 0; }
+  .me-pro-promo { padding-block: var(--sn-space-10); background: var(--sn-pro-bg); }
+  .me-pro-inner {
+    background: var(--sn-bg-white); border-radius: var(--sn-radius-xl);
+    padding: var(--sn-space-8); border: 1px solid color-mix(in srgb, var(--sn-pro-color) 20%, transparent);
+    box-shadow: var(--sn-shadow-sm); display: flex; flex-direction: column; gap: var(--sn-space-5);
+  }
+  .me-pro-header { display: flex; align-items: center; gap: var(--sn-space-3); }
+  .me-pro-badge {
+    display: inline-flex; align-items: center;
+    padding: var(--sn-space-1) var(--sn-space-4);
+    background: var(--sn-pro-gradient); color: #fff;
+    border-radius: var(--sn-radius-pill); font-size: var(--sn-text-sm); font-weight: 900; letter-spacing: 0.05em;
+  }
+  .me-pro-title { font-family: var(--sn-font-rounded); font-size: var(--sn-text-xl); font-weight: 900; color: var(--sn-text); margin: 0; }
+  .me-pro-features { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: var(--sn-space-3); }
+  .me-pro-feature { display: flex; align-items: flex-start; gap: var(--sn-space-3); font-size: var(--sn-text-sm); color: var(--sn-text-soft); line-height: var(--sn-leading-base); }
+  .me-pro-feature span:first-child { font-size: var(--sn-text-base); flex-shrink: 0; margin-top: 1px; }
+  .me-pro-cta { display: flex; align-items: center; gap: var(--sn-space-4); flex-wrap: wrap; }
+  .me-pro-note { font-size: var(--sn-text-xs); color: var(--sn-muted); margin: 0; }
+  .me-cta-btn {
+    display: inline-flex; align-items: center; gap: var(--sn-space-2);
+    padding: var(--sn-space-3) var(--sn-space-6);
+    border-radius: var(--sn-radius-pill);
+    font-family: var(--sn-font-rounded); font-size: var(--sn-text-base); font-weight: 900;
+    text-decoration: none; min-height: var(--sn-tap-min);
+    transition: transform var(--sn-dur-fast) var(--sn-ease), box-shadow var(--sn-dur-fast) var(--sn-ease);
+  }
+  .me-cta-btn:hover { transform: translateY(-1px); box-shadow: var(--sn-shadow-md); text-decoration: none; }
+  .me-cta-btn:focus-visible { outline: 2px solid var(--sn-primary); outline-offset: 2px; }
+  .me-cta-btn--primary { background: var(--sn-primary); color: #fff; }
+  .me-cta-btn--pro { background: var(--sn-pro-gradient); color: #fff; }
+  @media (max-width: 640px) {
+    .me-header-inner { flex-direction: column; text-align: center; }
+    .me-character-locked { flex-direction: column; text-align: center; }
+    .me-pro-inner { padding: var(--sn-space-5) var(--sn-space-4); }
+    .me-cta-btn--primary, .me-cta-btn--pro { width: 100%; justify-content: center; }
+  }
+</style>
