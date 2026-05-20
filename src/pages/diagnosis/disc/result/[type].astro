@@ -1,0 +1,977 @@
+---
+/**
+ * DiSC診断 結果ページ（動的ルート）
+ * 4タイプ分の結果ページを静的生成する
+ *
+ * URL: /diagnosis/disc/result/{typeId}/
+ * タイプID: D / i / S / C
+ *
+ * SEO/AIO:
+ * - JSON-LD: WebApplication + Article + BreadcrumbList
+ * - タイプ別メタタイトル・ディスクリプション
+ * - 向いている職種5項目・仕事スタイル・コミュニケーション傾向（ビジネス特化）
+ * - 他タイプとの仕事相性（BtoB文脈）
+ * - 思考傾向グラフ（Big5非開示・ユーザー向け「特性レーダー」表記）
+ * - DiSC®商標表記（Wiley社）
+ * - キャリア・転職アフィスタブ（CPC¥191活用）
+ * - YMYL回避: 医学的判断ゼロ・採用評価への使用推奨なし
+ *
+ * 確認日: 2026-05-20
+ */
+import ResultLayout from '../../../../layouts/ResultLayout.astro';
+import Container from '../../../../components/Container.astro';
+import { types } from '../../../../data/diagnoses/disc/types';
+import { meta } from '../../../../data/diagnoses/disc/meta';
+import type { DiscType } from '../../../../data/diagnoses/disc/questions';
+
+export function getStaticPaths() {
+  return Object.keys(types).map((typeId) => ({
+    params: { type: typeId },
+    props: { typeId: typeId as DiscType, typeData: types[typeId as DiscType] },
+  }));
+}
+
+const { typeId, typeData } = Astro.props;
+
+const SITE_URL = 'https://shindan-navi.jp';
+const PAGE_URL = `${SITE_URL}/diagnosis/disc/result/${typeId}/`;
+
+// タイプ別テーマカラー
+const typeColor: Record<DiscType, string> = {
+  D: '#dc2626',
+  i: '#d97706',
+  S: '#16a34a',
+  C: '#2563eb',
+};
+
+// 思考傾向グラフ用ラベル（Big5/OCEAN/ビッグファイブ表記禁止）
+const radarLabels = [
+  { key: 'O', label: '好奇心・探求' },
+  { key: 'C', label: '計画性・丁寧さ' },
+  { key: 'E', label: '行動力・積極性' },
+  { key: 'A', label: '共感力・協調性' },
+  { key: 'N', label: '感情の繊細さ' },
+] as const;
+
+// FAQs（タイプ別・ビジネス文脈特化）
+const faqs = [
+  {
+    question: `${typeData.name}はどんな仕事が向いていますか？`,
+    answer: typeData.workStyle + ' ' + typeData.careerSuggestions.slice(0, 3).join('、') + 'などが特に向いています。',
+  },
+  {
+    question: `${typeData.name}の仕事でのコミュニケーションスタイルは？`,
+    answer: typeData.communicationStyle,
+  },
+  {
+    question: `${typeData.name}の強みをビジネスで活かすには？`,
+    answer: typeData.strengths.join('。また、') + '。これらの強みを意識的に発揮できる環境・役割を選ぶことが大切です。',
+  },
+  {
+    question: `${typeData.name}が職場で消耗しないためのコツは？`,
+    answer: typeData.weaknesses[0] + '。' + typeData.weaknesses[1] + '。この傾向を意識しながら、強みを活かせる役割設計をすることが重要です。',
+  },
+  {
+    question: '他のDiSCタイプとの仕事相性は？',
+    answer: typeData.workWith,
+  },
+];
+
+// JSON-LD: WebApplication
+const jsonLdWebApp = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  '@id': `${PAGE_URL}#webapp`,
+  name: `DiSC診断 結果：${typeData.name}`,
+  url: PAGE_URL,
+  applicationCategory: 'EducationalApplication',
+  operatingSystem: 'Web',
+  description: `DiSC診断の結果は「${typeData.name}（${typeData.nameEn}）」。${typeData.catchphrase}`,
+  author: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+    name: '診断ナビ',
+    url: SITE_URL,
+  },
+};
+
+// JSON-LD: Article
+const jsonLdArticle = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  '@id': `${PAGE_URL}#article`,
+  headline: `${typeData.name}（DiSC ${typeData.nameEn}）の特徴・仕事スタイル・向いている職種・他タイプとの相性完全ガイド`,
+  url: PAGE_URL,
+  description: `DiSC診断の結果「${typeData.name}」の特徴・仕事スタイル・コミュニケーション傾向・向いている職種5項目・他タイプとの相性を詳しく解説。`,
+  datePublished: meta.publishedAt,
+  dateModified: meta.updatedAt,
+  author: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+    name: '診断ナビ',
+    url: SITE_URL,
+  },
+  publisher: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+    name: '診断ナビ',
+    url: SITE_URL,
+  },
+  about: {
+    '@type': 'Thing',
+    name: `DiSC ${typeData.nameEn} 行動スタイル`,
+    sameAs: 'https://www.discprofile.com/what-is-disc/overview',
+  },
+};
+
+// JSON-LD: BreadcrumbList
+const jsonLdBreadcrumb = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'ホーム', item: SITE_URL },
+    { '@type': 'ListItem', position: 2, name: '診断一覧', item: `${SITE_URL}/diagnosis/` },
+    { '@type': 'ListItem', position: 3, name: 'DiSC診断', item: `${SITE_URL}/diagnosis/disc/` },
+    { '@type': 'ListItem', position: 4, name: typeData.name, item: PAGE_URL },
+  ],
+};
+
+const jsonLdAll = [jsonLdWebApp, jsonLdArticle, jsonLdBreadcrumb];
+
+// 関連診断
+const relatedDiagnoses = [
+  { title: '完璧主義診断', href: '/diagnosis/perfectionism/', icon: '🔱', badge: 'おすすめ' },
+  { title: 'MBTI診断', href: '/diagnosis/mbti/', icon: '🧠' },
+  { title: '多重知能テスト', href: '/diagnosis/multi-int/', icon: '🦉' },
+  { title: '血液型性格診断', href: '/diagnosis/ketsuekigata/', icon: '🩸' },
+];
+
+// description: 改行を除去してslice
+const descriptionClean = typeData.description.replace(/\n+/g, ' ').trim();
+---
+
+<ResultLayout
+  diagnosisId="disc"
+  typeId={typeId}
+  typeName={typeData.name}
+  diagnosisName="DiSC診断"
+  characterEmoji={typeData.emoji}
+  characterName={typeData.nameEn}
+  tagline={typeData.catchphrase}
+  shareUrl={PAGE_URL}
+  pageTitle={`${typeData.name}【DiSC診断】特徴・仕事スタイル・向いている職種・他タイプとの相性 | 診断ナビ`}
+  pageDescription={`DiSC診断の結果は「${typeData.name}（${typeData.nameEn}）」。${typeData.catchphrase} 仕事スタイル・コミュニケーション傾向・向いている職種5項目・他タイプとの相性を詳しく解説。`}
+  relatedDiagnoses={relatedDiagnoses}
+  jsonLd={jsonLdAll}
+>
+  {/* ========== 概要タブ ========== */}
+  <Fragment slot="overview">
+    <div class="discr-overview">
+      <div class="discr-aio-block">
+        <p class="discr-aio-title">このページでわかること</p>
+        <ul class="discr-aio-list">
+          <li>{typeData.name}（{typeData.nameEn}）の行動傾向・特徴・強み・気をつけたい点</li>
+          <li>仕事スタイル・コミュニケーション傾向・向いている職種5項目</li>
+          <li>他DiSCタイプ（D/i/S/C）との仕事相性・チームでの協力のコツ</li>
+        </ul>
+      </div>
+
+      <div class="discr-description">
+        {descriptionClean.split('。').filter(s => s.trim()).map((sentence) => (
+          <p class="discr-body">{sentence.trim()}。</p>
+        ))}
+      </div>
+
+      <div class="discr-characteristics">
+        <h3 class="discr-h3">このタイプの5つの特徴</h3>
+        <ul class="discr-char-list">
+          {typeData.characteristics.map((char) => (
+            <li class="discr-char-item">
+              <span class="discr-char-icon" aria-hidden="true" style={`color: ${typeColor[typeId]}`}>◆</span>
+              <span>{char}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div class="discr-theory-note">
+        <p>
+          この診断結果はMarston (1928)「Emotions of Normal People」およびWiley DiSC公式
+          （<a href="https://www.discprofile.com/what-is-disc/overview" target="_blank" rel="noopener noreferrer">discprofile.com</a>、2026-05-20確認）
+          に基づく傾向把握のための参考情報です。
+          DiSC&#174;はJohn Wiley &amp; Sons, Inc.の登録商標です。本診断はWiley社の公式アセスメントではありません。
+          採用・評価・選考への使用は推奨しません。
+        </p>
+      </div>
+
+      <div class="discr-freshness">
+        <time datetime={meta.updatedAt}>{meta.updatedAt}</time> 時点の情報。
+        月1回以上の鮮度確認を実施しています。
+      </div>
+    </div>
+  </Fragment>
+
+  {/* ========== 強みタブ ========== */}
+  <Fragment slot="strengths">
+    <div class="discr-strengths">
+      <h3 class="discr-section-h3">{typeData.name}の4つの強み（ビジネス文脈）</h3>
+      <ul class="discr-strength-list">
+        {typeData.strengths.map((s) => (
+          <li class="discr-strength-item">
+            <span class="discr-strength-icon" aria-hidden="true">✅</span>
+            <span>{s}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </Fragment>
+
+  {/* ========== 注意点タブ ========== */}
+  <Fragment slot="weaknesses">
+    <div class="discr-weaknesses">
+      <h3 class="discr-section-h3">気をつけたい傾向</h3>
+      <ul class="discr-weakness-list">
+        {typeData.weaknesses.map((w) => (
+          <li class="discr-weakness-item">
+            <span class="discr-weakness-icon" aria-hidden="true">⚡</span>
+            <span>{w}</span>
+          </li>
+        ))}
+      </ul>
+      <div class="discr-weakness-note">
+        これらは「弱点」ではなく「強みと表裏一体の傾向」です。
+        自分のスタイルを理解することで、チームや役割の設計に活かせます。
+      </div>
+    </div>
+  </Fragment>
+
+  {/* ========== 仕事タブ（ビジネス特化・一部無料） ========== */}
+  <Fragment slot="work">
+    <div class="discr-work">
+      <div class="discr-work-free">
+        <h3 class="discr-section-h3">{typeData.name}の仕事スタイル</h3>
+        <p class="discr-body">{typeData.workStyle}</p>
+
+        <h3 class="discr-section-h3" style="margin-top: 1.5rem;">向いている職種（5項目）</h3>
+        <ul class="discr-career-list">
+          {typeData.careerSuggestions.map((career) => (
+            <li class="discr-career-item">
+              <span class="discr-career-icon" aria-hidden="true">💼</span>
+              <span>{career}</span>
+            </li>
+          ))}
+        </ul>
+
+        <h3 class="discr-section-h3" style="margin-top: 1.5rem;">他タイプとの仕事相性</h3>
+        <p class="discr-body">{typeData.workWith}</p>
+      </div>
+
+      {/* ★キャリア・転職アフィスタブ（CPC¥191）将来用スタブ */}
+      <div class="discr-career-cta">
+        <div class="discr-career-cta-inner">
+          <p class="discr-career-cta-title">あなたのタイプに合った職種を見つける</p>
+          <p class="discr-career-cta-desc">
+            {typeData.name}の強みを活かせるキャリアを、プロのキャリアアドバイザーに相談してみましょう。
+            無料相談から始められます。
+          </p>
+          <a href="/pass/" class="discr-pass-btn">
+            <span>キャリア相談で詳しく自己理解する</span>
+            <span aria-hidden="true">→</span>
+          </a>
+          <p class="discr-pass-sub">登録不要 / 無料で始められます</p>
+        </div>
+      </div>
+    </div>
+  </Fragment>
+
+  {/* ========== 恋愛タブ（PASS壁） ========== */}
+  <Fragment slot="love">
+    <div class="discr-love">
+      <div class="discr-pass-preview">
+        <h3 class="discr-section-h3">{typeData.name}の対人関係傾向</h3>
+        <p class="discr-body">
+          {typeData.name}のコミュニケーションスタイル：{typeData.communicationStyle}
+        </p>
+        <div class="discr-pass-cta">
+          <p class="discr-pass-desc">
+            恋愛・パートナーシップでの{typeData.name}の傾向詳細は¥390 PASSで確認できます。
+          </p>
+          <a href="/pass/" class="discr-pass-btn">
+            <span>¥390 PASSで恋愛レポートを読む</span>
+            <span aria-hidden="true">→</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </Fragment>
+
+  {/* ========== 友人タブ（PASS壁） ========== */}
+  <Fragment slot="friend">
+    <div class="discr-friend">
+      <div class="discr-pass-preview">
+        <h3 class="discr-section-h3">{typeData.name}の友人関係</h3>
+        <div class="discr-pass-cta">
+          <p class="discr-pass-desc">
+            友人関係での{typeData.name}の強み・相性タイプは¥390 PASSで確認できます。
+          </p>
+          <a href="/pass/" class="discr-pass-btn">
+            <span>¥390 PASSで友人レポートを読む</span>
+            <span aria-hidden="true">→</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </Fragment>
+
+  {/* ========== 家族タブ（PASS壁） ========== */}
+  <Fragment slot="family">
+    <div class="discr-family">
+      <div class="discr-pass-preview">
+        <h3 class="discr-section-h3">{typeData.name}の家族関係</h3>
+        <div class="discr-pass-cta">
+          <p class="discr-pass-desc">
+            親子・夫婦関係での{typeData.name}の傾向詳細は¥390 PASSで確認できます。
+          </p>
+          <a href="/pass/" class="discr-pass-btn">
+            <span>¥390 PASSで家族レポートを読む</span>
+            <span aria-hidden="true">→</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </Fragment>
+
+  {/* ========== 学校タブ（PASS壁） ========== */}
+  <Fragment slot="school">
+    <div class="discr-school">
+      <div class="discr-pass-preview">
+        <h3 class="discr-section-h3">{typeData.name}の学習スタイル</h3>
+        <div class="discr-pass-cta">
+          <p class="discr-pass-desc">
+            {typeData.name}に合った学習法・進路ヒントは¥390 PASSで確認できます。
+          </p>
+          <a href="/pass/" class="discr-pass-btn">
+            <span>¥390 PASSで学習レポートを読む</span>
+            <span aria-hidden="true">→</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </Fragment>
+
+  {/* ========== キャラクター類型タブ ========== */}
+  <Fragment slot="celebrity">
+    <div class="discr-celebrity">
+      <h3 class="discr-section-h3">{typeData.name}の行動類型</h3>
+      <div class="discr-pass-preview">
+        <div class="discr-pass-cta">
+          <p class="discr-pass-desc">
+            {typeData.name}の行動パターンが見える人物類型・職種別具体例は¥390 PASSで確認できます。
+          </p>
+          <a href="/pass/" class="discr-pass-btn">
+            <span>¥390 PASSで詳細を読む</span>
+            <span aria-hidden="true">→</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </Fragment>
+
+  {/* ========== 成長タブ（DiSCコミュニケーション改善Tips） ========== */}
+  <Fragment slot="growth">
+    <div class="discr-growth">
+      <h3 class="discr-section-h3">{typeData.name}の職場コミュニケーション改善Tips</h3>
+      <p class="discr-growth-note">
+        DiSCのスタイル理解を職場で活かすための実践ヒントです。
+        専門的なコーチングの代替ではありません。
+      </p>
+      <ul class="discr-tips-list">
+        <li class="discr-tips-item">
+          <div class="discr-tips-num" style={`background: ${typeColor[typeId]}`} aria-hidden="true">1</div>
+          <p class="discr-tips-body">
+            「{typeData.name}は{typeData.communicationStyle.slice(0, 60)}」という自分のスタイルを言語化しておく。
+            自己紹介の場面で「私は○○なコミュニケーションスタイルです」と伝えると周囲の理解が早まります。
+          </p>
+        </li>
+        <li class="discr-tips-item">
+          <div class="discr-tips-num" style={`background: ${typeColor[typeId]}`} aria-hidden="true">2</div>
+          <p class="discr-tips-body">
+            他のDiSCタイプのスタイルを意識的に把握する。
+            {typeData.workWith.slice(0, 80)}。
+            相手のスタイルに合わせて対話方法を変えることで、すれ違いが大幅に減ります。
+          </p>
+        </li>
+        <li class="discr-tips-item">
+          <div class="discr-tips-num" style={`background: ${typeColor[typeId]}`} aria-hidden="true">3</div>
+          <p class="discr-tips-body">
+            自分の強みを最大化できる役割に意図的につく。
+            {typeData.strengths[0]}。この強みが発揮される業務・プロジェクトに積極的に手を挙げる。
+          </p>
+        </li>
+        <li class="discr-tips-item">
+          <div class="discr-tips-num" style={`background: ${typeColor[typeId]}`} aria-hidden="true">4</div>
+          <p class="discr-tips-body">
+            「気をつけたい傾向」のうち最もよく出るパターンを1つ選んで意識的に対策する。
+            {typeData.weaknesses[0]}。
+            週1回の振り返りで「今週はどうだったか」を確認するとパターンが変わりやすくなります。
+          </p>
+        </li>
+        <li class="discr-tips-item">
+          <div class="discr-tips-num" style={`background: ${typeColor[typeId]}`} aria-hidden="true">5</div>
+          <p class="discr-tips-body">
+            チームの1on1でDiSCスタイルを開示し合う。
+            上司・部下・同僚が互いのスタイルを把握することで、フィードバックの受け取り方・伝え方の最適化ができます。
+          </p>
+        </li>
+      </ul>
+      <div class="discr-pass-cta">
+        <p class="discr-pass-desc">
+          他の診断と組み合わせた統合プロファイル・AIプロンプトカードは統合プロファイル（/pro）で確認できます。
+        </p>
+        <a href="/pro/" class="discr-pass-btn">
+          <span>統合プロファイルで過去と比較する</span>
+          <span aria-hidden="true">→</span>
+        </a>
+        <p class="discr-pass-sub">複数診断の統合管理・AIプロンプトカード付き</p>
+      </div>
+    </div>
+  </Fragment>
+</ResultLayout>
+
+{/* ========== 結果ページ追加コンテンツ（ResultLayout外） ========== */}
+<Container>
+  {/* ========== もう一度診断する ========== */}
+  <section class="discr-retake-section">
+    <h2 class="discr-retake-h2">診断をやり直す</h2>
+    <p class="discr-retake-desc">
+      「職場での自分」以外の状況（プライベート・ストレス時）で答えると異なる結果になることがあります。
+      何回でも再挑戦できます。
+    </p>
+    <a href="/diagnosis/disc/" class="discr-retake-btn">
+      もう一度DiSC診断をする
+    </a>
+  </section>
+
+  {/* ========== 思考傾向グラフ（Big5非開示・特性レーダー表記） ========== */}
+  <section class="discr-radar-section" aria-labelledby="discr-radar-h2">
+    <h2 id="discr-radar-h2" class="discr-radar-h2">行動特性グラフ</h2>
+    <p class="discr-radar-note">
+      {typeData.name}の研究傾向値をグラフ化したものです。
+      個人差があります（参考値）。DiSC↔Big5換算参考: Furnham et al. (2014) J. Individual Differences。
+    </p>
+    <div class="discr-radar-bars" role="list" aria-label="行動特性グラフ">
+      {radarLabels.map(({ key, label }) => {
+        const score = typeData.big5[key as keyof typeof typeData.big5];
+        const barColor = typeColor[typeId];
+        return (
+          <div class="discr-radar-row" role="listitem">
+            <span class="discr-radar-label">{label}</span>
+            <div class="discr-radar-bar-bg" role="meter" aria-valuenow={score} aria-valuemin={0} aria-valuemax={100} aria-label={`${label}: ${score}%`}>
+              <div class="discr-radar-bar-fill" style={`width: ${score}%; background: ${barColor}`}></div>
+            </div>
+            <span class="discr-radar-val">{score}</span>
+          </div>
+        );
+      })}
+    </div>
+  </section>
+
+  {/* ========== 他タイプと比べる ========== */}
+  <section class="discr-other-types-section" aria-labelledby="discr-other-h2">
+    <h2 id="discr-other-h2" class="discr-other-h2">他のDiSCタイプを見る</h2>
+    <div class="discr-other-types-grid">
+      {Object.entries(types)
+        .filter(([id]) => id !== typeId)
+        .map(([id, data]) => (
+          <a href={`/diagnosis/disc/result/${id}/`} class="discr-other-type-card" style={`--other-color: ${typeColor[id as DiscType]}`}>
+            <span class="discr-other-icon" aria-hidden="true">{data.emoji}</span>
+            <span class="discr-other-name">{data.name}</span>
+            <span class="discr-other-catch">{data.catchphrase.slice(0, 22)}...</span>
+          </a>
+        ))
+      }
+    </div>
+  </section>
+
+  {/* ========== FAQ ========== */}
+  <section class="discr-faq-section" aria-labelledby="discr-faq-h2">
+    <h2 id="discr-faq-h2" class="discr-faq-h2">よくある質問</h2>
+    <dl class="discr-faq-list">
+      {faqs.map(({ question, answer }) => (
+        <div class="discr-faq-item">
+          <dt class="discr-faq-q">{question}</dt>
+          <dd class="discr-faq-a">{answer}</dd>
+        </div>
+      ))}
+    </dl>
+  </section>
+
+  {/* ========== 商標ノート ========== */}
+  <p class="discr-trademark-note">
+    DiSC&#174; はJohn Wiley &amp; Sons, Inc. の登録商標です。
+    本診断はWiley社の公式アセスメントではなく、DiSC理論に基づく独立した自己理解ツールです。
+    採用・評価・選考への使用は推奨しません。
+    公式DiSCアセスメントは
+    <a href="https://www.discprofile.com/" target="_blank" rel="noopener noreferrer">discprofile.com</a>
+    をご確認ください。
+  </p>
+</Container>
+
+<style>
+/* ========== 概要 ========== */
+.discr-aio-block {
+  background: #eff6ff;
+  border-left: 4px solid #1d4ed8;
+  border-radius: 0 0.5rem 0.5rem 0;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.25rem;
+}
+.discr-aio-title {
+  font-weight: 700;
+  font-size: 0.8rem;
+  color: #1d4ed8;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0 0 0.5rem;
+}
+.discr-aio-list {
+  margin: 0;
+  padding-left: 1.5rem;
+  font-size: 0.85rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+.discr-body {
+  font-size: 0.95rem;
+  line-height: 1.8;
+  color: #374151;
+  margin: 0 0 0.75rem;
+}
+.discr-description {
+  margin-bottom: 1.5rem;
+}
+.discr-characteristics {
+  margin-top: 1.5rem;
+}
+.discr-h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 0 0 0.75rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+.discr-char-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+.discr-char-item {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+.discr-char-icon {
+  flex-shrink: 0;
+  font-size: 0.7em;
+  margin-top: 0.35em;
+}
+.discr-theory-note {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+  font-size: 0.8rem;
+  color: #6b7280;
+  line-height: 1.6;
+  margin-top: 1.5rem;
+}
+.discr-theory-note p {
+  margin: 0;
+}
+.discr-freshness {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  margin-top: 0.75rem;
+}
+
+/* ========== 強み ========== */
+.discr-section-h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 0 0 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+.discr-strength-list,
+.discr-weakness-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.discr-strength-item,
+.discr-weakness-item {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+.discr-strength-icon,
+.discr-weakness-icon {
+  flex-shrink: 0;
+  font-size: 1.1em;
+}
+.discr-weakness-note {
+  margin-top: 1.25rem;
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+  font-size: 0.85rem;
+  color: #92400e;
+  line-height: 1.6;
+}
+
+/* ========== 仕事・キャリア ========== */
+.discr-career-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+.discr-career-item {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+.discr-career-icon {
+  flex-shrink: 0;
+  font-size: 1em;
+}
+.discr-career-cta {
+  background: linear-gradient(135deg, #1d4ed8 0%, #7c3aed 100%);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  margin-top: 1.5rem;
+}
+.discr-career-cta-inner {
+  text-align: center;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+.discr-career-cta-title {
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 0;
+}
+.discr-career-cta-desc {
+  font-size: 0.875rem;
+  opacity: 0.9;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* ========== PASSプレビュー ========== */
+.discr-pass-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.discr-pass-cta {
+  background: linear-gradient(135deg, #1d4ed8 0%, #7c3aed 100%);
+  color: #fff;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+.discr-pass-desc {
+  font-size: 0.875rem;
+  opacity: 0.9;
+  line-height: 1.6;
+  margin: 0;
+}
+.discr-pass-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #fff;
+  color: #1d4ed8;
+  font-weight: 700;
+  font-size: 1rem;
+  padding: 0.75rem 1.75rem;
+  border-radius: 3rem;
+  text-decoration: none;
+  transition: transform 0.15s;
+}
+.discr-pass-btn:hover {
+  transform: translateY(-1px);
+}
+.discr-pass-sub {
+  font-size: 0.75rem;
+  opacity: 0.75;
+  margin: 0;
+}
+
+/* ========== 成長Tips ========== */
+.discr-growth-note {
+  font-size: 0.82rem;
+  color: #6b7280;
+  line-height: 1.6;
+  margin-bottom: 1.25rem;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+}
+.discr-tips-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  counter-reset: tips-counter;
+}
+.discr-tips-item {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+.discr-tips-num {
+  flex-shrink: 0;
+  width: 2rem;
+  height: 2rem;
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+.discr-tips-body {
+  font-size: 0.9rem;
+  line-height: 1.7;
+  color: #374151;
+  margin: 0;
+}
+
+/* ========== もう一度 ========== */
+.discr-retake-section {
+  text-align: center;
+  padding: 2rem 1rem;
+  border-top: 1px solid #e5e7eb;
+  margin-top: 2rem;
+}
+.discr-retake-h2 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+.discr-retake-desc {
+  font-size: 0.9rem;
+  color: #6b7280;
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}
+.discr-retake-btn {
+  display: inline-block;
+  background: #1d4ed8;
+  color: #fff;
+  font-weight: 700;
+  padding: 0.75rem 2rem;
+  border-radius: 3rem;
+  text-decoration: none;
+  font-size: 0.95rem;
+  transition: opacity 0.15s;
+}
+.discr-retake-btn:hover {
+  opacity: 0.88;
+}
+
+/* ========== 行動特性グラフ ========== */
+.discr-radar-section {
+  padding: 2rem 1rem;
+  border-top: 1px solid #e5e7eb;
+}
+.discr-radar-h2 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+.discr-radar-note {
+  font-size: 0.8rem;
+  color: #6b7280;
+  margin-bottom: 1.25rem;
+  line-height: 1.5;
+}
+.discr-radar-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.discr-radar-row {
+  display: grid;
+  grid-template-columns: 8rem 1fr 2.5rem;
+  align-items: center;
+  gap: 0.75rem;
+}
+.discr-radar-label {
+  font-size: 0.85rem;
+  color: #374151;
+  white-space: nowrap;
+}
+.discr-radar-bar-bg {
+  background: #e5e7eb;
+  border-radius: 1rem;
+  height: 0.625rem;
+  overflow: hidden;
+}
+.discr-radar-bar-fill {
+  height: 100%;
+  border-radius: 1rem;
+  transition: width 0.5s ease;
+}
+.discr-radar-val {
+  font-size: 0.8rem;
+  color: #6b7280;
+  text-align: right;
+}
+
+/* ========== 他タイプ ========== */
+.discr-other-types-section {
+  padding: 2rem 1rem;
+  border-top: 1px solid #e5e7eb;
+}
+.discr-other-h2 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+.discr-other-types-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 0.75rem;
+}
+.discr-other-type-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
+  text-align: center;
+}
+.discr-other-type-card:hover {
+  border-color: var(--other-color, #1d4ed8);
+  box-shadow: 0 2px 8px rgba(29 78 216 / 0.1);
+  transform: translateY(-2px);
+}
+.discr-other-icon {
+  font-size: 1.75rem;
+}
+.discr-other-name {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--other-color, #1d4ed8);
+}
+.discr-other-catch {
+  font-size: 0.72rem;
+  color: #6b7280;
+  line-height: 1.4;
+}
+
+/* ========== FAQ ========== */
+.discr-faq-section {
+  padding: 2rem 1rem;
+  border-top: 1px solid #e5e7eb;
+}
+.discr-faq-h2 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 1.25rem;
+}
+.discr-faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.discr-faq-item {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+.discr-faq-q {
+  font-weight: 700;
+  font-size: 0.9rem;
+  padding: 0.875rem 1.25rem;
+  background: #f9fafb;
+  margin: 0;
+  display: block;
+}
+.discr-faq-q::before {
+  content: 'Q. ';
+  color: #1d4ed8;
+}
+.discr-faq-a {
+  font-size: 0.875rem;
+  line-height: 1.7;
+  padding: 0.875rem 1.25rem;
+  margin: 0;
+  color: #4b5563;
+}
+.discr-faq-a::before {
+  content: 'A. ';
+  font-weight: 700;
+  color: #16a34a;
+}
+
+/* ========== 商標ノート ========== */
+.discr-trademark-note {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  border-top: 1px solid #e5e7eb;
+  padding-top: 1.5rem;
+  margin-top: 2rem;
+  line-height: 1.6;
+  padding-inline: 1rem;
+}
+
+/* ========== レスポンシブ ========== */
+@media (max-width: 480px) {
+  .discr-radar-row {
+    grid-template-columns: 6rem 1fr 2rem;
+  }
+  .discr-radar-label {
+    font-size: 0.75rem;
+  }
+  .discr-other-types-grid {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+}
+</style>
