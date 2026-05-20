@@ -1,20 +1,1115 @@
 ---
 /**
- * 診断ページ スタブ（Phase 0）
- * content-writer が本文を執筆する。
- * ui-ux-designer が診断フローコンポーネントを実装する。
+ * 完璧主義診断 ランディングページ
+ * KW: 完璧主義診断（穴場KW・Phase 1第2優先）
+ * 学術根拠: Hewitt & Flett (1991) + Frost et al. (1990) + Stoeber & Otto (2006)
+ * 確認日: 2026-05-20
+ *
+ * SEO/AIO対応:
+ * - JSON-LD: WebApplication + Quiz + FAQPage + BreadcrumbList
+ * - AIOブロック: 「このページでわかること」
+ * - YMYL回避: 医学的診断・治療表記ゼロ。傾向把握のみ
+ * - 4タイプ（徹底型/こだわり型/先延ばし型/期待型）
  */
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Container from '../../../components/Container.astro';
-const diagName = 'この診断';
+import DiagnosisFlow from '../../../components/DiagnosisFlow';
+import { meta } from '../../../data/diagnoses/perfectionism/meta';
+import { questions } from '../../../data/diagnoses/perfectionism/questions';
+import { calculateResultTypeId } from '../../../data/diagnoses/perfectionism/results';
+
+const SITE_URL = 'https://shindan-navi.jp';
+const PAGE_URL = `${SITE_URL}/diagnosis/perfectionism/`;
+
+// DiagnosisFlow に渡す questions を diagnosis.ts の Question 型に変換
+const flowQuestions = questions.map((q) => ({
+  id: String(q.id),
+  text: q.text,
+}));
+
+// JSON-LD: WebApplication
+const jsonLdWebApp = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  '@id': `${PAGE_URL}#webapp`,
+  name: '完璧主義診断【無料・3分・28問】',
+  url: PAGE_URL,
+  applicationCategory: 'EducationalApplication',
+  operatingSystem: 'Web',
+  description:
+    'Hewitt & Flett (1991) の多次元完璧主義尺度に基づく無料の完璧主義診断。28問に答えるだけで「徹底型」「こだわり型」「先延ばし型」「期待型」の4タイプを判定。仕事・恋愛・日常での向き合い方がわかります。',
+  offers: {
+    '@type': 'Offer',
+    price: '0',
+    priceCurrency: 'JPY',
+    availability: 'https://schema.org/InStock',
+  },
+  author: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+    name: '診断ナビ',
+    url: SITE_URL,
+  },
+  publisher: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+  },
+};
+
+// JSON-LD: Quiz（citation に学術文献を配置）
+const jsonLdQuiz = {
+  '@context': 'https://schema.org',
+  '@type': 'Quiz',
+  '@id': `${PAGE_URL}#quiz`,
+  name: '完璧主義診断（28問）',
+  url: PAGE_URL,
+  about: {
+    '@type': 'Thing',
+    name: '完璧主義（Perfectionism）心理学',
+    description: 'Hewitt & FlettおよびFrost et al.が研究した多次元完璧主義の理論',
+    sameAs: 'https://doi.org/10.1037/0022-3514.60.3.456',
+  },
+  educationalLevel: 'HighSchool',
+  numberOfQuestions: meta.questionCount,
+  assesses: '完璧主義タイプ・仕事スタイル・自己向き合い方',
+  dateCreated: meta.publishedAt,
+  dateModified: meta.updatedAt,
+  inLanguage: 'ja',
+  citation: meta.references.map((ref) => ({
+    '@type': 'ScholarlyArticle',
+    name: ref.title,
+    author: ref.author,
+    datePublished: String(ref.year),
+    url: ref.url,
+  })),
+};
+
+// JSON-LD: FAQPage（7問・完璧主義特有の質問）
+const faqs = [
+  {
+    question: '完璧主義は直した方がいいですか？',
+    answer:
+      '完璧主義は「直す」ものではなく、自分の傾向を理解して「向き合い方を調整する」ものです。Stoeber & Otto（2006）の研究では、完璧主義には「適応的」な側面もあり、高い基準を保ちながら自分を消耗させない工夫が重要とされています。本診断はその傾向を知るための自己理解ツールです。',
+  },
+  {
+    question: '完璧主義は強迫性障害などと関係ありますか？',
+    answer:
+      '本診断は性格傾向を把握するための自己理解ツールであり、医学的な診断は行いません。完璧主義の傾向が日常生活に大きく影響していると感じる場合は、医師や臨床心理士などの専門家にご相談ください。本診断の結果は、あくまで自己理解の参考としてご活用ください。',
+  },
+  {
+    question: '完璧主義の4タイプの違いは何ですか？',
+    answer:
+      '「徹底型」は自分への基準が高く、自分自身の納得感を最重視するタイプです。「こだわり型」は手順・精度・整理への強いこだわりを持つタイプです。「先延ばし型」は完璧にできない可能性を恐れて行動の開始が遅れやすいタイプです。「期待型」は他者からの期待に応えようとするプレッシャーが強いタイプです。',
+  },
+  {
+    question: 'この診断は何回でも受けられますか？',
+    answer:
+      '何回でも受けられます。時期によって状況や気持ちが変わると、結果が変わることがあります。複数回試して、傾向の変化を確認するのもひとつの使い方です。回答は24時間ブラウザに保存されます（サーバーには送信されません）。',
+  },
+  {
+    question: '結果は保存されますか？',
+    answer:
+      '回答データはブラウザのローカルストレージに7日間保存されます。サーバーへの送信・アカウント登録は不要です。ブラウザのキャッシュを削除すると結果が消えます。複数の診断を組み合わせた統合プロファイルの保存は、/pro ページからご利用いただけます。',
+  },
+  {
+    question: '完璧主義は仕事で強みになりますか？',
+    answer:
+      '完璧主義の傾向は、仕事の種類によっては大きな強みになります。「徹底型」「こだわり型」は品質管理・編集・研究・法務などの精度重視の仕事で力を発揮します。「先延ばし型」はリスク確認・品質保証に強みがあります。「期待型」は顧客対応・チームサポートで共感力が活きます。',
+  },
+  {
+    question: '完璧主義の人と相性がいいタイプは？',
+    answer:
+      '本診断では恋愛の傾向も確認できます。タイプによって異なりますが、一般的に「基準を認めてくれる相手」「プレッシャーをかけずに見守ってくれる相手」との関係が安定しやすいとされています。各タイプの結果ページで詳しく解説しています。',
+  },
+];
+
+const jsonLdFAQ = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  '@id': `${PAGE_URL}#faq`,
+  mainEntity: faqs.map(({ question, answer }) => ({
+    '@type': 'Question',
+    name: question,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: answer,
+    },
+  })),
+};
+
+// JSON-LD: BreadcrumbList
+const jsonLdBreadcrumb = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'ホーム', item: SITE_URL },
+    { '@type': 'ListItem', position: 2, name: '診断一覧', item: `${SITE_URL}/diagnosis/` },
+    { '@type': 'ListItem', position: 3, name: '完璧主義診断', item: PAGE_URL },
+  ],
+};
+
+const jsonLdAll = [jsonLdWebApp, jsonLdQuiz, jsonLdFAQ, jsonLdBreadcrumb];
+
+// 4タイプカード用データ
+const typeCards = [
+  {
+    id: 'thorough',
+    name: '徹底型',
+    nameEn: 'Self-Oriented',
+    catchphrase: 'やるなら100%。自分への基準が誰よりも高い完成追求者',
+    icon: '🔱',
+    color: '#6366f1',
+  },
+  {
+    id: 'particular',
+    name: 'こだわり型',
+    nameEn: 'Organization-Oriented',
+    catchphrase: '細部にこそ本質が宿る。秩序と精度を愛する職人気質',
+    icon: '⚙️',
+    color: '#059669',
+  },
+  {
+    id: 'procrastinating',
+    name: '先延ばし型',
+    nameEn: 'Failure-Avoidant',
+    catchphrase: '完璧にできないなら始められない。失敗への恐れが生む慎重さ',
+    icon: '⏳',
+    color: '#d97706',
+  },
+  {
+    id: 'expecting',
+    name: '期待型',
+    nameEn: 'Socially-Prescribed',
+    catchphrase: '誰かの期待が、私のプレッシャー。承認を求める追求者',
+    icon: '🌟',
+    color: '#db2777',
+  },
+];
 ---
-<BaseLayout title={`${diagName} - 診断ナビ`} description="診断説明（content-writerが執筆）">
+
+<BaseLayout
+  title={meta.title}
+  description={meta.description}
+  canonical={PAGE_URL}
+  jsonLd={jsonLdAll}
+  ogType="website"
+  publishDate={meta.publishedAt}
+  lastUpdated={meta.updatedAt}
+  breadcrumbs={[
+    { name: '診断一覧', url: '/diagnosis/' },
+    { name: '完璧主義診断', url: '/diagnosis/perfectionism/' },
+  ]}
+>
+  {/* ========== ヒーローセクション ========== */}
+  <section class="pf-hero" aria-labelledby="pf-hero-h1">
+    <Container>
+      <div class="pf-hero-inner">
+        <div class="pf-hero-badge">Hewitt &amp; Flett (1991) 多次元完璧主義尺度に基づく</div>
+        <h1 id="pf-hero-h1" class="pf-hero-h1">
+          完璧主義診断<br />
+          <span class="pf-hero-meta">【無料・3分・28問】</span>
+        </h1>
+        <p class="pf-hero-catch">
+          あなたの「完璧主義」はどのタイプ？<br />
+          4タイプから仕事・恋愛・日常の向き合い方を発見しよう
+        </p>
+        <div class="pf-hero-stats">
+          <span class="pf-stat"><strong>28</strong>問</span>
+          <span class="pf-stat-sep">・</span>
+          <span class="pf-stat">約<strong>3</strong>分</span>
+          <span class="pf-stat-sep">・</span>
+          <span class="pf-stat"><strong>4</strong>タイプ</span>
+          <span class="pf-stat-sep">・</span>
+          <span class="pf-stat">無料</span>
+        </div>
+        <a href="#diagnosis-flow" class="pf-cta-btn">
+          <span>診断スタート</span>
+          <span class="pf-cta-arrow" aria-hidden="true">↓</span>
+        </a>
+        <p class="pf-hero-sub">登録不要・所要時間3分・途中保存OK</p>
+      </div>
+    </Container>
+  </section>
+
   <Container>
-    <div style="padding-block: 4rem; text-align: center;">
-      <p style="font-size: 3rem; margin-bottom: 1rem;">🔮</p>
-      <h1 style="font-family: var(--sn-font-rounded); font-size: 1.5rem; margin-bottom: 1rem;">診断準備中</h1>
-      <p style="color: var(--sn-muted);">Phase 1 にてコンテンツ・診断フローを実装します</p>
-      <a href="/diagnosis/" style="display:inline-block; margin-top:2rem; color:var(--sn-primary);">← 診断一覧に戻る</a>
+    {/* ========== AIOブロック（このページでわかること） ========== */}
+    <div class="pf-aio-block" role="note" aria-label="このページでわかること">
+      <p class="pf-aio-title">このページでわかること</p>
+      <ul class="pf-aio-list">
+        <li>28問・5段階リッカートで測る完璧主義の4タイプ（Hewitt &amp; Flett 1991年・Frost et al. 1990年理論）</li>
+        <li>タイプ別の仕事スタイル・恋愛傾向・CBTセルフケアTips（各5項目）</li>
+        <li>他の診断（多重知能 / MBTI / DiSC）との統合プロファイルへの連携方法</li>
+      </ul>
+      <p class="pf-aio-updated">
+        <time datetime={meta.updatedAt}>{meta.updatedAt}</time> 時点の情報。
+        <a href="https://doi.org/10.1037/0022-3514.60.3.456" target="_blank" rel="noopener noreferrer">
+          Hewitt &amp; Flett (1991) 原著論文
+        </a>
+        を確認済。
+      </p>
     </div>
+
+    {/* ========== 完璧主義診断とは ========== */}
+    <section class="pf-section" aria-labelledby="pf-what-h2">
+      <h2 id="pf-what-h2" class="pf-h2">完璧主義診断とは</h2>
+      <p class="pf-lead">
+        完璧主義診断は、心理学者 Paul Hewitt と Gordon Flett が
+        1991年に発表した「多次元完璧主義尺度（Multidimensional Perfectionism Scale）」と、
+        Frost et al.（1990）の組織化・失敗懸念の研究をもとに設計した自己診断ツールです。
+      </p>
+      <p class="pf-body">
+        完璧主義は「直すべき欠点」ではありません。
+        Stoeber &amp; Otto（2006）の研究では、完璧主義には「適応的」な側面と「不適応的」な側面があり、
+        自分のタイプを知ることで長く力を発揮する向き合い方が見えてくると示されています
+        （<a href="https://doi.org/10.1207/s15327957pspr1004_2" target="_blank" rel="noopener noreferrer">Stoeber &amp; Otto, 2006</a>、2026-05-20確認）。
+      </p>
+      <div class="pf-info-table-wrap">
+        <table class="pf-info-table">
+          <caption class="pf-table-caption">完璧主義診断の概要</caption>
+          <tbody>
+            <tr>
+              <th scope="row">理論の根拠</th>
+              <td>Hewitt &amp; Flett (1991) MPS + Frost et al. (1990) MPS + Stoeber &amp; Otto (2006)</td>
+            </tr>
+            <tr>
+              <th scope="row">問題数</th>
+              <td>28問（各タイプ7問 × 4タイプ）</td>
+            </tr>
+            <tr>
+              <th scope="row">回答方式</th>
+              <td>5段階リッカートスケール（1=全く当てはまらない〜5=とても当てはまる）</td>
+            </tr>
+            <tr>
+              <th scope="row">所要時間</th>
+              <td>約3分</td>
+            </tr>
+            <tr>
+              <th scope="row">結果タイプ数</th>
+              <td>4タイプ（徹底型・こだわり型・先延ばし型・期待型）</td>
+            </tr>
+            <tr>
+              <th scope="row">注意事項</th>
+              <td>傾向把握のための参考ツールです。医学的診断は行いません。</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    {/* ========== 4タイプ紹介 ========== */}
+    <section class="pf-section" aria-labelledby="pf-types-h2">
+      <h2 id="pf-types-h2" class="pf-h2">4つの完璧主義タイプ</h2>
+      <p class="pf-lead">
+        完璧主義は一種類ではありません。
+        Hewitt &amp; Flett と Frost et al. の研究から、以下の4つのタイプに分類できます。
+        どれが「良い・悪い」ではなく、それぞれ異なる向き合い方があります。
+      </p>
+      <div class="pf-types-grid">
+        {typeCards.map((tc) => (
+          <article class="pf-type-card" style={`--type-color: ${tc.color}`}>
+            <div class="pf-type-icon" aria-hidden="true">{tc.icon}</div>
+            <h3 class="pf-type-name">{tc.name}</h3>
+            <p class="pf-type-name-en">{tc.nameEn}</p>
+            <p class="pf-type-desc">{tc.catchphrase}</p>
+            <a href={`/diagnosis/perfectionism/result/${tc.id}/`} class="pf-type-link">
+              {tc.name}の詳細を見る
+              <span aria-hidden="true">→</span>
+            </a>
+          </article>
+        ))}
+      </div>
+
+      {/* 4タイプ図解（概念図） */}
+      <div class="pf-chart-figure" role="figure" aria-labelledby="pf-chart-caption">
+        <div class="pf-chart-visual" aria-hidden="true">
+          <div class="pf-chart-axis pf-chart-axis--x">
+            <span class="pf-axis-label pf-axis-label--left">自己基準<br/>（内向き）</span>
+            <div class="pf-axis-line pf-axis-line--h"></div>
+            <span class="pf-axis-label pf-axis-label--right">他者基準<br/>（外向き）</span>
+          </div>
+          <div class="pf-chart-axis pf-chart-axis--y">
+            <span class="pf-axis-label pf-axis-label--top">達成志向</span>
+            <div class="pf-axis-line pf-axis-line--v"></div>
+            <span class="pf-axis-label pf-axis-label--bottom">失敗回避</span>
+          </div>
+          <div class="pf-chart-quadrant pf-chart-quadrant--tl">
+            <span class="pf-quad-icon">🔱</span>
+            <span class="pf-quad-name">徹底型</span>
+          </div>
+          <div class="pf-chart-quadrant pf-chart-quadrant--tr">
+            <span class="pf-quad-icon">🌟</span>
+            <span class="pf-quad-name">期待型</span>
+          </div>
+          <div class="pf-chart-quadrant pf-chart-quadrant--bl">
+            <span class="pf-quad-icon">⚙️</span>
+            <span class="pf-quad-name">こだわり型</span>
+          </div>
+          <div class="pf-chart-quadrant pf-chart-quadrant--br">
+            <span class="pf-quad-icon">⏳</span>
+            <span class="pf-quad-name">先延ばし型</span>
+          </div>
+        </div>
+        <p id="pf-chart-caption" class="pf-chart-caption">
+          【図1】完璧主義4タイプの分類軸（自己/他者基準 × 達成/失敗回避）。
+          Hewitt &amp; Flett (1991) + Stoeber &amp; Otto (2006) の研究傾向を概念図として示したもの。
+        </p>
+      </div>
+    </section>
+
+    {/* ========== 使い方 ========== */}
+    <section class="pf-section" aria-labelledby="pf-how-h2">
+      <h2 id="pf-how-h2" class="pf-h2">使い方（3ステップ）</h2>
+      <ol class="pf-steps">
+        <li class="pf-step">
+          <div class="pf-step-num" aria-hidden="true">1</div>
+          <div class="pf-step-body">
+            <h3 class="pf-step-title">「診断スタート」をタップ</h3>
+            <p class="pf-step-desc">
+              登録・インストール不要。ブラウザですぐ始められます。
+              途中で閉じても24時間以内なら再開できます。
+            </p>
+          </div>
+        </li>
+        <li class="pf-step">
+          <div class="pf-step-num" aria-hidden="true">2</div>
+          <div class="pf-step-body">
+            <h3 class="pf-step-title">28問に回答する（約3分）</h3>
+            <p class="pf-step-desc">
+              各質問に「1（全く当てはまらない）〜5（とても当てはまる）」で答えます。
+              正解・不正解はありません。今の自分に正直に答えてください。
+            </p>
+          </div>
+        </li>
+        <li class="pf-step">
+          <div class="pf-step-num" aria-hidden="true">3</div>
+          <div class="pf-step-body">
+            <h3 class="pf-step-title">タイプ診断結果と向き合い方を確認</h3>
+            <p class="pf-step-desc">
+              4タイプのうち最もスコアが高いものが「あなたのタイプ」として表示されます。
+              仕事・恋愛・CBTセルフケアTipsの詳細は無料で確認できます。
+            </p>
+          </div>
+        </li>
+      </ol>
+    </section>
+
+    {/* ========== 診断フロー（React島） ========== */}
+    <section class="pf-section pf-section--flow" id="diagnosis-flow" aria-labelledby="pf-flow-h2">
+      <h2 id="pf-flow-h2" class="pf-h2 pf-h2--center">診断を始める</h2>
+      <p class="pf-flow-lead">
+        全28問・約3分。今の自分に正直に答えてください。
+      </p>
+      <div class="pf-flow-wrapper">
+        <DiagnosisFlow
+          client:load
+          diagnosisId="perfectionism"
+          questions={flowQuestions}
+          resultPath={(typeId: string) => `/diagnosis/perfectionism/result/${typeId}/`}
+          calculateResult={calculateResultTypeId}
+        />
+      </div>
+    </section>
+
+    {/* ========== 精度・科学的根拠 ========== */}
+    <section class="pf-section" aria-labelledby="pf-science-h2">
+      <h2 id="pf-science-h2" class="pf-h2">診断の根拠・参考文献</h2>
+      <p class="pf-lead">
+        本診断は学術的な完璧主義研究をもとに設計しています。
+        傾向把握のための自己理解ツールであり、医学的・臨床的な診断ではありません。
+      </p>
+      <div class="pf-science-grid">
+        <div class="pf-science-card">
+          <div class="pf-science-icon" aria-hidden="true">📚</div>
+          <h3 class="pf-science-title">主要参考文献</h3>
+          <ul class="pf-ref-list">
+            {meta.references.map((ref) => (
+              <li class="pf-ref-item">
+                <a href={ref.url} target="_blank" rel="noopener noreferrer" class="pf-ref-link">
+                  {ref.author} ({ref.year}). {ref.title}.
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div class="pf-science-card">
+          <div class="pf-science-icon" aria-hidden="true">⚠️</div>
+          <h3 class="pf-science-title">ご注意（YMYL）</h3>
+          <p class="pf-science-body">
+            本診断は自己理解・性格傾向把握のための参考ツールです。
+            強迫性障害・うつ・不安障害等の医学的診断は行いません。
+            日常生活に大きく支障が出ている場合は、医師・臨床心理士にご相談ください。
+          </p>
+        </div>
+        <div class="pf-science-card">
+          <div class="pf-science-icon" aria-hidden="true">🔄</div>
+          <h3 class="pf-science-title">更新・鮮度管理</h3>
+          <p class="pf-science-body">
+            理論・参考文献情報は定期的に確認しています。
+            最終確認日: <time datetime={meta.updatedAt}>{meta.updatedAt}</time>。
+            情報の誤りを見つけた場合は
+            <a href="/contact/">お問い合わせ</a>
+            からご連絡ください。
+          </p>
+        </div>
+      </div>
+    </section>
+
+    {/* ========== 他の診断との違い ========== */}
+    <section class="pf-section" aria-labelledby="pf-compare-h2">
+      <h2 id="pf-compare-h2" class="pf-h2">他の診断との違い</h2>
+      <div class="pf-compare-table-wrap">
+        <table class="pf-compare-table">
+          <caption class="pf-table-caption">完璧主義診断と主要診断の比較（{meta.updatedAt}時点）</caption>
+          <thead>
+            <tr>
+              <th scope="col">診断名</th>
+              <th scope="col">測定軸</th>
+              <th scope="col">問題数</th>
+              <th scope="col">強み</th>
+              <th scope="col">用途</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">完璧主義診断（本ページ）</th>
+              <td>完璧主義4次元</td>
+              <td>28問</td>
+              <td>行動パターンの自己理解</td>
+              <td>消耗しない向き合い方の発見</td>
+            </tr>
+            <tr>
+              <th scope="row"><a href="/diagnosis/multi-int/">多重知能テスト</a></th>
+              <td>8つの知能領域</td>
+              <td>64問</td>
+              <td>学習・仕事の強み発見</td>
+              <td>学習スタイル・職種選択</td>
+            </tr>
+            <tr>
+              <th scope="row"><a href="/diagnosis/mbti/">MBTI</a></th>
+              <td>性格4軸（16タイプ）</td>
+              <td>-</td>
+              <td>人間関係・コミュニケーション傾向</td>
+              <td>チームビルディング・恋愛相性</td>
+            </tr>
+            <tr>
+              <th scope="row"><a href="/diagnosis/disc/">DiSC診断</a></th>
+              <td>行動スタイル4軸</td>
+              <td>-</td>
+              <td>職場での行動パターン</td>
+              <td>リーダーシップ・部下育成</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="pf-compare-note">
+        <strong>おすすめの組み合わせ:</strong>
+        完璧主義診断（行動傾向）× 多重知能（才能の軸）× MBTI（性格の軸）を
+        組み合わせると、自己理解が格段に深まります。
+        <a href="/diagnosis/">他の診断を見る →</a>
+      </p>
+    </section>
+
+    {/* ========== 関連リンク ========== */}
+    <section class="pf-section" aria-labelledby="pf-related-h2">
+      <h2 id="pf-related-h2" class="pf-h2">関連診断</h2>
+      <ul class="pf-related-list">
+        <li class="pf-related-item">
+          <a href="/diagnosis/multi-int/" class="pf-related-link">
+            <span class="pf-related-icon" aria-hidden="true">🦉</span>
+            <span class="pf-related-body">
+              <span class="pf-related-title">多重知能テスト</span>
+              <span class="pf-related-desc">8つの知能から「強みのかたち」を64問で発見</span>
+            </span>
+          </a>
+        </li>
+        <li class="pf-related-item">
+          <a href="/diagnosis/mbti/" class="pf-related-link">
+            <span class="pf-related-icon" aria-hidden="true">🧠</span>
+            <span class="pf-related-body">
+              <span class="pf-related-title">MBTI（16タイプ）診断</span>
+              <span class="pf-related-desc">性格・コミュニケーションスタイルを4軸で分析</span>
+            </span>
+          </a>
+        </li>
+        <li class="pf-related-item">
+          <a href="/diagnosis/disc/" class="pf-related-link">
+            <span class="pf-related-icon" aria-hidden="true">💼</span>
+            <span class="pf-related-body">
+              <span class="pf-related-title">DiSC診断</span>
+              <span class="pf-related-desc">職場でのリーダーシップ・行動スタイルを分析</span>
+            </span>
+          </a>
+        </li>
+        <li class="pf-related-item">
+          <a href="/diagnosis/ketsuekigata/" class="pf-related-link">
+            <span class="pf-related-icon" aria-hidden="true">🩸</span>
+            <span class="pf-related-body">
+              <span class="pf-related-title">血液型性格診断</span>
+              <span class="pf-related-desc">日本の血液型性格論をBig5心理学で再解釈</span>
+            </span>
+          </a>
+        </li>
+      </ul>
+    </section>
+
+    {/* ========== FAQ ========== */}
+    <section class="pf-section" aria-labelledby="pf-faq-h2">
+      <h2 id="pf-faq-h2" class="pf-h2">よくある質問</h2>
+      <dl class="pf-faq-list">
+        {faqs.map(({ question, answer }) => (
+          <div class="pf-faq-item">
+            <dt class="pf-faq-q">{question}</dt>
+            <dd class="pf-faq-a">{answer}</dd>
+          </div>
+        ))}
+      </dl>
+    </section>
   </Container>
 </BaseLayout>
+
+<style>
+/* ========== ヒーロー ========== */
+.pf-hero {
+  background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+  color: #fff;
+  padding-block: 3.5rem 4rem;
+  text-align: center;
+}
+.pf-hero-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+.pf-hero-badge {
+  display: inline-block;
+  background: rgba(255 255 255 / 0.2);
+  border: 1px solid rgba(255 255 255 / 0.4);
+  border-radius: 2rem;
+  padding: 0.25rem 1rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+}
+.pf-hero-h1 {
+  font-size: clamp(1.75rem, 5vw, 2.5rem);
+  font-family: var(--sn-font-rounded, sans-serif);
+  font-weight: 700;
+  line-height: 1.3;
+  margin: 0;
+}
+.pf-hero-meta {
+  display: block;
+  font-size: clamp(1rem, 3vw, 1.4rem);
+  opacity: 0.9;
+}
+.pf-hero-catch {
+  font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+  opacity: 0.92;
+  line-height: 1.7;
+  margin: 0;
+}
+.pf-hero-stats {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  font-size: 0.9rem;
+  opacity: 0.85;
+}
+.pf-stat strong {
+  font-size: 1.4em;
+  font-weight: 700;
+}
+.pf-stat-sep {
+  color: rgba(255 255 255 / 0.5);
+}
+.pf-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #fff;
+  color: #6366f1;
+  font-weight: 700;
+  font-size: 1.1rem;
+  padding: 0.85rem 2.5rem;
+  border-radius: 3rem;
+  text-decoration: none;
+  transition: transform 0.15s, box-shadow 0.15s;
+  margin-top: 0.5rem;
+}
+.pf-cta-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0 0 0 / 0.2);
+}
+.pf-cta-arrow {
+  font-size: 1.2em;
+}
+.pf-hero-sub {
+  font-size: 0.8rem;
+  opacity: 0.7;
+  margin: 0;
+}
+
+/* ========== AIOブロック ========== */
+.pf-aio-block {
+  background: #f0f4ff;
+  border-left: 4px solid var(--sn-primary);
+  border-radius: 0 0.5rem 0.5rem 0;
+  padding: 1.25rem 1.5rem;
+  margin-block: 2rem;
+}
+.pf-aio-title {
+  font-weight: 700;
+  margin: 0 0 0.5rem;
+  font-size: 0.9rem;
+  color: var(--sn-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.pf-aio-list {
+  margin: 0 0 0.75rem;
+  padding-left: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.pf-aio-list li {
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+.pf-aio-updated {
+  font-size: 0.75rem;
+  color: var(--sn-muted, #6b7280);
+  margin: 0;
+}
+
+/* ========== セクション共通 ========== */
+.pf-section {
+  margin-block: 3rem;
+}
+.pf-section--flow {
+  background: #f8f7ff;
+  padding: 2rem 1.5rem;
+  border-radius: 1rem;
+  margin-inline: -1rem;
+}
+.pf-h2 {
+  font-size: clamp(1.3rem, 4vw, 1.75rem);
+  font-family: var(--sn-font-rounded, sans-serif);
+  font-weight: 700;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--sn-primary);
+}
+.pf-h2--center {
+  text-align: center;
+  border-bottom: none;
+}
+.pf-lead {
+  font-size: 1rem;
+  line-height: 1.8;
+  margin-bottom: 1rem;
+  color: #374151;
+}
+.pf-body {
+  font-size: 0.95rem;
+  line-height: 1.8;
+  margin-bottom: 1rem;
+  color: #374151;
+}
+.pf-flow-lead {
+  text-align: center;
+  color: var(--sn-muted, #6b7280);
+  font-size: 0.9rem;
+  margin-bottom: 1.5rem;
+}
+.pf-flow-wrapper {
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+/* ========== 情報テーブル ========== */
+.pf-info-table-wrap {
+  overflow-x: auto;
+  margin-top: 1.5rem;
+}
+.pf-info-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+.pf-info-table th,
+.pf-info-table td {
+  padding: 0.6rem 1rem;
+  border: 1px solid #e5e7eb;
+  text-align: left;
+  line-height: 1.5;
+}
+.pf-info-table th {
+  background: #f3f4f6;
+  font-weight: 600;
+  white-space: nowrap;
+  width: 9rem;
+}
+.pf-table-caption {
+  font-size: 0.8rem;
+  color: var(--sn-muted, #6b7280);
+  text-align: left;
+  padding: 0.25rem 0 0.5rem;
+}
+
+/* ========== 4タイプグリッド ========== */
+.pf-types-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1rem;
+  margin-block: 1.5rem;
+}
+.pf-type-card {
+  border: 2px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  transition: box-shadow 0.15s, transform 0.15s;
+}
+.pf-type-card:hover {
+  box-shadow: 0 4px 16px rgba(0 0 0 / 0.1);
+  transform: translateY(-2px);
+}
+.pf-type-icon {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+.pf-type-name {
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin: 0 0 0.2rem;
+  color: var(--sn-primary);
+}
+.pf-type-name-en {
+  font-size: 0.7rem;
+  color: var(--sn-muted, #6b7280);
+  margin: 0 0 0.5rem;
+}
+.pf-type-desc {
+  font-size: 0.83rem;
+  line-height: 1.6;
+  color: #4b5563;
+  margin: 0 0 0.75rem;
+}
+.pf-type-link {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--sn-primary);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+.pf-type-link:hover {
+  text-decoration: underline;
+}
+
+/* ========== 4タイプ概念図 ========== */
+.pf-chart-figure {
+  margin-block: 2rem;
+  text-align: center;
+}
+.pf-chart-visual {
+  position: relative;
+  display: inline-block;
+  width: 280px;
+  height: 280px;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  margin-bottom: 1rem;
+}
+.pf-chart-axis {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.pf-chart-axis--x {
+  top: 50%;
+  left: 0;
+  right: 0;
+  transform: translateY(-50%);
+  padding-inline: 4px;
+}
+.pf-chart-axis--y {
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  transform: translateX(-50%);
+  flex-direction: column;
+  padding-block: 4px;
+}
+.pf-axis-line--h {
+  flex: 1;
+  height: 1px;
+  background: #d1d5db;
+  margin-inline: 4px;
+}
+.pf-axis-line--v {
+  flex: 1;
+  width: 1px;
+  background: #d1d5db;
+  margin-block: 4px;
+}
+.pf-axis-label {
+  font-size: 0.6rem;
+  color: #9ca3af;
+  font-weight: 600;
+  text-align: center;
+  line-height: 1.3;
+  white-space: nowrap;
+}
+.pf-chart-quadrant {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+}
+.pf-chart-quadrant--tl { top: 12%; left: 12%; }
+.pf-chart-quadrant--tr { top: 12%; right: 12%; }
+.pf-chart-quadrant--bl { bottom: 12%; left: 12%; }
+.pf-chart-quadrant--br { bottom: 12%; right: 12%; }
+.pf-quad-icon { font-size: 1.5rem; }
+.pf-quad-name {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #374151;
+}
+.pf-chart-caption {
+  font-size: 0.8rem;
+  color: var(--sn-muted, #6b7280);
+  max-width: 480px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+/* ========== ステップ ========== */
+.pf-steps {
+  list-style: none;
+  padding: 0;
+  margin: 1.5rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+.pf-step {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+.pf-step-num {
+  flex-shrink: 0;
+  width: 2.5rem;
+  height: 2.5rem;
+  background: var(--sn-primary);
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+.pf-step-title {
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 0 0 0.25rem;
+}
+.pf-step-desc {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: #4b5563;
+  margin: 0;
+}
+
+/* ========== 科学的根拠 ========== */
+.pf-science-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+.pf-science-card {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+}
+.pf-science-icon {
+  font-size: 1.75rem;
+  margin-bottom: 0.5rem;
+}
+.pf-science-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem;
+}
+.pf-science-body {
+  font-size: 0.85rem;
+  line-height: 1.7;
+  color: #4b5563;
+  margin: 0;
+}
+.pf-ref-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.pf-ref-item {
+  font-size: 0.78rem;
+  line-height: 1.5;
+}
+.pf-ref-link {
+  color: var(--sn-primary);
+  text-decoration: none;
+  word-break: break-word;
+}
+.pf-ref-link:hover {
+  text-decoration: underline;
+}
+
+/* ========== 比較テーブル ========== */
+.pf-compare-table-wrap {
+  overflow-x: auto;
+  margin-block: 1.5rem;
+}
+.pf-compare-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+.pf-compare-table th,
+.pf-compare-table td {
+  padding: 0.6rem 0.8rem;
+  border: 1px solid #e5e7eb;
+  text-align: left;
+  line-height: 1.5;
+}
+.pf-compare-table thead th {
+  background: var(--sn-primary);
+  color: #fff;
+  font-weight: 600;
+}
+.pf-compare-table tbody tr:first-child td,
+.pf-compare-table tbody tr:first-child th {
+  background: #f0f4ff;
+  font-weight: 600;
+}
+.pf-compare-table tbody tr:nth-child(even) {
+  background: #f9fafb;
+}
+.pf-compare-note {
+  font-size: 0.875rem;
+  color: #4b5563;
+  line-height: 1.6;
+  margin-top: 1rem;
+}
+
+/* ========== 関連リンク ========== */
+.pf-related-list {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.pf-related-link {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.pf-related-link:hover {
+  border-color: var(--sn-primary);
+  box-shadow: 0 2px 8px rgba(99 102 241 / 0.1);
+}
+.pf-related-icon {
+  font-size: 1.75rem;
+  flex-shrink: 0;
+}
+.pf-related-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+.pf-related-title {
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+.pf-related-desc {
+  font-size: 0.8rem;
+  color: var(--sn-muted, #6b7280);
+}
+
+/* ========== FAQ ========== */
+.pf-faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+.pf-faq-item {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+.pf-faq-q {
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 1rem 1.25rem;
+  background: #f9fafb;
+  margin: 0;
+  display: block;
+}
+.pf-faq-q::before {
+  content: 'Q. ';
+  color: var(--sn-primary);
+}
+.pf-faq-a {
+  font-size: 0.9rem;
+  line-height: 1.7;
+  padding: 1rem 1.25rem;
+  margin: 0;
+  color: #4b5563;
+}
+.pf-faq-a::before {
+  content: 'A. ';
+  font-weight: 700;
+  color: #16a34a;
+}
+
+/* ========== レスポンシブ ========== */
+@media (max-width: 640px) {
+  .pf-types-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .pf-science-grid {
+    grid-template-columns: 1fr;
+  }
+  .pf-section--flow {
+    margin-inline: -0.5rem;
+    padding: 1.5rem 1rem;
+  }
+  .pf-chart-visual {
+    width: 240px;
+    height: 240px;
+  }
+}
+</style>
