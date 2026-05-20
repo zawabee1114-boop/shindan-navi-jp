@@ -1,0 +1,559 @@
+---
+/**
+ * /profile/ - 統合プロファイルページ
+ * Phase 1 最終ピース: 8診断統合・5シーン軸・AIプロンプトカード
+ *
+ * 戦略コンセプト:
+ * - 8診断統合 = ブランドコア
+ * - Big5/OCEAN/ビッグファイブ ユーザー向け表示絶対NG → 「特性」「傾向」
+ * - 5シーン軸: 仕事 / 恋愛 / 友人 / 家族 / 学校
+ * - 家族軸 = 性格相性のみ（YMYL回避）
+ * - LocalStorage のみ（サーバー送信なし）
+ *
+ * JSON-LD: WebApplication / Article / BreadcrumbList
+ * noindex: 個人データページのため検索除外
+ *
+ * 確認日: 2026-05-21
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Container from '../../components/Container.astro';
+import IntegratedProfileViewer from '../../components/IntegratedProfileViewer';
+import AIPromptCardGenerator from '../../components/AIPromptCardGenerator';
+
+const siteUrl = 'https://shindan-navi.jp';
+const pageUrl = `${siteUrl}/profile/`;
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebApplication',
+    '@id': `${pageUrl}#webapp`,
+    name: '統合プロファイル - 診断ナビ',
+    applicationCategory: 'LifestyleApplication',
+    operatingSystem: 'Web Browser',
+    description: '8診断の結果を統合し、仕事・恋愛・友人・家族・学習の5シーン軸で特性を可視化するパーソナルプロファイル機能',
+    url: pageUrl,
+    isAccessibleForFree: true,
+    provider: {
+      '@type': 'Organization',
+      name: '診断ナビ',
+      url: siteUrl,
+    },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    '@id': `${pageUrl}#breadcrumb`,
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'ホーム', item: siteUrl },
+      { '@type': 'ListItem', position: 2, name: '統合プロファイル', item: pageUrl },
+    ],
+  },
+];
+---
+
+<BaseLayout
+  title="あなたの統合プロファイル | 8診断を統合して特性を可視化 - 診断ナビ"
+  description="8つの診断を統合し、仕事・恋愛・友人・家族・学習の5シーンであなたの特性を可視化。AIプロンプトカードで自己分析をさらに深めましょう。"
+  canonical={pageUrl}
+  jsonLd={jsonLd}
+  noindex={true}
+  breadcrumbs={[{ name: '統合プロファイル', url: '/profile/' }]}
+  lastUpdated="2026-05-21"
+>
+  <!-- ヘッダーセクション -->
+  <section class="prof-header">
+    <Container>
+      <div class="prof-header-inner">
+        <div class="prof-hero-badge" aria-hidden="true">
+          <span class="prof-hero-icon">🎯</span>
+          <span class="prof-hero-label">統合プロファイル</span>
+        </div>
+        <h1 class="prof-title">あなたの統合プロファイル</h1>
+        <p class="prof-lead">
+          8つの診断を統合した、あなただけのプロファイルです。<br>
+          仕事・恋愛・友人・家族・学習の5場面で特性をチェックできます。
+        </p>
+        <div class="prof-update-badge" aria-label="最終確認日">
+          <span aria-hidden="true">📅</span>
+          <time datetime="2026-05-21">2026-05-21 更新</time>
+        </div>
+      </div>
+    </Container>
+  </section>
+
+  <!-- メインコンテンツ -->
+  <section class="prof-main" aria-label="統合プロファイル本体">
+    <Container>
+      <!-- 統合プロファイルビューワー（React Island）-->
+      <IntegratedProfileViewer client:load />
+    </Container>
+  </section>
+
+  <!-- AIプロンプトカードセクション -->
+  <section class="prof-ai-section" aria-labelledby="ai-section-title">
+    <Container>
+      <div class="prof-section-head">
+        <h2 id="ai-section-title" class="prof-section-title">
+          <span aria-hidden="true">🤖</span>
+          AIプロンプトカード
+        </h2>
+        <p class="prof-section-desc">
+          ChatGPT / Claude / Gemini に渡す専用プロンプトを自動生成します。
+          あなたの特性に合わせた質問・文書作成が可能になります。
+        </p>
+      </div>
+      <AIPromptCardGenerator client:visible />
+    </Container>
+  </section>
+
+  <!-- PRO アップグレード CTA -->
+  <section class="prof-pro-section" aria-labelledby="pro-section-title">
+    <Container>
+      <div class="prof-pro-card">
+        <div class="prof-pro-badge-wrap">
+          <span class="prof-pro-badge">PRO</span>
+          <span class="prof-pro-badge-sub">会員限定機能</span>
+        </div>
+        <h2 id="pro-section-title" class="prof-pro-title">
+          統合プロファイル v∞ を使い続ける
+        </h2>
+        <p class="prof-pro-desc">
+          PROアップグレードで、プロファイルがどんどん深まります。
+        </p>
+        <ul class="prof-pro-features" role="list">
+          <li class="prof-pro-feature">
+            <span aria-hidden="true">⏳</span>
+            <div>
+              <strong>タイムカプセル</strong>
+              <span>今の自分を記録して1年後と比較</span>
+            </div>
+          </li>
+          <li class="prof-pro-feature">
+            <span aria-hidden="true">🤖</span>
+            <div>
+              <strong>全AIプロンプトカード解放</strong>
+              <span>志望動機・マッチングアプリ等の高度プロンプト（月次追加）</span>
+            </div>
+          </li>
+          <li class="prof-pro-feature">
+            <span aria-hidden="true">📈</span>
+            <div>
+              <strong>時間軸変化トラッキング</strong>
+              <span>感受性スコアの週次変動グラフで自己理解を深める</span>
+            </div>
+          </li>
+          <li class="prof-pro-feature">
+            <span aria-hidden="true">🔮</span>
+            <div>
+              <strong>月1限定診断</strong>
+              <span>PROのみが受けられる特別診断（ライフステージ・強み深掘り等）</span>
+            </div>
+          </li>
+        </ul>
+        <div class="prof-pro-cta-wrap">
+          <a href="/pro/" class="prof-pro-btn">
+            PRO会員 ¥590/月 →
+          </a>
+          <p class="prof-pro-note">いつでも解約可能</p>
+        </div>
+      </div>
+    </Container>
+  </section>
+
+  <!-- FAQ -->
+  <section class="prof-faq" aria-labelledby="faq-title">
+    <Container>
+      <h2 id="faq-title" class="prof-section-title">
+        <span aria-hidden="true">❓</span>
+        よくある質問
+      </h2>
+      <div class="prof-faq-list">
+        <details class="prof-faq-item">
+          <summary class="prof-faq-q">データはどこに保存されますか？</summary>
+          <div class="prof-faq-a">
+            <p>
+              すべてのデータはお使いのブラウザの LocalStorage のみに保存されます。
+              サーバーへの送信は一切行いません。
+              ブラウザのキャッシュクリアや設定変更によってデータが消えた場合、
+              再診断が必要になります。
+            </p>
+          </div>
+        </details>
+        <details class="prof-faq-item">
+          <summary class="prof-faq-q">8診断すべて受けないといけませんか？</summary>
+          <div class="prof-faq-a">
+            <p>
+              1診断から特性レーダーと5シーン軸スコアが表示されます。
+              受診数が増えるほどプロファイルの精度が上がります。
+              8診断すべて受けると統合プロファイルが完成します。
+            </p>
+          </div>
+        </details>
+        <details class="prof-faq-item">
+          <summary class="prof-faq-q">AIプロンプトカードとは何ですか？</summary>
+          <div class="prof-faq-a">
+            <p>
+              あなたの特性プロファイルを元に、ChatGPT・Claude・Gemini に貼り付けて使う
+              テンプレートを自動生成する機能です。自社のAIチャット機能ではなく、
+              外部のAIサービスをパーソナライズするためのテキストを提供します。
+            </p>
+          </div>
+        </details>
+        <details class="prof-faq-item">
+          <summary class="prof-faq-q">表示される「特性スコア」は何を示しますか？</summary>
+          <div class="prof-faq-a">
+            <p>
+              受診した診断の研究傾向値を統合・加重平均した参考値です。
+              科学的な診断・医療判断の代替にはなりません。
+              「自己理解のきっかけ」としてご活用ください。
+              数値が高い・低いことで優劣を示すものではありません。
+            </p>
+          </div>
+        </details>
+        <details class="prof-faq-item">
+          <summary class="prof-faq-q">家族軸で何を確認できますか？</summary>
+          <div class="prof-faq-a">
+            <p>
+              家族との性格相性・コミュニケーションスタイルの傾向を確認できます。
+              育児・介護・医療に関するアドバイスは本サービスの対象外です。
+              専門的な相談は、医師・カウンセラーにご相談ください。
+            </p>
+          </div>
+        </details>
+      </div>
+    </Container>
+  </section>
+
+  <!-- 関連ページリンク -->
+  <section class="prof-related" aria-label="関連ページ">
+    <Container>
+      <h2 class="prof-section-title">
+        <span aria-hidden="true">🔗</span>
+        関連ページ
+      </h2>
+      <div class="prof-related-grid">
+        <a href="/me/" class="prof-related-card">
+          <span class="prof-related-icon" aria-hidden="true">👤</span>
+          <div>
+            <span class="prof-related-label">マイページ</span>
+            <span class="prof-related-desc">受診状況・進捗確認</span>
+          </div>
+        </a>
+        <a href="/diagnosis/" class="prof-related-card">
+          <span class="prof-related-icon" aria-hidden="true">🧩</span>
+          <div>
+            <span class="prof-related-label">診断一覧</span>
+            <span class="prof-related-desc">8診断すべてはこちら</span>
+          </div>
+        </a>
+        <a href="/aisei/" class="prof-related-card">
+          <span class="prof-related-icon" aria-hidden="true">💑</span>
+          <div>
+            <span class="prof-related-label">相性診断ハブ</span>
+            <span class="prof-related-desc">5シーン別の相性を確認</span>
+          </div>
+        </a>
+        <a href="/pro/" class="prof-related-card">
+          <span class="prof-related-icon" aria-hidden="true">✨</span>
+          <div>
+            <span class="prof-related-label">PRO会員</span>
+            <span class="prof-related-desc">機能を全解放する</span>
+          </div>
+        </a>
+      </div>
+    </Container>
+  </section>
+</BaseLayout>
+
+<style>
+  /* ヘッダー */
+  .prof-header {
+    background: linear-gradient(135deg, var(--sn-primary-bg, #eef2ff) 0%, var(--sn-bg-soft, #f9fafb) 100%);
+    padding-block: var(--sn-space-10, 2.5rem) var(--sn-space-8, 2rem);
+    border-bottom: 1px solid var(--sn-border, #e5e7eb);
+  }
+  .prof-header-inner {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sn-space-4, 1rem);
+    max-width: 640px;
+  }
+  .prof-hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sn-space-2, 0.5rem);
+    padding: 0.375rem var(--sn-space-4, 1rem);
+    background: var(--sn-primary, #6366f1);
+    color: #fff;
+    border-radius: 999px;
+    width: fit-content;
+  }
+  .prof-hero-icon { font-size: 1rem; }
+  .prof-hero-label {
+    font-size: 0.8125rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+  }
+  .prof-title {
+    font-family: var(--sn-font-rounded, sans-serif);
+    font-size: clamp(1.5rem, 5vw, 2rem);
+    font-weight: 900;
+    color: var(--sn-text, #111827);
+    margin: 0;
+    line-height: 1.25;
+  }
+  .prof-lead {
+    font-size: var(--sn-text-base, 1rem);
+    color: var(--sn-text-soft, #6b7280);
+    line-height: 1.7;
+    margin: 0;
+  }
+  .prof-update-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-size: 0.75rem;
+    color: var(--sn-muted, #9ca3af);
+  }
+
+  /* メインセクション */
+  .prof-main {
+    padding-block: var(--sn-space-10, 2.5rem);
+  }
+
+  /* AIセクション */
+  .prof-ai-section {
+    padding-block: var(--sn-space-10, 2.5rem);
+    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+    border-top: 1px solid var(--sn-border, #e5e7eb);
+    border-bottom: 1px solid var(--sn-border, #e5e7eb);
+  }
+
+  /* セクション共通 */
+  .prof-section-head {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sn-space-3, 0.75rem);
+    margin-bottom: var(--sn-space-5, 1.25rem);
+  }
+  .prof-section-title {
+    display: flex;
+    align-items: center;
+    gap: var(--sn-space-2, 0.5rem);
+    font-family: var(--sn-font-rounded, sans-serif);
+    font-size: var(--sn-text-xl, 1.25rem);
+    font-weight: 900;
+    color: var(--sn-text, #111827);
+    margin: 0 0 var(--sn-space-5, 1.25rem);
+  }
+  .prof-section-desc {
+    font-size: var(--sn-text-sm, 0.875rem);
+    color: var(--sn-text-soft, #6b7280);
+    line-height: 1.7;
+    margin: 0;
+  }
+
+  /* PRO セクション */
+  .prof-pro-section {
+    padding-block: var(--sn-space-10, 2.5rem);
+  }
+  .prof-pro-card {
+    background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+    border-radius: var(--sn-radius-xl, 20px);
+    border: 1px solid #fde68a;
+    padding: var(--sn-space-8, 2rem);
+    display: flex;
+    flex-direction: column;
+    gap: var(--sn-space-5, 1.25rem);
+  }
+  .prof-pro-badge-wrap {
+    display: flex;
+    align-items: center;
+    gap: var(--sn-space-2, 0.5rem);
+  }
+  .prof-pro-badge {
+    padding: 0.25rem 0.75rem;
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    color: #fff;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 900;
+    letter-spacing: 0.05em;
+  }
+  .prof-pro-badge-sub {
+    font-size: 0.8125rem;
+    color: #92400e;
+    font-weight: 700;
+  }
+  .prof-pro-title {
+    font-family: var(--sn-font-rounded, sans-serif);
+    font-size: var(--sn-text-xl, 1.25rem);
+    font-weight: 900;
+    color: #92400e;
+    margin: 0;
+  }
+  .prof-pro-desc {
+    font-size: var(--sn-text-sm, 0.875rem);
+    color: #a16207;
+    margin: 0;
+  }
+  .prof-pro-features {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--sn-space-3, 0.75rem);
+  }
+  .prof-pro-feature {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--sn-space-3, 0.75rem);
+    font-size: var(--sn-text-sm, 0.875rem);
+    color: #92400e;
+    line-height: 1.6;
+  }
+  .prof-pro-feature > span:first-child {
+    font-size: var(--sn-text-base, 1rem);
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .prof-pro-feature strong {
+    display: block;
+    font-weight: 700;
+    color: #92400e;
+  }
+  .prof-pro-feature span:last-child {
+    color: #a16207;
+  }
+  .prof-pro-cta-wrap {
+    display: flex;
+    align-items: center;
+    gap: var(--sn-space-4, 1rem);
+    flex-wrap: wrap;
+  }
+  .prof-pro-btn {
+    display: inline-flex;
+    align-items: center;
+    padding: var(--sn-space-3, 0.75rem) var(--sn-space-7, 1.75rem);
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    color: #fff;
+    border-radius: 999px;
+    font-family: var(--sn-font-rounded, sans-serif);
+    font-size: var(--sn-text-base, 1rem);
+    font-weight: 900;
+    text-decoration: none;
+    min-height: var(--sn-tap-min, 44px);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .prof-pro-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+    text-decoration: none;
+  }
+  .prof-pro-btn:focus-visible {
+    outline: 2px solid #f59e0b;
+    outline-offset: 2px;
+  }
+  .prof-pro-note {
+    font-size: var(--sn-text-xs, 0.75rem);
+    color: #a16207;
+    margin: 0;
+  }
+
+  /* FAQ */
+  .prof-faq {
+    padding-block: var(--sn-space-10, 2.5rem);
+    background: var(--sn-bg-soft, #f9fafb);
+    border-top: 1px solid var(--sn-border, #e5e7eb);
+  }
+  .prof-faq-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sn-space-2, 0.5rem);
+  }
+  .prof-faq-item {
+    background: var(--sn-bg-white, #fff);
+    border-radius: var(--sn-radius-md, 12px);
+    border: 1px solid var(--sn-border, #e5e7eb);
+    overflow: hidden;
+  }
+  .prof-faq-q {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--sn-space-4, 1rem) var(--sn-space-5, 1.25rem);
+    font-size: var(--sn-text-sm, 0.875rem);
+    font-weight: 700;
+    color: var(--sn-text, #111827);
+    cursor: pointer;
+    list-style: none;
+    min-height: var(--sn-tap-min, 44px);
+  }
+  .prof-faq-q::-webkit-details-marker { display: none; }
+  .prof-faq-q::after {
+    content: '+';
+    font-size: 1.125rem;
+    color: var(--sn-primary, #6366f1);
+    flex-shrink: 0;
+    margin-left: var(--sn-space-3, 0.75rem);
+  }
+  details[open] .prof-faq-q::after { content: '−'; }
+  .prof-faq-a {
+    padding: 0 var(--sn-space-5, 1.25rem) var(--sn-space-4, 1rem);
+  }
+  .prof-faq-a p {
+    font-size: var(--sn-text-sm, 0.875rem);
+    color: var(--sn-text-soft, #6b7280);
+    line-height: 1.7;
+    margin: 0;
+  }
+
+  /* 関連ページ */
+  .prof-related {
+    padding-block: var(--sn-space-10, 2.5rem);
+  }
+  .prof-related-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--sn-space-3, 0.75rem);
+  }
+  .prof-related-card {
+    display: flex;
+    align-items: center;
+    gap: var(--sn-space-3, 0.75rem);
+    padding: var(--sn-space-4, 1rem);
+    background: var(--sn-bg-white, #fff);
+    border-radius: var(--sn-radius-md, 12px);
+    border: 1px solid var(--sn-border, #e5e7eb);
+    text-decoration: none;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+  .prof-related-card:hover {
+    border-color: var(--sn-primary, #6366f1);
+    box-shadow: 0 2px 8px rgba(99, 102, 241, 0.12);
+    text-decoration: none;
+  }
+  .prof-related-icon { font-size: 1.5rem; flex-shrink: 0; }
+  .prof-related-card > div {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+  }
+  .prof-related-label {
+    font-size: var(--sn-text-sm, 0.875rem);
+    font-weight: 700;
+    color: var(--sn-text, #111827);
+  }
+  .prof-related-desc {
+    font-size: var(--sn-text-xs, 0.75rem);
+    color: var(--sn-muted, #9ca3af);
+  }
+
+  @media (max-width: 480px) {
+    .prof-pro-card { padding: var(--sn-space-5, 1.25rem); }
+    .prof-related-grid { grid-template-columns: 1fr; }
+    .prof-pro-btn { width: 100%; justify-content: center; }
+  }
+</style>
