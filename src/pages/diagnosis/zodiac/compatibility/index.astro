@@ -1,0 +1,355 @@
+---
+/**
+ * 星座性格診断 12×12 相性表
+ * 学術根拠:
+ *   - Carlson S (1985) Nature 318, 419-425
+ *   - プトレマイオス『テトラビブロス』（2世紀）: エレメント相性分類
+ * 確認日: 2026-05-21
+ */
+import BaseLayout from '../../../../layouts/BaseLayout.astro';
+import Container from '../../../../components/Container.astro';
+import { ZODIAC_TYPES, meta } from '../../../../data/diagnoses/zodiac/meta';
+import { typesDetail } from '../../../../data/diagnoses/zodiac/types-detail';
+import {
+  getCompatibility,
+  getCategoryColor,
+  getCategoryLabel,
+} from '../../../../data/diagnoses/zodiac/results';
+import { elementsData } from '../../../../data/diagnoses/zodiac/elements-modality';
+
+const SITE_URL = 'https://shindan-navi.jp';
+const PAGE_URL = `${SITE_URL}/diagnosis/zodiac/compatibility/`;
+
+const pageTitle = '12星座 相性表【全144ペア・スコア付き完全版】｜星座性格診断 | 診断ナビ';
+const pageDesc = '牡羊座〜魚座の12星座すべての相性を144ペアで網羅した完全相性表。スコア・相性カテゴリ・エレメント別色分けで一目瞭然。科学的位置付け（Carlson 1985 Nature）も明示。';
+
+// 12×12 マトリクスデータ
+const matrixData = ZODIAC_TYPES.map((rowZodiac) =>
+  ZODIAC_TYPES.map((colZodiac) => getCompatibility(rowZodiac, colZodiac))
+);
+
+// エレメント別カラー
+const ELEMENT_COLORS: Record<string, { bg: string; border: string; text: string }> = {
+  fire:  { bg: '#FEF2F2', border: '#FCA5A5', text: '#991B1B' },
+  earth: { bg: '#F5F5F4', border: '#A8A29E', text: '#44403C' },
+  air:   { bg: '#EFF6FF', border: '#93C5FD', text: '#1E40AF' },
+  water: { bg: '#ECFEFF', border: '#67E8F9', text: '#164E63' },
+};
+
+// カテゴリ別セル色
+function getCellBg(score: number): string {
+  if (score >= 80) return '#F5F3FF';
+  if (score >= 65) return '#ECFDF5';
+  if (score >= 50) return '#EFF6FF';
+  if (score >= 35) return '#FFFBEB';
+  return '#FFF1F2';
+}
+
+// エレメント相性概観
+const elementCompatSummary = [
+  { pair: '火 × 火', example: '牡羊×獅子', score: 80, desc: '情熱・行動力が共鳴。同エレメントとして強い親和性があるとされます。' },
+  { pair: '火 × 風', example: '獅子×双子', score: 78, desc: '火と風は補完関係。風が火をさらに燃やすとされ、刺激し合える組み合わせとされます。' },
+  { pair: '地 × 地', example: '牡牛×山羊', score: 80, desc: '安定・実務志向が共鳴。信頼と誠実さで深い関係が育まれやすいとされます。' },
+  { pair: '地 × 水', example: '乙女×蠍', score: 76, desc: '地と水は補完関係。現実的な安定と深い感情が融合するとされます。' },
+  { pair: '風 × 風', example: '双子×水瓶', score: 78, desc: '知性・社交性が共鳴。刺激的な知的交流が続く関係とされます。' },
+  { pair: '水 × 水', example: '蟹×魚', score: 82, desc: '感受性・共感力が共鳴。深い感情的理解が生まれやすいとされます。' },
+  { pair: '火 × 水', example: '牡羊×蟹', score: 42, desc: '対立エレメント。互いのスタイルの違いが最大の学びをもたらすとされます。' },
+  { pair: '地 × 風', example: '牡牛×水瓶', score: 43, desc: '対立エレメント。伝統と革新の対比から互いが学べる関係とされます。' },
+];
+
+// FAQ
+const faqs = [
+  {
+    question: '12星座の相性表に科学的根拠はありますか？',
+    answer:
+      'ありません。Carlson S（1985年）のNature誌論文（https://doi.org/10.1038/318419a0）で、占星術の予測が偶然レベルと差がないことが示されています。本相性表は西洋占星術の伝統的なエレメント・モダリティ分類を参考にした「文化的傾向値」として提供しており、科学的測定ではありません。自己理解・人間関係の話題としてお楽しみください。',
+  },
+  {
+    question: '相性表のスコアはどのように計算していますか？',
+    answer:
+      '本サイトのスコアは、西洋占星術の伝統的な分類（エレメント・モダリティ・守護星）に基づいて算出した傾向値です。同エレメント+30点、補完エレメント+20点、同モダリティ+10点、補完モダリティ+15点などをベース50点に加減算しています。科学的な測定値ではありません。',
+  },
+  {
+    question: '最高スコアの組み合わせはどれですか？',
+    answer:
+      '本サイトのスコアでは蟹座×魚座（88点）・牡牛座×山羊座（86点）・蠍座×魚座（86点）などが高評価です。ただしスコアで人を選ぶことは推奨しません。実際の相性は個人の性格・価値観・コミュニケーション方法によって大きく変わります。',
+  },
+];
+
+// JSON-LD
+const jsonLdArticle = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  '@id': `${PAGE_URL}#article`,
+  headline: pageTitle,
+  description: pageDesc,
+  url: PAGE_URL,
+  datePublished: meta.publishedAt,
+  dateModified: meta.updatedAt,
+  inLanguage: 'ja',
+};
+
+const jsonLdFaq = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  '@id': `${PAGE_URL}#faq`,
+  mainEntity: faqs.map((faq) => ({
+    '@type': 'Question',
+    name: faq.question,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: faq.answer,
+    },
+  })),
+};
+
+const jsonLdBreadcrumb = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  '@id': `${PAGE_URL}#breadcrumb`,
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'ホーム', item: SITE_URL + '/' },
+    { '@type': 'ListItem', position: 2, name: '診断一覧', item: SITE_URL + '/diagnosis/' },
+    { '@type': 'ListItem', position: 3, name: '星座性格診断', item: SITE_URL + '/diagnosis/zodiac/' },
+    { '@type': 'ListItem', position: 4, name: '12×12 相性表', item: PAGE_URL },
+  ],
+};
+---
+
+<BaseLayout title={pageTitle} description={pageDesc}>
+  <Fragment slot="head">
+    <link rel="canonical" href={PAGE_URL} />
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLdArticle)} />
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLdFaq)} />
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLdBreadcrumb)} />
+  </Fragment>
+
+  <Container>
+    <!-- パンくず -->
+    <nav aria-label="パンくずリスト" style="padding-block: 0.75rem; font-size: 0.85rem; color: var(--sn-muted);">
+      <a href="/" style="color: var(--sn-primary);">ホーム</a>
+      <span aria-hidden="true"> › </span>
+      <a href="/diagnosis/" style="color: var(--sn-primary);">診断一覧</a>
+      <span aria-hidden="true"> › </span>
+      <a href="/diagnosis/zodiac/" style="color: var(--sn-primary);">星座性格診断</a>
+      <span aria-hidden="true"> › </span>
+      <span aria-current="page">12×12 相性表</span>
+    </nav>
+
+    <!-- H1 -->
+    <h1 style="font-size: clamp(1.4rem, 4vw, 2rem); font-weight: 800; line-height: 1.3; margin-bottom: 0.75rem; color: var(--sn-text);">
+      12星座 相性表【全144ペア・スコア付き完全版】
+    </h1>
+
+    <!-- 鮮度バッジ -->
+    <p style="font-size: 0.8rem; color: var(--sn-muted); margin-bottom: 1.5rem;">
+      <time datetime={meta.updatedAt}>{meta.updatedAt.replace(/-/g, '/')} 時点の情報</time>
+      ｜ <a href="https://doi.org/10.1038/318419a0" target="_blank" rel="noopener noreferrer" style="color: var(--sn-primary);">Carlson 1985 Nature</a> 参照
+    </p>
+
+    <!-- このページでわかること -->
+    <blockquote style="background: var(--sn-surface, #fff); border-left: 4px solid var(--sn-primary, #7C3AED); padding: 1rem 1.25rem; margin: 0 0 2rem; border-radius: 0 0.5rem 0.5rem 0;">
+      <strong>このページでわかること</strong>
+      <ul style="margin: 0.5rem 0 0; padding-left: 1.25rem; line-height: 1.8;">
+        <li>12星座 × 12星座の全144ペアの相性スコアと傾向（西洋占星術の伝統的分類基準）</li>
+        <li>エレメント（火・地・風・水）別の相性概観</li>
+        <li>科学的位置付けと利用上の注意（Carlson 1985 Nature引用）</li>
+      </ul>
+    </blockquote>
+
+    <!-- 科学的位置付け警告 -->
+    <div style="background: #FEF3C7; border: 2px solid #FCD34D; border-radius: 1rem; padding: 1.25rem; margin-bottom: 2rem;">
+      <p style="font-size: 0.875rem; color: #92400E; margin: 0; line-height: 1.8;">
+        <strong>⚠️ 科学的位置付け:</strong>
+        本相性表は西洋占星術の伝統的エレメント分類に基づく「文化的傾向値」です。
+        Carlson（1985 Nature <a href="https://doi.org/10.1038/318419a0" target="_blank" rel="noopener noreferrer" style="color: #92400E;">DOI</a>）の研究で、占星術の科学的根拠がないことが示されています。
+        スコアで人を選んだり、就職・結婚の判断基準にしないことを推奨します。
+      </p>
+    </div>
+
+    <!-- スコア凡例 -->
+    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1.5rem;" role="legend" aria-label="相性スコアの凡例">
+      {[
+        { label: '80+点 深い親和性', color: '#8B5CF6', bg: '#F5F3FF' },
+        { label: '65-79点 相性良好', color: '#10B981', bg: '#ECFDF5' },
+        { label: '50-64点 バランス型', color: '#3B82F6', bg: '#EFF6FF' },
+        { label: '35-49点 学び合い', color: '#F59E0B', bg: '#FFFBEB' },
+        { label: '〜34点 最大の対比', color: '#EF4444', bg: '#FFF1F2' },
+      ].map((item) => (
+        <span style={`display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.25rem 0.6rem; background: ${item.bg}; border: 1.5px solid ${item.color}40; border-radius: 999px; font-size: 0.75rem; color: ${item.color}; font-weight: 600;`}>
+          {item.label}
+        </span>
+      ))}
+    </div>
+
+    <!-- 12×12 マトリクス -->
+    <section style="margin-bottom: 3rem;">
+      <h2 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 1rem;">12×12 相性スコア一覧表</h2>
+      <p style="font-size: 0.85rem; color: var(--sn-muted); margin-bottom: 1rem;">
+        縦軸（あなた）× 横軸（相手）でスコアを確認できます。
+        各セルをクリックすると詳細ページへ移動します。
+      </p>
+      <div style="overflow-x: auto; -webkit-overflow-scrolling: touch;">
+        <table
+          style="border-collapse: collapse; font-size: 0.775rem; min-width: 600px;"
+          aria-label="12星座相性マトリクス"
+        >
+          <!-- ヘッダー行 -->
+          <thead>
+            <tr>
+              <th style="padding: 0.4rem; border: 1px solid var(--sn-border, #e5e7eb); background: #F9FAFB; min-width: 60px;"></th>
+              {ZODIAC_TYPES.map((colZodiac) => {
+                const d = typesDetail[colZodiac];
+                const c = ELEMENT_COLORS[d.element];
+                return (
+                  <th style={`padding: 0.35rem; border: 1px solid var(--sn-border, #e5e7eb); background: ${c.bg}; color: ${c.text}; font-weight: 700; text-align: center; min-width: 52px;`}>
+                    <a href={`/diagnosis/zodiac/${colZodiac}/`} style={`color: ${c.text}; text-decoration: none; display: flex; flex-direction: column; align-items: center; gap: 0.1rem;`}>
+                      <span style="font-size: 1rem;">{d.symbol}</span>
+                      <span style="font-size: 0.7rem; white-space: nowrap;">{d.japaneseName}</span>
+                    </a>
+                  </th>
+                );
+              })}
+            </tr>
+          </thead>
+
+          <!-- データ行 -->
+          <tbody>
+            {matrixData.map((row, rowIdx) => {
+              const rowZodiac = ZODIAC_TYPES[rowIdx];
+              const rowDetail = typesDetail[rowZodiac];
+              const rowColors = ELEMENT_COLORS[rowDetail.element];
+              return (
+                <tr>
+                  <!-- 行ヘッダー -->
+                  <th style={`padding: 0.35rem; border: 1px solid var(--sn-border, #e5e7eb); background: ${rowColors.bg}; color: ${rowColors.text}; font-weight: 700;`}>
+                    <a href={`/diagnosis/zodiac/${rowZodiac}/`} style={`color: ${rowColors.text}; text-decoration: none; display: flex; align-items: center; gap: 0.3rem;`}>
+                      <span style="font-size: 0.9rem;">{rowDetail.symbol}</span>
+                      <span style="font-size: 0.7rem; white-space: nowrap;">{rowDetail.japaneseName}</span>
+                    </a>
+                  </th>
+
+                  <!-- スコアセル -->
+                  {row.map((pair, colIdx) => {
+                    const colZodiac = ZODIAC_TYPES[colIdx];
+                    const isSelf = rowZodiac === colZodiac;
+                    return (
+                      <td style={`padding: 0.35rem; border: 1px solid var(--sn-border, #e5e7eb); text-align: center; background: ${getCellBg(pair.score)};`}>
+                        {isSelf ? (
+                          <span style="color: var(--sn-muted); font-size: 0.7rem;">—</span>
+                        ) : (
+                          <a
+                            href={`/diagnosis/zodiac/${colZodiac}/`}
+                            title={pair.oneLineSummary}
+                            style={`display: block; font-weight: 700; font-size: 0.85rem; color: ${getCategoryColor(pair.category)}; text-decoration: none;`}
+                            aria-label={`${rowDetail.japaneseName}と${typesDetail[colZodiac].japaneseName}の相性: ${pair.score}点`}
+                          >
+                            {pair.score}
+                          </a>
+                        )}
+                      </td>
+                    );
+                  })}
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- エレメント相性概観 -->
+    <section style="margin-bottom: 3rem;">
+      <h2 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 1rem;">エレメント別 相性概観</h2>
+      <p style="font-size: 0.85rem; color: var(--sn-muted); margin-bottom: 1.5rem;">
+        西洋占星術の伝統的なエレメント分類に基づく概観です。同エレメント・補完エレメントが相性良好とされています。
+      </p>
+      <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1rem;">
+        {elementCompatSummary.map((item) => (
+          <div style={`background: ${item.score >= 65 ? '#ECFDF5' : item.score >= 50 ? '#EFF6FF' : '#FFFBEB'}; border: 2px solid ${item.score >= 65 ? '#6EE7B7' : item.score >= 50 ? '#93C5FD' : '#FCD34D'}; border-radius: 0.75rem; padding: 1rem;`}>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+              <span style="font-weight: 700; font-size: 0.95rem;">{item.pair}</span>
+              <span style="font-size: 0.8rem; color: var(--sn-muted);">例: {item.example}</span>
+            </div>
+            <p style="font-size: 0.85rem; color: var(--sn-text); margin: 0; line-height: 1.7;">{item.desc}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- コンテンツ補強 -->
+    <section style="margin-bottom: 3rem;">
+      <h2 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 1rem;">星座相性表の見方・活用方法</h2>
+      <div style="line-height: 1.9; font-size: 0.95rem; color: var(--sn-text);">
+        <p>
+          本相性表は西洋占星術の12星座分類を性格理解のヒントとして提供しています。
+          プトレマイオス（2世紀）のエレメント分類（火・地・風・水）とモダリティ（活動・不動・柔軟）を基礎として、
+          各星座の伝統的な性格傾向から相性スコアを算出しています。
+        </p>
+        <p>
+          相性スコアが高い組み合わせは「価値観・行動スタイルが近く、自然な理解が生まれやすい」とされる傾向があります。
+          一方でスコアが低い組み合わせは「最も異なるスタイルを持つため、最大の学び合いの機会がある」と捉えることができます。
+          「相性が悪い」という断定的な表現は使用しておりません。
+        </p>
+        <p>
+          ただしCarlson（1985 Nature）の二重盲検試験が示すように、占星術の予測に科学的根拠はありません。
+          本相性表はエンタメ・自己理解のヒントとしてお楽しみいただくことを推奨します。
+          就職・結婚・採用など重要な判断の基準には使えません。
+        </p>
+        <p>
+          各セルの星座名・スコアをクリックすると、その星座の詳細ページ（性格特性・全相性ランキング）へ移動できます。
+          12星座それぞれのページでは、より詳しい相性の説明・伝統的な見方・現代的な解釈・学び合いのポイントを確認できます。
+        </p>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section style="margin-bottom: 3rem;">
+      <h2 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 1rem;">よくある質問</h2>
+      <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+        {faqs.map((faq, i) => (
+          <details style="background: var(--sn-surface, #fff); border: 2px solid var(--sn-border, #e5e7eb); border-radius: 0.75rem; overflow: hidden;">
+            <summary style="padding: 0.875rem 1rem; font-weight: 700; font-size: 0.9rem; cursor: pointer; list-style: none; display: flex; align-items: center; gap: 0.5rem;">
+              <span style="color: var(--sn-primary);">Q{i + 1}.</span>
+              {faq.question}
+            </summary>
+            <div style="padding: 0 1rem 0.875rem; font-size: 0.875rem; color: var(--sn-text); line-height: 1.8; border-top: 1px solid var(--sn-border, #e5e7eb);">
+              <p style="margin: 0.75rem 0 0;">{faq.answer}</p>
+            </div>
+          </details>
+        ))}
+      </div>
+    </section>
+
+    <!-- 関連ページ -->
+    <section style="margin-bottom: 2.5rem;">
+      <h2 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 1rem;">関連診断・ページ</h2>
+      <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 0.75rem;">
+        {[
+          { href: '/diagnosis/zodiac/', label: '星座性格診断 TOP', desc: '12星座を一覧で見る' },
+          { href: '/diagnosis/blood-compat/', label: '血液型相性診断', desc: '4タイプ × 全10ペア' },
+          { href: '/diagnosis/mbti-compat/', label: 'MBTI相性診断', desc: '16タイプの相性一覧' },
+          { href: '/diagnosis/', label: '全診断一覧', desc: '他の診断を探す' },
+        ].map((link) => (
+          <a href={link.href} style="display: block; background: var(--sn-surface, #fff); border: 2px solid var(--sn-border, #e5e7eb); border-radius: 0.75rem; padding: 0.75rem; text-decoration: none;">
+            <p style="font-size: 0.9rem; font-weight: 700; color: var(--sn-primary); margin: 0 0 0.25rem;">{link.label}</p>
+            <p style="font-size: 0.775rem; color: var(--sn-muted); margin: 0;">{link.desc}</p>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <!-- Disclaimer -->
+    <aside
+      aria-label="免責事項"
+      style="background: #F3F4F6; border-radius: 0.75rem; padding: 1rem 1.25rem; margin-bottom: 2rem; font-size: 0.8rem; color: var(--sn-muted); line-height: 1.8;"
+    >
+      <strong>免責事項:</strong> {meta.disclaimer}
+    </aside>
+
+    <!-- 最終更新 -->
+    <p style="font-size: 0.75rem; color: var(--sn-muted); text-align: right;">
+      最終更新: <time datetime={meta.updatedAt}>{meta.updatedAt.replace(/-/g, '/')}</time>
+    </p>
+  </Container>
+</BaseLayout>
