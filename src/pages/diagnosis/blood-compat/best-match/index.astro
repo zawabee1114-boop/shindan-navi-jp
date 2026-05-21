@@ -1,0 +1,882 @@
+---
+/**
+ * 相性のいい血液型ページ
+ * KW: 相性のいい血液型（VOL: 1,000 / SD: 15）
+ *
+ * 学術根拠:
+ * - 古川竹二 (1927) 「血液型による気質の研究」心理学研究
+ *   https://www.jstage.jst.go.jp/browse/psycholres
+ * - 能見正比古 (1971) 『血液型でわかる相性』青春出版社
+ *   https://www.seishun.co.jp/
+ * - Sakamoto A, Yamazaki K (2004) International Journal of Psychology 39(4)
+ *   https://doi.org/10.1080/00207590344000248
+ * - 日本心理学会 公式見解 (2014)
+ *   https://psych.or.jp/opinion/bl-personality/
+ *
+ * 確認日: 2026-05-21
+ */
+import BaseLayout from '../../../../layouts/BaseLayout.astro';
+import Container from '../../../../components/Container.astro';
+import { meta as bcMeta, BLOOD_TYPES } from '../../../../data/diagnoses/blood-compat/meta';
+import {
+  getCompatibility,
+  getBestMatches,
+  getGrowthMatches,
+  getCategoryLabel,
+  getCategoryColor,
+} from '../../../../data/diagnoses/blood-compat/results';
+import TldrBlock from '../../../../components/TldrBlock.astro';
+import ReferenceList from '../../../../components/ReferenceList.astro';
+import ScienceNote from '../../../../components/ScienceNote.astro';
+
+const SITE_URL = 'https://shindan-navi.jp';
+const PAGE_URL = `${SITE_URL}/diagnosis/blood-compat/best-match/`;
+const UPDATED_AT = '2026-05-21';
+
+const pageTitle = '相性のいい血液型ランキング【TOP5・WORST5・シーン別】｜診断ナビ';
+const pageDesc = '相性のいい血液型をランキング形式で徹底解説。全10ペアのスコアTOP5・WORST5・恋愛/結婚/友人シーン別ベストマッチを紹介。古川竹二（1927）・能見正比古（1971）の研究と日本心理学会見解を踏まえた正確な解説。';
+
+// 全10ペアを重複なしで取得・スコア順ソート
+const allPairsMap: Record<string, ReturnType<typeof getCompatibility>> = {};
+BLOOD_TYPES.forEach((t1) => {
+  BLOOD_TYPES.forEach((t2) => {
+    const key = [t1, t2].sort().join('-');
+    if (!allPairsMap[key]) {
+      allPairsMap[key] = getCompatibility(t1, t2);
+    }
+  });
+});
+const allPairsSorted = Object.values(allPairsMap).sort((a, b) => b.score - a.score);
+
+// TOP5 / WORST5
+const top5 = allPairsSorted.slice(0, 5);
+const worst5 = [...allPairsSorted].reverse().slice(0, 5);
+
+// タイプ別ベストマッチ（各タイプのスコア1位）
+const typeBestMatch = BLOOD_TYPES.map((type) => {
+  const best = getBestMatches(type, 1)[0];
+  const partner = best.type1 === type ? best.type2 : best.type1;
+  return { type, best, partner };
+});
+
+// タイプ別「成長機会ペア」（スコア最低・ただし「最悪」ではなく「学び合い」として表示）
+const typeGrowthMatch = BLOOD_TYPES.map((type) => {
+  const growth = getGrowthMatches(type, 1)[0];
+  const partner = growth.type1 === type ? growth.type2 : growth.type1;
+  return { type, growth, partner };
+});
+
+// 4タイプ × 全ペアのベスト3
+const allTypesBest3 = BLOOD_TYPES.map((type) => ({
+  type,
+  best3: getBestMatches(type, 3),
+}));
+
+// FAQ 12問
+const faqs = [
+  {
+    question: '血液型の相性で一番いい組み合わせは何ですか？',
+    answer:
+      '本サイトのスコアでは、A型×A型（86点）が全10ペア中最高スコアです。2位はO型×O型（85点）、3位はB型×AB型（80点）です。ただしこれは日本の血液型性格分類文化に基づく傾向値であり、日本心理学会（2014年・https://psych.or.jp/opinion/bl-personality/）は血液型と性格の科学的相関は限定的と明言しています。',
+  },
+  {
+    question: 'A型と相性のいい血液型はどれですか？',
+    answer:
+      '本サイトのスコアでは、A型との相性上位は1位A型（86点・深く理解し合えるペア）、2位AB型（78点・相性の良いペア）、3位O型（75点・相性の良いペア）です。A型×B型は45点（学び合いペア）です。ただしこれは文化的傾向値であり、個人差が大きい点に注意してください。',
+  },
+  {
+    question: 'B型と相性のいい血液型はどれですか？',
+    answer:
+      '本サイトのスコアでは、B型との相性上位は1位AB型（80点・相性の良いペア）、2位O型（70点・相性の良いペア）、3位B型（65点・バランス型ペア）です。B型×A型は45点（学び合いペア）です。',
+  },
+  {
+    question: 'O型と相性のいい血液型はどれですか？',
+    answer:
+      '本サイトのスコアでは、O型との相性上位は1位O型（85点・深く理解し合えるペア）、2位A型（75点・相性の良いペア）、3位B型（70点・相性の良いペア）です。O型×AB型は55点（バランス型ペア）です。',
+  },
+  {
+    question: 'AB型と相性のいい血液型はどれですか？',
+    answer:
+      '本サイトのスコアでは、AB型との相性上位は1位B型（80点・相性の良いペア）、2位A型（78点・相性の良いペア）、3位AB型（68点・バランス型ペア）です。AB型×O型は55点（バランス型ペア）です。',
+  },
+  {
+    question: '相性のいい血液型で結婚を決めてもいいですか？',
+    answer:
+      '推奨しません。日本心理学会（2014年）は「血液型と性格の間に科学的に明確な統計的相関は認められない」と明言しています（https://psych.or.jp/opinion/bl-personality/）。結婚という重要な決断を血液型スコアで決めることは、科学的根拠のない基準で相手を評価するリスクがあります。実際の対話・共通の価値観・生活観の一致を重視してください。',
+  },
+  {
+    question: '相性のいい血液型同士でも別れることはありますか？',
+    answer:
+      'あります。血液型相性スコアは日本の文化的分類に基づく傾向値であり、実際の関係は個人の性格・コミュニケーション・環境・タイミングなど多くの要因で決まります。スコアが高くても関係が続くとは限らず、スコアが低くても深い絆を築いているカップルは多数います。',
+  },
+  {
+    question: '血液型相性ランキングのスコアはどのように計算されていますか？',
+    answer:
+      '能見正比古（1971）の伝統的相性論（青春出版社）を「文化的分類」として参照し、傾向値として0〜100点で数値化しています。科学的な効果量（d値）を測定したものではありません。あくまで日本の血液型文化における「相性のイメージ」を参考情報として整理したものです。',
+  },
+  {
+    question: '相性が悪い血液型の組み合わせとはどう付き合えばいいですか？',
+    answer:
+      '本サイトでは「相性が悪い」という表現を使いません。スコアが低い組み合わせは「学び合いペア」「成長機会の多いペア」として位置づけています。違うスタイルを持つ相手からは、自分とは異なる視点・価値観・アプローチを学べます。「違い」を問題ではなく資源として捉えることが大切です。',
+  },
+  {
+    question: '「相性のいい血液型」を恋愛で使う際の注意点は？',
+    answer:
+      '血液型相性は「話題のきっかけ」として楽しむことを推奨します。血液型だけで交際相手を選んだり断ったりすることは、科学的根拠のない判断で相手を評価するリスクがあります。実際に会って話し、価値観や目標の一致を確認することが、良い関係を築く近道です。',
+  },
+  {
+    question: 'MBTIと血液型、相性判断にはどちらが参考になりますか？',
+    answer:
+      'MBTIはKeirsey（1998）・Jung（1921）の心理学理論に基づいており、血液型性格分類より多くの学術的研究に裏付けられています。日本心理学会（2014）は「血液型と性格の科学的相関は認められない」と明言しています。より参考にしたい場合はMBTI相性（/diagnosis/mbti-compat/）も合わせてご覧ください。',
+  },
+  {
+    question: '血液型相性が悪いと言われる組み合わせでも仲良くなれますか？',
+    answer:
+      'もちろんです。本サイトのスコアが低い組み合わせでも、実際に深い友情や長続きする恋愛を築いている方は大勢います。血液型は「傾向のイメージ」に過ぎず、実際の関係は対話・相互尊重・共通の経験から形成されます。スコアを固定的な判断基準にしないことを強く推奨します。',
+  },
+];
+
+// JSON-LD
+const jsonLdArticle = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  '@id': `${PAGE_URL}#article`,
+  mainEntityOfPage: { '@type': 'WebPage', '@id': PAGE_URL },
+  headline: '相性のいい血液型ランキング【TOP5・WORST5・シーン別】',
+  description: pageDesc,
+  url: PAGE_URL,
+  datePublished: UPDATED_AT,
+  dateModified: UPDATED_AT,
+  inLanguage: 'ja',
+  author: { '@type': 'Organization', '@id': `${SITE_URL}/#organization`, name: '診断ナビ' },
+  publisher: { '@type': 'Organization', '@id': `${SITE_URL}/#organization`, name: '診断ナビ' },
+  citation: bcMeta.references.map((ref) => ({
+    '@type': ref.url.includes('doi.org') ? 'ScholarlyArticle' : 'Book',
+    name: ref.title,
+    author: ref.author,
+    datePublished: String(ref.year),
+    publisher: ref.publisher,
+    url: ref.url,
+  })),
+};
+
+const jsonLdFAQ = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  '@id': `${PAGE_URL}#faq`,
+  mainEntity: faqs.map(({ question, answer }) => ({
+    '@type': 'Question',
+    name: question,
+    acceptedAnswer: { '@type': 'Answer', text: answer },
+  })),
+};
+
+const jsonLdBreadcrumb = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  '@id': `${PAGE_URL}#breadcrumb`,
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'ホーム', item: SITE_URL },
+    { '@type': 'ListItem', position: 2, name: '診断一覧', item: `${SITE_URL}/diagnosis/` },
+    { '@type': 'ListItem', position: 3, name: '血液型相性診断', item: `${SITE_URL}/diagnosis/blood-compat/` },
+    { '@type': 'ListItem', position: 4, name: '相性のいい血液型', item: PAGE_URL },
+  ],
+};
+
+const jsonLdAll = [jsonLdArticle, jsonLdFAQ, jsonLdBreadcrumb];
+
+const catColors: Record<string, string> = {
+  soulmate: '#8B5CF6',
+  good: '#10B981',
+  neutral: '#3B82F6',
+  growth: '#F59E0B',
+  challenge: '#EF4444',
+};
+const catBgs: Record<string, string> = {
+  soulmate: '#f3e8ff',
+  good: '#d1fae5',
+  neutral: '#dbeafe',
+  growth: '#fef3c7',
+  challenge: '#fee2e2',
+};
+
+const typeLabels: Record<string, string> = { A: 'A型', B: 'B型', O: 'O型', AB: 'AB型' };
+---
+
+<BaseLayout
+  title={pageTitle}
+  description={pageDesc}
+  canonical={PAGE_URL}
+  jsonLd={jsonLdAll}
+  ogType="article"
+  publishDate={UPDATED_AT}
+  lastUpdated={UPDATED_AT}
+  breadcrumbs={[
+    { name: '診断一覧', url: '/diagnosis/' },
+    { name: '血液型相性診断', url: '/diagnosis/blood-compat/' },
+    { name: '相性のいい血液型', url: '/diagnosis/blood-compat/best-match/' },
+  ]}
+>
+  {/* ========== ヒーロー ========== */}
+  <section class="bm-hero" aria-labelledby="bm-hero-h1">
+    <Container>
+      <div class="bm-hero-inner">
+        <div class="bm-hero-badge">古川竹二（1927）・能見正比古（1971）研究 + 日本心理学会見解</div>
+        <h1 id="bm-hero-h1" class="bm-hero-h1">
+          相性のいい血液型ランキング<br />
+          <span class="bm-hero-meta">【全10ペア TOP5・WORST5・シーン別ベストマッチ】</span>
+        </h1>
+        <p class="bm-hero-catch">
+          A型・B型・O型・AB型、最も相性がいいのはどの組み合わせ？<br />
+          恋愛・結婚・友人のシーン別ベストマッチを徹底解説
+        </p>
+        <div class="bm-hero-stats">
+          <span class="bm-stat"><strong>10</strong>ペア</span>
+          <span class="bm-stat-sep">全分析</span>
+          <span class="bm-stat-sep">・</span>
+          <span class="bm-stat">3シーン別</span>
+          <span class="bm-stat-sep">・</span>
+          <span class="bm-stat">無料</span>
+          <span class="bm-stat-sep">・</span>
+          <span class="bm-stat">登録不要</span>
+        </div>
+        <p class="bm-hero-sub">
+          <time datetime={UPDATED_AT}>{UPDATED_AT}</time> 時点の情報
+        </p>
+      </div>
+    </Container>
+  </section>
+
+  <Container>
+    {/* ========== このページでわかること ========== */}
+    <div class="bm-aio-block" role="note" aria-label="このページでわかること">
+      <p class="bm-aio-title">このページでわかること</p>
+      <ul class="bm-aio-list">
+        <li>全10ペアの相性スコアTOP5（最高相性）とWORST5（最大の学び合いペア）</li>
+        <li>各タイプの「最高相性ペア」と「成長機会の多いペア」</li>
+        <li>恋愛・結婚・友人 シーン別のベストマッチ比較</li>
+        <li>スコアの見方と正しい活用法（日本心理学会 2014年公式見解を踏まえて）</li>
+      </ul>
+      <p class="bm-aio-updated">
+        参照元:
+        <a href="https://psych.or.jp/opinion/bl-personality/" target="_blank" rel="noopener noreferrer">日本心理学会（2014）</a>・
+        <a href="https://doi.org/10.1080/00207590344000248" target="_blank" rel="noopener noreferrer">Sakamoto &amp; Yamazaki（2004）</a>
+        を確認済。
+      </p>
+    </div>
+
+    {/* ========== TldrBlock ========== */}
+    <TldrBlock
+      title="相性のいい血液型 ポイントまとめ"
+      points={[
+        '全10ペア最高スコア: A型×A型（86点）。2位O型×O型（85点）、3位B型×AB型（80点）、4位A型×AB型（78点）、5位A型×O型（75点）',
+        '各タイプの最高相性: A型→A型（86点）、B型→AB型（80点）、O型→O型（85点）、AB型→B型（80点）',
+        '日本心理学会（2014）公式見解: 「血液型と性格の科学的統計的相関は認められない」。スコアは文化的傾向値であり科学的測定値ではない',
+        '血液型で結婚・交際・友人を選別することは推奨しない。採用で血液型を使うことはブラハラ（血液型ハラスメント）に該当する可能性がある',
+        '「相性のいい血液型」は会話のきっかけ・自己理解のヒントとして活用。実際の相性は対話・共通の価値観・コミュニケーションで形成される',
+      ]}
+      updatedAt={UPDATED_AT}
+      sourceLabel="日本心理学会 公式見解（2014）"
+      sourceUrl="https://psych.or.jp/opinion/bl-personality/"
+    />
+
+    {/* ========== TOP5 ランキング ========== */}
+    <section class="bm-section" aria-labelledby="bm-top5-h2">
+      <h2 id="bm-top5-h2" class="bm-h2">血液型相性ランキング TOP5（最高相性ペア）</h2>
+      <p class="bm-lead">
+        全10ペアの相性スコアを高い順に並べました。
+        スコアは能見正比古（1971）の相性論を「文化的分類」として参照した傾向値です。
+        科学的に厳密な相関は限定的です（日本心理学会 2014）。
+      </p>
+      <ol class="bm-ranking-list">
+        {top5.map((pair, idx) => {
+          const color = catColors[pair.category] ?? '#6b7280';
+          const bg = catBgs[pair.category] ?? '#f9fafb';
+          return (
+            <li class="bm-ranking-item" style={`border-left: 5px solid ${color}; background: ${bg};`}>
+              <div class="bm-ranking-num-block" style={`color: ${color};`}>
+                <span class="bm-ranking-pos">{idx + 1}</span>
+                <span class="bm-ranking-pos-label">位</span>
+              </div>
+              <div class="bm-ranking-info">
+                <div class="bm-ranking-header">
+                  <span class="bm-ranking-pair" style={`color: ${color};`}>
+                    {typeLabels[pair.type1]} × {typeLabels[pair.type2]}
+                  </span>
+                  <span class="bm-ranking-score" style={`color: ${color};`}>{pair.score}点</span>
+                  <span class="bm-ranking-cat">{getCategoryLabel(pair.category)}</span>
+                </div>
+                <p class="bm-ranking-summary">{pair.oneLineSummary}</p>
+                <p class="bm-ranking-detail">{pair.detailDescription}</p>
+                <div class="bm-ranking-scenes">
+                  <div class="bm-ranking-scene">
+                    <span class="bm-scene-label">恋愛</span>
+                    <p class="bm-scene-text">{pair.loveCompat}</p>
+                  </div>
+                  <div class="bm-ranking-scene">
+                    <span class="bm-scene-label">友人</span>
+                    <p class="bm-scene-text">{pair.friendCompat}</p>
+                  </div>
+                  <div class="bm-ranking-scene">
+                    <span class="bm-scene-label">仕事</span>
+                    <p class="bm-scene-text">{pair.workCompat}</p>
+                  </div>
+                </div>
+              </div>
+            </li>
+          );
+        })}
+      </ol>
+    </section>
+
+    {/* ========== WORST5（学び合いペア） ========== */}
+    <section class="bm-section" aria-labelledby="bm-worst5-h2">
+      <h2 id="bm-worst5-h2" class="bm-h2">学び合いペアランキング（WORST5）</h2>
+      <div class="bm-worst-note" role="note">
+        <p>
+          本サイトでは「相性が悪い」という表現は使いません。
+          スコアが低い組み合わせは<strong>「最大の学び合いペア」</strong>として位置づけています。
+          違うスタイルがあるからこそ、互いの視野を広げ合える関係になれます。
+        </p>
+      </div>
+      <ol class="bm-ranking-list">
+        {worst5.map((pair, idx) => {
+          const color = catColors[pair.category] ?? '#6b7280';
+          const bg = catBgs[pair.category] ?? '#f9fafb';
+          return (
+            <li class="bm-ranking-item" style={`border-left: 5px solid ${color}; background: ${bg};`}>
+              <div class="bm-ranking-num-block" style={`color: ${color};`}>
+                <span class="bm-ranking-pos">{idx + 1}</span>
+              </div>
+              <div class="bm-ranking-info">
+                <div class="bm-ranking-header">
+                  <span class="bm-ranking-pair" style={`color: ${color};`}>
+                    {typeLabels[pair.type1]} × {typeLabels[pair.type2]}
+                  </span>
+                  <span class="bm-ranking-score" style={`color: ${color};`}>{pair.score}点</span>
+                  <span class="bm-ranking-cat">{getCategoryLabel(pair.category)}</span>
+                </div>
+                <p class="bm-ranking-summary">{pair.oneLineSummary}</p>
+                <p class="bm-ranking-detail">{pair.growthPoint}</p>
+              </div>
+            </li>
+          );
+        })}
+      </ol>
+    </section>
+
+    {/* ========== タイプ別最高相性 ========== */}
+    <section class="bm-section" aria-labelledby="bm-type-best-h2">
+      <h2 id="bm-type-best-h2" class="bm-h2">タイプ別 最高相性ペア・成長機会ペア</h2>
+      <p class="bm-lead">
+        各血液型の「スコア最高」ペアと「最も異なるスタイルを持つ」ペアを示します。
+      </p>
+      <div class="bm-type-best-grid">
+        {BLOOD_TYPES.map((type) => {
+          const best = typeBestMatch.find((b) => b.type === type)!;
+          const growth = typeGrowthMatch.find((g) => g.type === type)!;
+          const bestColor = catColors[best.best.category] ?? '#6b7280';
+          const bestBg = catBgs[best.best.category] ?? '#f9fafb';
+          const growthColor = catColors[growth.growth.category] ?? '#6b7280';
+          const growthBg = catBgs[growth.growth.category] ?? '#f9fafb';
+          return (
+            <div class="bm-type-best-card">
+              <div class="bm-type-best-header">
+                <div class="bm-type-best-badge">{typeLabels[type]}</div>
+                <h3 class="bm-type-best-name">{typeLabels[type]} の相性まとめ</h3>
+              </div>
+              <div class="bm-type-best-row" style={`background: ${bestBg}; border-left: 3px solid ${bestColor};`}>
+                <span class="bm-type-best-label" style={`color: ${bestColor};`}>最高相性</span>
+                <div class="bm-type-best-content">
+                  <span class="bm-type-best-partner" style={`color: ${bestColor};`}>
+                    {typeLabels[type]} × {typeLabels[best.partner]}（{best.best.score}点）
+                  </span>
+                  <p class="bm-type-best-text">{best.best.oneLineSummary}</p>
+                </div>
+              </div>
+              <div class="bm-type-best-row" style={`background: ${growthBg}; border-left: 3px solid ${growthColor};`}>
+                <span class="bm-type-best-label" style={`color: ${growthColor};`}>学び合いペア</span>
+                <div class="bm-type-best-content">
+                  <span class="bm-type-best-partner" style={`color: ${growthColor};`}>
+                    {typeLabels[type]} × {typeLabels[growth.partner]}（{growth.growth.score}点）
+                  </span>
+                  <p class="bm-type-best-text">{growth.growth.growthPoint}</p>
+                </div>
+              </div>
+              <div class="bm-type-best-top3">
+                <p class="bm-type-best-top3-title">ベスト3：</p>
+                {allTypesBest3.find((d) => d.type === type)!.best3.map((p) => {
+                  const partner = p.type1 === type ? p.type2 : p.type1;
+                  const c = catColors[p.category] ?? '#6b7280';
+                  return (
+                    <span class="bm-type-best-top3-item" style={`color: ${c};`}>
+                      {typeLabels[partner]}（{p.score}点）
+                    </span>
+                  );
+                })}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </section>
+
+    {/* ========== シーン別ベストマッチ ========== */}
+    <section class="bm-section" aria-labelledby="bm-scene-h2">
+      <h2 id="bm-scene-h2" class="bm-h2">シーン別ベストマッチ（恋愛・友人・仕事）</h2>
+      <p class="bm-lead">
+        各タイプの恋愛・友人・仕事 3シーンでの相性傾向を比較します。
+        すべてのスコアは日本の血液型文化に基づく傾向値です。
+      </p>
+      <div class="bm-scene-section">
+        <h3 class="bm-scene-h3">恋愛シーン ベストマッチ</h3>
+        <div class="bm-scene-grid">
+          {BLOOD_TYPES.map((type) => {
+            const sorted = BLOOD_TYPES.map((p) => ({
+              partner: p,
+              compat: getCompatibility(type, p),
+            })).sort((a, b) => b.compat.score - a.compat.score);
+            const top = sorted[0];
+            const color = catColors[top.compat.category] ?? '#6b7280';
+            const bg = catBgs[top.compat.category] ?? '#f9fafb';
+            return (
+              <div class="bm-scene-card" style={`border-top: 3px solid ${color};`}>
+                <div class="bm-scene-type">{typeLabels[type]}</div>
+                <div class="bm-scene-best-pair" style={`color: ${color};`}>
+                  → {typeLabels[top.partner]}（{top.compat.score}点）
+                </div>
+                <p class="bm-scene-text" style={`background: ${bg};`}>{top.compat.loveCompat}</p>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+      <div class="bm-scene-section">
+        <h3 class="bm-scene-h3">友人シーン ベストマッチ</h3>
+        <div class="bm-scene-grid">
+          {BLOOD_TYPES.map((type) => {
+            const sorted = BLOOD_TYPES.map((p) => ({
+              partner: p,
+              compat: getCompatibility(type, p),
+            })).sort((a, b) => b.compat.score - a.compat.score);
+            const top = sorted[0];
+            const color = catColors[top.compat.category] ?? '#6b7280';
+            const bg = catBgs[top.compat.category] ?? '#f9fafb';
+            return (
+              <div class="bm-scene-card" style={`border-top: 3px solid ${color};`}>
+                <div class="bm-scene-type">{typeLabels[type]}</div>
+                <div class="bm-scene-best-pair" style={`color: ${color};`}>
+                  → {typeLabels[top.partner]}（{top.compat.score}点）
+                </div>
+                <p class="bm-scene-text" style={`background: ${bg};`}>{top.compat.friendCompat}</p>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+      <div class="bm-scene-section">
+        <h3 class="bm-scene-h3">仕事シーン ベストマッチ</h3>
+        <div class="bm-scene-grid">
+          {BLOOD_TYPES.map((type) => {
+            const sorted = BLOOD_TYPES.map((p) => ({
+              partner: p,
+              compat: getCompatibility(type, p),
+            })).sort((a, b) => b.compat.score - a.compat.score);
+            const top = sorted[0];
+            const color = catColors[top.compat.category] ?? '#6b7280';
+            const bg = catBgs[top.compat.category] ?? '#f9fafb';
+            return (
+              <div class="bm-scene-card" style={`border-top: 3px solid ${color};`}>
+                <div class="bm-scene-type">{typeLabels[type]}</div>
+                <div class="bm-scene-best-pair" style={`color: ${color};`}>
+                  → {typeLabels[top.partner]}（{top.compat.score}点）
+                </div>
+                <p class="bm-scene-text" style={`background: ${bg};`}>{top.compat.workCompat}</p>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+
+    {/* ========== 注意事項・ブラハラ ========== */}
+    <section class="bm-section" aria-labelledby="bm-caution-h2">
+      <h2 id="bm-caution-h2" class="bm-h2">血液型ランキングを使う際の注意点</h2>
+      <div class="bm-harassment-box" role="alert" aria-label="血液型ハラスメントの警告">
+        <p class="bm-harassment-lead">
+          血液型相性ランキングは「話題のきっかけ・自己理解のヒント」として使うものです。
+          以下の使い方は推奨しません。
+        </p>
+        <ul class="bm-harassment-list">
+          <li>ランキング上位の血液型の人だけと交際・友人関係を築こうとする</li>
+          <li>採用・就職の面接で血液型を確認し判断材料にする（採用差別の可能性）</li>
+          <li>スコアが低い相手を「相性が悪い」と決めつけて排除する</li>
+          <li>結婚相手を血液型スコアだけで判断する</li>
+        </ul>
+        <div class="bm-disclaimer-box" role="note">
+          <p class="bm-disclaimer-text">{bcMeta.disclaimer}</p>
+        </div>
+      </div>
+    </section>
+
+    {/* ========== 関連ページ ========== */}
+    <section class="bm-section" aria-labelledby="bm-related-h2">
+      <h2 id="bm-related-h2" class="bm-h2">関連ページ・もっと詳しく調べる</h2>
+      <div class="bm-related-grid">
+        <a href="/diagnosis/blood-compat/" class="bm-related-card">
+          <h3 class="bm-related-title">血液型相性診断【完全版】</h3>
+          <p class="bm-related-desc">全10ペアのスコア・仕事・恋愛・友人相性・4×4マトリクスを完全収録</p>
+          <span class="bm-related-link">詳しく見る →</span>
+        </a>
+        <a href="/diagnosis/blood-compat/tool/" class="bm-related-card">
+          <h3 class="bm-related-title">血液型相性診断ツール</h3>
+          <p class="bm-related-desc">2タイプを選ぶだけで即表示。無料・登録不要</p>
+          <span class="bm-related-link">ツールを使う →</span>
+        </a>
+        <a href="/diagnosis/blood-compat/friend/" class="bm-related-card">
+          <h3 class="bm-related-title">血液型相性【友達編】</h3>
+          <p class="bm-related-desc">友人関係における4タイプの付き合い方と全16ペアの友情相性</p>
+          <span class="bm-related-link">友達相性を見る →</span>
+        </a>
+        <a href="/diagnosis/blood-type/love/" class="bm-related-card">
+          <h3 class="bm-related-title">血液型×恋愛</h3>
+          <p class="bm-related-desc">4タイプの恋愛傾向・相性・恋愛での強みと気をつけたい傾向</p>
+          <span class="bm-related-link">恋愛傾向を見る →</span>
+        </a>
+        <a href="/diagnosis/mbti-compat/" class="bm-related-card">
+          <h3 class="bm-related-title">MBTI相性一覧</h3>
+          <p class="bm-related-desc">心理学的根拠に基づく16タイプ相性分析</p>
+          <span class="bm-related-link">MBTI相性を見る →</span>
+        </a>
+      </div>
+    </section>
+
+    {/* ========== FAQ ========== */}
+    <section class="bm-section" aria-labelledby="bm-faq-h2">
+      <h2 id="bm-faq-h2" class="bm-h2">よくある質問（FAQ）</h2>
+      <dl class="bm-faq-list">
+        {faqs.map(({ question, answer }) => (
+          <div class="bm-faq-item">
+            <dt class="bm-faq-q">
+              <span class="bm-faq-q-icon" aria-hidden="true">Q</span>
+              {question}
+            </dt>
+            <dd class="bm-faq-a">
+              <span class="bm-faq-a-icon" aria-hidden="true">A</span>
+              <span set:html={answer.replace(
+                /(https?:\/\/[^\s）]+)/g,
+                '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>'
+              )} />
+            </dd>
+          </div>
+        ))}
+      </dl>
+    </section>
+
+    {/* ========== ScienceNote ========== */}
+    <ScienceNote
+      basisText="古川竹二（1927）「血液型による気質の研究」・能見正比古（1971）の文化的研究・日本心理学会（2014）公式見解・Sakamoto & Yamazaki（2004）International Journal of Psychology 39(4)を参照"
+      basisUrl="https://psych.or.jp/opinion/bl-personality/"
+      basisLabel="日本心理学会 公式見解（2014）"
+      notMedical={true}
+      updatedAt={UPDATED_AT}
+      additionalNote="相性スコアは日本の血液型文化における文化的分類に基づく傾向値です。科学的に血液型と性格の有意な統計的相関は認められていません（日本心理学会 2014）。"
+    />
+
+    {/* ========== ReferenceList ========== */}
+    <ReferenceList references={bcMeta.references} confirmedAt={UPDATED_AT} />
+  </Container>
+</BaseLayout>
+
+<style>
+  :root {
+    --bm-primary: #e84393;
+    --bm-text: var(--sn-text, #1f2937);
+    --bm-muted: var(--sn-muted, #6b7280);
+    --bm-border: var(--sn-border, #e5e7eb);
+    --bm-surface: var(--sn-surface, #f9fafb);
+    --bm-radius: 12px;
+  }
+
+  .bm-hero {
+    background: linear-gradient(135deg, #fdf2f8 0%, #fce7f3 50%, #f9fafb 100%);
+    padding: 3rem 0 2rem;
+    border-bottom: 1px solid var(--bm-border);
+  }
+  .bm-hero-inner { text-align: center; }
+  .bm-hero-badge {
+    display: inline-block;
+    background: rgba(232, 67, 147, 0.1);
+    color: var(--bm-primary);
+    border: 1px solid rgba(232, 67, 147, 0.3);
+    border-radius: 999px;
+    padding: 0.3rem 1rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+  }
+  .bm-hero-h1 {
+    font-size: clamp(1.45rem, 4.5vw, 2.1rem);
+    font-weight: 800;
+    line-height: 1.3;
+    color: var(--bm-text);
+    margin: 0 0 0.8rem;
+  }
+  .bm-hero-meta {
+    display: block;
+    font-size: clamp(0.88rem, 2.5vw, 1.05rem);
+    font-weight: 600;
+    color: var(--bm-primary);
+  }
+  .bm-hero-catch { font-size: 1rem; color: var(--bm-muted); line-height: 1.8; margin: 0 0 1rem; }
+  .bm-hero-stats {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+  }
+  .bm-stat { font-size: 0.95rem; font-weight: 700; }
+  .bm-stat strong { font-size: 1.3rem; color: var(--bm-primary); }
+  .bm-stat-sep { color: var(--bm-muted); }
+  .bm-hero-sub { font-size: 0.8rem; color: var(--bm-muted); margin: 0; }
+
+  .bm-section { margin: 3rem 0; }
+  .bm-h2 {
+    font-size: clamp(1.15rem, 3vw, 1.45rem);
+    font-weight: 800;
+    color: var(--bm-text);
+    margin: 0 0 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--bm-primary);
+  }
+  .bm-lead { font-size: 0.97rem; line-height: 1.8; color: var(--bm-text); margin: 0 0 1.2rem; }
+
+  .bm-aio-block {
+    background: #fdf2f8;
+    border: 1px solid rgba(232, 67, 147, 0.2);
+    border-radius: var(--bm-radius);
+    padding: 1.2rem 1.5rem;
+    margin: 1.5rem 0 2rem;
+  }
+  .bm-aio-title { font-weight: 700; font-size: 0.95rem; color: var(--bm-primary); margin: 0 0 0.6rem; }
+  .bm-aio-list { margin: 0 0 0.8rem; padding-left: 1.4rem; font-size: 0.92rem; line-height: 1.7; color: var(--bm-text); }
+  .bm-aio-updated { font-size: 0.8rem; color: var(--bm-muted); margin: 0; }
+  .bm-aio-updated a { color: var(--bm-primary); }
+
+  /* ========== ランキングリスト ========== */
+  .bm-ranking-list { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 1.2rem; }
+  .bm-ranking-item {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+    padding: 1.2rem 1.4rem;
+    border-radius: 0 var(--bm-radius) var(--bm-radius) 0;
+  }
+  .bm-ranking-num-block { display: flex; align-items: baseline; gap: 0.1rem; flex-shrink: 0; width: 2.4rem; }
+  .bm-ranking-pos { font-size: 2rem; font-weight: 900; line-height: 1; }
+  .bm-ranking-pos-label { font-size: 0.75rem; font-weight: 700; }
+  .bm-ranking-info { flex: 1; }
+  .bm-ranking-header { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 0.3rem; }
+  .bm-ranking-pair { font-size: 1.05rem; font-weight: 800; }
+  .bm-ranking-score { font-size: 0.9rem; font-weight: 700; }
+  .bm-ranking-cat { font-size: 0.78rem; color: var(--bm-muted); }
+  .bm-ranking-summary { font-size: 0.9rem; font-weight: 600; color: var(--bm-text); margin: 0 0 0.5rem; }
+  .bm-ranking-detail { font-size: 0.87rem; line-height: 1.7; color: var(--bm-text); margin: 0 0 0.8rem; white-space: pre-line; }
+  .bm-ranking-scenes { display: flex; flex-direction: column; gap: 0.5rem; }
+  .bm-ranking-scene { display: flex; gap: 0.5rem; align-items: flex-start; }
+  .bm-scene-label {
+    background: var(--bm-primary);
+    color: #fff;
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 0.1rem 0.5rem;
+    border-radius: 4px;
+    white-space: nowrap;
+    flex-shrink: 0;
+    margin-top: 0.2rem;
+  }
+  .bm-scene-text { font-size: 0.85rem; line-height: 1.65; color: var(--bm-text); margin: 0; white-space: pre-line; }
+
+  /* ========== WORST5 ========== */
+  .bm-worst-note {
+    background: #f0fdf4;
+    border: 1px solid #a7f3d0;
+    border-radius: 8px;
+    padding: 0.9rem 1.2rem;
+    margin-bottom: 1rem;
+    font-size: 0.92rem;
+    line-height: 1.7;
+    color: var(--bm-text);
+  }
+  .bm-worst-note p { margin: 0; }
+
+  /* ========== タイプ別最高相性 ========== */
+  .bm-type-best-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1rem;
+  }
+  .bm-type-best-card {
+    background: #fff;
+    border: 1px solid var(--bm-border);
+    border-radius: var(--bm-radius);
+    padding: 1.2rem;
+  }
+  .bm-type-best-header {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    margin-bottom: 0.8rem;
+  }
+  .bm-type-best-badge {
+    width: 44px;
+    height: 44px;
+    background: var(--bm-primary);
+    color: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.88rem;
+    font-weight: 800;
+    flex-shrink: 0;
+  }
+  .bm-type-best-name { font-size: 0.95rem; font-weight: 700; color: var(--bm-text); margin: 0; }
+  .bm-type-best-row {
+    display: flex;
+    gap: 0.6rem;
+    align-items: flex-start;
+    padding: 0.7rem 0.9rem;
+    border-radius: 0 8px 8px 0;
+    margin-bottom: 0.5rem;
+  }
+  .bm-type-best-label { font-size: 0.72rem; font-weight: 700; white-space: nowrap; flex-shrink: 0; padding-top: 0.2rem; }
+  .bm-type-best-content { flex: 1; }
+  .bm-type-best-partner { font-size: 0.88rem; font-weight: 700; display: block; margin-bottom: 0.2rem; }
+  .bm-type-best-text { font-size: 0.82rem; line-height: 1.6; color: var(--bm-text); margin: 0; }
+  .bm-type-best-top3 { display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap; margin-top: 0.5rem; }
+  .bm-type-best-top3-title { font-size: 0.78rem; color: var(--bm-muted); margin: 0; white-space: nowrap; }
+  .bm-type-best-top3-item { font-size: 0.82rem; font-weight: 700; }
+
+  /* ========== シーン別 ========== */
+  .bm-scene-section { margin-bottom: 1.5rem; }
+  .bm-scene-h3 {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--bm-text);
+    margin: 0 0 0.8rem;
+    padding: 0.4rem 0.8rem;
+    background: var(--bm-surface);
+    border-left: 4px solid var(--bm-primary);
+    border-radius: 0 6px 6px 0;
+  }
+  .bm-scene-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 0.8rem;
+  }
+  .bm-scene-card {
+    background: #fff;
+    border: 1px solid var(--bm-border);
+    border-radius: 8px;
+    padding: 0.9rem;
+  }
+  .bm-scene-type { font-size: 1rem; font-weight: 800; color: var(--bm-text); margin-bottom: 0.3rem; }
+  .bm-scene-best-pair { font-size: 0.9rem; font-weight: 700; margin-bottom: 0.5rem; }
+  .bm-scene-text {
+    font-size: 0.83rem;
+    line-height: 1.65;
+    color: var(--bm-text);
+    margin: 0;
+    padding: 0.5rem 0.7rem;
+    border-radius: 6px;
+    white-space: pre-line;
+  }
+
+  /* ========== 注意事項 ========== */
+  .bm-harassment-box {
+    background: #fff7ed;
+    border: 1.5px solid #f59e0b;
+    border-radius: var(--bm-radius);
+    padding: 1.2rem 1.5rem;
+  }
+  .bm-harassment-lead { font-size: 0.95rem; line-height: 1.75; margin: 0 0 0.8rem; }
+  .bm-harassment-list { margin: 0 0 0.8rem; padding-left: 1.4rem; font-size: 0.9rem; line-height: 1.75; color: var(--bm-text); }
+  .bm-disclaimer-box { background: #fefce8; border: 1px solid #fde68a; border-radius: 8px; padding: 0.8rem 1rem; margin-top: 0.8rem; }
+  .bm-disclaimer-text { font-size: 0.83rem; color: #92400e; line-height: 1.7; margin: 0; }
+
+  /* ========== 関連ページ ========== */
+  .bm-related-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+  .bm-related-card {
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    border: 1.5px solid var(--bm-border);
+    border-radius: var(--bm-radius);
+    padding: 1.1rem;
+    text-decoration: none;
+    color: var(--bm-text);
+    transition: border-color 0.15s;
+  }
+  .bm-related-card:hover { border-color: var(--bm-primary); }
+  .bm-related-title { font-size: 0.95rem; font-weight: 700; margin: 0 0 0.4rem; }
+  .bm-related-desc { font-size: 0.83rem; line-height: 1.6; color: var(--bm-muted); margin: 0 0 0.6rem; flex: 1; }
+  .bm-related-link { font-size: 0.83rem; font-weight: 700; color: var(--bm-primary); }
+
+  /* ========== FAQ ========== */
+  .bm-faq-list { display: flex; flex-direction: column; gap: 1rem; }
+  .bm-faq-item {
+    background: #fff;
+    border: 1px solid var(--bm-border);
+    border-radius: var(--bm-radius);
+    padding: 1.2rem;
+  }
+  .bm-faq-q {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    font-weight: 700;
+    font-size: 0.97rem;
+    margin-bottom: 0.6rem;
+  }
+  .bm-faq-q-icon {
+    background: var(--bm-primary);
+    color: #fff;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.78rem;
+    font-weight: 800;
+    flex-shrink: 0;
+  }
+  .bm-faq-a {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    font-size: 0.92rem;
+    line-height: 1.75;
+    margin: 0;
+  }
+  .bm-faq-a-icon {
+    background: #d1fae5;
+    color: #065f46;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.78rem;
+    font-weight: 800;
+    flex-shrink: 0;
+  }
+</style>

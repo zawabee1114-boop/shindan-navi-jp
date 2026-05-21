@@ -1,0 +1,806 @@
+---
+/**
+ * 血液型×仕事ページ
+ * KW: 血液型 仕事 / 血液型 仕事スタイル
+ *
+ * 学術根拠:
+ * - 古川竹二 (1927) 「血液型による気質の研究」心理学研究
+ *   https://www.jstage.jst.go.jp/browse/psycholres
+ * - 能見正比古 (1971) 『血液型でわかる相性』青春出版社
+ *   https://www.seishun.co.jp/
+ * - Sakamoto A, Yamazaki K (2004) International Journal of Psychology 39(4)
+ *   https://doi.org/10.1080/00207590344000248
+ * - 日本心理学会 公式見解 (2014)
+ *   https://psych.or.jp/opinion/bl-personality/
+ *
+ * 禁止事項:
+ * - 採用・人事評価での血液型使用を推奨する表現
+ * - 特定職種への断定的な推奨
+ * - 医療・精神疾患言及
+ *
+ * 確認日: 2026-05-21
+ */
+import BaseLayout from '../../../../layouts/BaseLayout.astro';
+import Container from '../../../../components/Container.astro';
+import { meta as bcMeta, BLOOD_TYPES } from '../../../../data/diagnoses/blood-compat/meta';
+import { typesDetail } from '../../../../data/diagnoses/blood-compat/types-detail';
+import { getCompatibility, getCategoryLabel } from '../../../../data/diagnoses/blood-compat/results';
+import TldrBlock from '../../../../components/TldrBlock.astro';
+import ReferenceList from '../../../../components/ReferenceList.astro';
+import ScienceNote from '../../../../components/ScienceNote.astro';
+
+const SITE_URL = 'https://shindan-navi.jp';
+const PAGE_URL = `${SITE_URL}/diagnosis/blood-type/work/`;
+const UPDATED_AT = '2026-05-21';
+
+const pageTitle = '血液型と仕事スタイル【A・B・O・AB型の傾向と職場での付き合い方】｜診断ナビ';
+const pageDesc = '血液型と仕事スタイルの関係を解説。A型・B型・O型・AB型それぞれの仕事の進め方・強み・職種傾向を紹介。ブラハラ警告と採用NG明示付き。古川（1927）・能見（1971）・日本心理学会（2014）の見解を踏まえた公正な解説。';
+
+// 4タイプの仕事詳細データ
+const workData = [
+  {
+    type: 'A' as const,
+    detail: typesDetail['A'],
+    workStyle: typesDetail['A'].workStyle,
+    jobTrends: [
+      '品質管理・監査・内部統制',
+      '会計・経理・税理士',
+      '編集・校正・文章作成',
+      '医療事務・看護・介護職サポート',
+      '教育・学術研究',
+    ],
+    bossStyle: '方針と期待値を明確にしてくれると動きやすいです。急な変更より事前の共有を大切にする傾向があります。',
+    subordinateStyle: '丁寧に仕事をする分、完璧主義が出て自分を追い込む場面があります。「これで十分」という言葉が助けになります。',
+    colleagueStyle: '約束を守り、細部まで確認する姿勢があります。役割分担を明確にすると、最大限に力を発揮できます。',
+    stressPattern: '理想と現実のギャップ・急な変更・マナーを守らない言動がストレスになりやすい傾向があります。',
+  },
+  {
+    type: 'B' as const,
+    detail: typesDetail['B'],
+    workStyle: typesDetail['B'].workStyle,
+    jobTrends: [
+      'クリエイター・デザイナー・アーティスト',
+      'エンジニア・プログラマー（個人裁量が大きい環境）',
+      '起業家・フリーランス',
+      '研究・開発・商品企画',
+      'スポーツ・エンターテインメント系',
+    ],
+    bossStyle: '細かいルールより目標と自由度を示してくれると力を発揮します。ミクロな管理より大きな方向性の共有が合います。',
+    subordinateStyle: '型破りなアイデアを持っていますが、段取りの管理が苦手な場合があります。発想は尊重しつつ、実行計画を一緒に立てると機能します。',
+    colleagueStyle: '刺激的なアイデアを出す存在です。ペースの違いは事前に調整しておくと摩擦が減ります。',
+    stressPattern: '細かいルールへの縛り・同じことの繰り返し・自由度のない環境がストレスになりやすい傾向があります。',
+  },
+  {
+    type: 'O' as const,
+    detail: typesDetail['O'],
+    workStyle: typesDetail['O'].workStyle,
+    jobTrends: [
+      '営業・交渉・ビジネス開発',
+      '経営管理・プロジェクトマネジメント',
+      '教育・コーチング・人材育成',
+      '政治・行政・地域活動',
+      'スポーツ・チームスポーツ指導',
+    ],
+    bossStyle: '目標達成への推進力が高く、チームを引っ張る力があります。細部の管理より全体の方針判断が得意です。',
+    subordinateStyle: '指示が明確で目標意識が高い環境で力を発揮します。大雑把な面があるため、確認プロセスを設けると完成度が上がります。',
+    colleagueStyle: '社交的で周囲を盛り上げる存在です。競争心が強く出ることがあるため、協力の枠組みを共有すると機能します。',
+    stressPattern: '細かい書類作業の連続・評価が見えない環境・達成感のないルーティンがストレスになりやすい傾向があります。',
+  },
+  {
+    type: 'AB' as const,
+    detail: typesDetail['AB'],
+    workStyle: typesDetail['AB'].workStyle,
+    jobTrends: [
+      '企画・戦略立案・コンサルティング',
+      'データ分析・リサーチ・マーケティング',
+      '科学・哲学・社会学研究',
+      '芸術・音楽・独自の表現分野',
+      'IT・システム設計（独自アーキテクチャ）',
+    ],
+    bossStyle: '論理的な説明と独自の裁量を認めてくれると動きやすいです。感情より根拠で評価してくれる環境が合います。',
+    subordinateStyle: '独創的な発想力がありますが、二面性があり調子の波がある場合があります。状態を確認しながら関わると力を引き出せます。',
+    colleagueStyle: '知的な会話と独自の視点をもたらします。少人数の深い協力関係を好む傾向があるため、無理に広い社交を求めないほうが機能します。',
+    stressPattern: '根拠なく感情的に動く環境・単純作業の繰り返し・自分らしさを否定される場面がストレスになりやすい傾向があります。',
+  },
+];
+
+// 仕事相性テーブル（各タイプ×全タイプの仕事相性）
+const workCompatTable = BLOOD_TYPES.map((type) =>
+  BLOOD_TYPES.map((partner) => ({
+    partner,
+    compat: getCompatibility(type, partner),
+  }))
+);
+
+// FAQ 12問
+const faqs = [
+  {
+    question: '採用面接で血液型を聞いてもいいですか？',
+    answer:
+      '推奨しません。日本心理学会（2014年・https://psych.or.jp/opinion/bl-personality/）は「血液型と性格の科学的相関は認められない」と明言しており、血液型を採用基準に使うことは科学的根拠のない差別につながるリスクがあります。「B型は採用しない」「AB型は変わり者だから」といった判断はブラハラ（血液型ハラスメント）に該当します。公平採用の観点からも血液型の確認・使用は避けてください。',
+  },
+  {
+    question: '血液型で仕事の向き不向きは判断できますか？',
+    answer:
+      '科学的には判断できません。日本心理学会（2014年）は「血液型と性格の科学的統計的相関は認められない」と明言しています。本ページの「職種傾向」は日本の血液型性格分類文化に基づくイメージであり、実際の適性は個人の経験・スキル・価値観・興味によって決まります。血液型で職業選択を決めることは推奨しません。',
+  },
+  {
+    question: 'A型はどんな仕事が得意とされていますか？',
+    answer:
+      '日本の血液型性格分類（古川 1927・能見 1971）ではA型は「計画性・丁寧さ・責任感」の傾向が記述されています。こうしたイメージから、品質管理・経理・編集・教育などと親和性が高いとされることがあります。ただしこれは文化的イメージであり科学的根拠は限定的です（日本心理学会 2014）。個人差が非常に大きいことに注意してください。',
+  },
+  {
+    question: 'B型が仕事でよく言われる「マイペース」は事実ですか？',
+    answer:
+      '「B型=マイペース・自己中心的」は日本の血液型性格分類による文化的イメージです。日本心理学会（2014年）は「血液型と性格の科学的相関は限定的」と明言しており、B型の方が必ずマイペースであるという科学的根拠はありません。この血液型ステレオタイプでB型の方を職場で決めつけることはブラハラになります。',
+  },
+  {
+    question: 'O型はリーダー向きといわれるのはなぜですか？',
+    answer:
+      '日本の血液型性格分類（能見 1971）ではO型は「社交的・リーダーシップ・行動力」の傾向が記述されており、リーダーのイメージと結びついています。ただしこれは文化的イメージであり、O型の方が全員リーダー向きであるという科学的根拠はありません（日本心理学会 2014）。実際のリーダーシップは経験・環境・スキルによって形成されます。',
+  },
+  {
+    question: 'AB型は仕事で変わり者扱いされることがありますが、どう対応すればいいですか？',
+    answer:
+      '「AB型=変わり者」は日本の血液型性格分類による文化的イメージに過ぎず、科学的根拠は限定的です（日本心理学会 2014）。職場でこのようなレッテルを貼ることはブラハラに該当する可能性があります。もし職場で血液型を理由に不当な扱いを受けていると感じたら、ハラスメント相談窓口に相談することを検討してください。',
+  },
+  {
+    question: '職場での異なる血液型の同僚とうまく付き合うには？',
+    answer:
+      '血液型より「個人の仕事スタイル・価値観・コミュニケーション傾向」を実際に観察することが重要です。本サイトの仕事相性コメントは「会話のきっかけ・傾向の参考」として使うことを推奨します。相手を血液型で決めつけず、実際の対話を通じてお互いの働き方を理解し合うことが職場の人間関係を豊かにします。',
+  },
+  {
+    question: '上司が血液型で仕事を割り振るのは問題ですか？',
+    answer:
+      '問題があります。血液型を根拠に役割・業務・評価を決めることはブラハラ（血液型ハラスメント）に該当する可能性があります。日本心理学会（2014年）は「血液型と性格の科学的相関は認められない」と明言しており、科学的根拠のない基準で業務を割り振ることは不当な扱いにつながります。',
+  },
+  {
+    question: 'A型×B型の仕事コンビはうまくいきますか？',
+    answer:
+      '本サイトのスコアではA型×B型は45点（学び合いペア）です。A型の計画性とB型の発想力は、役割を適切に分けると補完的に機能する可能性があります。ただしこれは文化的傾向値であり、実際の関係は個人の性格・経験・チームの仕組みによって大きく変わります。スコアを固定的な判断基準にしないことを推奨します。',
+  },
+  {
+    question: '血液型と仕事のストレス反応に関係はありますか？',
+    answer:
+      '血液型とストレス反応の科学的相関は認められていません（日本心理学会 2014）。本ページの「ストレスパターン」は日本の血液型性格分類文化に基づくイメージです。実際のストレス反応は個人の性格・環境・経験・健康状態によって異なります。心身の不調がある場合は専門家（医師・カウンセラー）にご相談ください。',
+  },
+  {
+    question: '血液型と仕事の生産性・パフォーマンスに関係はありますか？',
+    answer:
+      '科学的相関は認められていません（日本心理学会 2014・Sakamoto & Yamazaki 2004）。業務パフォーマンスは、スキル・経験・モチベーション・職場環境・健康状態など多くの要因で決まります。血液型を生産性の判断基準にすることは科学的根拠のない評価につながり、ブラハラのリスクがあります。',
+  },
+  {
+    question: '仕事での血液型相性が悪い上司・同僚とどう関わればいいですか？',
+    answer:
+      '本サイトでは「相性が悪い」という表現は使いません。スコアが低い組み合わせは「学び合いペア」として位置づけています。異なるスタイルを持つ相手との仕事は、自分とは違う視点・アプローチを学べる機会です。コミュニケーションの形式（対話・メール・ドキュメント）を相手のスタイルに合わせて選ぶことが実践的なアドバイスです。',
+  },
+];
+
+// JSON-LD
+const jsonLdArticle = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  '@id': `${PAGE_URL}#article`,
+  mainEntityOfPage: { '@type': 'WebPage', '@id': PAGE_URL },
+  headline: '血液型と仕事スタイル【A・B・O・AB型の傾向と職場での付き合い方】',
+  description: pageDesc,
+  url: PAGE_URL,
+  datePublished: UPDATED_AT,
+  dateModified: UPDATED_AT,
+  inLanguage: 'ja',
+  author: { '@type': 'Organization', '@id': `${SITE_URL}/#organization`, name: '診断ナビ' },
+  publisher: { '@type': 'Organization', '@id': `${SITE_URL}/#organization`, name: '診断ナビ' },
+  citation: bcMeta.references.map((ref) => ({
+    '@type': ref.url.includes('doi.org') ? 'ScholarlyArticle' : 'Book',
+    name: ref.title,
+    author: ref.author,
+    datePublished: String(ref.year),
+    publisher: ref.publisher,
+    url: ref.url,
+  })),
+};
+
+const jsonLdFAQ = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  '@id': `${PAGE_URL}#faq`,
+  mainEntity: faqs.map(({ question, answer }) => ({
+    '@type': 'Question',
+    name: question,
+    acceptedAnswer: { '@type': 'Answer', text: answer },
+  })),
+};
+
+const jsonLdBreadcrumb = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  '@id': `${PAGE_URL}#breadcrumb`,
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'ホーム', item: SITE_URL },
+    { '@type': 'ListItem', position: 2, name: '診断一覧', item: `${SITE_URL}/diagnosis/` },
+    { '@type': 'ListItem', position: 3, name: '血液型相性診断', item: `${SITE_URL}/diagnosis/blood-compat/` },
+    { '@type': 'ListItem', position: 4, name: '血液型と仕事', item: PAGE_URL },
+  ],
+};
+
+const jsonLdAll = [jsonLdArticle, jsonLdFAQ, jsonLdBreadcrumb];
+
+const catColors: Record<string, string> = {
+  soulmate: '#8B5CF6',
+  good: '#10B981',
+  neutral: '#3B82F6',
+  growth: '#F59E0B',
+  challenge: '#EF4444',
+};
+const catBgs: Record<string, string> = {
+  soulmate: '#f3e8ff',
+  good: '#d1fae5',
+  neutral: '#dbeafe',
+  growth: '#fef3c7',
+  challenge: '#fee2e2',
+};
+
+const typeLabels: Record<string, string> = { A: 'A型', B: 'B型', O: 'O型', AB: 'AB型' };
+---
+
+<BaseLayout
+  title={pageTitle}
+  description={pageDesc}
+  canonical={PAGE_URL}
+  jsonLd={jsonLdAll}
+  ogType="article"
+  publishDate={UPDATED_AT}
+  lastUpdated={UPDATED_AT}
+  breadcrumbs={[
+    { name: '診断一覧', url: '/diagnosis/' },
+    { name: '血液型相性診断', url: '/diagnosis/blood-compat/' },
+    { name: '血液型と仕事', url: '/diagnosis/blood-type/work/' },
+  ]}
+>
+  {/* ========== ヒーロー ========== */}
+  <section class="bw-hero" aria-labelledby="bw-hero-h1">
+    <Container>
+      <div class="bw-hero-inner">
+        <div class="bw-hero-badge">古川竹二（1927）・能見正比古（1971）研究 + 日本心理学会見解</div>
+        <h1 id="bw-hero-h1" class="bw-hero-h1">
+          血液型と仕事スタイル<br />
+          <span class="bw-hero-meta">【A・B・O・AB型の傾向と職場での付き合い方】</span>
+        </h1>
+        <p class="bw-hero-catch">
+          4タイプの仕事スタイル・職種傾向・同僚・上司・部下との関わり方を解説。<br />
+          採用での血液型使用NG・ブラハラ警告付き
+        </p>
+        <div class="bw-hero-warning" role="alert" aria-label="重要な注意事項">
+          <span class="bw-warning-icon" aria-hidden="true">⚠️</span>
+          <p class="bw-warning-text">
+            <strong>採用・人事評価での血液型使用は推奨しません。</strong>
+            科学的根拠がなく、血液型ハラスメント（ブラハラ）につながるリスクがあります。
+          </p>
+        </div>
+        <p class="bw-hero-sub">
+          <time datetime={UPDATED_AT}>{UPDATED_AT}</time> 時点の情報
+        </p>
+      </div>
+    </Container>
+  </section>
+
+  <Container>
+    {/* ========== このページでわかること ========== */}
+    <div class="bw-aio-block" role="note" aria-label="このページでわかること">
+      <p class="bw-aio-title">このページでわかること</p>
+      <ul class="bw-aio-list">
+        <li>A・B・O・AB型 4タイプの仕事スタイル・強み・気をつけたい傾向</li>
+        <li>各タイプが活躍しやすい「職種傾向のイメージ」（断定でなく傾向として）</li>
+        <li>上司・部下・同僚が異なる血液型のときの関わり方のヒント</li>
+        <li>採用NG・ブラハラ警告と、日本心理学会（2014）の公式見解</li>
+      </ul>
+      <p class="bw-aio-updated">
+        参照元:
+        <a href="https://psych.or.jp/opinion/bl-personality/" target="_blank" rel="noopener noreferrer">日本心理学会（2014）</a>・
+        <a href="https://www.jstage.jst.go.jp/browse/psycholres" target="_blank" rel="noopener noreferrer">古川（1927）</a>・
+        <a href="https://doi.org/10.1080/00207590344000248" target="_blank" rel="noopener noreferrer">Sakamoto &amp; Yamazaki（2004）</a>
+        を確認済。
+      </p>
+    </div>
+
+    {/* ========== TldrBlock ========== */}
+    <TldrBlock
+      title="血液型と仕事 ポイントまとめ"
+      points={[
+        'A型仕事傾向: 計画性・丁寧さ・品質管理への高い意識。品質管理・経理・教育などのイメージと親和性あり（文化的傾向）',
+        'B型仕事傾向: 発想力・自由な思考・興味への没頭力。クリエイティブ・研究開発・起業家などのイメージと親和性あり（文化的傾向）',
+        'O型仕事傾向: リーダーシップ・社交性・推進力。営業・マネジメント・コーチングなどのイメージと親和性あり（文化的傾向）',
+        'AB型仕事傾向: 独創的な分析力・二面性による柔軟さ。企画・戦略・研究などのイメージと親和性あり（文化的傾向）',
+        '【絶対NG】採用・人事評価・昇進判断に血液型を使うことはブラハラ。日本心理学会（2014）は「血液型と性格の科学的相関は認められない」と明言',
+      ]}
+      updatedAt={UPDATED_AT}
+      sourceLabel="日本心理学会 公式見解（2014）"
+      sourceUrl="https://psych.or.jp/opinion/bl-personality/"
+    />
+
+    {/* ========== ブラハラ警告（強化版） ========== */}
+    <section class="bw-section" aria-labelledby="bw-harassment-h2">
+      <h2 id="bw-harassment-h2" class="bw-h2">採用・人事評価での血液型使用は禁止【重要】</h2>
+      <div class="bw-harassment-box" role="alert" aria-label="血液型ハラスメント警告">
+        <p class="bw-harassment-lead">
+          職場・採用で血液型を使う以下の行為はブラハラ（血液型ハラスメント）に該当する可能性があります。
+        </p>
+        <ul class="bw-harassment-list">
+          <li>「B型は採用しない」「AB型は変わり者だから管理職に向かない」と採用・昇進の判断に血液型を使う</li>
+          <li>「A型だから〇〇の仕事をやれ」と血液型を根拠に業務を割り振る</li>
+          <li>「O型のくせにリーダーシップがない」と血液型を持ち出して人格を否定する</li>
+          <li>入社書類・採用フォームに血液型の記入欄を設ける</li>
+          <li>面接で血液型を聞き、採用の合否に反映させる</li>
+        </ul>
+        <div class="bw-harassment-legal" role="note">
+          <p>
+            厚生労働省の「公正な採用選考」の基準では、採用に関係のない個人情報の収集は避けるべきとされています。
+            血液型は仕事能力・適性と科学的相関がないため（日本心理学会 2014・
+            <a href="https://psych.or.jp/opinion/bl-personality/" target="_blank" rel="noopener noreferrer">公式見解</a>）、
+            採用判断の基準として使用することは公正な採用の原則に反します。
+          </p>
+        </div>
+      </div>
+    </section>
+
+    {/* ========== 4タイプの仕事スタイル ========== */}
+    <section class="bw-section" aria-labelledby="bw-types-h2">
+      <h2 id="bw-types-h2" class="bw-h2">4タイプ別 仕事スタイルの傾向</h2>
+      <p class="bw-lead">
+        日本の血液型性格分類（古川 1927・能見 1971）に基づく仕事傾向のイメージです。
+        いずれも「文化的傾向のイメージ」であり、個人差が大きいことを前提にお読みください。
+        科学的に仕事能力・職種適性は血液型では測定できません（日本心理学会 2014）。
+      </p>
+
+      {workData.map((item) => (
+        <div class="bw-type-card" id={`work-type-${item.type}`}>
+          <div class="bw-type-header">
+            <div class="bw-type-badge">{typeLabels[item.type]}</div>
+            <div class="bw-type-title-block">
+              <h3 class="bw-type-name">{typesDetail[item.type].name}の仕事スタイル</h3>
+              <p class="bw-type-nickname">「{item.detail.nickname}」</p>
+            </div>
+          </div>
+
+          {/* 仕事スタイル基本 */}
+          <div class="bw-work-style-body">
+            <p class="bw-work-style-text">{item.workStyle}</p>
+          </div>
+
+          {/* 強み・気をつけたい傾向 */}
+          <div class="bw-type-grid">
+            <div class="bw-type-col">
+              <h4 class="bw-type-col-title bw-col-good">仕事での強みの傾向</h4>
+              <ul class="bw-type-list">
+                {item.detail.strengths.map((s) => <li>{s}</li>)}
+              </ul>
+            </div>
+            <div class="bw-type-col">
+              <h4 class="bw-type-col-title bw-col-care">気をつけたい傾向</h4>
+              <ul class="bw-type-list">
+                {item.detail.weaknesses.map((w) => <li>{w}</li>)}
+              </ul>
+            </div>
+          </div>
+
+          {/* 職種傾向（断定でなく「イメージ」として） */}
+          <div class="bw-job-trends">
+            <h4 class="bw-job-trends-title">
+              親和性があるとされる職種イメージ
+              <span class="bw-job-trends-note">（文化的傾向・個人差大・断定ではない）</span>
+            </h4>
+            <ul class="bw-job-list">
+              {item.jobTrends.map((job) => <li class="bw-job-item">{job}</li>)}
+            </ul>
+          </div>
+
+          {/* 上司・部下・同僚との付き合い方 */}
+          <div class="bw-relations">
+            <h4 class="bw-relations-title">職場での関わり方ヒント</h4>
+            <div class="bw-relations-grid">
+              <div class="bw-relation-card">
+                <div class="bw-relation-role">上司として</div>
+                <p class="bw-relation-text">{item.bossStyle}</p>
+              </div>
+              <div class="bw-relation-card">
+                <div class="bw-relation-role">部下・後輩として</div>
+                <p class="bw-relation-text">{item.subordinateStyle}</p>
+              </div>
+              <div class="bw-relation-card">
+                <div class="bw-relation-role">同僚として</div>
+                <p class="bw-relation-text">{item.colleagueStyle}</p>
+              </div>
+            </div>
+          </div>
+
+          {/* ストレスパターン */}
+          <div class="bw-stress-box" role="note">
+            <span class="bw-stress-label">ストレスになりやすい状況の傾向</span>
+            <p class="bw-stress-text">{item.stressPattern}</p>
+            <p class="bw-stress-note">※ 個人差が大きく、血液型のみで判断できません。心身の不調がある場合は専門家にご相談ください。</p>
+          </div>
+        </div>
+      ))}
+    </section>
+
+    {/* ========== 仕事相性テーブル ========== */}
+    <section class="bw-section" aria-labelledby="bw-compat-h2">
+      <h2 id="bw-compat-h2" class="bw-h2">職場での血液型相性コメント</h2>
+      <p class="bw-lead">
+        各タイプが異なる血液型の同僚と仕事する際の傾向コメントです。
+        「相性が悪い」表現は使わず、すべて「学び合いのポイント」として記述しています。
+      </p>
+      <div class="bw-compat-grid">
+        {BLOOD_TYPES.map((type, ti) => (
+          <div class="bw-compat-card">
+            <h3 class="bw-compat-type">{typeLabels[type]}と一緒に働くとき</h3>
+            {BLOOD_TYPES.map((partner) => {
+              const compat = getCompatibility(type, partner);
+              const color = catColors[compat.category] ?? '#6b7280';
+              const bg = catBgs[compat.category] ?? '#f9fafb';
+              return (
+                <div class="bw-compat-row" style={`border-left: 3px solid ${color}; background: ${bg};`}>
+                  <div class="bw-compat-header">
+                    <span class="bw-compat-pair" style={`color: ${color};`}>
+                      {typeLabels[type]} × {typeLabels[partner]}
+                    </span>
+                    <span class="bw-compat-score" style={`color: ${color};`}>{compat.score}点</span>
+                  </div>
+                  <p class="bw-compat-text">{compat.workCompat}</p>
+                </div>
+              );
+            })}
+          </div>
+        ))}
+      </div>
+    </section>
+
+    {/* ========== 関連ページ ========== */}
+    <section class="bw-section" aria-labelledby="bw-related-h2">
+      <h2 id="bw-related-h2" class="bw-h2">関連ページ</h2>
+      <div class="bw-related-grid">
+        <a href="/diagnosis/blood-compat/" class="bw-related-card">
+          <h3 class="bw-related-title">血液型相性診断【完全版】</h3>
+          <p class="bw-related-desc">全10ペアのスコア・仕事・恋愛・友人相性を網羅</p>
+          <span class="bw-related-link">詳しく見る →</span>
+        </a>
+        <a href="/diagnosis/blood-type/love/" class="bw-related-card">
+          <h3 class="bw-related-title">血液型×恋愛</h3>
+          <p class="bw-related-desc">4タイプの恋愛傾向・相性マトリクス・恋愛での強み</p>
+          <span class="bw-related-link">恋愛傾向を見る →</span>
+        </a>
+        <a href="/diagnosis/blood-compat/friend/" class="bw-related-card">
+          <h3 class="bw-related-title">血液型相性【友達編】</h3>
+          <p class="bw-related-desc">友人関係での4タイプの付き合い方と相性</p>
+          <span class="bw-related-link">友達相性を見る →</span>
+        </a>
+        <a href="/diagnosis/blood-compat/best-match/" class="bw-related-card">
+          <h3 class="bw-related-title">相性のいい血液型ランキング</h3>
+          <p class="bw-related-desc">TOP5・WORST5・シーン別ベストマッチ</p>
+          <span class="bw-related-link">ランキングを見る →</span>
+        </a>
+        <a href="/diagnosis/mbti-compat/" class="bw-related-card">
+          <h3 class="bw-related-title">MBTI相性一覧</h3>
+          <p class="bw-related-desc">心理学的根拠に基づく16タイプ相性分析</p>
+          <span class="bw-related-link">MBTI相性を見る →</span>
+        </a>
+      </div>
+    </section>
+
+    {/* ========== FAQ ========== */}
+    <section class="bw-section" aria-labelledby="bw-faq-h2">
+      <h2 id="bw-faq-h2" class="bw-h2">よくある質問（FAQ）</h2>
+      <dl class="bw-faq-list">
+        {faqs.map(({ question, answer }) => (
+          <div class="bw-faq-item">
+            <dt class="bw-faq-q">
+              <span class="bw-faq-q-icon" aria-hidden="true">Q</span>
+              {question}
+            </dt>
+            <dd class="bw-faq-a">
+              <span class="bw-faq-a-icon" aria-hidden="true">A</span>
+              <span set:html={answer.replace(
+                /(https?:\/\/[^\s）]+)/g,
+                '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>'
+              )} />
+            </dd>
+          </div>
+        ))}
+      </dl>
+    </section>
+
+    {/* ========== ScienceNote ========== */}
+    <ScienceNote
+      basisText="古川竹二（1927）「血液型による気質の研究」・能見正比古（1971）の文化的研究・日本心理学会（2014）公式見解・Sakamoto & Yamazaki（2004）International Journal of Psychology 39(4)を参照"
+      basisUrl="https://psych.or.jp/opinion/bl-personality/"
+      basisLabel="日本心理学会 公式見解（2014）"
+      notMedical={true}
+      updatedAt={UPDATED_AT}
+      additionalNote="血液型と仕事能力・職種適性の科学的相関は認められていません（日本心理学会 2014）。本ページは文化的分類に基づく傾向イメージを会話のきっかけとして提示しています。採用・人事評価への使用は推奨しません。"
+    />
+
+    {/* ========== ReferenceList ========== */}
+    <ReferenceList references={bcMeta.references} confirmedAt={UPDATED_AT} />
+  </Container>
+</BaseLayout>
+
+<style>
+  :root {
+    --bw-primary: #e84393;
+    --bw-text: var(--sn-text, #1f2937);
+    --bw-muted: var(--sn-muted, #6b7280);
+    --bw-border: var(--sn-border, #e5e7eb);
+    --bw-surface: var(--sn-surface, #f9fafb);
+    --bw-radius: 12px;
+  }
+
+  .bw-hero {
+    background: linear-gradient(135deg, #fdf2f8 0%, #fce7f3 50%, #f9fafb 100%);
+    padding: 3rem 0 2rem;
+    border-bottom: 1px solid var(--bw-border);
+  }
+  .bw-hero-inner { text-align: center; }
+  .bw-hero-badge {
+    display: inline-block;
+    background: rgba(232, 67, 147, 0.1);
+    color: var(--bw-primary);
+    border: 1px solid rgba(232, 67, 147, 0.3);
+    border-radius: 999px;
+    padding: 0.3rem 1rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+  }
+  .bw-hero-h1 {
+    font-size: clamp(1.4rem, 4.5vw, 2.1rem);
+    font-weight: 800;
+    line-height: 1.3;
+    color: var(--bw-text);
+    margin: 0 0 0.8rem;
+  }
+  .bw-hero-meta {
+    display: block;
+    font-size: clamp(0.85rem, 2.5vw, 1rem);
+    font-weight: 600;
+    color: var(--bw-primary);
+  }
+  .bw-hero-catch { font-size: 0.97rem; color: var(--bw-muted); line-height: 1.8; margin: 0 0 1rem; }
+  .bw-hero-warning {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    background: #fff7ed;
+    border: 1.5px solid #f59e0b;
+    border-radius: 8px;
+    padding: 0.8rem 1rem;
+    margin: 0.8rem auto 1rem;
+    max-width: 640px;
+    text-align: left;
+  }
+  .bw-warning-icon { font-size: 1.2rem; flex-shrink: 0; }
+  .bw-warning-text { font-size: 0.88rem; line-height: 1.7; color: #92400e; margin: 0; }
+  .bw-hero-sub { font-size: 0.8rem; color: var(--bw-muted); margin: 0; }
+
+  .bw-section { margin: 3rem 0; }
+  .bw-h2 {
+    font-size: clamp(1.15rem, 3vw, 1.45rem);
+    font-weight: 800;
+    color: var(--bw-text);
+    margin: 0 0 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--bw-primary);
+  }
+  .bw-lead { font-size: 0.97rem; line-height: 1.8; color: var(--bw-text); margin: 0 0 1.2rem; }
+
+  .bw-aio-block {
+    background: #fdf2f8;
+    border: 1px solid rgba(232, 67, 147, 0.2);
+    border-radius: var(--bw-radius);
+    padding: 1.2rem 1.5rem;
+    margin: 1.5rem 0 2rem;
+  }
+  .bw-aio-title { font-weight: 700; font-size: 0.95rem; color: var(--bw-primary); margin: 0 0 0.6rem; }
+  .bw-aio-list { margin: 0 0 0.8rem; padding-left: 1.4rem; font-size: 0.92rem; line-height: 1.7; color: var(--bw-text); }
+  .bw-aio-updated { font-size: 0.8rem; color: var(--bw-muted); margin: 0; }
+  .bw-aio-updated a { color: var(--bw-primary); }
+
+  /* ブラハラ警告 */
+  .bw-harassment-box {
+    background: #fff7ed;
+    border: 1.5px solid #f59e0b;
+    border-radius: var(--bw-radius);
+    padding: 1.2rem 1.5rem;
+  }
+  .bw-harassment-lead { font-size: 0.95rem; line-height: 1.75; margin: 0 0 0.8rem; color: var(--bw-text); font-weight: 600; }
+  .bw-harassment-list { margin: 0 0 0.8rem; padding-left: 1.4rem; font-size: 0.9rem; line-height: 1.8; color: var(--bw-text); }
+  .bw-harassment-legal {
+    background: #fefce8;
+    border: 1px solid #fde68a;
+    border-radius: 8px;
+    padding: 0.8rem 1rem;
+    font-size: 0.85rem;
+    line-height: 1.7;
+    color: #92400e;
+  }
+  .bw-harassment-legal p { margin: 0; }
+  .bw-harassment-legal a { color: #92400e; text-decoration: underline; }
+
+  /* タイプカード */
+  .bw-type-card {
+    background: #fff;
+    border: 1px solid var(--bw-border);
+    border-radius: var(--bw-radius);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  .bw-type-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; }
+  .bw-type-badge {
+    width: 56px;
+    height: 56px;
+    background: var(--bw-primary);
+    color: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    font-weight: 800;
+    flex-shrink: 0;
+  }
+  .bw-type-name { font-size: 1.1rem; font-weight: 800; color: var(--bw-text); margin: 0; }
+  .bw-type-nickname { font-size: 0.87rem; color: var(--bw-muted); margin: 0; }
+  .bw-work-style-body {
+    background: #fdf2f8;
+    border-left: 3px solid var(--bw-primary);
+    border-radius: 0 8px 8px 0;
+    padding: 0.9rem 1.1rem;
+    margin-bottom: 1rem;
+  }
+  .bw-work-style-text { font-size: 0.95rem; line-height: 1.8; color: var(--bw-text); margin: 0; white-space: pre-line; }
+  .bw-type-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.2rem; }
+  .bw-type-col-title { font-size: 0.82rem; font-weight: 700; margin: 0 0 0.5rem; padding: 0.2rem 0.5rem; border-radius: 4px; }
+  .bw-col-good { background: #d1fae5; color: #065f46; }
+  .bw-col-care { background: #fef3c7; color: #92400e; }
+  .bw-type-list { margin: 0; padding-left: 1.2rem; font-size: 0.87rem; line-height: 1.7; color: var(--bw-text); }
+
+  /* 職種傾向 */
+  .bw-job-trends {
+    background: #f8fafc;
+    border: 1px solid var(--bw-border);
+    border-radius: 8px;
+    padding: 0.9rem 1.1rem;
+    margin-bottom: 1.2rem;
+  }
+  .bw-job-trends-title { font-size: 0.88rem; font-weight: 700; color: var(--bw-text); margin: 0 0 0.6rem; }
+  .bw-job-trends-note { font-size: 0.75rem; color: var(--bw-muted); font-weight: 400; margin-left: 0.3rem; }
+  .bw-job-list { margin: 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 0.4rem; }
+  .bw-job-item {
+    background: #fff;
+    border: 1px solid var(--bw-border);
+    border-radius: 999px;
+    padding: 0.25rem 0.7rem;
+    font-size: 0.82rem;
+    color: var(--bw-text);
+  }
+
+  /* 関わり方ヒント */
+  .bw-relations { margin-bottom: 1rem; }
+  .bw-relations-title { font-size: 0.9rem; font-weight: 700; color: var(--bw-muted); margin: 0 0 0.7rem; }
+  .bw-relations-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.7rem; }
+  .bw-relation-card {
+    background: var(--bw-surface);
+    border: 1px solid var(--bw-border);
+    border-radius: 8px;
+    padding: 0.8rem;
+  }
+  .bw-relation-role {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--bw-primary);
+    margin-bottom: 0.4rem;
+  }
+  .bw-relation-text { font-size: 0.85rem; line-height: 1.65; color: var(--bw-text); margin: 0; }
+
+  /* ストレスボックス */
+  .bw-stress-box {
+    background: #fef9ec;
+    border: 1px solid #fde68a;
+    border-radius: 8px;
+    padding: 0.8rem 1rem;
+  }
+  .bw-stress-label { font-size: 0.78rem; font-weight: 700; color: #92400e; display: block; margin-bottom: 0.3rem; }
+  .bw-stress-text { font-size: 0.87rem; line-height: 1.65; color: var(--bw-text); margin: 0 0 0.4rem; }
+  .bw-stress-note { font-size: 0.78rem; color: var(--bw-muted); margin: 0; }
+
+  /* 仕事相性 */
+  .bw-compat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1rem; }
+  .bw-compat-card {
+    background: #fff;
+    border: 1px solid var(--bw-border);
+    border-radius: var(--bw-radius);
+    padding: 1.2rem;
+  }
+  .bw-compat-type { font-size: 0.97rem; font-weight: 700; color: var(--bw-text); margin: 0 0 0.8rem; }
+  .bw-compat-row {
+    padding: 0.7rem 0.9rem;
+    border-radius: 0 6px 6px 0;
+    margin-bottom: 0.5rem;
+  }
+  .bw-compat-header { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.2rem; }
+  .bw-compat-pair { font-size: 0.88rem; font-weight: 700; }
+  .bw-compat-score { font-size: 0.82rem; font-weight: 700; }
+  .bw-compat-text { font-size: 0.83rem; line-height: 1.65; color: var(--bw-text); margin: 0; white-space: pre-line; }
+
+  /* 関連ページ */
+  .bw-related-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; }
+  .bw-related-card {
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    border: 1.5px solid var(--bw-border);
+    border-radius: var(--bw-radius);
+    padding: 1.1rem;
+    text-decoration: none;
+    color: var(--bw-text);
+    transition: border-color 0.15s;
+  }
+  .bw-related-card:hover { border-color: var(--bw-primary); }
+  .bw-related-title { font-size: 0.95rem; font-weight: 700; margin: 0 0 0.4rem; }
+  .bw-related-desc { font-size: 0.83rem; line-height: 1.6; color: var(--bw-muted); margin: 0 0 0.6rem; flex: 1; }
+  .bw-related-link { font-size: 0.83rem; font-weight: 700; color: var(--bw-primary); }
+
+  /* FAQ */
+  .bw-faq-list { display: flex; flex-direction: column; gap: 1rem; }
+  .bw-faq-item {
+    background: #fff;
+    border: 1px solid var(--bw-border);
+    border-radius: var(--bw-radius);
+    padding: 1.2rem;
+  }
+  .bw-faq-q {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    font-weight: 700;
+    font-size: 0.97rem;
+    margin-bottom: 0.6rem;
+  }
+  .bw-faq-q-icon {
+    background: var(--bw-primary);
+    color: #fff;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.78rem;
+    font-weight: 800;
+    flex-shrink: 0;
+  }
+  .bw-faq-a {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    font-size: 0.92rem;
+    line-height: 1.75;
+    margin: 0;
+  }
+  .bw-faq-a-icon {
+    background: #d1fae5;
+    color: #065f46;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.78rem;
+    font-weight: 800;
+    flex-shrink: 0;
+  }
+
+  @media (max-width: 640px) {
+    .bw-type-grid { grid-template-columns: 1fr; }
+  }
+</style>
