@@ -18,6 +18,8 @@ import DiagnosisFlow from '../../../components/DiagnosisFlow';
 import { meta } from '../../../data/diagnoses/love-style/meta';
 import { questions } from '../../../data/diagnoses/love-style/questions';
 import { calculateResultTypeId } from '../../../data/diagnoses/love-style/results';
+import TldrBlock from '../../../components/TldrBlock.astro';
+import ReferenceList from '../../../components/ReferenceList.astro';
 
 const SITE_URL = 'https://shindan-navi.jp';
 const PAGE_URL = `${SITE_URL}/diagnosis/love-style/`;
@@ -85,8 +87,18 @@ const jsonLdQuiz = {
   })),
 };
 
-// FAQ 8問
+// FAQ 12問（8問→12問に拡充・AI Overview最適化・2026-05-21更新）
 const faqs = [
+  {
+    question: '恋愛スタイル診断とは何ですか？',
+    answer:
+      '恋愛スタイル診断とは、カナダの社会学者 J.A.Lee が1973年の著書「The Colors of Love」で提唱した恋愛類型論に基づく自己診断ツールです。情熱型（Eros）・遊戯型（Ludus）・友愛型（Storge）・実利型（Pragma）・感情型（Mania）・献身型（Agape）の6スタイルで恋愛傾向を分類します（参照: Lee JA (1973). The Colors of Love. New Press.）。',
+  },
+  {
+    question: '恋愛スタイル診断の科学的根拠は？',
+    answer:
+      'J.A.Lee（1973）の理論をもとに、Hendrick & Hendrick（1986）がLove Attitudes Scale（LAS）を開発・信頼性検証し、心理学研究で広く使用されています（参照: Hendrick C & Hendrick SS, 1986, Journal of Personality and Social Psychology, 50(2), 392-402）。本診断はその知見を参考に、日本語環境向けに設計した自己理解ツールです。',
+  },
   {
     question: '恋愛スタイルは変わることがありますか？',
     answer:
@@ -95,7 +107,7 @@ const faqs = [
   {
     question: '6タイプの違いを教えてください',
     answer:
-      '情熱型（Eros）：強い感情的惹かれを重視。遊戯型（Ludus）：自由と軽やかさを大切にする。友愛型（Storge）：友情から育まれる安定した愛。実利型（Pragma）：価値観・将来設計の一致を重視。感情型（Mania）：強い感情の波と深いつながりへの希求。献身型（Agape）：見返りを求めない深い愛情。（J.A.Lee 1973に基づく）',
+      '情熱型（Eros）：強い感情的惹かれを重視。遊戯型（Ludus）：自由と軽やかさを大切にする。友愛型（Storge）：友情から育まれる安定した愛。実利型（Pragma）：価値観・将来設計の一致を重視。感情型（Mania）：強い感情の波と深いつながりへの希求。献身型（Agape）：見返りを求めない深い愛情。（J.A.Lee 1973に基づく分類）',
   },
   {
     question: '自分の恋愛スタイルを知るメリットは何ですか？',
@@ -105,7 +117,7 @@ const faqs = [
   {
     question: '感情型（Mania）は依存傾向があるということですか？',
     answer:
-      'いいえ、そうではありません。感情型は「恋愛への真剣さと強い感情表現の傾向」を示す恋愛スタイルです。医学的な依存症や執着障害とは全く異なります。感情型の方の深い愛情は、誠実さとパートナーへの真剣さの表れでもあります。',
+      'いいえ、そうではありません。感情型は「恋愛への真剣さと強い感情表現の傾向」を示す恋愛スタイルです。医学的な依存症や執着の障害とは全く異なります。感情型の方の深い愛情は、誠実さとパートナーへの真剣さの表れでもあります。',
   },
   {
     question: '結婚に向いているタイプは何ですか？',
@@ -126,6 +138,16 @@ const faqs = [
     question: 'この診断は恋愛だけに使えますか？',
     answer:
       '友情関係・職場の対人関係にも応用できます。各タイプページに「友情パターン」の説明を掲載しています。恋愛スタイルは友人への接し方にも影響することが研究（Lee 1973）で示されており、人間関係全般の自己理解ツールとして活用できます。',
+  },
+  {
+    question: '恋愛スタイル診断とMBTIの違いは何ですか？',
+    answer:
+      'MBTIは「性格全般の認知・判断傾向」を16タイプで分類します。恋愛スタイル診断は「恋愛における価値観・行動傾向」を6スタイルで分類します。組み合わせることで、「どんな人か（MBTI）×恋愛でどう動くか（恋愛スタイル）」の立体的な自己理解が得られます。',
+  },
+  {
+    question: 'PASSで何が追加されますか？',
+    answer:
+      '無料の基本診断（6タイプ判定・強み・注意点）に加え、¥390のPASSで「仕事・恋愛・友人・家族・学校」の5軸詳細レポートが解放されます。他診断（多重知能・DiSC・完璧主義）との統合プロファイルも閲覧できます。',
   },
 ];
 
@@ -273,22 +295,18 @@ const lifeImpacts = [
   </section>
 
   <Container>
-    {/* ========== AIOブロック（このページでわかること） ========== */}
-    <div class="ls-aio-block" role="note" aria-label="このページでわかること">
-      <p class="ls-aio-title">このページでわかること</p>
-      <ul class="ls-aio-list">
-        <li>30問・5段階リッカートで測る恋愛スタイル6タイプ（J.A.Lee 1973年・Hendrick & Hendrick 1986年LAS準拠）</li>
-        <li>タイプ別の恋愛傾向・強み・気をつけたい点・他タイプとの相性（スコア付き）</li>
-        <li>友情・人間関係全般への応用方法と、パートナーとの対話改善のヒント</li>
-      </ul>
-      <p class="ls-aio-updated">
-        <time datetime={meta.updatedAt}>{meta.updatedAt}</time> 時点の情報。
-        <a href="https://doi.org/10.1037/0022-3514.50.2.392" target="_blank" rel="noopener noreferrer">
-          Hendrick & Hendrick (1986) LAS
-        </a>
-        を確認済。
-      </p>
-    </div>
+    {/* ========== TL;DRブロック（AI引用最適化） ========== */}
+    <TldrBlock
+      title="このページのポイント（3行まとめ）"
+      points={[
+        "恋愛スタイル診断はJ.A.Lee（1973）の恋愛類型論に基づき、情熱型・遊戯型・友愛型・実利型・感情型・献身型の6スタイルを28問・約3分で判定する無料ツールです",
+        "Hendrick & Hendrick（1986）の研究では、恋愛スタイルの理解が関係満足度と関連することが示されています",
+        "恋愛・友情・職場の人間関係全般の自己理解に活用でき、パートナーとの対話のきっかけになります"
+      ]}
+      updatedAt={meta.updatedAt}
+      sourceLabel="Hendrick & Hendrick (1986) Love Attitudes Scale"
+      sourceUrl="https://doi.org/10.1177/0146167286124002"
+    />
 
     {/* ========== 恋愛スタイル理論とは ========== */}
     <section class="ls-section" aria-labelledby="ls-what-h2">
@@ -547,6 +565,9 @@ const lifeImpacts = [
       医学的・臨床的な診断ではありません。感情型（Mania）は恋愛への真剣さの傾向を示すスタイル分類であり、医学的な依存症・精神障害とは異なります。
       確認日: 2026-05-21。
     </p>
+    {/* ========== 参考文献リスト（AIO/LLMO E-E-A-T強化） ========== */}
+    <ReferenceList references={meta.references} confirmedAt={meta.updatedAt} />
+
   </Container>
 </BaseLayout>
 

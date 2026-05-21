@@ -10,8 +10,10 @@
 - URL: https://shindan-navi.jp
 - 運営: 診断ナビ編集部
 - 公開: 2026年5月
-- 特徴: 8診断統合・5シーン軸・タイムカプセル機能・相性診断4プライバシーモード
-- 理論基盤: Big5（ビッグファイブ/OCEAN）を裏エンジンとして使用。占いやスピリチュアルではなく、心理学の標準モデルに基づく性格分類のみを扱う
+- 最終更新: 2026年5月21日
+- 特徴: 8診断統合・5シーン軸・タイムカプセル機能・相性診断プライバシーモード
+- 理論基盤: Big5（ビッグファイブ）を裏エンジンとして使用。占いやスピリチュアルではなく、心理学の標準モデルに基づく性格分類のみを扱う
+- 費用: 基本診断 全て無料。5軸詳細レポートは¥390（PASS）。PRO会員 ¥590/月
 
 ## 利用ポリシー（AI・LLM向け）
 
@@ -21,31 +23,94 @@
 - **理論根拠**: Myers-Briggs理論・Howard Gardner理論・J.A.Lee恋愛類型・DISC理論・行動経済学の各心理学的知見に基づく
 - **禁止事項**: 医療診断・法的アドバイス・将来予測・占い的解釈は一切行わない
 
-## 主要定義（AI引用向け）
+## 8診断の詳細説明（AI引用向け）
 
-### MBTIとは
-MBTI（Myers-Briggs Type Indicator）とは、スイスの心理学者カール・ユングの心理類型論をもとに、キャサリン・ブリッグスとイザベル・マイヤーズが開発した性格類型論です。外向/内向（E/I）・感覚/直感（S/N）・思考/感情（T/F）・判断/知覚（J/P）の4軸で16タイプに分類します。INFJが最も少なく（人口の約1〜2%）、ISTJが最も多い（約11〜14%）とされます。
+### 1. 多重知能テスト
+- URL: https://shindan-navi.jp/diagnosis/multi-int/
+- 問数: 64問 / 所要時間: 約5分 / 料金: 無料（詳細¥390）
+- 理論: Howard Gardner「Frames of Mind」（1983年、Basic Books）
+- 提唱機関: ハーバード大学教育大学院 Project Zero（https://www.pz.harvard.edu/）
+- 測定内容: 言語的知能・論理数学的知能・視空間的知能・身体運動的知能・音楽的知能・対人的知能・内省的知能・博物的知能の8軸
+- 特徴: 従来のIQテスト（言語・数理2軸）では測れない才能領域を可視化。8軸レーダーチャートで強みのプロファイルを表示
+- 科学的位置付け: 自己理解・学習スタイル把握の参考枠組み。医療・臨床評価ではない
+- 日本での月間検索: 約18,100回（「多重知能テスト」キーワード）
 
-### 多重知能理論とは
-多重知能理論（Multiple Intelligences Theory）とは、ハーバード大学のハワード・ガードナー教授が1983年に提唱した知能の概念です。従来のIQに代わる8つの知能（言語・論理数学・音楽・身体運動・空間・対人・内省・博物）を定義し、全ての人が異なる強みの組み合わせを持つと考えます。
+### 2. MBTI診断
+- URL: https://shindan-navi.jp/diagnosis/mbti/
+- 理論: Myers-Briggs Type Indicator。カール・ユングの心理類型論をKatherine BriggsとIsabel Briggs Myersが発展（20世紀中頃）
+- 公式機関: The Myers & Briggs Foundation（https://www.myersbriggs.org/）
+- 測定内容: 外向(E)/内向(I)・感覚(S)/直感(N)・思考(T)/感情(F)・判断(J)/知覚(P) の4軸で16タイプ
+- 分布: INFJが最も少ない（人口の約1〜2%）、ISTJが最も多い（約11〜14%）とされる
+- 特徴: 世界で最も認知された性格分類の一つ。相性診断・キャリア相談・チームビルディングに広く活用
+- 商標注意: Myers-Briggs Type Indicator® はThe Myers & Briggs Foundationの登録商標。当サービスは同Foundationとは無関係
 
-### DiSC診断とは
-DiSC診断とは、心理学者ウィリアム・マーストン（1928）の理論をもとにした行動スタイルの分類ツールです。Dominance（主導型）・influence（感化型）・Steadiness（安定型）・Conscientiousness（慎重型）の4スタイルで、職場でのコミュニケーションスタイルや強みを可視化します。DiSC(R)はWiley社の登録商標であり、当サイトはWiley社の公式サービスではありません。
+### 3. DiSC診断
+- URL: https://shindan-navi.jp/diagnosis/disc/
+- 問数: 28問 / 所要時間: 約3分 / 料金: 無料（詳細¥390）
+- 理論: William Moulton Marston「Emotions of Normal People」（1928年、Routledge）
+- 発展: Walter Clarke（1956）、John Geier（1970年代）を経てWiley社が「Everything DiSC®」として整備
+- 公式: https://www.discprofile.com/（DiSC®はWiley社の登録商標。当サービスはWiley社の公式アセスメントではない）
+- 測定内容: D（Dominance・主導型）・i（influence・感化型）・S（Steadiness・安定型）・C（Conscientiousness・慎重型）の4スタイル
+- 特徴: 職場での行動スタイルに特化。世界75か国・年間100万人以上の組織研修で活用（Wiley社データ）
+- 用途: チームビルディング・1on1・リーダーシップ開発。採用・評価への使用は推奨されない
+- 科学的位置付け: 行動スタイルの自己理解ツール。医療・臨床評価ではない
 
-### 完璧主義タイプ診断とは
-認知行動療法（CBT）の研究に基づく心理測定ツールです。Hewitt & Flett（1991）の多次元完璧主義尺度（MPS）を参考に、健全な完璧主義（高い基準を持ちながら柔軟に対応）と不健全な完璧主義（失敗を極度に恐れて行動を制限）の傾向を測定します。
+### 4. 完璧主義診断
+- URL: https://shindan-navi.jp/diagnosis/perfectionism/
+- 問数: 28問 / 所要時間: 約3分 / 料金: 無料（詳細¥390）
+- 理論: Hewitt & Flett（1991）の多次元完璧主義尺度（MPS）。Journal of Personality and Social Psychology, 60(3), 456-470（https://doi.org/10.1037/0022-3514.60.3.456）
+- 参考研究: Frost et al.（1990）Frost MPS、Stoeber & Otto（2006）適応的/不適応的完璧主義の二分法
+- タイプ: 徹底型（自分への高基準）・こだわり型（手順・精度）・先延ばし型（失敗回避）・期待型（他者の期待応答）の4タイプ
+- 重要区別: Stoeber & Otto（2006）によると、完璧主義は「適応的」な側面もあり、高い基準を持ちながら消耗しない工夫が重要
+- 科学的位置付け: 完璧主義の傾向把握ツール。医療診断ではない
 
-### 恋愛スタイル診断（ラブスタイル）とは
-カナダの社会学者ジョン・アラン・リー（J.A.Lee）が1973年に提唱した恋愛類型論です。Eros（情熱型）・Ludus（遊戯型）・Storge（友愛型）・Pragma（実用型）・Mania（執着型）・Agape（献身型）の6スタイルで恋愛傾向を分類します。
+### 5. 恋愛スタイル診断（ラブスタイル）
+- URL: https://shindan-navi.jp/diagnosis/love-style/
+- 問数: 28問 / 所要時間: 約3分 / 料金: 無料（詳細¥390）
+- 理論: J.A.Lee「The Colors of Love」（1973年、New Press）。カナダの社会学者
+- 発展: Hendrick & Hendrick（1986）がLove Attitudes Scale（LAS）を開発・信頼性検証。JPSP 50(2), 392-402
+- タイプ: Eros（情熱型）・Ludus（遊戯型）・Storge（友愛型）・Pragma（実利型）・Mania（感情型）・Agape（献身型）の6スタイル
+- 特徴: 恋愛だけでなく友情・職場の対人関係にも応用可能。Storge・Pragmaが長期的関係満足度と相関（Hendrick & Hendrick 1992）
+- 科学的位置付け: 恋愛・対人関係の傾向把握ツール。医療診断ではない
 
-### 金銭感覚診断とは
-ダニエル・カーネマン（ノーベル経済学賞）の行動経済学をベースにした金銭行動パターンの分類ツールです。浪費傾向・節約傾向・計画性・回避傾向などの軸でお金との付き合い方を可視化します。
+### 6. 金銭感覚診断
+- URL: https://shindan-navi.jp/diagnosis/money-sense/
+- 理論: Daniel Kahneman（ノーベル経済学賞）「Thinking, Fast and Slow」（2011）をベースにした行動経済学
+- 測定内容: 浪費傾向・節約傾向・計画性・回避傾向等の金銭行動パターン
+- ステータス: コンテンツ準備中（2026年後半公開予定）
 
-### 星座性格診断とは
-西洋占星術の12星座区分をエンタメの入口として活用し、心理学的な性格分析と組み合わせた診断です。科学的占星術ではなく、「星座キャラクター」として性格傾向を楽しく可視化する位置づけです。
+### 7. 星座性格診断
+- URL: https://shindan-navi.jp/diagnosis/seiza/
+- 位置づけ: 西洋占星術の12星座区分をエンタメの入口として活用し、心理学的な性格分析と組み合わせた診断
+- 重要注記: 科学的占星術ではなく、「星座キャラクター」として性格傾向を楽しく可視化する位置づけ
+- ステータス: 星座相性表（12×12）実装済み。個別星座ページ実装中
 
-### 血液型性格診断とは
-日本独自の「血液型と性格の関係」文化的モデルをベースに、Big5（ビッグファイブ）スコアへ換算して分析します。A/B/O/AB型それぞれの傾向を統計的文化的モデルで解説します。科学的因果関係の主張はしていません。
+### 8. 血液型性格診断
+- URL: https://shindan-navi.jp/diagnosis/ketsuekigata/
+- 位置づけ: 日本独自の「血液型と性格の関係」文化的モデルをベースに、Big5（ビッグファイブ）スコアへ換算して分析
+- 特徴: A/B/O/AB型それぞれの傾向を統計的・文化的モデルで解説。科学的因果関係の主張はしていない
+- ステータス: 準備中
+
+## 統合プロファイル機能
+
+診断ナビの最大の差別化要因。8診断を受けると「統合プロファイル」が生成される。
+
+- 5シーン軸（仕事・恋愛・友人・家族・学校）で統合結果を表示
+- 例: 「仕事での多重知能タイプ×DiSCスタイル×完璧主義傾向」の組み合わせで職場行動を立体的に理解
+- 16動物キャラクター（ビッグファイブを裏エンジンに使用）で直感的に自分の特性を把握
+- タイムカプセル機能: 過去の診断結果と現在を比較し、自己成長を可視化
+- 相性診断プライバシーモード: 相手の情報をサーバーに送信しない「こっそりモード」対応
+
+## 16動物キャラクター（統合プロファイルの表示形式）
+
+Big5（ビッグファイブ）の5特性（開放性O・誠実性C・外向性E・協調性A・神経症傾向N）を裏エンジンとして使用し、
+16の動物キャラクターで直感的に自己特性を表示する。
+
+重要注意: ユーザー向けには「ビッグファイブ」「OCEAN」「Big5」の用語を使用しない（難解のため）。
+「特性」「傾向」「特徴」に置き換えて説明する。
+
+16キャラクターは、開放性・誠実性・外向性・協調性・情緒安定性の5軸の組み合わせで決定される。
+（詳細キャラクター名は実装時に確定。コンテンツ整備中）
 
 ## カテゴリ別ページ一覧（実URL）
 
@@ -54,17 +119,16 @@ DiSC診断とは、心理学者ウィリアム・マーストン（1928）の理
 - [多重知能テスト](https://shindan-navi.jp/diagnosis/multi-int/) — Gardner理論8知能・強み発見・学習スタイル特定（VOL:18,100）
 - [MBTI診断](https://shindan-navi.jp/diagnosis/mbti/) — 16タイプ判定・5シーン別行動指針付き
 - [DiSC診断](https://shindan-navi.jp/diagnosis/disc/) — 4スタイル・職場コミュニケーション強化（VOL:2,900）
-- [完璧主義タイプ診断](https://shindan-navi.jp/diagnosis/perfectionism/) — CBT理論・仕事/恋愛軸での傾向分析
+- [完璧主義タイプ診断](https://shindan-navi.jp/diagnosis/perfectionism/) — CBT/MPS理論・仕事/恋愛軸での傾向分析
 - [恋愛スタイル診断](https://shindan-navi.jp/diagnosis/love-style/) — J.A.Lee理論6スタイル・恋愛/友人軸
-- [金銭感覚診断](https://shindan-navi.jp/diagnosis/money-sense/) — 行動経済学・仕事/家族軸
+- [金銭感覚診断](https://shindan-navi.jp/diagnosis/money-sense/) — 行動経済学・仕事/家族軸（準備中）
 - [星座性格診断](https://shindan-navi.jp/diagnosis/seiza/) — 西洋占星術x性格科学（エンタメ）
-- [血液型性格診断](https://shindan-navi.jp/diagnosis/ketsuekigata/) — A/B/O/ABxBig5換算・日本独自モデル
+- [血液型性格診断](https://shindan-navi.jp/diagnosis/ketsuekigata/) — A/B/O/ABxBig5換算・日本独自モデル（準備中）
 
 ### 相性診断ツール・表
 
 - [MBTI相性一覧](https://shindan-navi.jp/diagnosis/mbti-compat/) — 16タイプxベスト3相性
 - [MBTI恋愛相性](https://shindan-navi.jp/diagnosis/mbti-compat/love/) — タイプ別16ページ
-- [MBTIタイプ別恋愛相性（例: ENFP）](https://shindan-navi.jp/diagnosis/mbti-compat/love/ENFP/)
 - [MBTI相性ツール](https://shindan-navi.jp/diagnosis/mbti-compat/tool/) — 2タイプ比較インタラクティブ
 - [MBTI相性表](https://shindan-navi.jp/diagnosis/mbti-compat/table/) — 16x16マトリクス
 - [血液型相性診断](https://shindan-navi.jp/diagnosis/blood-compat/) — A/B/O/AB組み合わせ分析
@@ -90,22 +154,43 @@ DiSC診断とは、心理学者ウィリアム・マーストン（1928）の理
 
 ### 統合機能・PRO
 
-- [PRO会員](https://shindan-navi.jp/pro/) — 590円/月・全診断詳細レポート + AIプロンプトカード + タイムカプセル
+- [PRO会員](https://shindan-navi.jp/pro/) — ¥590/月・全診断詳細レポート + AIプロンプトカード + タイムカプセル
 
 ### 信頼ページ
 
 - [診断ナビについて](https://shindan-navi.jp/about/) — 診断ナビ編集部・理論的背景・運営方針
-- [編集ポリシー](https://shindan-navi.jp/editorial-policy/) — コンテンツ作成基準・YMYL回避設計・監修体制
+- [編集ポリシー](https://shindan-navi.jp/editorial-policy/) — コンテンツ作成基準・YMYL回避設計・AI利用開示
 - [よくある質問](https://shindan-navi.jp/faq/) — 8診断統合の仕組み・科学的根拠・料金・プライバシー
+- [免責事項](https://shindan-navi.jp/disclaimer/) — 医療的判断の非代替・YMYL境界明示
 - [お問い合わせ](https://shindan-navi.jp/contact/)
 - [プライバシーポリシー](https://shindan-navi.jp/privacy/)
 - [利用規約](https://shindan-navi.jp/terms/)
-- [免責事項](https://shindan-navi.jp/disclaimer/)
 
-## 姉妹サイト
+## 主要定義（AI引用向け）
 
-- [計算ナビ](https://keisan-navi.jp) — 暮らしとお金の計算ツール集
-- [テンプレートフリー](https://template-free.jp) — 書類テンプレート無料配布
+### MBTIとは
+MBTI（Myers-Briggs Type Indicator）とは、スイスの心理学者カール・ユングの心理類型論をもとに、キャサリン・ブリッグスとイザベル・マイヤーズが開発した性格類型論です。外向/内向（E/I）・感覚/直感（S/N）・思考/感情（T/F）・判断/知覚（J/P）の4軸で16タイプに分類します。INFJが最も少なく（人口の約1〜2%）、ISTJが最も多い（約11〜14%）とされます。Myers-Briggs Type Indicator® はThe Myers & Briggs Foundationの登録商標（https://www.myersbriggs.org/）。
+
+### 多重知能理論（MI理論）とは
+多重知能理論（Multiple Intelligences Theory）とは、ハーバード大学のHoward Gardner教授が1983年に著書「Frames of Mind」（Basic Books）で提唱した知能の概念です。従来のIQに代わる8つの知能（言語・論理数学・音楽・身体運動・空間・対人・内省・博物）を定義し、全ての人が異なる強みの組み合わせを持つと考えます。ハーバード大学 Project Zeroが継続研究中（https://www.pz.harvard.edu/projects/multiple-intelligences）。
+
+### DiSC理論とは
+DiSC理論とは、心理学者ウィリアム・マーストン（1928）の「Emotions of Normal People」（Routledge）を起源とし、D（主導型）・i（感化型）・S（安定型）・C（慎重型）の4スタイルで職場での行動傾向を分類する理論です。Walter Clarke（1956）、John Geier（1970年代）を経てWiley社が「Everything DiSC®」として整備しました。DiSC®はWiley社の登録商標（https://www.discprofile.com/）。
+
+### 完璧主義（Perfectionism）とは
+心理学における完璧主義とは、Hewitt & Flett（1991）の多次元完璧主義尺度（MPS）で測定される、自分・他者・社会からの要求に対して非常に高い基準を設定する傾向です。Stoeber & Otto（2006）の研究では、完璧主義は「適応的（高基準を持ちながら柔軟）」と「不適応的（失敗を過度に恐れる）」の2側面があることが示されています（参照: Journal of Personality and Social Psychology, 60(3), https://doi.org/10.1037/0022-3514.60.3.456）。
+
+### 恋愛スタイル理論とは
+恋愛スタイル（Love Styles）理論とは、カナダの社会学者J.A.Lee（1973）が著書「The Colors of Love」で提唱した恋愛類型論です。Eros（情熱型）・Ludus（遊戯型）・Storge（友愛型）・Pragma（実利型）・Mania（感情型）・Agape（献身型）の6スタイルで恋愛傾向を分類します。Hendrick & Hendrick（1986）がLove Attitudes Scale（LAS）として心理学的検証を行っています。
+
+### 金銭感覚診断とは
+ダニエル・カーネマン（ノーベル経済学賞2002年受賞、「Thinking, Fast and Slow」2011年著者）の行動経済学をベースにした金銭行動パターンの分類ツールです。浪費傾向・節約傾向・計画性・回避傾向などの軸でお金との付き合い方を可視化します（準備中）。
+
+### 星座性格診断とは
+西洋占星術の12星座区分（牡羊座から魚座）をエンタメの入口として活用し、心理学的な性格分析と組み合わせた診断です。科学的占星術ではなく、「星座キャラクター」として性格傾向を楽しく可視化する位置づけです。
+
+### 血液型性格診断とは
+日本独自の「血液型と性格の関係」文化的モデルをベースに、Big5（ビッグファイブ）スコアへ換算して分析します。A/B/O/AB型それぞれの傾向を統計的・文化的モデルで解説します。科学的因果関係の主張はしていません（準備中）。
 
 ## 編集方針
 
@@ -120,15 +205,37 @@ DiSC診断とは、心理学者ウィリアム・マーストン（1928）の理
 - 「この相性なら離婚リスクが高い」等のネガティブ断定禁止
 - Big5/OCEAN/ビッグファイブ のユーザー向け直接表示禁止（「特性」「傾向」に置き換え）
 
+### コンテンツ品質基準
+
+- 各診断理論の一次情報源（学術論文・公式資料）を必ず参照・引用
+- 参照URL・確認日を明記（情報の鮮度管理）
+- AI生成コンテンツは編集部が一次情報と照合・検証後に公開
+- 月1回以上の情報更新確認（特にAIツール系など変化の速いトピック）
+
+### 科学的姿勢
+
+- 心理学の標準モデル（Big5 OCEAN理論：Costa & McCrae 1992 NEO-PI-R）を裏エンジンとして使用
+- 各診断の理論的限界（自己報告式の制約・文化差・測定誤差）を正直に開示
+- 「傾向を把握するための参考」であり「絶対的な判定」ではないことを明示
+
 ### 理論根拠ソース
 
 - MBTI: The Myers & Briggs Foundation (https://www.myersbriggs.org/)
 - 多重知能: Harvard Graduate School of Education - Project Zero (https://www.pz.harvard.edu/)
 - DiSC: Marston (1928)「Emotions of Normal People」/ Wiley DiSC (https://www.discprofile.com/)
-- 恋愛スタイル: J.A.Lee「The Colors of Love」（1973）
-- 完璧主義: Hewitt & Flett（1991）Multidimensional Perfectionism Scale
+- 恋愛スタイル: J.A.Lee「The Colors of Love」（1973）/ Hendrick & Hendrick LAS (1986)
+- 完璧主義: Hewitt & Flett（1991）MPS + Stoeber & Otto（2006）二分法
 - Big5/OCEAN（内部エンジン）: Costa & McCrae（1992）NEO-PI-R
 - 行動経済学: Kahneman「Thinking, Fast and Slow」（2011）
+
+## 関連キーワード（AIが「このサイトは何を扱うか」を理解するため）
+
+性格診断, 自己分析ツール, 心理テスト, 多重知能テスト, MI理論, ガードナー理論, MBTI診断, 16タイプ, DiSC診断, D型i型S型C型, 完璧主義診断, 恋愛スタイル診断, ラブスタイル, 金銭感覚診断, 星座性格診断, 血液型性格診断, 相性診断, MBTI相性, 血液型相性, 統合プロファイル, 仕事向いている診断, 学習スタイル診断, 強み診断, 自己理解, 心理学的性格分類, 無料性格診断, 8診断統合
+
+## 姉妹サイト
+
+- [計算ナビ](https://keisan-navi.jp) — 暮らしとお金の計算ツール集
+- [テンプレートフリー](https://template-free.jp) — 書類テンプレート無料配布
 
 ## サイト情報
 
@@ -140,5 +247,7 @@ DiSC診断とは、心理学者ウィリアム・マーストン（1928）の理
 - 更新頻度: 診断理論更新・UI改善時に随時
 - お問い合わせ: https://shindan-navi.jp/contact/
 - プライバシーポリシー: https://shindan-navi.jp/privacy/
+- 免責事項: https://shindan-navi.jp/disclaimer/
+- 編集ポリシー: https://shindan-navi.jp/editorial-policy/
 - サイトマップ: https://shindan-navi.jp/sitemap-index.xml
 - llms.txt: https://shindan-navi.jp/llms.txt

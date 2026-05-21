@@ -18,6 +18,9 @@ import DiagnosisFlow from '../../../components/DiagnosisFlow';
 import { meta } from '../../../data/diagnoses/disc/meta';
 import { questions } from '../../../data/diagnoses/disc/questions';
 import { calculateResultTypeId } from '../../../data/diagnoses/disc/results';
+import TldrBlock from '../../../components/TldrBlock.astro';
+import ReferenceList from '../../../components/ReferenceList.astro';
+import ScienceNote from '../../../components/ScienceNote.astro';
 
 const SITE_URL = 'https://shindan-navi.jp';
 const PAGE_URL = `${SITE_URL}/diagnosis/disc/`;
@@ -85,47 +88,67 @@ const jsonLdQuiz = {
   })),
 };
 
-// FAQ 8問（DiSC特有・ビジネス・採用注意含む）
+// FAQ 12問（8問→12問に拡充・AI Overview最適化・2026-05-21更新）
 const faqs = [
+  {
+    question: 'DiSC診断とは何ですか？',
+    answer:
+      'DiSC診断とは、心理学者William Moulton Marston（1928）が著書「Emotions of Normal People」で提唱した行動スタイル理論に基づく自己診断ツールです。D（Dominance・主導型）・i（influence・感化型）・S（Steadiness・安定型）・C（Conscientiousness・慎重型）の4タイプで職場での行動スタイルを可視化します（出典: Wiley DiSC公式 https://www.discprofile.com/what-is-disc/overview、2026-05-21確認）。',
+  },
   {
     question: 'DiSC診断に科学的根拠はありますか？',
     answer:
-      'DiSC理論はWilliam Moulton Marston（1928）の著書「Emotions of Normal People」を起源とし、Walter Clarke（1956）、John Geier（1970年代）を経てWiley社が現代版として整備した行動スタイルモデルです（https://www.discprofile.com/what-is-disc/history-of-disc、2026-05-20確認）。本診断はDiSC理論に基づく自己理解ツールであり、Wiley社の公式アセスメントとは別のものです。',
+      'DiSC理論はWilliam Moulton Marston（1928）の著書「Emotions of Normal People」（Routledge）を起源とし、Walter Clarke（1956）、John Geier（1970年代）を経てWiley社が現代版として整備した行動スタイルモデルです（参照: https://www.discprofile.com/what-is-disc/history-of-disc、2026-05-21確認）。本診断はDiSC理論に基づく自己理解ツールであり、Wiley社の公式アセスメントとは別のものです。',
   },
   {
     question: 'MBTIとDiSCの違いは何ですか？',
     answer:
-      'MBTIは「どのように世界を認識し判断するか」（内向/外向・感覚/直感・思考/感情・判断/知覚）の16タイプ分類です。DiSCは「職場・対人関係での行動スタイル」（D/i/S/C）に特化した4タイプモデルです。DiSCはビジネス文脈・チームビルディング・リーダーシップ開発での活用を想定して設計されています。',
+      'MBTIは「どのように世界を認識し判断するか」（内向/外向・感覚/直感・思考/感情・判断/知覚）の16タイプ分類です。DiSCは「職場・対人関係での行動スタイル」（D/i/S/C）に特化した4タイプモデルです。MBTIは性格・認知の傾向全般を測り、DiSCはビジネス文脈・チームビルディング・リーダーシップ開発での活用を想定して設計されています。',
   },
   {
     question: '公式DiSC（Wiley社）との違いは何ですか？',
     answer:
-      'Wiley社の公式DiSC®アセスメント（https://www.discprofile.com/ ）は有料の認定プログラムで、より詳細な研究データと解釈レポートが含まれます。本診断はDiSC理論の学術的知見に基づく無料の自己理解ツールであり、Wiley社の製品ではありません。職場での本格導入にはWiley社の認定プログラムをご検討ください。',
+      'Wiley社の公式DiSC®アセスメント（https://www.discprofile.com/）は有料の認定プログラムで、研究データと詳細解釈レポートが含まれます。本診断はDiSC理論の学術的知見に基づく無料の自己理解ツールであり、Wiley社の製品ではありません。職場での本格導入にはWiley社の認定プログラムをご検討ください。「DiSC®」はWiley社の登録商標です。',
   },
   {
     question: 'DiSCの4タイプの組み合わせはありますか？',
     answer:
-      '実際のDiSCプロファイルでは4タイプが複合することが多く、Wiley社の研究では12の複合スタイルが定義されています。本診断では最もスコアの高いタイプを「主タイプ」として判定します。複合スタイルの詳細分析はWiley社の公式アセスメントで確認できます。',
+      '実際のDiSCプロファイルでは4タイプが複合することが多く、Wiley社の研究では12の複合スタイルが定義されています（参照: https://www.discprofile.com/what-is-disc/disc-styles、2026-05-21確認）。本診断では最もスコアの高いタイプを「主タイプ」として判定します。複合スタイルの詳細分析はWiley社の公式アセスメントで確認できます。',
   },
   {
     question: '仕事でDiSCを活用する方法は？',
     answer:
-      'DiSCは主に3つの場面で活用されます。①チームビルディング（メンバー相互の行動スタイル理解）、②1on1・コーチング（上司と部下の対話スタイルの最適化）、③リーダーシップ開発（自分の強みと盲点の把握）です。職場研修でのDiSC活用は多くの企業で実績があります。',
+      'DiSCは主に3つの場面で活用されます。1. チームビルディング（メンバー相互の行動スタイル理解）、2. 1on1・コーチング（上司と部下の対話スタイルの最適化）、3. リーダーシップ開発（自分の強みと盲点の把握）です。Wiley社によると、DiSCは世界75か国・年間100万人以上の組織研修で活用されています（https://www.everythingdisc.com/、2026-05-21確認）。',
   },
   {
-    question: '診断結果は変わることがありますか？',
+    question: 'DiSC診断の結果は変わることがありますか？',
     answer:
-      'DiSCの行動スタイルはある程度安定していますが、役割・環境・ストレス状況によって変化することがあります。同じ人でも「職場での自分」と「プライベートの自分」でスコアが異なることがあります。本診断は何回でも受けられます。',
+      'DiSCの行動スタイルはある程度安定していますが、役割・環境・ストレス状況によって変化することがあります。同じ人でも「職場での自分」と「プライベートの自分」でスコアが異なることがあります。本診断は何回でも受けられます。3〜6ヶ月後に再受診して変化を確認するのもおすすめです。',
   },
   {
-    question: 'リーダーに向いているタイプは何ですか？',
+    question: 'リーダーに向いているDiSCタイプは何ですか？',
     answer:
-      'DiSCではどのタイプもリーダーになれると考えます。D型は推進力・決断力で牽引するリーダー、i型は共感・巻き込み力で人をまとめるリーダー、S型は安定・信頼で長期的に支えるリーダー、C型は専門性・分析力で判断の質を高めるリーダーとして活躍します。リーダーシップスタイルが異なるだけです。',
+      'DiSCではどのタイプもリーダーになれると考えます。D型は推進力・決断力で牽引するリーダー、i型は共感・巻き込み力で人をまとめるリーダー、S型は安定・信頼で長期的に支えるリーダー、C型は専門性・分析力で判断の質を高めるリーダーとして活躍します。リーダーシップスタイルが異なるだけであり、どれが優れているということはありません。',
   },
   {
     question: 'DiSCで採用や人事評価をしていいですか？',
     answer:
-      'DiSCを採用・評価・昇進の基準に使うことは推奨しません。行動スタイルの好みは多様であり、特定のタイプを「優れている」とすることは公平採用の観点から問題になる可能性があります。Wiley社も「DiSCは採用選考ツールではない」と明記しています（https://www.discprofile.com/what-is-disc/overview、2026-05-20確認）。本診断は自己理解・チームコミュニケーション改善の目的でご活用ください。',
+      'DiSCを採用・評価・昇進の基準に使うことは推奨しません。行動スタイルの好みは多様であり、特定のタイプを「優れている」とすることは公平採用の観点から問題になる可能性があります。Wiley社も「DiSCは採用選考ツールではない」と明記しています（https://www.discprofile.com/what-is-disc/overview、2026-05-21確認）。本診断は自己理解・チームコミュニケーション改善の目的でご活用ください。',
+  },
+  {
+    question: '何問・何分かかりますか？',
+    answer:
+      '全28問で、目安は約3分です。各質問に「1（全く当てはまらない）〜5（とても当てはまる）」の5段階で回答します。登録不要・スマートフォンでも快適に受診できます。途中で中断しても24時間以内なら再開可能です。',
+  },
+  {
+    question: '何回受けても同じ結果になりますか？',
+    answer:
+      '同じ傾向が安定して出ることが多いですが、受診時の状況（仕事のストレス・プライベートの影響）によって変わることもあります。複数回受けて傾向を確認すると、「自分の行動スタイルの幅」として参考になります。',
+  },
+  {
+    question: 'PASSで何が追加されますか？',
+    answer:
+      '無料の基本診断（4タイプ判定・強み・注意点・向いている職種）に加え、¥390のPASSで「仕事・恋愛・友人・家族・学校」の5軸詳細レポートが解放されます。他診断（多重知能・MBTI・完璧主義）との統合プロファイルも閲覧できます。',
   },
 ];
 
@@ -262,22 +285,18 @@ const businessUses = [
   </section>
 
   <Container>
-    {/* ========== AIOブロック（このページでわかること） ========== */}
-    <div class="disc-aio-block" role="note" aria-label="このページでわかること">
-      <p class="disc-aio-title">このページでわかること</p>
-      <ul class="disc-aio-list">
-        <li>28問・5段階リッカートで測るDiSCの4タイプ（Marston 1928年・Wiley DiSC公式系譜）</li>
-        <li>タイプ別の仕事スタイル・コミュニケーション傾向・向いている職種（5項目）・他タイプとの相性</li>
-        <li>チームビルディング・リーダーシップ・1on1での実践的な活用方法</li>
-      </ul>
-      <p class="disc-aio-updated">
-        <time datetime={meta.updatedAt}>{meta.updatedAt}</time> 時点の情報。
-        <a href="https://www.discprofile.com/what-is-disc/overview" target="_blank" rel="noopener noreferrer">
-          Wiley DiSC公式
-        </a>
-        を確認済。
-      </p>
-    </div>
+    {/* ========== TL;DRブロック（AI引用最適化） ========== */}
+    <TldrBlock
+      title="このページのポイント（3行まとめ）"
+      points={[
+        "DiSC診断はMarston（1928）の行動スタイル理論に基づき、D（主導型）・i（感化型）・S（安定型）・C（慎重型）の4タイプで職場での行動傾向を28問・約3分で測定する無料ツールです",
+        "Wiley社がEveryting DiSC®として整備し、世界75か国・年間100万人以上の組織研修で活用されています（DiSC®はWiley社の登録商標。本診断はWiley社の公式アセスメントではありません）",
+        "チームビルディング・1on1・リーダーシップ開発に活用でき、採用・評価には使用しないことが推奨されています"
+      ]}
+      updatedAt={meta.updatedAt}
+      sourceLabel="Wiley DiSC公式"
+      sourceUrl="https://www.discprofile.com/what-is-disc/overview"
+    />
 
     {/* ========== DiSC診断とは ========== */}
     <section class="disc-section" aria-labelledby="disc-what-h2">
@@ -627,6 +646,9 @@ const businessUses = [
         ))}
       </dl>
     </section>
+
+    {/* ========== 参考文献リスト（AIO/LLMO E-E-A-T強化） ========== */}
+    <ReferenceList references={meta.references} confirmedAt={meta.updatedAt} />
 
     {/* ========== 商標フッターノート ========== */}
     <p class="disc-trademark-note">

@@ -1,0 +1,148 @@
+---
+/**
+ * ReferenceList.astro - 参考文献リスト（AIO/LLMO・E-E-A-T強化）
+ *
+ * 役割:
+ * - 各診断ページの参考文献を一覧表示し、引用元の透明性を確保
+ * - AI検索エンジンが「信頼できる一次情報に基づくページ」と認識しやすくする
+ * - 学術論文・公式資料・書籍の表記形式を統一
+ *
+ * 使い方:
+ * <ReferenceList references={meta.references} confirmedAt="2026-05-21" />
+ *
+ * デザイントークン: --sn-* のみ使用
+ */
+
+interface Reference {
+  title: string;
+  author: string;
+  year: number;
+  publisher?: string;
+  journal?: string;
+  volume?: string;
+  pages?: string;
+  url?: string;
+}
+
+interface Props {
+  references: Reference[];
+  confirmedAt?: string;
+}
+
+const { references, confirmedAt = '2026-05-21' } = Astro.props;
+---
+
+<section class="ref-section" aria-labelledby="ref-heading">
+  <h2 id="ref-heading" class="ref-heading">参考文献・出典</h2>
+  <p class="ref-note">
+    本診断の理論的根拠となる学術論文・公式資料です。
+    最終確認日: <time datetime={confirmedAt}>{confirmedAt}</time>
+  </p>
+  <ol class="ref-list">
+    {references.map((ref, i) => (
+      <li class="ref-item" id={`ref-${i + 1}`}>
+        <span class="ref-authors">{ref.author}</span>
+        {' '}
+        <span class="ref-year">({ref.year})</span>.
+        {' '}
+        {ref.url ? (
+          <a href={ref.url} target="_blank" rel="noopener noreferrer" class="ref-title">
+            {ref.title}
+          </a>
+        ) : (
+          <span class="ref-title">{ref.title}</span>
+        )}.
+        {ref.journal && (
+          <span class="ref-journal">
+            {' '}<em>{ref.journal}</em>
+            {ref.volume && <span>, {ref.volume}</span>}
+            {ref.pages && <span>, {ref.pages}</span>}
+          </span>
+        )}
+        {ref.publisher && !ref.journal && (
+          <span class="ref-publisher"> {ref.publisher}</span>
+        )}
+        {ref.url && (
+          <span class="ref-url"> — <a href={ref.url} target="_blank" rel="noopener noreferrer">{ref.url}</a></span>
+        )}
+      </li>
+    ))}
+  </ol>
+</section>
+
+<style>
+.ref-section {
+  margin-block: 3rem;
+  padding: 1.5rem;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+}
+
+.ref-heading {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem;
+  color: #1f2937;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--sn-primary);
+}
+
+.ref-note {
+  font-size: 0.8rem;
+  color: var(--sn-muted, #6b7280);
+  margin: 0 0 1rem;
+}
+
+.ref-list {
+  margin: 0;
+  padding-left: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.ref-item {
+  font-size: 0.85rem;
+  line-height: 1.7;
+  color: #374151;
+}
+
+.ref-authors {
+  font-weight: 600;
+}
+
+.ref-year {
+  color: #6b7280;
+}
+
+.ref-title {
+  font-style: italic;
+  color: var(--sn-primary);
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  transition: text-decoration-color 0.15s;
+}
+
+a.ref-title:hover {
+  text-decoration-color: var(--sn-primary);
+}
+
+.ref-journal {
+  color: #4b5563;
+}
+
+.ref-publisher {
+  color: #4b5563;
+}
+
+.ref-url {
+  font-size: 0.8rem;
+  word-break: break-all;
+  color: #6b7280;
+}
+
+.ref-url a {
+  color: #6b7280;
+}
+</style>

@@ -1,0 +1,101 @@
+---
+/**
+ * TldrBlock.astro - AI Overview 引用最適化・TL;DRブロック
+ *
+ * 役割:
+ * - AI検索エンジン（ChatGPT/Perplexity/Gemini）が引用しやすい「要点まとめ」を冒頭に提供
+ * - BaseLayout の SpeakableSpecification が .tldr をセレクタに含んでいるため音声検索対応済み
+ * - 鮮度バッジ（updatedAt）を表示し、情報の時点を明示
+ *
+ * 使い方:
+ * <TldrBlock
+ *   title="このページのポイント"
+ *   points={["要点1", "要点2", "要点3"]}
+ *   updatedAt="2026-05-21"
+ *   sourceLabel="ハーバード大学 Project Zero 公式"
+ *   sourceUrl="https://www.pz.harvard.edu/projects/multiple-intelligences"
+ * />
+ *
+ * デザイントークン: --sn-* のみ使用
+ */
+
+interface Props {
+  title?: string;
+  points: string[];
+  updatedAt: string;
+  sourceLabel?: string;
+  sourceUrl?: string;
+}
+
+const {
+  title = 'このページのポイント',
+  points,
+  updatedAt,
+  sourceLabel,
+  sourceUrl,
+} = Astro.props;
+---
+
+<div class="tldr" role="note" aria-label={title}>
+  <p class="tldr__title">{title}</p>
+  <ul class="tldr__list">
+    {points.map((point) => (
+      <li class="tldr__item">{point}</li>
+    ))}
+  </ul>
+  <p class="tldr__meta">
+    <time datetime={updatedAt}>{updatedAt}</time> 時点の情報。
+    {sourceUrl && sourceLabel && (
+      <>
+        参照元:{' '}
+        <a href={sourceUrl} target="_blank" rel="noopener noreferrer" class="tldr__source-link">
+          {sourceLabel}
+        </a>
+        を確認済。
+      </>
+    )}
+  </p>
+</div>
+
+<style>
+.tldr {
+  background: #f0f4ff;
+  border-left: 4px solid var(--sn-primary);
+  border-radius: 0 0.5rem 0.5rem 0;
+  padding: 1.25rem 1.5rem;
+  margin-block: 2rem;
+}
+
+.tldr__title {
+  font-weight: 700;
+  margin: 0 0 0.5rem;
+  font-size: 0.875rem;
+  color: var(--sn-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.tldr__list {
+  margin: 0 0 0.75rem;
+  padding-left: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.tldr__item {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: #1f2937;
+}
+
+.tldr__meta {
+  font-size: 0.75rem;
+  color: var(--sn-muted, #6b7280);
+  margin: 0;
+}
+
+.tldr__source-link {
+  color: var(--sn-primary);
+}
+</style>
