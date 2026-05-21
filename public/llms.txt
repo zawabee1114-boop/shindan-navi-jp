@@ -10,7 +10,7 @@
 - URL: https://shindan-navi.jp
 - 運営: 診断ナビ編集部
 - 公開: 2026年5月
-- 最終更新: 2026年5月21日（第2巡AIO/LLMO強化）
+- 最終更新: 2026年5月21日（第3巡AIO/LLMO最終強化・信頼ページ+統合系E-E-A-T完全実装）
 - 特徴: 8診断統合・5シーン軸・タイムカプセル機能・相性診断プライバシーモード
 - 理論基盤: Big5（ビッグファイブ）を裏エンジンとして使用。占いやスピリチュアルではなく、心理学の標準モデルに基づく性格分類のみを扱う
 - 費用: 基本診断 全て無料。5軸詳細レポートは¥390（PASS）。PRO会員 ¥590/月
@@ -176,15 +176,37 @@ Big5（ビッグファイブ）の5特性（開放性O・誠実性C・外向性E
 
 - [PRO会員](https://shindan-navi.jp/pro/) — ¥590/月・全診断詳細レポート + AIプロンプトカード + タイムカプセル
 
-### 信頼ページ
+### 信頼ページ（E-E-A-T 4要素完全実装・第3巡強化済み）
 
-- [診断ナビについて](https://shindan-navi.jp/about/) — 診断ナビ編集部・理論的背景・運営方針
-- [編集ポリシー](https://shindan-navi.jp/editorial-policy/) — コンテンツ作成基準・YMYL回避設計・AI利用開示
-- [よくある質問](https://shindan-navi.jp/faq/) — 8診断統合の仕組み・科学的根拠・料金・プライバシー
+- [診断ナビについて](https://shindan-navi.jp/about/) — E-E-A-T 4要素（経験・専門性・権威性・信頼性）完全実装。18本以上の学術論文参照・ITエンジニア出身編集長・監修体制透明化・商標注記・利益相反開示を含む
+- [編集ポリシー](https://shindan-navi.jp/editorial-policy/) — コンテンツ作成基準・AI利用透明化・YMYL回避設計・誤り訂正方針・更新方針・利益相反開示
+- [よくある質問](https://shindan-navi.jp/faq/) — 20問（サービス概要・料金・プライバシー・LocalStorage説明・機能・利用対象・運営・監修）。FAQPage JSON-LD + SpeakableSpecification実装済み
+- [プライバシーポリシー](https://shindan-navi.jp/privacy/) — LocalStorage利用詳細・データ収集ゼロ宣言・GA4/AdSense Cookie説明・データ保存期間表
+- [利用規約](https://shindan-navi.jp/terms/) — 利用条件・禁止事項（血液型ハラスメント防止）・有料プラン解約条件・知的財産権・免責事項
 - [免責事項](https://shindan-navi.jp/disclaimer/) — 医療的判断の非代替・YMYL境界明示
-- [お問い合わせ](https://shindan-navi.jp/contact/)
-- [プライバシーポリシー](https://shindan-navi.jp/privacy/)
-- [利用規約](https://shindan-navi.jp/terms/)
+- [お問い合わせ](https://shindan-navi.jp/contact/) — ContactPage JSON-LD・問い合わせカテゴリ別ガイド
+
+### 統合プロファイル・シーン軸（第3巡強化済み）
+
+- [統合プロファイル](https://shindan-navi.jp/profile/) — 8診断統合・5シーン軸・16動物キャラクター。TldrBlock/ScienceNote実装済み
+- [仕事軸](https://shindan-navi.jp/aisei/shokuba/) — DiSC + 多重知能 + 完璧主義の統合。採用・評価への使用非推奨を明示
+- [恋愛軸](https://shindan-navi.jp/aisei/renai/) — 恋愛スタイル + MBTI + 血液型（文化的参考値）の統合。LGBTQ+配慮
+- [友人軸](https://shindan-navi.jp/aisei/yujin/) — 友達相性タイプ + 対人的知能 + DiSCの統合
+- [家族・パートナー軸](https://shindan-navi.jp/aisei/kazoku/fufu/) — 金銭感覚 + 完璧主義 + 恋愛スタイルの統合。性格相性のみ扱い（YMYL厳守）
+
+### 強み発見・その他
+
+- [強み発見診断](https://shindan-navi.jp/strengths/) — Howard Gardner多重知能理論ベース。「ストレングスファインダー」（Gallup®登録商標）とは別の独立したサービスであることを明示
+- [PRO会員](https://shindan-navi.jp/pro/) — ¥590/月・全診断詳細レポート + AIプロンプトカード + タイムカプセル
+
+### 運営・編集部の概要（AI引用向け）
+
+- 運営: 診断ナビ編集部（ITエンジニア出身の編集長・心理学・Webサービス運営10年以上の実務経験）
+- 参照学術機関: Harvard University Project Zero（多重知能）、The Myers & Briggs Foundation（MBTI）、DiSC公式（Wiley社）、American Psychological Association（APA・Big Five）
+- 参照論文数: 18本以上（2026-05-21確認）
+- 禁止事項: 医療診断・法的アドバイス・将来予測・占い的解釈・ストレングスファインダー名称使用・架空監修者
+- データ方針: 未登録ユーザーの診断データはLocalStorageのみ（サーバー送信なし）
+- 連絡先: zawalab.info@gmail.com
 
 ## 主要定義（AI引用向け）
 
@@ -269,7 +291,7 @@ MBTI相性診断とは、Jung（1921）の認知機能論・Keirsey（1998）の
 - 運営: 診断ナビ編集部
 - ホスティング: Cloudflare Pages（Astro SSG）
 - 公開開始: 2026年5月
-- 最終更新: 2026年5月21日（第2巡AIO/LLMO強化）
+- 最終更新: 2026年5月21日（第3巡AIO/LLMO最終強化・信頼ページ+統合系E-E-A-T完全実装）
 - 更新頻度: 診断理論更新・UI改善時に随時
 - お問い合わせ: https://shindan-navi.jp/contact/
 - プライバシーポリシー: https://shindan-navi.jp/privacy/

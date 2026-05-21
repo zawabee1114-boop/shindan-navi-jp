@@ -2,6 +2,7 @@
 /**
  * /aisei/shokuba/ - 職場相性ハブページ（仕事軸統合プロファイル接続版）
  * Phase 1: 統合プロファイルの仕事軸を表示
+ * 第3巡AIO/LLMO強化: TldrBlock + ScienceNote + FAQ + mentions JSON-LD 追加
  *
  * 仕事軸: DiSC + 多重知能 + 完璧主義 の組み合わせを統合表示
  * YMYL回避: 採用・昇格・雇用判断への使用を推奨しない旨を明記
@@ -11,24 +12,65 @@
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Container from '../../../components/Container.astro';
 import IntegratedProfileViewer from '../../../components/IntegratedProfileViewer';
+import TldrBlock from '../../../components/TldrBlock.astro';
+import ScienceNote from '../../../components/ScienceNote.astro';
 
 const siteUrl = 'https://shindan-navi.jp';
 const pageUrl = `${siteUrl}/aisei/shokuba/`;
 
-const jsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'BreadcrumbList',
-  itemListElement: [
-    { '@type': 'ListItem', position: 1, name: 'ホーム', item: siteUrl },
-    { '@type': 'ListItem', position: 2, name: '相性診断', item: `${siteUrl}/aisei/` },
-    { '@type': 'ListItem', position: 3, name: '職場相性', item: pageUrl },
-  ],
-};
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    '@id': pageUrl,
+    url: pageUrl,
+    name: '職場・仕事の特性 | 統合プロファイル - 診断ナビ',
+    description: '8診断（DiSC・多重知能・完璧主義）を統合した仕事軸プロファイル。職場でのコミュニケーション・リーダーシップ・実行スタイルの傾向を確認できます。',
+    dateModified: '2026-05-21',
+    isPartOf: { '@type': 'WebSite', '@id': `${siteUrl}/#website`, url: siteUrl },
+    mentions: [
+      { '@type': 'Thing', name: 'DiSC理論', sameAs: 'https://www.discprofile.com/' },
+      { '@type': 'Thing', name: '多重知能理論', sameAs: 'https://www.pz.harvard.edu/projects/multiple-intelligences' },
+    ],
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    url: `${pageUrl}#faq`,
+    mainEntity: [
+      {
+        '@type': 'Question',
+        name: '職場での性格相性とは何ですか？',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: '職場での性格相性とは、DiSC行動スタイル・多重知能タイプ・完璧主義傾向の組み合わせに基づいて、コミュニケーション・リーダーシップ・実行スタイルがどのように機能するかを分析した参考情報です。採用・昇進の判断根拠としての使用は推奨しません。',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: '採用・評価に使ってもいいですか？',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'いいえ、推奨しません。本サービスの診断結果は自己理解・チームビルディングの参考情報です。採用選考・昇進判断・人事評価の根拠として使用することは推奨しません。DiSC公式（Wiley社）も同様の立場を示しています。',
+        },
+      },
+    ],
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'ホーム', item: siteUrl },
+      { '@type': 'ListItem', position: 2, name: '相性診断', item: `${siteUrl}/aisei/` },
+      { '@type': 'ListItem', position: 3, name: '職場相性', item: pageUrl },
+    ],
+  },
+];
 ---
 
 <BaseLayout
   title="職場・仕事の特性 | 統合プロファイル - 診断ナビ"
-  description="8診断を統合した仕事軸のプロファイル。リーダーシップ・チームワーク・実行力など、職場での特性と傾向を確認できます。"
+  description="8診断を統合した仕事軸のプロファイル。DiSC・多重知能・完璧主義の組み合わせでリーダーシップ・チームワーク・実行スタイルの傾向を確認できます。採用・評価判断への使用は推奨しません。"
   canonical={pageUrl}
   jsonLd={jsonLd}
   noindex={true}
@@ -36,6 +78,7 @@ const jsonLd = {
     { name: '相性診断', url: '/aisei/' },
     { name: '職場相性', url: '/aisei/shokuba/' },
   ]}
+  lastUpdated="2026-05-21"
 >
   <!-- ヘッダー -->
   <section class="axis-header axis-header--work">
@@ -53,12 +96,72 @@ const jsonLd = {
     </Container>
   </section>
 
+  <!-- TldrBlock（AIO引用最適化）-->
+  <Container>
+    <TldrBlock
+      title="仕事軸プロファイルとは"
+      points={[
+        "DiSC行動スタイル・多重知能・完璧主義タイプの3診断を統合した仕事軸の特性表示",
+        "職場でのコミュニケーション傾向・リーダーシップスタイル・実行パターンを確認できる",
+        "採用選考・昇進判断・人事評価の根拠としての使用は推奨しない（DiSC公式Wiley社も同立場）",
+        "8診断のうち3診断（DiSC・多重知能・完璧主義）が完了すると仕事軸スコアが表示される"
+      ]}
+      updatedAt="2026-05-21"
+      sourceLabel="DiSC Profile 公式（Wiley社）"
+      sourceUrl="https://www.discprofile.com/"
+    />
+  </Container>
+
+  <!-- 定義パラグラフ -->
+  <Container>
+    <div class="axis-definition">
+      <h2 class="axis-def-title">職場での性格相性とは何ですか？</h2>
+      <p class="axis-def-text">
+        職場での性格相性とは、DiSC行動スタイル（Dominance・Influence・Steadiness・Conscientiousness）・多重知能タイプ・完璧主義傾向の組み合わせに基づいて、コミュニケーション・リーダーシップ・実行スタイルがどのように機能するかを分析した参考情報です。Wiley社のDiSC公式データによると、世界75か国・年間100万人以上の組織研修で職場スタイル理解に活用されています（Wiley社データ、2024年）。
+      </p>
+    </div>
+  </Container>
+
   <!-- 統合プロファイル（仕事軸） -->
   <section class="axis-main">
     <Container>
       <IntegratedProfileViewer client:load axis="work" singleAxisMode={true} />
     </Container>
   </section>
+
+  <!-- FAQ -->
+  <Container>
+    <div class="axis-faq">
+      <h2 class="axis-faq-title">よくある質問</h2>
+      <div class="faq-list">
+        {[
+          { q: "採用・評価に使ってもいいですか？", a: "いいえ、推奨しません。本サービスの診断結果は自己理解・チームビルディングの参考情報です。採用選考・昇進判断・人事評価の根拠として使用することは推奨しません。DiSC公式（Wiley社）も「DiSCは採用・選考目的への使用を推奨しない」と明示しています。" },
+          { q: "8診断統合で仕事軸が表示されるのはいつですか？", a: "DiSC診断・多重知能テスト・完璧主義タイプ診断の3診断が完了すると、仕事軸のスコアが自動計算・表示されます。3つ未完了の場合は、未完了の診断へのリンクが表示されます。" },
+          { q: "仕事軸の診断結果はどのように活用すればいいですか？", a: "チームメンバーとのコミュニケーションスタイルの違いを理解する・1on1での自己紹介に活用する・上司との関係性を改善するための対話のきっかけにする、などの参考情報として活用できます。ただし、重要な人事判断は必ず複数の情報源・専門家の判断と組み合わせてください。" },
+        ].map(item => (
+          <details class="faq-item">
+            <summary class="faq-summary">
+              <span class="faq-q">Q</span>
+              <span class="faq-q-text">{item.q}</span>
+            </summary>
+            <div class="faq-answer">{item.a}</div>
+          </details>
+        ))}
+      </div>
+    </div>
+  </Container>
+
+  <!-- ScienceNote -->
+  <Container>
+    <ScienceNote
+      basisText="DiSC理論: William Moulton Marston「Emotions of Normal People」（1928年）に基づく行動スタイル分類。Wiley社が「Everything DiSC®」として整備。多重知能: Howard Gardner（Harvard大・1983年）の8知能モデル。"
+      basisUrl="https://www.discprofile.com/"
+      basisLabel="DiSC Profile 公式（Wiley社）"
+      notMedical={true}
+      updatedAt="2026-05-21"
+      additionalNote="採用選考・昇進判断・人事評価の根拠として使用することは推奨しません。世界75か国・年間100万人以上の組織研修で自己理解・チームビルディング目的に活用されています（Wiley社データ）。"
+    />
+  </Container>
 
   <!-- 関連診断 -->
   <section class="axis-related">
@@ -89,89 +192,44 @@ const jsonLd = {
             <span>仕事への向き合い方・強みと注意点</span>
           </div>
         </a>
+        <a href="/profile/" class="axis-diag-card">
+          <span aria-hidden="true">🎯</span>
+          <div>
+            <strong>統合プロファイル</strong>
+            <span>8診断統合で全シーン軸を確認</span>
+          </div>
+        </a>
       </div>
     </Container>
   </section>
 </BaseLayout>
 
 <style>
-  .axis-header {
-    padding-block: var(--sn-space-8, 2rem);
-    border-bottom: 1px solid var(--sn-border, #e5e7eb);
-  }
-  .axis-header--work {
-    background: linear-gradient(135deg, #eff6ff 0%, var(--sn-bg-soft, #f9fafb) 100%);
-  }
-  .axis-header-inner {
-    display: flex;
-    align-items: flex-start;
-    gap: var(--sn-space-4, 1rem);
-  }
-  .axis-icon {
-    font-size: 2.5rem;
-    flex-shrink: 0;
-    line-height: 1;
-  }
-  .axis-title {
-    font-family: var(--sn-font-rounded, sans-serif);
-    font-size: clamp(1.25rem, 4vw, 1.75rem);
-    font-weight: 900;
-    color: var(--sn-text, #111827);
-    margin: 0 0 var(--sn-space-2, 0.5rem);
-  }
-  .axis-lead {
-    font-size: var(--sn-text-sm, 0.875rem);
-    color: var(--sn-text-soft, #6b7280);
-    line-height: 1.7;
-    margin: 0;
-  }
-  .axis-main {
-    padding-block: var(--sn-space-8, 2rem);
-  }
-  .axis-related {
-    padding-block: var(--sn-space-8, 2rem);
-    background: var(--sn-bg-soft, #f9fafb);
-    border-top: 1px solid var(--sn-border, #e5e7eb);
-  }
-  .axis-section-title {
-    display: flex;
-    align-items: center;
-    gap: var(--sn-space-2, 0.5rem);
-    font-family: var(--sn-font-rounded, sans-serif);
-    font-size: var(--sn-text-lg, 1.125rem);
-    font-weight: 900;
-    color: var(--sn-text, #111827);
-    margin: 0 0 var(--sn-space-4, 1rem);
-  }
-  .axis-diag-grid {
-    display: flex;
-    flex-direction: column;
-    gap: var(--sn-space-2, 0.5rem);
-  }
-  .axis-diag-card {
-    display: flex;
-    align-items: center;
-    gap: var(--sn-space-3, 0.75rem);
-    padding: var(--sn-space-4, 1rem);
-    background: var(--sn-bg-white, #fff);
-    border-radius: var(--sn-radius-md, 12px);
-    border: 1px solid var(--sn-border, #e5e7eb);
-    text-decoration: none;
-    transition: border-color 0.15s ease;
-  }
-  .axis-diag-card:hover {
-    border-color: var(--sn-scene-work, #3b82f6);
-    text-decoration: none;
-  }
+  .axis-header { padding-block: var(--sn-space-8, 2rem); border-bottom: 1px solid var(--sn-border, #e5e7eb); }
+  .axis-header--work { background: linear-gradient(135deg, #eff6ff 0%, var(--sn-bg-soft, #f9fafb) 100%); }
+  .axis-header-inner { display: flex; align-items: flex-start; gap: var(--sn-space-4, 1rem); }
+  .axis-icon { font-size: 2.5rem; flex-shrink: 0; line-height: 1; }
+  .axis-title { font-family: var(--sn-font-rounded, sans-serif); font-size: clamp(1.25rem, 4vw, 1.75rem); font-weight: 900; color: var(--sn-text, #111827); margin: 0 0 var(--sn-space-2, 0.5rem); }
+  .axis-lead { font-size: var(--sn-text-sm, 0.875rem); color: var(--sn-text-soft, #6b7280); line-height: 1.7; margin: 0; }
+  .axis-definition { margin-block: 1.5rem; padding: 1.25rem 1.5rem; background: var(--sn-bg-white, #fff); border: 1px solid var(--sn-border, #e5e7eb); border-radius: var(--sn-radius, 0.75rem); }
+  .axis-def-title { font-family: var(--sn-font-rounded, sans-serif); font-size: var(--sn-text-lg, 1.125rem); font-weight: 700; margin-bottom: 0.75rem; }
+  .axis-def-text { font-size: var(--sn-text-sm, 0.875rem); color: var(--sn-text-soft, #6b7280); line-height: var(--sn-leading-relaxed, 1.8); }
+  .axis-main { padding-block: var(--sn-space-8, 2rem); }
+  .axis-faq { margin-block: 2rem; }
+  .axis-faq-title { font-family: var(--sn-font-rounded, sans-serif); font-size: var(--sn-text-lg, 1.125rem); font-weight: 700; margin-bottom: 1rem; }
+  .faq-list { display: flex; flex-direction: column; gap: 0.75rem; }
+  details.faq-item { background: var(--sn-bg-white, #fff); border: 1px solid var(--sn-border, #e5e7eb); border-radius: var(--sn-radius, 0.75rem); overflow: hidden; }
+  .faq-summary { display: flex; align-items: flex-start; gap: 0.75rem; padding: 1rem 1.25rem; cursor: pointer; list-style: none; font-weight: 700; font-size: var(--sn-text-sm, 0.875rem); }
+  .faq-summary::-webkit-details-marker { display: none; }
+  .faq-q { flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%; background: var(--sn-primary, #6366f1); color: #fff; font-size: 0.7rem; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+  .faq-q-text { flex: 1; padding-top: 2px; }
+  .faq-answer { padding: 0 1.25rem 1rem; padding-left: calc(1.25rem + 22px + 0.75rem); font-size: var(--sn-text-sm, 0.875rem); color: var(--sn-text-soft, #6b7280); line-height: var(--sn-leading-relaxed, 1.8); }
+  .axis-related { padding-block: var(--sn-space-8, 2rem); background: var(--sn-bg-soft, #f9fafb); border-top: 1px solid var(--sn-border, #e5e7eb); }
+  .axis-section-title { display: flex; align-items: center; gap: var(--sn-space-2, 0.5rem); font-family: var(--sn-font-rounded, sans-serif); font-size: var(--sn-text-lg, 1.125rem); font-weight: 900; color: var(--sn-text, #111827); margin: 0 0 var(--sn-space-4, 1rem); }
+  .axis-diag-grid { display: flex; flex-direction: column; gap: var(--sn-space-2, 0.5rem); }
+  .axis-diag-card { display: flex; align-items: center; gap: var(--sn-space-3, 0.75rem); padding: var(--sn-space-4, 1rem); background: var(--sn-bg-white, #fff); border-radius: var(--sn-radius-md, 12px); border: 1px solid var(--sn-border, #e5e7eb); text-decoration: none; transition: border-color 0.15s ease; }
+  .axis-diag-card:hover { border-color: var(--sn-scene-work, #3b82f6); }
   .axis-diag-card > span:first-child { font-size: 1.5rem; flex-shrink: 0; }
-  .axis-diag-card strong {
-    display: block;
-    font-size: var(--sn-text-sm, 0.875rem);
-    font-weight: 700;
-    color: var(--sn-text, #111827);
-  }
-  .axis-diag-card span:last-child {
-    font-size: var(--sn-text-xs, 0.75rem);
-    color: var(--sn-muted, #9ca3af);
-  }
+  .axis-diag-card strong { display: block; font-size: var(--sn-text-sm, 0.875rem); font-weight: 700; color: var(--sn-text, #111827); }
+  .axis-diag-card span:last-child { font-size: var(--sn-text-xs, 0.75rem); color: var(--sn-muted, #9ca3af); }
 </style>
