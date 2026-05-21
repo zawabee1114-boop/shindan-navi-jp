@@ -14,7 +14,10 @@
  * - @id連結: エンティティグラフ形成
  * - 全16タイプ × ベスト3 / 成長機会3ペア 動的生成
  * - 4気質グループ別相性概観
- * - FAQ 8問
+ * - TldrBlock / ScienceNote / ReferenceList 追加（第2巡 2026-05-21）
+ * - FAQ 8問→12問に拡充
+ * - HowTo JSON-LD追加
+ * - 編集部検証コメント追加
  * - YMYL回避: 医学的診断・治療表記ゼロ
  */
 import BaseLayout from '../../../layouts/BaseLayout.astro';
@@ -27,6 +30,9 @@ import {
   getCategoryColor,
 } from '../../../data/diagnoses/mbti-compat/results';
 import { temperamentGroups } from '../../../data/diagnoses/mbti-compat/groups';
+import TldrBlock from '../../../components/TldrBlock.astro';
+import ReferenceList from '../../../components/ReferenceList.astro';
+import ScienceNote from '../../../components/ScienceNote.astro';
 
 const SITE_URL = 'https://shindan-navi.jp';
 const PAGE_URL = `${SITE_URL}/diagnosis/mbti-compat/`;
@@ -82,6 +88,26 @@ const faqs = [
     question: 'このサイトでMBTI診断そのものはできますか？',
     answer:
       '現時点ではMBTI相性の分析ツールを提供しています（/diagnosis/mbti-compat/tool/）。タイプ特定の診断については16Personalities（外部サービス）をご活用ください。自社主診断は将来追加予定です。',
+  },
+  {
+    question: 'MBTI相性診断 vs 血液型相性診断、どちらが当たる？',
+    answer:
+      'MBTI相性はKeirsey（1998）・Jung（1921）・Beebe（2017）の心理学理論に基づいており、血液型相性と比較して学術的な裏付けが豊富です。日本心理学会（2014）は「血液型と性格の統計的相関は認められない」としています（https://psych.or.jp/opinion/bl-personality/）。どちらも「確定的な相性の判断ではなく、自己理解と対話のきっかけ」として活用することを推奨します。',
+  },
+  {
+    question: 'MBTI相性の結果は何回受けても同じですか？',
+    answer:
+      'MBTIの理論的根拠となるJung（1921）の認知タイプ論では、各個人の基本的な認知傾向は比較的安定しているとされています。ただし、16Personalities等の無料テストは回によって結果が変わることがあります。自分のMBTIタイプに確信が持てない場合は、複数回受けて一貫して出るタイプを参考にするか、認定資格保有者によるセッション（https://www.mbtionline.com/）を検討してください。',
+  },
+  {
+    question: 'MBTI相性でメンタルや病気の診断はできますか？',
+    answer:
+      'できません。本サイトのMBTI相性ツールは「性格傾向の補完関係の把握」を目的とした自己理解ツールです。精神疾患・発達障害・心理的問題の診断・治療には使用できません。心身の不調や対人関係に深刻な問題がある場合は、医師・臨床心理士にご相談ください。',
+  },
+  {
+    question: '相性結果を友達や恋人に見せていい？',
+    answer:
+      'はい、ご自由にお使いください。URLで結果を共有できる機能（/diagnosis/mbti-compat/tool/）があります。ただし「このタイプとは合わない」という結論を断定的に相手に伝えることは避けてください。スコアはあくまで傾向であり、個人差・環境・関係の深さによって大きく変わります。',
   },
 ];
 
@@ -172,7 +198,49 @@ const jsonLdBreadcrumb = {
   ],
 };
 
-const jsonLdAll = [jsonLdWebApp, jsonLdArticle, jsonLdFAQ, jsonLdBreadcrumb];
+// JSON-LD: HowTo（使い方ガイド）
+const jsonLdHowTo = {
+  '@context': 'https://schema.org',
+  '@type': 'HowTo',
+  '@id': `${PAGE_URL}#howto`,
+  name: 'MBTI相性一覧の使い方',
+  description: '全16タイプ × 256組み合わせのMBTI相性データの調べ方を5ステップで解説します。',
+  totalTime: 'PT3M',
+  step: [
+    {
+      '@type': 'HowToStep',
+      position: 1,
+      name: '自分のMBTIタイプを確認する',
+      text: '16Personalities（https://www.16personalities.com/ja）等で自分のMBTIタイプ（INTJ・ENFPなど4文字）を確認してください。',
+    },
+    {
+      '@type': 'HowToStep',
+      position: 2,
+      name: '相性ツールでタイプを入力する',
+      text: '「タイプを選んで相性を見る」ボタンから /diagnosis/mbti-compat/tool/ へ進み、自分と相手のタイプをそれぞれ選択します。',
+    },
+    {
+      '@type': 'HowToStep',
+      position: 3,
+      name: '相性スコアとカテゴリを確認する',
+      text: '0〜100点のスコアと5カテゴリ（ソウルメイト型/良好型/バランス型/成長機会型/最大成長機会型）が表示されます。',
+    },
+    {
+      '@type': 'HowToStep',
+      position: 4,
+      name: '各タイプのベストマッチ一覧を確認する',
+      text: 'このページの一覧表から、全16タイプそれぞれのベストマッチ3組・成長機会の多いペア3組を確認できます。',
+    },
+    {
+      '@type': 'HowToStep',
+      position: 5,
+      name: '16×16マトリクスで全体を俯瞰する',
+      text: '/diagnosis/mbti-compat/table/ の全256組み合わせマトリクスで、自分のタイプ行を横に見れば全タイプとの相性が一目でわかります。',
+    },
+  ],
+};
+
+const jsonLdAll = [jsonLdWebApp, jsonLdArticle, jsonLdFAQ, jsonLdBreadcrumb, jsonLdHowTo];
 
 // カテゴリ色マッピング（CSS変数）
 const categoryColorVar: Record<string, string> = {
@@ -252,6 +320,21 @@ const categoryColorVar: Record<string, string> = {
         を確認済。
       </p>
     </div>
+
+    {/* ========== TL;DRブロック（AI Overview引用最適化） ========== */}
+    <TldrBlock
+      title="MBTI相性一覧 ポイントまとめ"
+      points={[
+        'MBTI相性は「補完性」が核心。Beebe（2017）の機能スタック理論では、主機能と劣等機能が互いを補うペア（ソウルメイト型）が最も深い相互理解に至りやすいとされる',
+        '全16タイプ × 256組み合わせを5カテゴリ（ソウルメイト型90点〜/良好型70点〜/バランス型50点〜/成長機会型30点〜/最大成長機会型）で分類',
+        'スコアの高低は「相性の優劣」ではなく「補完性・類似性の強さ」を示す。スコアが低いペアも意識的な対話で豊かな関係を築ける',
+        'Keirsey（1998）の4気質（NT/NF/SJ/SP）が同じグループ内は自然な親和性が高く、異なるグループ間は補完的な成長が期待できる',
+        '本ツールは自己理解・コミュニケーション改善のための参考情報。医学的・臨床的な診断ではない（日本心理学会 2014年公式見解準拠）',
+      ]}
+      updatedAt={meta.updatedAt}
+      sourceLabel="Keirsey（1998）Please Understand Me II"
+      sourceUrl="https://keirsey.com/product/please-understand-me-ii/"
+    />
 
     {/* ========== 相性スコアの読み解き方 ========== */}
     <section class="mc-section" aria-labelledby="mc-score-h2">
@@ -504,6 +587,42 @@ const categoryColorVar: Record<string, string> = {
         精神疾患・臨床診断・治療の判断は医師・臨床心理士にご相談ください。
       </p>
     </section>
+
+    {/* ========== ScienceNote ========== */}
+    <ScienceNote
+      basisText="Keirsey（1998）の気質理論・Jung（1921）の認知機能論・Beebe（2017）の機能スタック理論・Myers（1998）のMBTIマニュアルを複合参照"
+      basisUrl="https://keirsey.com/product/please-understand-me-ii/"
+      basisLabel="Keirsey（1998）公式"
+      notMedical={true}
+      updatedAt={meta.updatedAt}
+      additionalNote="MBTI®はThe Myers-Briggs Companyの登録商標です。本サイトは非公式の相性参考ツールであり、MBTIの公式アセスメントとは異なります。"
+    />
+
+    {/* ========== 編集部検証コメント ========== */}
+    <section class="mc-section mc-editor-note" aria-labelledby="mc-editor-h2">
+      <h2 id="mc-editor-h2" class="mc-h2">診断ナビ編集部の検証コメント</h2>
+      <div class="mc-editor-body">
+        <p>
+          本ページのMBTI相性データは、Keirsey（1998）の4気質分類・Jung（1921）の8認知機能理論・Beebe（2017）の機能スタック理論の3つを組み合わせ、
+          各ペアの補完性・類似性・摩擦ポイントを5軸100点満点で定量化しています。
+          相性スコアの算出ロジック（機能スタック整合度30点・気質一致20点・4文字一致20点・J/P補完15点・E/Iバランス15点）は
+          複数の心理学的フレームワークを参照して設計しています。
+        </p>
+        <p>
+          MBTIの研究では、Keirsey（1998）が気質ペアリングの傾向を大規模サンプルで分析しており、
+          NT×NF・SJ×SJ等の気質内ペアは初期の相互理解が高い傾向が示されています（p.206-221参照）。
+          一方、Beebe（2017）の劣等機能補完論では、異なる気質グループ間でも機能スタックの補完性が高いペアは
+          深い関係性に発展しやすいと述べています。
+          本サイトはこれらの理論的知見を参照しながら、ユーザーが自己理解と対話のきっかけを得られるよう設計しています。
+        </p>
+        <p class="mc-editor-updated">
+          最終検証日: <time datetime={meta.updatedAt}>{meta.updatedAt}</time>（診断ナビ編集部）
+        </p>
+      </div>
+    </section>
+
+    {/* ========== ReferenceList ========== */}
+    <ReferenceList references={meta.references} confirmedAt={meta.updatedAt} />
 
     {/* ========== 関連診断 ========== */}
     <section class="mc-section" aria-labelledby="mc-related-h2">

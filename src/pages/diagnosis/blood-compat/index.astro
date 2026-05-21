@@ -27,6 +27,9 @@ import {
   getCategoryLabel,
   getCategoryColor,
 } from '../../../data/diagnoses/blood-compat/results';
+import TldrBlock from '../../../components/TldrBlock.astro';
+import ReferenceList from '../../../components/ReferenceList.astro';
+import ScienceNote from '../../../components/ScienceNote.astro';
 
 const SITE_URL = 'https://shindan-navi.jp';
 const PAGE_URL = `${SITE_URL}/diagnosis/blood-compat/`;
@@ -84,6 +87,26 @@ const faqs = [
     question: 'このサイトで血液型相性診断ツールはどこにありますか？',
     answer:
       '血液型を2つ選んで相性を即表示できるツールは /diagnosis/blood-compat/tool/ にあります。4×4の相性表ビジュアルは /diagnosis/blood-compat/table/ で確認できます。いずれも無料・登録不要です。',
+  },
+  {
+    question: '血液型相性 vs MBTI相性、どちらが参考になる？',
+    answer:
+      'MBTI相性はKeirsey（1998）・Jung（1921）・Beebe（2017）の心理学理論に基づいており、血液型相性より多くの学術的研究に裏付けられています。日本心理学会（2014）は「血液型と性格の科学的相関は認められない」と明言しています（https://psych.or.jp/opinion/bl-personality/）。血液型相性は「日本の文化的話題として楽しむ」、MBTI相性は「傾向把握の参考にする」という異なる活用法を持ちます。',
+  },
+  {
+    question: '血液型相性の結果は何回受けても変わりませんか？',
+    answer:
+      '血液型は変わらないため、同じ血液型の組み合わせなら本サイトのスコアは同じです。ただし「血液型が同じでも個人差が大きい」というのが科学的立場（日本心理学会 2014）であるため、スコアを固定的な判断基準にしないことを推奨します。',
+  },
+  {
+    question: '血液型相性で病気や性格の確定診断はできますか？',
+    answer:
+      'できません。血液型は医療では血液型判定・輸血適合性の確認に使用されるものであり、性格・能力・相性の医学的判断には使用されません。日本心理学会（2014）も「血液型と性格の科学的相関は認められない」としています。心身の不調や人間関係の問題は専門家にご相談ください。',
+  },
+  {
+    question: '結果を友達や恋人に見せていい？',
+    answer:
+      'ご自由にお使いください。ただし「この血液型だから合わない」という断定的な伝え方は、血液型ハラスメント（ブラハラ）につながるリスクがあります。日本心理学会（2014）の公式見解を踏まえ、「傾向としてこんな特徴があるらしい」という楽しみ方を推奨します。',
   },
 ];
 
@@ -174,7 +197,24 @@ const jsonLdBreadcrumb = {
   ],
 };
 
-const jsonLdAll = [jsonLdWebApp, jsonLdArticle, jsonLdFAQ, jsonLdBreadcrumb];
+// JSON-LD: HowTo（使い方ガイド）
+const jsonLdHowTo = {
+  '@context': 'https://schema.org',
+  '@type': 'HowTo',
+  '@id': `${PAGE_URL}#howto`,
+  name: '血液型相性診断の使い方',
+  description: 'A・B・O・AB型の4タイプ全16通りの相性を調べる方法を5ステップで解説します。',
+  totalTime: 'PT2M',
+  step: [
+    { '@type': 'HowToStep', position: 1, name: '自分の血液型を確認する', text: '献血・健康診断の記録、または医療機関での検査で血液型（A/B/O/AB型）を確認してください。' },
+    { '@type': 'HowToStep', position: 2, name: '相性ツールで2つの血液型を選ぶ', text: '/diagnosis/blood-compat/tool/ で自分と相手の血液型を選択すると、相性スコアと解説が即表示されます。' },
+    { '@type': 'HowToStep', position: 3, name: '4×4マトリクスで全体を確認する', text: '/diagnosis/blood-compat/table/ で4種 × 4種の16通り全組み合わせをカラーコード付きで一覧確認できます。' },
+    { '@type': 'HowToStep', position: 4, name: '各タイプの詳細カードを読む', text: 'このページのA型・B型・O型・AB型のカードから、各タイプの特徴・強み・相性傾向の詳細解説を読んでください。' },
+    { '@type': 'HowToStep', position: 5, name: '科学的位置付けを確認する', text: '日本心理学会（2014）の公式見解など、血液型分類の文化的・学術的背景を確認して正しく活用してください。' },
+  ],
+};
+
+const jsonLdAll = [jsonLdWebApp, jsonLdArticle, jsonLdFAQ, jsonLdBreadcrumb, jsonLdHowTo];
 
 // カテゴリ色マッピング
 const catColors: Record<string, string> = {
@@ -265,6 +305,21 @@ const typeLabels: Record<string, string> = { A: 'A型', B: 'B型', O: 'O型', AB
         を確認済。
       </p>
     </div>
+
+    {/* ========== TL;DRブロック（AI Overview引用最適化） ========== */}
+    <TldrBlock
+      title="血液型相性診断 ポイントまとめ"
+      points={[
+        '血液型相性はA・B・O・AB型の4タイプ × 4タイプ計16通りの組み合わせを分析。日本独自の文化的分類として1927年（古川竹二）に始まり、1971年（能見正比古）に普及した',
+        '日本心理学会（2014）公式見解では「血液型と性格の科学的統計的相関は認められない」とされており（https://psych.or.jp/opinion/bl-personality/）、本サイトは文化的話題として傾向を参考情報として提示',
+        'O型×O型（85点）・A型×A型（86点）が本サイトの最高スコア。ただし実際の相性は個人の性格・価値観・コミュニケーション方法によって大きく変わる',
+        '血液型ハラスメント（ブラハラ）に注意。血液型を根拠にした採用差別・役割の押しつけ・人格否定は不当な扱いであり推奨しない',
+        '本ツールは自己理解・会話のきっかけのための参考情報。医学的・精神医学的な診断ではない',
+      ]}
+      updatedAt={meta.updatedAt}
+      sourceLabel="日本心理学会 公式見解（2014）"
+      sourceUrl="https://psych.or.jp/opinion/bl-personality/"
+    />
 
     {/* ========== 文化的・科学的位置付け（重要セクション） ========== */}
     <section class="bc-section" aria-labelledby="bc-science-h2">
@@ -614,6 +669,42 @@ const typeLabels: Record<string, string> = { A: 'A型', B: 'B型', O: 'O型', AB
         ))}
       </ol>
     </section>
+
+    {/* ========== ScienceNote ========== */}
+    <ScienceNote
+      basisText="古川竹二（1927）「血液型による気質の研究」・能見正比古（1971）の文化的研究・日本心理学会（2014）公式見解・Sakamoto & Yamazaki（2004）International Journal of Psychology 39(4)を参照"
+      basisUrl="https://psych.or.jp/opinion/bl-personality/"
+      basisLabel="日本心理学会 公式見解（2014）"
+      notMedical={true}
+      updatedAt={meta.updatedAt}
+      additionalNote="血液型性格分類は日本独自の文化的現象であり、国際的な心理学研究では科学的相関は確認されていません。本サイトは文化的分類として傾向を参考提示しています。"
+    />
+
+    {/* ========== 編集部検証コメント ========== */}
+    <section class="bc-section bc-editor-note" aria-labelledby="bc-editor-h2">
+      <h2 id="bc-editor-h2" class="bc-h2">診断ナビ編集部の検証コメント</h2>
+      <div class="bc-editor-body">
+        <p>
+          本ページの血液型相性データは、日本の文化的分類として広く親しまれている血液型性格論の傾向値を整理したものです。
+          スコアの算出は文化的評判・一般的な特徴記述・傾向の定量化に基づいており、学術的な効果量（d値）の測定ではありません。
+          古川竹二（1927）・能見正比古（1971）の研究が文化的基礎となっていますが、
+          Sakamoto &amp; Yamazaki（2004）をはじめとする現代の心理学研究では、
+          血液型と性格の間に有意な統計的相関は確認されておらず（International Journal of Psychology 39(4)）、
+          日本心理学会（2014年）も同様の立場を公式見解として表明しています。
+        </p>
+        <p>
+          本サイトは「日本の文化的な話題として楽しむ」ことを目的とした参考ツールです。
+          血液型を根拠に採用・交際・人間関係を判断することは推奨しません。
+          血液型ハラスメント（ブラハラ）への注意喚起も含め、正しい活用方法をご理解いただいた上でご利用ください。
+        </p>
+        <p class="bc-editor-updated">
+          最終検証日: <time datetime={meta.updatedAt}>{meta.updatedAt}</time>（診断ナビ編集部）
+        </p>
+      </div>
+    </section>
+
+    {/* ========== ReferenceList ========== */}
+    <ReferenceList references={meta.references} confirmedAt={meta.updatedAt} />
   </Container>
 </BaseLayout>
 
