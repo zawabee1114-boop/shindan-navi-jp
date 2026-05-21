@@ -1,14 +1,811 @@
 ---
+/**
+ * /aisei/kazoku/oyako/ - 親子相性ページ（Phase 2 強化版）
+ *
+ * ターゲットKW: 親子相性（VOL260/SD14・穴場）
+ * 家族軸 = 性格相性のみ（YMYL回避・絶対厳守）
+ * 育児ストレス・育て方論・医療言及は絶対NG
+ *
+ * 確認日: 2026-05-21
+ * 根拠:
+ *  - Gardner H (1983) Frames of Mind: The Theory of Multiple Intelligences
+ *    https://www.pz.harvard.edu/projects/multiple-intelligences
+ *  - Myers IB & Myers PB (1980) Gifts Differing
+ *    https://www.myersbriggs.org/
+ *  - Keirsey D (1998) Please Understand Me II
+ *    https://keirsey.com/
+ *  - Baumrind D (1966) Effects of Authoritative Parental Control on Child Behavior
+ *    https://doi.org/10.2307/1126611
+ */
 import BaseLayout from '../../../../layouts/BaseLayout.astro';
 import Container from '../../../../components/Container.astro';
+import IntegratedProfileViewer from '../../../../components/IntegratedProfileViewer';
+import TldrBlock from '../../../../components/TldrBlock.astro';
+import ScienceNote from '../../../../components/ScienceNote.astro';
+import ReferenceList from '../../../../components/ReferenceList.astro';
+
+const siteUrl = 'https://shindan-navi.jp';
+const pageUrl = `${siteUrl}/aisei/kazoku/oyako/`;
+
+const references = [
+  {
+    title: 'Frames of Mind: The Theory of Multiple Intelligences',
+    author: 'Gardner, H.',
+    year: 1983,
+    publisher: 'Basic Books',
+    url: 'https://www.pz.harvard.edu/projects/multiple-intelligences',
+  },
+  {
+    title: 'Gifts Differing: Understanding the Myers-Briggs Type Indicator',
+    author: 'Myers, I.B. & Myers, P.B.',
+    year: 1980,
+    publisher: 'Consulting Psychologists Press',
+    url: 'https://www.myersbriggs.org/',
+  },
+  {
+    title: 'Please Understand Me II: Temperament, Character, Intelligence',
+    author: 'Keirsey, D.',
+    year: 1998,
+    publisher: 'Prometheus Nemesis Book Company',
+    url: 'https://keirsey.com/',
+  },
+  {
+    title: 'Effects of Authoritative Parental Control on Child Behavior',
+    author: 'Baumrind, D.',
+    year: 1966,
+    journal: 'Child Development',
+    volume: '37(4), 887-907',
+    url: 'https://doi.org/10.2307/1126611',
+  },
+];
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    '@id': `${pageUrl}#article`,
+    url: pageUrl,
+    headline: '親子の性格相性完全ガイド｜MBTI×多重知能で理解するコミュニケーション術',
+    description: 'Gardner（1983）多重知能理論・Myers-Briggs（1980）を用いた親子相性の科学的考え方。タイプが違うときの理解法・子供の傾向を観察するヒント・FAQ10問を収録。',
+    dateModified: '2026-05-21',
+    datePublished: '2026-05-21',
+    author: { '@type': 'Organization', name: '診断ナビ編集部', url: siteUrl },
+    publisher: { '@type': 'Organization', name: '診断ナビ', url: siteUrl },
+    isPartOf: { '@type': 'WebSite', '@id': `${siteUrl}/#website`, url: siteUrl },
+    about: [
+      { '@type': 'Thing', name: '親子相性', sameAs: 'https://ja.wikipedia.org/wiki/%E3%83%9E%E3%82%A4%E3%83%A4%E3%83%BC%E3%82%BA%EF%BC%9D%E3%83%96%E3%83%AA%E3%83%83%E3%82%B0%E3%82%B9%E3%83%BB%E3%82%BF%E3%82%A4%E3%83%97%E6%8C%87%E6%A8%99' },
+      { '@type': 'Thing', name: '多重知能理論', sameAs: 'https://www.pz.harvard.edu/projects/multiple-intelligences' },
+    ],
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    url: `${pageUrl}#faq`,
+    mainEntity: [
+      {
+        '@type': 'Question',
+        name: '親子の性格相性は固定されていますか？',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: '性格傾向は遺伝と環境の両方の影響を受けます。MBTIの研究では、同じタイプが親子で共通することもありますが、異なるタイプが多く見られます。重要なのは「タイプの一致」ではなく、お互いのスタイルを理解して対話することです。',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: 'MBTIが異なる親子は相性が悪いですか？',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'そのようなことはありません。MBTIは性格傾向の参考情報です。Keirsey（1998）は、タイプが異なる親子は互いに学べる視点が多く、多様な思考スタイルを育む環境になりやすいと述べています。',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: '多重知能（Gardner）は親子相性にどう関係しますか？',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Gardner（1983）の多重知能理論では、人は8種類の知能（言語・論理数学・音楽・身体運動・空間・対人・内省・自然）の異なる組み合わせを持ちます。親と子の強い知能が異なる場合、親が「なぜこんなことに夢中なのか」と感じる場面が生まれやすいですが、それは子供の強みが親と違う知能領域にあるサインである可能性があります。',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: '内向型の子供を外向型の親はどう理解すればいいですか？',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: '内向型の子供は1人の時間でエネルギーを回復します。外向型の親が「もっと人と関わって」と働きかけることが、子供には負担になる場合があります。「1人でいること＝問題」ではなく「充電スタイルの違い」として捉えることで、コミュニケーションが改善されやすいです。',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: '感情型（F）の子供と思考型（T）の親の対話術は？',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: '感情型の子供が悩みを話すとき、思考型の親がすぐに「解決策」を提示すると子供が「話を聞いてもらえていない」と感じる場合があります。「まずどう感じているかを聞く」ことを先行させてから、問題解決の話を始めると関係がスムーズになります。',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: '子供の性格タイプはいつ頃に判断できますか？',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'MBTIなどの自己申告型ツールは、言語能力と内省力がある程度発達する10〜12歳以降からの活用が研究者の推奨です。幼少期は「傾向の観察」として、日常の行動パターン（集団 vs 1人・計画的 vs その場の流れ）を見ることが実用的です。本サイトのコンテンツは参考情報であり、年齢別の発達診断や能力評価の代替ではありません。',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: '計画型（J）の親と知覚型（P）の子供はなぜぶつかりやすいですか？',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: '計画型（J）の親は「先に決めてから動く」ことで安心します。知覚型（P）の子供は「流れに任せる」ことを好むため、「なぜ先に決められないの？」vs「なぜもっと柔軟にできないの？」という衝突が起きやすいです。どちらのスタイルも有効であることを前提に、「最低限の合意」だけを作ると摩擦が減ります。',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: '親子で性格診断を一緒に受けるメリットはありますか？',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: '親子で診断を受けると「なぜいつもこういう反応をするのか」を責めずに話し合えるきっかけが生まれます。「悪い行動」ではなく「スタイルの違い」として会話できるため、批判より理解を軸にした対話に移行しやすいです。本サイトの統合プロファイルで親子それぞれのプロファイルを確認できます。',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: '血液型と親子相性は関係ありますか？',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: '血液型と性格の科学的相関は国際的な研究で限定的とされています（Sakamoto & Yamazaki 2004）。本サイトでは「日本文化の会話のきっかけ」として掲載していますが、親子関係の実質的な理解にはMBTIや多重知能など行動傾向を観察するアプローチが有効です。',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: '統合プロファイルで親子相性を確認するにはどうすればいいですか？',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: '本ページの統合プロファイルビューアーで、あなたの診断結果を家族軸でまとめて確認できます。MBTI・多重知能・完璧主義・マネースクリプトなど8つの診断を統合したプロファイルが表示されます。親側・子供側それぞれが診断を受けて比較することで対話のヒントが得られます。',
+        },
+      },
+    ],
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'ホーム', item: siteUrl },
+      { '@type': 'ListItem', position: 2, name: '相性診断', item: `${siteUrl}/aisei/` },
+      { '@type': 'ListItem', position: 3, name: '家族相性', item: `${siteUrl}/aisei/kazoku/` },
+      { '@type': 'ListItem', position: 4, name: '親子相性', item: pageUrl },
+    ],
+  },
+];
+
+// MBTIタイプ別 親子コミュニケーションのポイント
+const mbtiOyakoPairs = [
+  { types: '外向型（E）の親 × 内向型（I）の子', label: '活発 × 内省ペア', desc: '子供の「1人の時間」を確保する合意を作る。会話は「たくさん話す」より「子供のペースに合わせる」が有効。' },
+  { types: '思考型（T）の親 × 感情型（F）の子', label: '論理 × 共感ペア', desc: '子供の悩みに対して解決策より先に共感を示す。「なぜそう感じるの？」より「そう感じるんだね」から始める。' },
+  { types: '感情型（F）の親 × 思考型（T）の子', label: '共感 × 分析ペア', desc: '子供が「なぜ？」「どうして？」と論理的に問う傾向を、反抗とではなく知的好奇心として捉える。' },
+  { types: '判断型（J）の親 × 知覚型（P）の子', label: '計画 × 柔軟ペア', desc: '「ルール」よりも「最低限の約束」を少なく設定し、知覚型の子供が動きやすい余白を残す。' },
+  { types: '直感型（N）の親 × 感覚型（S）の子', label: 'ビジョン × 現実ペア', desc: '大きなアイデアより「今日・明日の具体的な話」が子供に届きやすい。感覚型の子供は体験から学ぶ傾向がある。' },
+  { types: '感覚型（S）の親 × 直感型（N）の子', label: '現実 × 想像ペア', desc: '子供が「もし〜だったら」という空想を楽しむ場合、それを「非現実的」と打ち消さず聞く姿勢が信頼を育む。' },
+];
+
+// 多重知能別 子供の傾向観察ヒント
+const intelligenceHints = [
+  { name: '言語知能が高い子', sign: '本・言葉・ストーリーに強い反応を示す', tip: '読書・会話・書くことを日常に取り入れると意欲が伸びやすい' },
+  { name: '論理数学知能が高い子', sign: 'パターン・仕組み・「なぜ？」への関心が強い', tip: '「正解を教える」より「一緒に考える」プロセスが有効' },
+  { name: '音楽知能が高い子', sign: 'リズム・メロディーへの敏感さが見られる', tip: '音楽・リズムを使った学習や生活習慣が定着しやすい' },
+  { name: '身体運動知能が高い子', sign: '動くことでエネルギーを発散する', tip: '座学より体を使う活動と組み合わせると学びの定着が良い場合がある（Gardner 1983）' },
+  { name: '対人知能が高い子', sign: '人との関わりを好み、場の雰囲気を読む', tip: 'グループ活動・対話型の学習環境が合いやすい' },
+  { name: '内省知能が高い子', sign: '自分の内面を観察・分析する傾向がある', tip: '感情日記・1人で深く考える時間が有効。外向型の親が「もっと話して」と強要しないことが重要' },
+];
 ---
-<BaseLayout title="家族相性診断 - 診断ナビ" description="家族相性診断（content-writerが執筆）">
+
+<BaseLayout
+  title="親子の性格相性｜MBTI×多重知能で理解するコミュニケーション術 - 診断ナビ"
+  description="Gardner（1983）多重知能理論・MBTIを用いた親子相性の科学的考え方。タイプが違うときの理解法・子供の傾向を観察するヒント・FAQ10問を収録。性格傾向の参考情報です。"
+  canonical={pageUrl}
+  jsonLd={jsonLd}
+  publishDate="2026-05-21"
+  lastUpdated="2026-05-21"
+  breadcrumbs={[
+    { name: '相性診断', url: '/aisei/' },
+    { name: '家族相性', url: '/aisei/kazoku/' },
+    { name: '親子相性', url: '/aisei/kazoku/oyako/' },
+  ]}
+>
+  <!-- ページヘッダー -->
+  <section class="axis-header axis-header--family">
+    <Container>
+      <div class="axis-header-inner">
+        <div class="axis-icon" aria-hidden="true">👪</div>
+        <div>
+          <p class="axis-eyebrow">2026-05-21 確認済み情報</p>
+          <h1 class="axis-title">親子の性格相性</h1>
+          <p class="axis-lead">
+            MBTI16タイプ・多重知能理論（Gardner 1983）を統合した親子軸プロファイルです。<br>
+            タイプの違いを「問題」ではなく「スタイルの多様性」として理解するヒントをまとめています。
+          </p>
+          <div class="axis-ymyl-note" role="note" aria-label="ご注意">
+            <span aria-hidden="true">ℹ️</span>
+            このページは性格傾向の参考情報です。発達支援・医療・教育相談の専門的なアドバイスは含まれません。
+          </div>
+        </div>
+      </div>
+    </Container>
+  </section>
+
+  <!-- TldrBlock -->
   <Container>
-    <div style="padding-block: 4rem; text-align: center;">
-      <p style="font-size: 3rem; margin-bottom: 1rem;">🏠</p>
-      <h1 style="font-family: var(--sn-font-rounded); font-size: 1.5rem; margin-bottom: 1rem;">家族相性診断 準備中</h1>
-      <p style="color: var(--sn-muted);">Phase 1 にて実装します</p>
-      <a href="/aisei/" style="display:inline-block; margin-top:2rem; color:var(--sn-primary);">← 相性診断トップに戻る</a>
-    </div>
+    <TldrBlock
+      title="このページでわかること"
+      points={[
+        "親子相性の科学的根拠: Gardner（1983）多重知能理論・Keirsey（1998）のタイプ別行動パターンに基づく解説",
+        "MBTI6パターンの親子コミュニケーション傾向と対話のヒント（外向/内向・思考/感情・判断/知覚軸）",
+        "多重知能（言語・論理・音楽・身体・対人・内省など）別の子供の傾向観察ポイント",
+        "親と子のタイプが違うときの理解法と、衝突を減らすための対話の工夫",
+        "FAQ10問: MBTIの年齢適用・血液型と親子相性・統合プロファイルの使い方など",
+      ]}
+      updatedAt="2026-05-21"
+      sourceLabel="Harvard Project Zero / Multiple Intelligences"
+      sourceUrl="https://www.pz.harvard.edu/projects/multiple-intelligences"
+    />
+  </Container>
+
+  <!-- 統合プロファイル（家族軸） -->
+  <section class="axis-main">
+    <Container>
+      <h2 class="section-title">あなたの親子軸プロファイルを確認する</h2>
+      <p class="section-lead">8診断の結果をまとめて確認できます。子供との対話のヒントとしてご活用ください。</p>
+      <IntegratedProfileViewer client:load axis="family" singleAxisMode={true} />
+    </Container>
+  </section>
+
+  <!-- 親子相性の科学的根拠 -->
+  <section class="content-section">
+    <Container>
+      <h2 class="section-title">親子相性の科学的根拠とは</h2>
+
+      <p class="body-text">
+        親子の性格相性を考えるとき、最も実用的な枠組みの1つが Howard Gardner（1983）の多重知能理論です。
+        8種類の知能（言語・論理数学・音楽・身体運動・空間・対人・内省・自然）の組み合わせは個人によって異なり、
+        親と子が異なる知能領域に強みを持つ場合、お互いの行動が「なぜそうするのか」と感じることが生まれやすくなります。
+        （出典: <a href="https://www.pz.harvard.edu/projects/multiple-intelligences" target="_blank" rel="noopener noreferrer">Harvard Project Zero 公式</a>）
+      </p>
+
+      <div class="research-box">
+        <h3 class="research-box__title">Gardner の多重知能理論（1983）— 8つの知能領域</h3>
+        <ul class="research-box__list">
+          <li><strong>言語知能</strong>: 言葉・ストーリー・読み書きへの感受性</li>
+          <li><strong>論理数学知能</strong>: 推論・パターン認識・因果関係への関心</li>
+          <li><strong>音楽知能</strong>: リズム・音階・メロディーへの敏感さ</li>
+          <li><strong>身体運動知能</strong>: 体を使った表現・精密な動作の習得</li>
+          <li><strong>空間知能</strong>: 視覚的なイメージ・空間把握能力</li>
+          <li><strong>対人知能</strong>: 他者の感情・動機を理解する力</li>
+          <li><strong>内省知能</strong>: 自己の感情・動機を深く観察する力</li>
+          <li><strong>自然知能</strong>: 自然界のパターン・生き物への関心</li>
+        </ul>
+        <p class="research-box__note">
+          出典: Gardner H（1983）Frames of Mind.
+          <a href="https://www.pz.harvard.edu/projects/multiple-intelligences" target="_blank" rel="noopener noreferrer">Harvard Project Zero</a>
+        </p>
+      </div>
+
+      <p class="body-text">
+        MBTIの研究者 Keirsey（1998）は、タイプが異なる親子では「自分と違う視点を自然に学べる環境」になりやすいと述べています。
+        タイプの一致が「相性の良さ」ではなく、
+        「互いのスタイルを知っているか」が関係の質を左右するという見解です。
+        （出典: <a href="https://keirsey.com/" target="_blank" rel="noopener noreferrer">Keirsey.com 公式</a>）
+      </p>
+    </Container>
+  </section>
+
+  <!-- MBTIタイプ別 親子コミュニケーション -->
+  <section class="content-section content-section--alt">
+    <Container>
+      <h2 class="section-title">MBTI 軸別 親子コミュニケーション傾向</h2>
+      <p class="section-lead">
+        MBTIは自己申告ツールであり、関係の優劣を決めるものではありません。
+        下記は「傾向の参考情報」として、対話のヒントとして活用してください。
+      </p>
+
+      <div class="compat-grid">
+        {mbtiOyakoPairs.map((pair) => (
+          <div class="compat-card">
+            <div class="compat-card__types">{pair.types}</div>
+            <div class="compat-card__label">{pair.label}</div>
+            <p class="compat-card__desc">{pair.desc}</p>
+          </div>
+        ))}
+      </div>
+
+      <div class="info-box">
+        <h3 class="info-box__title">親子のMBTI活用で大切なこと</h3>
+        <ul class="info-box__list">
+          <li>「このタイプだから〜するべき」という断定的な使い方は研究者が推奨しません</li>
+          <li>子供に対してタイプを押し付ける（「あなたはPタイプだから片付けが苦手なのは仕方ない」）は逆効果です</li>
+          <li>タイプを「行動の言い訳」ではなく「傾向を理解して関わり方を工夫するきっかけ」として使うことが重要です</li>
+          <li>幼少期（〜10歳）はタイプを固定せず、日常の行動傾向を観察する段階として捉えることを推奨します</li>
+        </ul>
+      </div>
+    </Container>
+  </section>
+
+  <!-- 多重知能別 子供の観察ヒント -->
+  <section class="content-section">
+    <Container>
+      <h2 class="section-title">多重知能別 子供の傾向を観察するヒント</h2>
+      <p class="section-lead">
+        Gardner（1983）の多重知能理論を参考に、日常の行動から子供の傾向をつかむ観察ポイントをまとめました。
+        「強い知能＝優れた子供」ではなく、「どの領域に関心とエネルギーが向かっているか」を知るための参考情報です。
+      </p>
+
+      <div class="intel-grid">
+        {intelligenceHints.map((item) => (
+          <div class="intel-card">
+            <div class="intel-card__name">{item.name}</div>
+            <div class="intel-card__sign">
+              <span class="intel-card__sign-label">観察のサイン</span>
+              {item.sign}
+            </div>
+            <div class="intel-card__tip">
+              <span class="intel-card__tip-label">親へのヒント</span>
+              {item.tip}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <p class="body-text mt-md">
+        多重知能のより詳しい解説は
+        <a href="/diagnosis/multi-intelligence/">多重知能診断ページ</a>
+        で確認できます。自分の強い知能領域を知った上で子供との傾向を比較する参考になります。
+      </p>
+    </Container>
+  </section>
+
+  <!-- 親子のタイプが違うときの理解 -->
+  <section class="content-section content-section--alt">
+    <Container>
+      <h2 class="section-title">親と子のタイプが違うときの理解</h2>
+
+      <p class="body-text">
+        親と子のMBTIタイプや多重知能の強みが異なる場合、
+        「なぜこんなことが好きなの？」「なぜ私の言うことが伝わらないの？」という感覚が生まれやすいです。
+        これは「相性が悪い」ではなく、「異なるスタイルを持つ2人が共存している」サインです。
+      </p>
+
+      <div class="diff-list">
+        <div class="diff-item">
+          <h3 class="diff-item__title">ステップ1: 自分のスタイルを先に知る</h3>
+          <p class="diff-item__text">
+            子供の行動を理解するには、まず親自身の傾向を知ることが有効です。
+            「私は計画型（J）なので、予定が変わるとストレスになる」と認識できると、
+            子供の「その場の流れで動く」スタイルを「自分とは違う」と受け取りやすくなります。
+          </p>
+        </div>
+        <div class="diff-item">
+          <h3 class="diff-item__title">ステップ2: 行動ではなくスタイルとして観察する</h3>
+          <p class="diff-item__text">
+            「片付けない」「集中力がない」という行動の評価より、
+            「知覚型（P）の傾向があり、複数のことに同時に関心が向く」という傾向として見ると、
+            対話の出発点が批判から理解に移ります。
+          </p>
+        </div>
+        <div class="diff-item">
+          <h3 class="diff-item__title">ステップ3: 「最低限の合意」を少なく設定する</h3>
+          <p class="diff-item__text">
+            親の完璧主義的な「全てのルール」を子供に適用しようとすると摩擦が増えます。
+            「これだけは守ってほしい」というコアの部分を絞り込み、
+            それ以外は各自のスタイルに任せることで、日常の衝突が減ります。
+          </p>
+        </div>
+      </div>
+    </Container>
+  </section>
+
+  <!-- ScienceNote -->
+  <Container>
+    <ScienceNote
+      basisText="Gardner H（1983）Frames of Mind: The Theory of Multiple Intelligences（Basic Books）・Myers IB & Myers PB（1980）Gifts Differing（Consulting Psychologists Press）・Keirsey D（1998）Please Understand Me II・Baumrind D（1966）Child Development 37(4) を参考に編集部が作成。"
+      basisUrl="https://www.pz.harvard.edu/projects/multiple-intelligences"
+      basisLabel="Harvard Project Zero"
+      notMedical={true}
+      updatedAt="2026-05-21"
+      additionalNote="家族軸は性格相性の参考情報のみを提供します。発達支援・医療・教育相談・能力評価の専門的なアドバイスは含まれません。育児ストレス・教育論・躾論はスコープ外です。"
+    />
+  </Container>
+
+  <!-- FAQ -->
+  <section class="faq-section" id="faq">
+    <Container>
+      <h2 class="section-title">よくある質問（FAQ）</h2>
+      <dl class="faq-list">
+        {[
+          { q: '親子の性格相性は固定されていますか？', a: '性格傾向は遺伝と環境の両方の影響を受けます。MBTIの研究では同じタイプが親子で共通することもありますが、異なるタイプが多く見られます。重要なのは「タイプの一致」ではなく、互いのスタイルを理解して対話することです。' },
+          { q: 'MBTIが異なる親子は相性が悪いですか？', a: 'そのようなことはありません。Keirsey（1998）は、タイプが異なる親子は互いに学べる視点が多く、多様な思考スタイルを育む環境になりやすいと述べています。' },
+          { q: '多重知能（Gardner）は親子相性にどう関係しますか？', a: 'Gardner（1983）の多重知能理論では、人は8種類の知能の異なる組み合わせを持ちます。親と子の強い知能が異なる場合、子供の行動が親には理解しにくく感じることがありますが、それは子供の強みが親と違う領域にあるサインである可能性があります。' },
+          { q: '内向型の子供を外向型の親はどう理解すればいいですか？', a: '内向型の子供は1人の時間でエネルギーを回復します。「もっと人と関わって」という働きかけが子供には負担になる場合があります。「充電スタイルの違い」として捉えることで、コミュニケーションが改善されやすいです。' },
+          { q: '感情型（F）の子供と思考型（T）の親の対話術は？', a: '感情型の子供が悩みを話すとき、思考型の親がすぐに「解決策」を提示すると「話を聞いてもらえていない」と感じる場合があります。まず共感を先行してから、問題解決の話を始めると関係がスムーズになります。' },
+          { q: '子供の性格タイプはいつ頃に判断できますか？', a: 'MBTIなどの自己申告型ツールは10〜12歳以降からの活用が研究者の推奨です。幼少期は「傾向の観察」として日常の行動パターンを見ることが実用的です。本サイトのコンテンツは参考情報であり、年齢別の発達診断や能力評価の代替ではありません。' },
+          { q: '計画型（J）の親と知覚型（P）の子供はなぜぶつかりやすいですか？', a: '計画型（J）の親は「先に決めてから動く」ことで安心します。知覚型（P）の子供は「流れに任せる」ことを好むため衝突が起きやすいです。「最低限の合意」だけを作ると摩擦が減ります。' },
+          { q: '親子で性格診断を一緒に受けるメリットはありますか？', a: '親子で診断を受けると「なぜいつもこういう反応をするのか」を責めずに話し合えるきっかけが生まれます。「スタイルの違い」として会話できるため、批判より理解を軸にした対話に移行しやすいです。' },
+          { q: '血液型と親子相性は関係ありますか？', a: '血液型と性格の科学的相関は国際的な研究で限定的とされています。本サイトでは「日本文化の会話のきっかけ」として掲載していますが、親子関係の理解にはMBTIや多重知能など行動傾向を観察するアプローチが有効です。' },
+          { q: '統合プロファイルで親子相性を確認するにはどうすればいいですか？', a: '本ページの統合プロファイルビューアーで、あなたの診断結果を家族軸でまとめて確認できます。MBTI・多重知能・完璧主義・マネースクリプトなど8つの診断を統合したプロファイルが表示されます。' },
+        ].map((item) => (
+          <div class="faq-item">
+            <dt class="faq-q">{item.q}</dt>
+            <dd class="faq-a">{item.a}</dd>
+          </div>
+        ))}
+      </dl>
+    </Container>
+  </section>
+
+  <!-- 関連診断 -->
+  <section class="axis-related">
+    <Container>
+      <h2 class="section-title">関連する診断・ページ</h2>
+      <div class="related-grid">
+        <a href="/diagnosis/multi-intelligence/" class="related-card">
+          <span aria-hidden="true">🧠</span>
+          <div>
+            <strong>多重知能診断</strong>
+            <span>Gardner 8知能から強みを知る</span>
+          </div>
+        </a>
+        <a href="/diagnosis/mbti-compat/" class="related-card">
+          <span aria-hidden="true">🔮</span>
+          <div>
+            <strong>MBTI相性診断</strong>
+            <span>16タイプ×16タイプの相性マトリクス</span>
+          </div>
+        </a>
+        <a href="/aisei/kazoku/fufu/" class="related-card">
+          <span aria-hidden="true">👫</span>
+          <div>
+            <strong>夫婦・パートナー相性</strong>
+            <span>Gottman理論×MBTI×血液型</span>
+          </div>
+        </a>
+        <a href="/aisei/kazoku/communication/" class="related-card">
+          <span aria-hidden="true">💬</span>
+          <div>
+            <strong>家族のコミュニケーション</strong>
+            <span>夫婦・親子・きょうだいの会話パターン</span>
+          </div>
+        </a>
+        <a href="/aisei/kazoku/" class="related-card">
+          <span aria-hidden="true">🏠</span>
+          <div>
+            <strong>家族相性ハブ</strong>
+            <span>家族軸の全ページをまとめて確認</span>
+          </div>
+        </a>
+        <a href="/profile/" class="related-card">
+          <span aria-hidden="true">🎯</span>
+          <div>
+            <strong>統合プロファイル</strong>
+            <span>8診断統合で全シーン軸を確認</span>
+          </div>
+        </a>
+      </div>
+    </Container>
+  </section>
+
+  <!-- 参考文献 -->
+  <Container>
+    <ReferenceList references={references} confirmedAt="2026-05-21" />
   </Container>
 </BaseLayout>
+
+<style>
+  /* ヘッダー */
+  .axis-header {
+    padding-block: var(--sn-space-8, 2rem);
+    border-bottom: 1px solid var(--sn-border, #e5e7eb);
+  }
+  .axis-header--family {
+    background: linear-gradient(135deg, #fffbeb 0%, var(--sn-bg-soft, #f9fafb) 100%);
+  }
+  .axis-header-inner {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--sn-space-4, 1rem);
+  }
+  .axis-icon {
+    font-size: 2.5rem;
+    flex-shrink: 0;
+    line-height: 1;
+  }
+  .axis-eyebrow {
+    font-size: 0.75rem;
+    color: var(--sn-muted, #6b7280);
+    margin: 0 0 0.25rem;
+  }
+  .axis-title {
+    font-family: var(--sn-font-rounded, sans-serif);
+    font-size: clamp(1.25rem, 4vw, 1.75rem);
+    font-weight: 900;
+    color: var(--sn-text, #111827);
+    margin: 0 0 var(--sn-space-2, 0.5rem);
+  }
+  .axis-lead {
+    font-size: var(--sn-text-sm, 0.875rem);
+    color: var(--sn-text-soft, #6b7280);
+    line-height: 1.7;
+    margin: 0 0 var(--sn-space-3, 0.75rem);
+  }
+  .axis-ymyl-note {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.375rem;
+    padding: 0.625rem 0.875rem;
+    background: #f0f9ff;
+    border-radius: 8px;
+    border: 1px solid #bae6fd;
+    font-size: 0.75rem;
+    color: #0c4a6e;
+    line-height: 1.6;
+  }
+
+  /* セクション */
+  .content-section {
+    padding-block: var(--sn-space-10, 2.5rem);
+  }
+  .content-section--alt {
+    background: var(--sn-bg-soft, #f9fafb);
+  }
+  .axis-main {
+    padding-block: var(--sn-space-8, 2rem);
+  }
+  .section-title {
+    font-family: var(--sn-font-rounded, sans-serif);
+    font-size: clamp(1.125rem, 3vw, 1.5rem);
+    font-weight: 900;
+    color: var(--sn-text, #111827);
+    margin: 0 0 var(--sn-space-3, 0.75rem);
+  }
+  .section-lead {
+    font-size: 0.9rem;
+    color: var(--sn-text-soft, #6b7280);
+    line-height: 1.7;
+    margin: 0 0 var(--sn-space-6, 1.5rem);
+  }
+  .body-text {
+    font-size: 0.95rem;
+    line-height: 1.8;
+    color: var(--sn-text, #111827);
+    margin: 0 0 var(--sn-space-4, 1rem);
+  }
+  .body-text a {
+    color: var(--sn-primary, #7c3aed);
+    text-decoration: underline;
+  }
+  .mt-md {
+    margin-top: var(--sn-space-6, 1.5rem);
+  }
+
+  /* リサーチボックス */
+  .research-box {
+    background: #fef3c7;
+    border-left: 4px solid #d97706;
+    border-radius: 0 0.5rem 0.5rem 0;
+    padding: 1.25rem 1.5rem;
+    margin-block: 1.5rem;
+  }
+  .research-box__title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #92400e;
+    margin: 0 0 0.75rem;
+  }
+  .research-box__list {
+    margin: 0 0 0.75rem;
+    padding-left: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+  .research-box__list li {
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: #1f2937;
+  }
+  .research-box__note {
+    font-size: 0.75rem;
+    color: #78350f;
+    margin: 0;
+  }
+  .research-box__note a {
+    color: #78350f;
+  }
+
+  /* MBTI相性グリッド */
+  .compat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: var(--sn-space-3, 0.75rem);
+    margin-bottom: var(--sn-space-4, 1rem);
+  }
+  .compat-card {
+    background: var(--sn-bg-white, #fff);
+    border: 1px solid var(--sn-border, #e5e7eb);
+    border-radius: var(--sn-radius-md, 12px);
+    padding: 1rem;
+  }
+  .compat-card__types {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: var(--sn-primary, #7c3aed);
+    margin-bottom: 0.25rem;
+  }
+  .compat-card__label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 0.5rem;
+  }
+  .compat-card__desc {
+    font-size: 0.8rem;
+    color: var(--sn-text-soft, #6b7280);
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  /* インフォボックス */
+  .info-box {
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    border-radius: 0.5rem;
+    padding: 1.25rem 1.5rem;
+    margin-block: 1.5rem;
+  }
+  .info-box__title {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #1e40af;
+    margin: 0 0 0.75rem;
+  }
+  .info-box__list {
+    margin: 0;
+    padding-left: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+  .info-box__list li {
+    font-size: 0.875rem;
+    line-height: 1.6;
+    color: #1e3a5f;
+  }
+
+  /* 多重知能グリッド */
+  .intel-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: var(--sn-space-3, 0.75rem);
+    margin-bottom: var(--sn-space-4, 1rem);
+  }
+  .intel-card {
+    background: var(--sn-bg-white, #fff);
+    border: 1px solid var(--sn-border, #e5e7eb);
+    border-radius: var(--sn-radius-md, 12px);
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .intel-card__name {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--sn-text, #111827);
+  }
+  .intel-card__sign,
+  .intel-card__tip {
+    font-size: 0.8rem;
+    color: #374151;
+    line-height: 1.6;
+  }
+  .intel-card__sign-label,
+  .intel-card__tip-label {
+    display: block;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--sn-primary, #7c3aed);
+    margin-bottom: 0.2rem;
+  }
+
+  /* タイプ違いリスト */
+  .diff-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  .diff-item {
+    background: var(--sn-bg-white, #fff);
+    border: 1px solid var(--sn-border, #e5e7eb);
+    border-radius: var(--sn-radius-md, 12px);
+    padding: 1.25rem 1.5rem;
+  }
+  .diff-item__title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--sn-text, #111827);
+    margin: 0 0 0.5rem;
+  }
+  .diff-item__text {
+    font-size: 0.9rem;
+    line-height: 1.75;
+    color: #374151;
+    margin: 0;
+  }
+
+  /* FAQ */
+  .faq-section {
+    padding-block: var(--sn-space-10, 2.5rem);
+    background: var(--sn-bg-soft, #f9fafb);
+  }
+  .faq-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .faq-item {
+    background: var(--sn-bg-white, #fff);
+    border: 1px solid var(--sn-border, #e5e7eb);
+    border-radius: var(--sn-radius-md, 12px);
+    padding: 1.25rem 1.5rem;
+  }
+  .faq-q {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--sn-text, #111827);
+    margin: 0 0 0.625rem;
+  }
+  .faq-q::before {
+    content: 'Q. ';
+    color: var(--sn-primary, #7c3aed);
+  }
+  .faq-a {
+    font-size: 0.875rem;
+    line-height: 1.75;
+    color: #374151;
+    margin: 0;
+  }
+
+  /* 関連診断 */
+  .axis-related {
+    padding-block: var(--sn-space-8, 2rem);
+    border-top: 1px solid var(--sn-border, #e5e7eb);
+  }
+  .related-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: var(--sn-space-2, 0.5rem);
+  }
+  .related-card {
+    display: flex;
+    align-items: center;
+    gap: var(--sn-space-3, 0.75rem);
+    padding: var(--sn-space-4, 1rem);
+    background: var(--sn-bg-white, #fff);
+    border-radius: var(--sn-radius-md, 12px);
+    border: 1px solid var(--sn-border, #e5e7eb);
+    text-decoration: none;
+    transition: border-color 0.15s ease;
+  }
+  .related-card:hover {
+    border-color: #f59e0b;
+  }
+  .related-card > span:first-child {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+  }
+  .related-card strong {
+    display: block;
+    font-size: var(--sn-text-sm, 0.875rem);
+    font-weight: 700;
+    color: var(--sn-text, #111827);
+  }
+  .related-card span:last-child {
+    font-size: var(--sn-text-xs, 0.75rem);
+    color: var(--sn-muted, #9ca3af);
+  }
+</style>
