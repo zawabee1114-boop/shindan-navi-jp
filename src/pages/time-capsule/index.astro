@@ -1,0 +1,1553 @@
+---
+/**
+ * /time-capsule/ - タイムカプセル機能紹介ハブ
+ *
+ * KW: タイムカプセル 自己 / 過去の自分 比較 / 自己成長 記録
+ * 確認日: 2026-05-21
+ *
+ * 学術根拠:
+ *   - Wilson TD, Ross M (2003) "The identity function of autobiographical memory"
+ *     Memory, 11(2), 137-150
+ *   - Markus H, Nurius P (1986) "Possible selves"
+ *     American Psychologist, 41(9), 954-969
+ *   - Roberts BW, Walton KE, Viechtbauer W (2006) "Patterns of mean-level change in personality traits"
+ *     Psychological Bulletin, 132(1), 1-25
+ *
+ * SEO/AIO対応:
+ * - JSON-LD: WebPage + Article + FAQPage + BreadcrumbList
+ * - @id連結: エンティティグラフ形成
+ * - PRO訴求CTA（タイムカプセル機能・¥590/月）
+ * - TldrBlock / ScienceNote / ReferenceList
+ * - FAQ 10問
+ * - YMYL回避: 医療診断・治療表記ゼロ
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Container from '../../components/Container.astro';
+import TldrBlock from '../../components/TldrBlock.astro';
+import ReferenceList from '../../components/ReferenceList.astro';
+import ScienceNote from '../../components/ScienceNote.astro';
+
+const SITE_URL = 'https://shindan-navi.jp';
+const PAGE_URL = `${SITE_URL}/time-capsule/`;
+const CONFIRMED_AT = '2026-05-21';
+
+const references = [
+  {
+    title: 'The identity function of autobiographical memory: Time is on our side',
+    author: 'Wilson TD, Ross M',
+    year: 2003,
+    journal: 'Memory',
+    volume: '11(2), 137-150',
+    url: 'https://doi.org/10.1080/741938210',
+  },
+  {
+    title: 'Possible selves',
+    author: 'Markus H, Nurius P',
+    year: 1986,
+    journal: 'American Psychologist',
+    volume: '41(9), 954-969',
+    url: 'https://doi.org/10.1037/0003-066X.41.9.954',
+  },
+  {
+    title: 'Patterns of mean-level change in personality traits across the life course: A meta-analysis of longitudinal studies',
+    author: 'Roberts BW, Walton KE, Viechtbauer W',
+    year: 2006,
+    journal: 'Psychological Bulletin',
+    volume: '132(1), 1-25',
+    url: 'https://doi.org/10.1037/0033-2909.132.1.1',
+  },
+];
+
+const faqs = [
+  {
+    question: 'タイムカプセルって何ができますか？',
+    answer:
+      '今日の診断結果と「未来の自分へのメッセージ」を一緒に保存し、設定した時期（3ヶ月・6ヶ月・12ヶ月後）に自動で通知が届きます。当時の診断スコアと現在のスコアをグラフで比較して、自分がどう変化したかを可視化できます。',
+  },
+  {
+    question: 'PROじゃないと使えませんか？',
+    answer:
+      'タイムカプセル機能はPRO会員（¥590/月）専用の機能です。無料・PASSプランでは利用できません。診断を受けるだけなら無料でご利用いただけます。',
+  },
+  {
+    question: '何ヶ月後に通知が来ますか？',
+    answer:
+      'カプセル作成時に「3ヶ月後」「6ヶ月後」「12ヶ月後」から選べます。複数の時期を設定することも可能です。通知はメールとブラウザ通知の両方に対応する予定です。',
+  },
+  {
+    question: '書いた手紙は誰かに見られますか？',
+    answer:
+      '手紙の内容はあなた自身にしか見えません。他のユーザー・スタッフ・外部には一切公開されない非公開データです。プライバシーポリシーに基づき適切に管理されます。',
+  },
+  {
+    question: '過去の診断結果と今の比較ができますか？',
+    answer:
+      'はい。タイムカプセルを開封するとき、保存当時の8診断スコアと現在のスコアをレーダーチャートと5シーン軸グラフで並べて比較できます。どの特性がどの方向に変化したかを一目で確認できます。',
+  },
+  {
+    question: 'タイムカプセルを削除できますか？',
+    answer:
+      'はい。設定画面からいつでも削除できます。削除後はデータを復元できませんのでご注意ください。',
+  },
+  {
+    question: '紙の日記と何が違いますか？',
+    answer:
+      '紙の日記は手書きの記録ですが、タイムカプセルは診断スコアというデータと手紙を一緒に保存します。「気分で書いた日記」ではなく「測定結果に基づいた変化の記録」なので、感覚ではなく数値で自己変化を確認できます。',
+  },
+  {
+    question: '性格が変わっていなかった場合はどうなりますか？',
+    answer:
+      'スコアが大きく変わっていなかった場合も、「この期間を通じて安定していた」という発見自体が自己理解につながります。また「変化がない」ことと「成長がない」ことは別の話です。安定した特性が確認されることで、自分の核となるパターンを再認識できます。',
+  },
+  {
+    question: '通知メールが届かない場合はどうすればいいですか？',
+    answer:
+      '迷惑メールフォルダを確認してください。それでも届かない場合は設定画面から通知アドレスを再確認するか、ブラウザ通知を有効にしてください。フィードバックフォームからもご連絡いただけます。',
+  },
+  {
+    question: 'タイムカプセルは何個まで作れますか？',
+    answer:
+      'PRO会員は複数のカプセルを作成できます。たとえば「転職前」「結婚前」「引っ越し前」のように、ライフイベントごとに別々に記録することができます。上限数は現在設計中で、正式リリース時に確定します。',
+  },
+];
+
+const jsonLdWebPage = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  '@id': `${PAGE_URL}#webpage`,
+  url: PAGE_URL,
+  name: 'タイムカプセル｜過去のあなたから今への手紙｜診断ナビ',
+  description:
+    '診断ナビのタイムカプセル機能。今日の診断結果と未来の自分へのメッセージを保存し、3ヶ月・6ヶ月・12ヶ月後に自動通知。過去と現在の特性変化をグラフで比較できるPRO限定機能。',
+  inLanguage: 'ja',
+  isPartOf: { '@id': `${SITE_URL}/#website` },
+  breadcrumb: { '@id': `${PAGE_URL}#breadcrumb` },
+  datePublished: '2026-05-21',
+  dateModified: CONFIRMED_AT,
+};
+
+const jsonLdArticle = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  '@id': `${PAGE_URL}#article`,
+  mainEntityOfPage: { '@type': 'WebPage', '@id': PAGE_URL },
+  headline: 'タイムカプセル｜過去のあなたから今のあなたへ手紙を届ける',
+  description:
+    '診断ナビのタイムカプセル機能を詳しく解説。Wilson & Ross（2003）の自己連続性研究・Markus & Nurius（1986）の可能自己理論をもとに、自己成長の記録・可視化・PRO機能の使い方を紹介。',
+  url: PAGE_URL,
+  datePublished: '2026-05-21',
+  dateModified: CONFIRMED_AT,
+  inLanguage: 'ja',
+  author: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+    name: '診断ナビ',
+  },
+  publisher: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+    name: '診断ナビ',
+  },
+  citation: references.map((ref) => ({
+    '@type': 'ScholarlyArticle',
+    name: ref.title,
+    author: ref.author,
+    datePublished: String(ref.year),
+    url: ref.url,
+  })),
+};
+
+const jsonLdFAQ = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  '@id': `${PAGE_URL}#faq`,
+  mainEntity: faqs.map(({ question, answer }) => ({
+    '@type': 'Question',
+    name: question,
+    acceptedAnswer: { '@type': 'Answer', text: answer },
+  })),
+};
+
+const jsonLdBreadcrumb = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  '@id': `${PAGE_URL}#breadcrumb`,
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'ホーム', item: SITE_URL },
+    { '@type': 'ListItem', position: 2, name: 'タイムカプセル', item: PAGE_URL },
+  ],
+};
+
+const jsonLdAll = [jsonLdWebPage, jsonLdArticle, jsonLdFAQ, jsonLdBreadcrumb];
+---
+
+<BaseLayout
+  title="タイムカプセル｜過去のあなたから今への手紙｜診断ナビ"
+  description="診断結果と未来の自分へのメッセージを保存して、3〜12ヶ月後に届ける。過去と現在の特性変化をグラフで比較できるPRO限定機能。自己連続性研究（Wilson & Ross 2003）に基づく自己成長の可視化。"
+  canonical={PAGE_URL}
+  jsonLd={jsonLdAll}
+  ogType="article"
+  publishDate="2026-05-21"
+  lastUpdated={CONFIRMED_AT}
+  breadcrumbs={[
+    { name: 'タイムカプセル', url: '/time-capsule/' },
+  ]}
+>
+  <link rel="canonical" href={PAGE_URL} slot="head" />
+
+  {/* ========== ヒーロー ========== */}
+  <section class="tc-hero" aria-labelledby="tc-hero-h1">
+    <div class="tc-hero-inner">
+      <div class="tc-hero-badge">Wilson & Ross（2003）自己連続性研究に基づく</div>
+      <h1 id="tc-hero-h1" class="tc-hero-h1">
+        タイムカプセル<br />
+        <span class="tc-hero-sub">過去のあなたから、今のあなたへ手紙を届ける</span>
+      </h1>
+      <p class="tc-hero-catch">
+        3ヶ月前の自分は、今の悩みをどう見ていたか。<br />
+        診断ナビのタイムカプセル機能は、あなたの成長を数値で記録します。
+      </p>
+      <div class="tc-hero-meta">
+        <time datetime={CONFIRMED_AT}>{CONFIRMED_AT}</time> 時点の情報
+      </div>
+      <a href="#pro-cta" class="tc-hero-cta" aria-label="PRO会員の詳細を見る">
+        PRO でタイムカプセルを始める
+        <span aria-hidden="true">→</span>
+      </a>
+    </div>
+  </section>
+
+  <Container>
+    {/* ========== このページでわかること ========== */}
+    <div class="tc-aio-block" role="note" aria-label="このページでわかること">
+      <p class="tc-aio-title">このページでわかること</p>
+      <ul class="tc-aio-list">
+        <li>診断ナビのタイムカプセル機能で「何ができるか」の仕組みと手順</li>
+        <li>Wilson & Ross（2003）の自己連続性研究・Markus & Nurius（1986）の可能自己理論の要点</li>
+        <li>転職・結婚・出産など5つのライフシーンでの活用例</li>
+        <li>PRO会員（¥590/月）でタイムカプセルを使う具体的な方法</li>
+        <li>FAQ 10問（プライバシー・通知・複数作成・削除ほか）</li>
+      </ul>
+    </div>
+
+    {/* ========== TL;DR ========== */}
+    <TldrBlock
+      title="タイムカプセル機能のポイントまとめ"
+      points={[
+        '診断ナビのタイムカプセルは「今日の8診断スコア + 未来の自分へのメッセージ」をセットで保存する機能。3ヶ月・6ヶ月・12ヶ月後に自動通知が届く',
+        'Wilson & Ross（2003）の自己連続性研究では、過去の自己を振り返ることが現在の自己肯定感・成長認知に寄与することが示されている（Memory 11(2)）',
+        'Markus & Nurius（1986）の可能自己理論では、「未来の自分のイメージを具体化すること」が動機づけと行動変化を促すとされている',
+        '開封時に「当時のスコア vs 現在のスコア」をレーダーチャートと5シーン軸グラフで比較できる',
+        'PRO会員（¥590/月）限定機能。転職・結婚・出産など人生の節目に記録しておくと、後から「あのときの自分」をデータで振り返れる',
+      ]}
+      updatedAt={CONFIRMED_AT}
+      sourceLabel="Wilson & Ross（2003）Memory"
+      sourceUrl="https://doi.org/10.1080/741938210"
+    />
+
+    {/* ========== H2-1: タイムカプセルとは ========== */}
+    <section class="tc-section" aria-labelledby="tc-what-h2">
+      <h2 id="tc-what-h2" class="tc-h2">診断ナビのタイムカプセルとは</h2>
+      <p class="tc-lead">
+        「タイムカプセル」とは、今の自分の状態を記録して未来に届けるしくみです。<br />
+        診断ナビのタイムカプセル機能は、心理学的な自己記録ツールとして設計されています。
+      </p>
+      <p>
+        一般的なタイムカプセルは思い出の品を土に埋めますが、<br />
+        診断ナビのタイムカプセルは「8つの診断スコア」というデータを封印します。<br />
+        感覚的な記憶ではなく、数値として残るため、変化を客観的に確認できます。
+      </p>
+
+      <h3 class="tc-h3">なぜ診断スコアを記録することが大切なのか</h3>
+      <p>
+        Wilson & Ross（2003）は、過去の自己を振り返ることが<br />
+        現在の自己評価・成長認知に影響を与えることを示しました。<br />
+        人は「過去の自分」と「今の自分」を比べることで、成長を実感します。
+      </p>
+      <p>
+        ただし記憶は変容します。<br />
+        「あのとき自分はどうだったか」は、時間が経つと美化・歪曲されることが多い。<br />
+        診断スコアという客観的なデータがあれば、記憶に頼らずに比較できます。
+      </p>
+
+      <div class="tc-quote-card" role="blockquote" aria-label="研究の要点">
+        <p class="tc-quote-label">研究の要点</p>
+        <p class="tc-quote-text">
+          Wilson & Ross（2003）は、人々が過去の自己を現在の自己より「劣っていた」と認識する傾向を報告した。
+          この「自己向上バイアス」は現在の自己を肯定的に評価することに寄与するが、
+          同時に実際の変化量を過大評価するリスクもある。
+          客観的な記録（スコア・データ）を持つことで、より正確な自己変化の認識が可能になる。
+        </p>
+        <p class="tc-quote-source">
+          出典: Wilson TD, Ross M（2003）<a href="https://doi.org/10.1080/741938210" target="_blank" rel="noopener noreferrer">Memory, 11(2), 137-150</a>
+        </p>
+      </div>
+    </section>
+
+    {/* ========== H2-2: ストーリーセクション ========== */}
+    <section class="tc-section" aria-labelledby="tc-story-h2">
+      <h2 id="tc-story-h2" class="tc-h2">3ヶ月前の私から、今の私へ</h2>
+      <p class="tc-lead">
+        タイムカプセルがどう機能するかを、架空のケースでイメージしてみましょう。<br />
+        以下は実際の利用ストーリーを参考に構成したサンプルです。
+      </p>
+
+      {/* ストーリー1 */}
+      <div class="tc-story-card">
+        <div class="tc-story-header">
+          <div class="tc-story-icon" aria-hidden="true">✉️</div>
+          <div class="tc-story-meta">
+            <p class="tc-story-name">架空ケース A：転職前後の自己変化</p>
+            <p class="tc-story-date">転職直前にタイムカプセルを作成・3ヶ月後に開封</p>
+          </div>
+        </div>
+        <div class="tc-story-letter" role="article" aria-label="タイムカプセルの手紙サンプル">
+          <p class="tc-letter-label">転職前日に書いた手紙（サンプル）</p>
+          <p class="tc-letter-body">
+            「今日、最後の出社日が終わりました。正直、めちゃくちゃ怖いです。<br />
+            9年間勤めた会社を辞めて、知らない会社に飛び込む。<br />
+            誠実性のスコアが72点あるのに、今は全然自分を信じられない。<br />
+            <br />
+            3ヶ月後の自分へ。もし後悔していたとしても、それはそれでいい。<br />
+            でも、怖がりながらも動いた自分を、どうか責めないでほしい。<br />
+            一つだけ聞きたい。外向性のスコア、上がってる？」
+          </p>
+        </div>
+        <div class="tc-story-result">
+          <p class="tc-story-result-label">3ヶ月後・開封時のスコア変化</p>
+          <div class="tc-score-compare">
+            <div class="tc-score-item">
+              <span class="tc-score-trait">外向性</span>
+              <div class="tc-score-bar-wrap">
+                <div class="tc-score-bar tc-score-bar--before" style="width: 48%">
+                  <span class="tc-score-bar-label">before 48</span>
+                </div>
+                <div class="tc-score-bar tc-score-bar--after" style="width: 61%">
+                  <span class="tc-score-bar-label">after 61</span>
+                </div>
+              </div>
+            </div>
+            <div class="tc-score-item">
+              <span class="tc-score-trait">誠実性</span>
+              <div class="tc-score-bar-wrap">
+                <div class="tc-score-bar tc-score-bar--before" style="width: 72%">
+                  <span class="tc-score-bar-label">before 72</span>
+                </div>
+                <div class="tc-score-bar tc-score-bar--after" style="width: 78%">
+                  <span class="tc-score-bar-label">after 78</span>
+                </div>
+              </div>
+            </div>
+            <div class="tc-score-item">
+              <span class="tc-score-trait">神経症傾向</span>
+              <div class="tc-score-bar-wrap">
+                <div class="tc-score-bar tc-score-bar--before" style="width: 71%">
+                  <span class="tc-score-bar-label">before 71</span>
+                </div>
+                <div class="tc-score-bar tc-score-bar--after" style="width: 54%">
+                  <span class="tc-score-bar-label">after 54</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <p class="tc-story-insight">
+            外向性と誠実性が上昇し、神経症傾向（不安・気分の波）が低下しました。<br />
+            転職前の「怖さ」を正直に書いておいたからこそ、3ヶ月後に「あのときより落ち着いている」と気づけました。
+          </p>
+        </div>
+      </div>
+
+      {/* ストーリー2 */}
+      <div class="tc-story-card tc-story-card--alt">
+        <div class="tc-story-header">
+          <div class="tc-story-icon" aria-hidden="true">🌱</div>
+          <div class="tc-story-meta">
+            <p class="tc-story-name">架空ケース B：「INFP傾向→INTJ傾向」の1年間</p>
+            <p class="tc-story-date">1年前のカプセルを開封したら...</p>
+          </div>
+        </div>
+        <div class="tc-story-body">
+          <p>
+            1年前、診断ナビの多重知能テストを受けたとき、内省・感情処理・創造的思考のスコアが高かった。<br />
+            MBTIでは繰り返しINFP傾向が出ていて、「この性格は変わらないんだろうな」と思っていた。
+          </p>
+          <p>
+            1年後に同じ診断を受けると、論理的思考・組織力・計画性のスコアが上昇していた。<br />
+            プロジェクトリーダーを1年間続けた経験が、スコアに現れていた。
+          </p>
+          <p>
+            タイムカプセルの手紙には「もっと計画的な人間になりたい」と書いてあった。<br />
+            1年後の自分は、その願いがある程度かなっていることをデータで確認した。
+          </p>
+          <p class="tc-story-insight-text">
+            Roberts ら（2006）は、性格変化は「急に」ではなく「緩やかに・継続的に」起きると示しています。<br />
+            1年という期間でも、行動の変化がスコアに反映されることがあります。
+          </p>
+          <p class="tc-source-note">
+            出典: Roberts BW et al.（2006）<a href="https://doi.org/10.1037/0033-2909.132.1.1" target="_blank" rel="noopener noreferrer">Psychological Bulletin, 132(1)</a>
+          </p>
+        </div>
+      </div>
+
+      {/* ストーリー3 */}
+      <div class="tc-story-card">
+        <div class="tc-story-header">
+          <div class="tc-story-icon" aria-hidden="true">💌</div>
+          <div class="tc-story-meta">
+            <p class="tc-story-name">架空ケース C：過去の悩みを今の自分が読み返したら</p>
+            <p class="tc-story-date">6ヶ月前のカプセルを開封した体験</p>
+          </div>
+        </div>
+        <div class="tc-story-body">
+          <p>
+            6ヶ月前、友人関係のトラブルで協調性スコアが大きく揺れていた時期に書いた手紙がある。<br />
+            「なぜ自分はこんなに人間関係でつまずくんだろう」という言葉が書かれていた。
+          </p>
+          <p>
+            6ヶ月後に読み返すと、当時の悩みはほぼ解消されていた。<br />
+            スコアも協調性が61→69に上昇していた。
+          </p>
+          <p>
+            過去の手紙を読んで気づいたのは、「6ヶ月前の自分はよく頑張っていた」ということだった。<br />
+            当時は必死だったけど、今から見るとあの時期が成長の起点だったとわかる。
+          </p>
+          <p class="tc-story-insight-text">
+            Wilson & Ross（2003）は「過去の自分を振り返ることが、現在の自己肯定感の構築に寄与する」と示しています。<br />
+            タイムカプセルはその「振り返り」に、データという確かな足場を与えます。
+          </p>
+        </div>
+      </div>
+    </section>
+
+    {/* ========== H2-3: 仕組み ========== */}
+    <section class="tc-section" aria-labelledby="tc-how-h2">
+      <h2 id="tc-how-h2" class="tc-h2">タイムカプセルの仕組み</h2>
+      <p class="tc-lead">
+        4ステップで完了します。<br />
+        難しい操作はありません。
+      </p>
+
+      <ol class="tc-step-list" role="list">
+        <li class="tc-step-item">
+          <div class="tc-step-num" aria-label="ステップ1">1</div>
+          <div class="tc-step-body">
+            <h3 class="tc-step-title">今日の診断を受けて、スコアを記録する</h3>
+            <p class="tc-step-desc">
+              8つの診断（MBTI・強み・多重知能ほか）のスコアが自動で保存されます。<br />
+              すでに受けている診断はそのまま使えます。追加での受け直しは不要です。
+            </p>
+          </div>
+        </li>
+        <li class="tc-step-item">
+          <div class="tc-step-num" aria-label="ステップ2">2</div>
+          <div class="tc-step-body">
+            <h3 class="tc-step-title">「未来の自分への手紙」を書く</h3>
+            <p class="tc-step-desc">
+              今の悩み・目標・気持ちを自由に書きます。<br />
+              書き方は自由ですが、「今の自分が感じていること」を正直に書くのがおすすめです。<br />
+              テンプレートもご用意しています（<a href="/time-capsule/letter/">手紙の書き方</a>を参照）。
+            </p>
+          </div>
+        </li>
+        <li class="tc-step-item">
+          <div class="tc-step-num" aria-label="ステップ3">3</div>
+          <div class="tc-step-body">
+            <h3 class="tc-step-title">開封時期を選んで「封印」する</h3>
+            <p class="tc-step-desc">
+              3ヶ月・6ヶ月・12ヶ月から選択します。<br />
+              設定した時期になると、メールとブラウザ通知で「開封の時期です」とお知らせします。<br />
+              複数の時期を設定することも可能です。
+            </p>
+          </div>
+        </li>
+        <li class="tc-step-item">
+          <div class="tc-step-num" aria-label="ステップ4">4</div>
+          <div class="tc-step-body">
+            <h3 class="tc-step-title">開封して変化を確認する</h3>
+            <p class="tc-step-desc">
+              通知が届いたら開封ページへ。<br />
+              当時の診断スコアと現在のスコアをレーダーチャートで並べて比較します。<br />
+              5シーン軸（仕事・恋愛・友人・家族・学校）でも変化を可視化できます。
+            </p>
+          </div>
+        </li>
+      </ol>
+    </section>
+
+    {/* ========== H2-4: 科学的根拠 ========== */}
+    <section class="tc-section" aria-labelledby="tc-science-h2">
+      <h2 id="tc-science-h2" class="tc-h2">タイムカプセルを支える心理学的根拠</h2>
+      <p class="tc-lead">
+        「過去の自分を振り返る」行為には、心理学的な裏付けがあります。<br />
+        主要な3つの研究を紹介します。
+      </p>
+
+      <div class="tc-science-grid">
+        <div class="tc-science-card">
+          <div class="tc-science-number" aria-hidden="true">研究 1</div>
+          <h3 class="tc-science-title">自己連続性と自伝的記憶</h3>
+          <p class="tc-science-author">Wilson TD, Ross M（2003）Memory, 11(2)</p>
+          <p class="tc-science-desc">
+            過去の自己を振り返ることは、現在の自己の肯定的評価を支える「同一性機能」を持つ。<br />
+            自分が「どこから来て、どこに向かっているか」を認識することが、心理的安定に寄与する。
+          </p>
+          <a href="https://doi.org/10.1080/741938210" target="_blank" rel="noopener noreferrer" class="tc-science-link">論文を見る →</a>
+        </div>
+
+        <div class="tc-science-card">
+          <div class="tc-science-number" aria-hidden="true">研究 2</div>
+          <h3 class="tc-science-title">可能自己（Possible Selves）理論</h3>
+          <p class="tc-science-author">Markus H, Nurius P（1986）American Psychologist, 41(9)</p>
+          <p class="tc-science-desc">
+            「未来の自分のイメージを具体的に描くこと」が動機づけと行動変化を促す。<br />
+            希望する未来の自己（hoped-for self）を言語化することが、現在の行動の指針になる。<br />
+            タイムカプセルの「未来の自分への手紙」は、この理論の実践的応用といえる。
+          </p>
+          <a href="https://doi.org/10.1037/0003-066X.41.9.954" target="_blank" rel="noopener noreferrer" class="tc-science-link">論文を見る →</a>
+        </div>
+
+        <div class="tc-science-card">
+          <div class="tc-science-number" aria-hidden="true">研究 3</div>
+          <h3 class="tc-science-title">性格変化の縦断研究</h3>
+          <p class="tc-science-author">Roberts BW, Walton KE, Viechtbauer W（2006）Psychological Bulletin, 132(1)</p>
+          <p class="tc-science-desc">
+            92研究・50,207人のメタ分析で、成人期を通じた特性の緩やかな変化が確認された。<br />
+            変化は「数ヶ月単位」ではなく「数年〜数十年単位」が基本だが、<br />
+            ライフイベント後の1〜2年で有意な変化が起きるケースも報告されている。
+          </p>
+          <a href="https://doi.org/10.1037/0033-2909.132.1.1" target="_blank" rel="noopener noreferrer" class="tc-science-link">論文を見る →</a>
+        </div>
+      </div>
+    </section>
+
+    {/* ========== H2-5: PRO訴求（メイン） ========== */}
+    <section class="tc-section tc-pro-section" id="pro-cta" aria-labelledby="tc-pro-h2">
+      <h2 id="tc-pro-h2" class="tc-pro-h2">3ヶ月後の自分にも会いたい人へ</h2>
+      <p class="tc-pro-lead">
+        タイムカプセル機能はPRO会員（¥590/月）限定です。<br />
+        タイムカプセル以外にも、継続的な自己理解を深める機能がすべて使えます。
+      </p>
+
+      <div class="tc-pro-card">
+        <div class="tc-pro-card-top">
+          <span class="tc-pro-badge">PRO限定</span>
+          <span class="tc-pro-price">¥590<span class="tc-pro-unit">/月</span></span>
+          <span class="tc-pro-tax">税込・いつでも解約可</span>
+        </div>
+        <div class="tc-pro-features-list">
+          <div class="tc-pro-feature-row tc-pro-feature-row--highlight">
+            <span class="tc-pro-feature-icon" aria-hidden="true">⏳</span>
+            <div class="tc-pro-feature-body">
+              <strong class="tc-pro-feature-name">タイムカプセル機能</strong>
+              <p class="tc-pro-feature-desc">
+                診断スコア＋手紙を封印 → 3・6・12ヶ月後に自動通知 → 変化をグラフ比較
+              </p>
+            </div>
+          </div>
+          <div class="tc-pro-feature-row">
+            <span class="tc-pro-feature-icon" aria-hidden="true">📈</span>
+            <div class="tc-pro-feature-body">
+              <strong class="tc-pro-feature-name">全期間 特性変化グラフ</strong>
+              <p class="tc-pro-feature-desc">
+                受けた全診断の時系列グラフで、自分の特性変化を長期的に追跡できる
+              </p>
+            </div>
+          </div>
+          <div class="tc-pro-feature-row">
+            <span class="tc-pro-feature-icon" aria-hidden="true">🤖</span>
+            <div class="tc-pro-feature-body">
+              <strong class="tc-pro-feature-name">AIプロンプトカード（月次更新）</strong>
+              <p class="tc-pro-feature-desc">
+                あなたのタイプ専用・ChatGPT/Claude対応の自己分析プロンプトを毎月配信
+              </p>
+            </div>
+          </div>
+          <div class="tc-pro-feature-row">
+            <span class="tc-pro-feature-icon" aria-hidden="true">🚫</span>
+            <div class="tc-pro-feature-body">
+              <strong class="tc-pro-feature-name">広告完全非表示</strong>
+              <p class="tc-pro-feature-desc">
+                全ページ・全診断フローで広告が消え、集中できる環境に
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="tc-pro-cta-wrap">
+          <a href="/pro/" class="tc-pro-cta-btn" aria-label="PRO会員の詳細・申込ページへ">
+            PRO会員の詳細を見る
+            <span aria-hidden="true">→</span>
+          </a>
+          <p class="tc-pro-cta-note">現在はプレビュー中。Stripe決済連携後に申込可能になります。</p>
+        </div>
+      </div>
+    </section>
+
+    {/* ========== H2-6: 活用シーン5パターン ========== */}
+    <section class="tc-section" aria-labelledby="tc-scene-h2">
+      <h2 id="tc-scene-h2" class="tc-h2">タイムカプセルの活用シーン 5パターン</h2>
+      <p class="tc-lead">
+        人生の節目に使うと、後から振り返ったときに価値が最大化します。<br />
+        どのタイミングでも記録を始めることができます。
+      </p>
+
+      <div class="tc-scene-grid">
+        <div class="tc-scene-card">
+          <div class="tc-scene-icon" aria-hidden="true">💼</div>
+          <h3 class="tc-scene-title">転職前後の自分を比較する</h3>
+          <p class="tc-scene-desc">
+            転職の決断をした日に記録を始めましょう。<br />
+            「なぜ転職するのか」「怖いこと・期待すること」を書いておくと、<br />
+            3ヶ月後に「スコアの変化」と「手紙に書いた気持ち」を同時に見直せます。
+          </p>
+          <div class="tc-scene-check">
+            <span>記録タイミング</span>
+            <span class="tc-scene-timing">転職決断直後 or 入社初日</span>
+          </div>
+        </div>
+
+        <div class="tc-scene-card">
+          <div class="tc-scene-icon" aria-hidden="true">💍</div>
+          <h3 class="tc-scene-title">結婚前後の変化を記録する</h3>
+          <p class="tc-scene-desc">
+            結婚前の「今の自分」を記録しておきましょう。<br />
+            Bleidorn ら（2018）は結婚が協調性・誠実性の変化と関連することを示しています。<br />
+            1年後に「結婚前と何が変わったか」をデータで確認できます。
+          </p>
+          <div class="tc-scene-check">
+            <span>記録タイミング</span>
+            <span class="tc-scene-timing">入籍の前後1ヶ月以内</span>
+          </div>
+        </div>
+
+        <div class="tc-scene-card">
+          <div class="tc-scene-icon" aria-hidden="true">🎓</div>
+          <h3 class="tc-scene-title">大学卒業時 → 社会人3年目</h3>
+          <p class="tc-scene-desc">
+            学生から社会人への移行は、最も特性変化が起きやすい時期の一つです。<br />
+            「学生の自分」を記録しておくと、3年後に「どこがどう変わったか」を確認できます。
+          </p>
+          <div class="tc-scene-check">
+            <span>記録タイミング</span>
+            <span class="tc-scene-timing">卒業式の前後 or 社会人スタート直後</span>
+          </div>
+        </div>
+
+        <div class="tc-scene-card">
+          <div class="tc-scene-icon" aria-hidden="true">👶</div>
+          <h3 class="tc-scene-title">出産前 → 子育て中の変化</h3>
+          <p class="tc-scene-desc">
+            出産は誠実性・協調性・外向性に大きな変化をもたらすことがあります。<br />
+            「出産前の自分」を記録しておくと、育児が落ち着いた頃に「自分がどう変わったか」を確認できます。
+          </p>
+          <div class="tc-scene-check">
+            <span>記録タイミング</span>
+            <span class="tc-scene-timing">出産予定日の2〜4週間前</span>
+          </div>
+        </div>
+
+        <div class="tc-scene-card">
+          <div class="tc-scene-icon" aria-hidden="true">🌅</div>
+          <h3 class="tc-scene-title">30代 → 40代 ライフステージ移行</h3>
+          <p class="tc-scene-desc">
+            Roberts ら（2006）は、30〜40代は成人期の中で特性変化が最も大きい時期の一つと示しています。<br />
+            30代半ばに記録を始めると、40代に入ったときの「変化の全体像」が見えてきます。
+          </p>
+          <div class="tc-scene-check">
+            <span>記録タイミング</span>
+            <span class="tc-scene-timing">30代のうちに（年齢ベースの節目で）</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    {/* ========== Science Note ========== */}
+    <ScienceNote
+      basisText="Wilson & Ross（2003）自己連続性と自伝的記憶の研究・Markus & Nurius（1986）可能自己理論・Roberts ら（2006）縦断メタ分析（92研究・50,207人）"
+      basisUrl="https://doi.org/10.1080/741938210"
+      basisLabel="Wilson & Ross（2003）Memory"
+      notMedical={true}
+      updatedAt={CONFIRMED_AT}
+      additionalNote="本機能は自己理解・自己成長記録のためのツールです。心理療法・カウンセリング・精神医学的アセスメントの代替ではありません。心身の不調がある場合は医師・臨床心理士にご相談ください。"
+    />
+
+    {/* ========== ReferenceList ========== */}
+    <ReferenceList references={references} confirmedAt={CONFIRMED_AT} />
+
+    {/* ========== 関連ページ ========== */}
+    <section class="tc-section" aria-labelledby="tc-related-h2">
+      <h2 id="tc-related-h2" class="tc-h2">関連ページ</h2>
+      <ul class="tc-related-list">
+        <li class="tc-related-item">
+          <a href="/time-capsule/letter/" class="tc-related-link">
+            <span class="tc-related-icon" aria-hidden="true">✉️</span>
+            <span class="tc-related-body">
+              <span class="tc-related-title">過去のあなたへの手紙｜書き方・5つのテンプレ</span>
+              <span class="tc-related-desc">自分への手紙の心理学的効果・5つのテンプレート・書き方のコツ7つ</span>
+            </span>
+          </a>
+        </li>
+        <li class="tc-related-item">
+          <a href="/pro/" class="tc-related-link">
+            <span class="tc-related-icon" aria-hidden="true">⭐</span>
+            <span class="tc-related-body">
+              <span class="tc-related-title">PRO会員 ¥590/月</span>
+              <span class="tc-related-desc">タイムカプセル・AIプロンプトカード・広告非表示ほか全機能の詳細</span>
+            </span>
+          </a>
+        </li>
+        <li class="tc-related-item">
+          <a href="/profile/" class="tc-related-link">
+            <span class="tc-related-icon" aria-hidden="true">📊</span>
+            <span class="tc-related-body">
+              <span class="tc-related-title">統合プロファイル</span>
+              <span class="tc-related-desc">8診断を統合した現在の自己理解レポート</span>
+            </span>
+          </a>
+        </li>
+        <li class="tc-related-item">
+          <a href="/diagnosis/change/seikaku-kawaru/" class="tc-related-link">
+            <span class="tc-related-icon" aria-hidden="true">🔄</span>
+            <span class="tc-related-body">
+              <span class="tc-related-title">性格は変わるのか？科学的根拠と変化の仕組み</span>
+              <span class="tc-related-desc">縦断研究（92研究・50,207人）で示された特性変化の実態</span>
+            </span>
+          </a>
+        </li>
+        <li class="tc-related-item">
+          <a href="/diagnosis/" class="tc-related-link">
+            <span class="tc-related-icon" aria-hidden="true">🧠</span>
+            <span class="tc-related-body">
+              <span class="tc-related-title">診断一覧</span>
+              <span class="tc-related-desc">8つの診断を受けて、タイムカプセルに記録する</span>
+            </span>
+          </a>
+        </li>
+      </ul>
+    </section>
+
+    {/* ========== FAQ ========== */}
+    <section class="tc-section" aria-labelledby="tc-faq-h2">
+      <h2 id="tc-faq-h2" class="tc-h2">よくある質問</h2>
+      <dl class="tc-faq-list">
+        {faqs.map(({ question, answer }) => (
+          <div class="tc-faq-item">
+            <dt class="tc-faq-q">{question}</dt>
+            <dd class="tc-faq-a">{answer}</dd>
+          </div>
+        ))}
+      </dl>
+    </section>
+
+    {/* ========== 末尾PRO再訴求 ========== */}
+    <div class="tc-bottom-cta">
+      <p class="tc-bottom-cta-text">3ヶ月後の自分にも、今の正直な気持ちを届けてみませんか。</p>
+      <a href="/pro/" class="tc-bottom-cta-btn" aria-label="PRO会員の詳細を見る">
+        PRO でタイムカプセルを始める →
+      </a>
+      <p class="tc-bottom-cta-note">¥590/月・いつでも解約可・Stripe連携後に申込可能</p>
+    </div>
+  </Container>
+</BaseLayout>
+
+<style>
+/* ========== ヒーロー ========== */
+.tc-hero {
+  background: linear-gradient(135deg, #1e1b4b 0%, #4f46e5 50%, #7c3aed 100%);
+  color: #fff;
+  padding-block: 4rem 4.5rem;
+  text-align: center;
+}
+.tc-hero-inner {
+  max-width: 640px;
+  margin-inline: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+  padding-inline: 1rem;
+}
+.tc-hero-badge {
+  display: inline-block;
+  background: rgba(255 255 255 / 0.15);
+  border: 1px solid rgba(255 255 255 / 0.35);
+  border-radius: 2rem;
+  padding: 0.25rem 1rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+}
+.tc-hero-h1 {
+  font-size: clamp(2rem, 6vw, 2.75rem);
+  font-family: var(--sn-font-rounded, sans-serif);
+  font-weight: 900;
+  line-height: 1.25;
+  margin: 0;
+}
+.tc-hero-sub {
+  display: block;
+  font-size: clamp(0.95rem, 2.5vw, 1.15rem);
+  opacity: 0.88;
+  margin-top: 0.4rem;
+  font-weight: 500;
+  line-height: 1.5;
+}
+.tc-hero-catch {
+  font-size: clamp(0.9rem, 2vw, 1rem);
+  opacity: 0.85;
+  line-height: 1.85;
+  margin: 0;
+}
+.tc-hero-meta {
+  font-size: 0.75rem;
+  opacity: 0.6;
+}
+.tc-hero-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.9rem 2.25rem;
+  background: #fff;
+  color: #4f46e5;
+  border-radius: 3rem;
+  font-family: var(--sn-font-rounded, sans-serif);
+  font-size: 1.05rem;
+  font-weight: 900;
+  text-decoration: none;
+  box-shadow: 0 8px 24px rgba(0 0 0 / 0.25);
+  min-height: 44px;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.tc-hero-cta:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 16px 36px rgba(0 0 0 / 0.3);
+  text-decoration: none;
+}
+.tc-hero-cta:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 3px;
+}
+
+/* ========== AIOブロック ========== */
+.tc-aio-block {
+  background: #eef2ff;
+  border-left: 4px solid #4f46e5;
+  border-radius: 0 0.5rem 0.5rem 0;
+  padding: 1.25rem 1.5rem;
+  margin-block: 2rem;
+}
+.tc-aio-title {
+  font-weight: 700;
+  margin: 0 0 0.5rem;
+  font-size: 0.875rem;
+  color: #4338ca;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.tc-aio-list {
+  margin: 0;
+  padding-left: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.tc-aio-list li {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: #1e1b4b;
+}
+
+/* ========== セクション共通 ========== */
+.tc-section {
+  margin-block: 3.5rem;
+}
+.tc-h2 {
+  font-size: clamp(1.3rem, 4vw, 1.7rem);
+  font-family: var(--sn-font-rounded, sans-serif);
+  font-weight: 900;
+  margin: 0 0 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 3px solid #4f46e5;
+  color: #1e1b4b;
+}
+.tc-h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin: 1.75rem 0 0.75rem;
+  color: #3730a3;
+}
+.tc-lead {
+  font-size: 1rem;
+  line-height: 1.85;
+  color: #374151;
+  margin-bottom: 1.5rem;
+}
+p {
+  font-size: 0.95rem;
+  line-height: 1.85;
+  color: #374151;
+  margin-block: 0.75rem;
+}
+.tc-source-note {
+  font-size: 0.78rem;
+  color: #6b7280;
+  margin-top: 0.5rem;
+}
+.tc-source-note a {
+  color: #4f46e5;
+}
+
+/* ========== 引用カード ========== */
+.tc-quote-card {
+  background: #f5f3ff;
+  border-left: 4px solid #7c3aed;
+  border-radius: 0 0.75rem 0.75rem 0;
+  padding: 1.25rem 1.5rem;
+  margin-block: 1.5rem;
+}
+.tc-quote-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #7c3aed;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0 0 0.5rem;
+}
+.tc-quote-text {
+  font-size: 0.9rem;
+  line-height: 1.8;
+  color: #1f2937;
+  margin: 0 0 0.5rem;
+  font-style: italic;
+}
+.tc-quote-source {
+  font-size: 0.78rem;
+  color: #6b7280;
+  margin: 0;
+}
+.tc-quote-source a {
+  color: #7c3aed;
+}
+
+/* ========== ストーリーカード ========== */
+.tc-story-card {
+  border: 1px solid #e0e7ff;
+  border-radius: 1rem;
+  overflow: hidden;
+  margin-block: 1.5rem;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(79 70 229 / 0.08);
+}
+.tc-story-card--alt {
+  border-color: #ddd6fe;
+  background: #faf5ff;
+}
+.tc-story-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1.25rem 1.5rem;
+  background: #eef2ff;
+  border-bottom: 1px solid #e0e7ff;
+}
+.tc-story-card--alt .tc-story-header {
+  background: #ede9fe;
+  border-color: #ddd6fe;
+}
+.tc-story-icon {
+  font-size: 2rem;
+  flex-shrink: 0;
+}
+.tc-story-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+.tc-story-name {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #1e1b4b;
+  margin: 0;
+}
+.tc-story-date {
+  font-size: 0.8rem;
+  color: #6b7280;
+  margin: 0;
+}
+.tc-story-body {
+  padding: 1.25rem 1.5rem;
+}
+.tc-story-letter {
+  padding: 1.25rem 1.5rem;
+  background: #fff;
+  border-bottom: 1px solid #e5e7eb;
+}
+.tc-letter-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #4f46e5;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin: 0 0 0.75rem;
+}
+.tc-letter-body {
+  font-size: 0.9rem;
+  line-height: 1.9;
+  color: #374151;
+  font-style: italic;
+  margin: 0;
+  white-space: pre-line;
+  border-left: 3px solid #c7d2fe;
+  padding-left: 1rem;
+}
+.tc-story-result {
+  padding: 1.25rem 1.5rem;
+  background: #f9fafb;
+}
+.tc-story-result-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #4f46e5;
+  margin: 0 0 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.tc-score-compare {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+.tc-score-item {
+  display: grid;
+  grid-template-columns: 6rem 1fr;
+  gap: 0.75rem;
+  align-items: center;
+}
+.tc-score-trait {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #374151;
+  white-space: nowrap;
+}
+.tc-score-bar-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+.tc-score-bar {
+  height: 1.5rem;
+  border-radius: 0.25rem;
+  display: flex;
+  align-items: center;
+  padding: 0 0.5rem;
+  min-width: 2rem;
+  transition: width 0.3s ease;
+}
+.tc-score-bar--before {
+  background: #e0e7ff;
+}
+.tc-score-bar--after {
+  background: #4f46e5;
+}
+.tc-score-bar-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #1e1b4b;
+  white-space: nowrap;
+}
+.tc-score-bar--after .tc-score-bar-label {
+  color: #fff;
+}
+.tc-story-insight {
+  font-size: 0.875rem;
+  line-height: 1.7;
+  color: #4b5563;
+  margin: 0;
+  padding: 0.75rem 1rem;
+  background: #eff6ff;
+  border-radius: 0.5rem;
+  border-left: 3px solid #4f46e5;
+}
+.tc-story-insight-text {
+  font-size: 0.875rem;
+  line-height: 1.75;
+  color: #4b5563;
+  margin-top: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: #eff6ff;
+  border-radius: 0.5rem;
+  border-left: 3px solid #4f46e5;
+}
+
+/* ========== ステップリスト ========== */
+.tc-step-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  margin-top: 1.5rem;
+  padding: 0;
+  list-style: none;
+}
+.tc-step-item {
+  display: flex;
+  gap: 1.25rem;
+  align-items: flex-start;
+  padding: 1.25rem;
+  border: 1px solid #e0e7ff;
+  border-radius: 0.875rem;
+  background: #fff;
+  box-shadow: 0 1px 4px rgba(79 70 229 / 0.06);
+}
+.tc-step-num {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  min-width: 2.5rem;
+  background: #4f46e5;
+  color: #fff;
+  border-radius: 50%;
+  font-family: var(--sn-font-rounded, sans-serif);
+  font-weight: 900;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+.tc-step-body {
+  flex: 1;
+}
+.tc-step-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1e1b4b;
+  margin: 0 0 0.4rem;
+}
+.tc-step-desc {
+  font-size: 0.875rem;
+  line-height: 1.7;
+  color: #4b5563;
+  margin: 0;
+}
+.tc-step-desc a {
+  color: #4f46e5;
+  text-decoration: underline;
+}
+
+/* ========== 科学的根拠グリッド ========== */
+.tc-science-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.25rem;
+  margin-top: 1.5rem;
+}
+.tc-science-card {
+  border: 1px solid #e0e7ff;
+  border-radius: 0.875rem;
+  padding: 1.25rem;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.tc-science-number {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #4f46e5;
+  background: #eef2ff;
+  display: inline-block;
+  padding: 0.15rem 0.5rem;
+  border-radius: 0.25rem;
+  letter-spacing: 0.04em;
+  align-self: flex-start;
+}
+.tc-science-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #1e1b4b;
+  margin: 0;
+}
+.tc-science-author {
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin: 0;
+  font-style: italic;
+}
+.tc-science-desc {
+  font-size: 0.875rem;
+  line-height: 1.7;
+  color: #374151;
+  margin: 0;
+}
+.tc-science-link {
+  font-size: 0.8rem;
+  color: #4f46e5;
+  text-decoration: underline;
+  align-self: flex-start;
+  margin-top: auto;
+}
+
+/* ========== PRO訴求セクション ========== */
+.tc-pro-section {
+  background: linear-gradient(135deg, #f0f4ff 0%, #faf5ff 100%);
+  border-radius: 1.25rem;
+  padding: 2.5rem 1.5rem;
+  border: 1px solid #ddd6fe;
+}
+.tc-pro-h2 {
+  font-size: clamp(1.3rem, 4vw, 1.7rem);
+  font-family: var(--sn-font-rounded, sans-serif);
+  font-weight: 900;
+  margin: 0 0 0.75rem;
+  color: #1e1b4b;
+  text-align: center;
+}
+.tc-pro-lead {
+  text-align: center;
+  font-size: 0.95rem;
+  color: #4b5563;
+  line-height: 1.8;
+  margin-bottom: 1.75rem;
+}
+.tc-pro-card {
+  background: #fff;
+  border: 2px solid #4f46e5;
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(79 70 229 / 0.15);
+}
+.tc-pro-card-top {
+  background: linear-gradient(135deg, #1e1b4b 0%, #4f46e5 50%, #7c3aed 100%);
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.tc-pro-badge {
+  background: rgba(255 255 255 / 0.2);
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.2rem 0.65rem;
+  border-radius: 2rem;
+  border: 1px solid rgba(255 255 255 / 0.4);
+  white-space: nowrap;
+}
+.tc-pro-price {
+  font-family: var(--sn-font-rounded, sans-serif);
+  font-size: 1.75rem;
+  font-weight: 900;
+  color: #fff;
+  margin-left: auto;
+}
+.tc-pro-unit {
+  font-size: 1rem;
+  font-weight: 500;
+}
+.tc-pro-tax {
+  font-size: 0.75rem;
+  color: rgba(255 255 255 / 0.7);
+  white-space: nowrap;
+}
+.tc-pro-features-list {
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.tc-pro-feature-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.875rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+}
+.tc-pro-feature-row--highlight {
+  background: #eef2ff;
+  border: 1px solid #c7d2fe;
+}
+.tc-pro-feature-icon {
+  font-size: 1.4rem;
+  flex-shrink: 0;
+  margin-top: 0.1rem;
+}
+.tc-pro-feature-body {
+  flex: 1;
+}
+.tc-pro-feature-name {
+  display: block;
+  font-size: 0.925rem;
+  font-weight: 700;
+  color: #1e1b4b;
+  margin-bottom: 0.2rem;
+}
+.tc-pro-feature-desc {
+  font-size: 0.85rem;
+  color: #4b5563;
+  line-height: 1.65;
+  margin: 0;
+}
+.tc-pro-cta-wrap {
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  border-top: 1px solid #e0e7ff;
+  background: #f8f9ff;
+}
+.tc-pro-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.9rem 2.5rem;
+  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+  color: #fff;
+  border-radius: 3rem;
+  font-family: var(--sn-font-rounded, sans-serif);
+  font-size: 1.05rem;
+  font-weight: 900;
+  text-decoration: none;
+  min-height: 44px;
+  box-shadow: 0 6px 18px rgba(79 70 229 / 0.3);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.tc-pro-cta-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(79 70 229 / 0.4);
+  text-decoration: none;
+}
+.tc-pro-cta-btn:focus-visible {
+  outline: 3px solid #4f46e5;
+  outline-offset: 3px;
+}
+.tc-pro-cta-note {
+  font-size: 0.78rem;
+  color: #6b7280;
+  margin: 0;
+  text-align: center;
+}
+
+/* ========== 活用シーングリッド ========== */
+.tc-scene-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1.25rem;
+  margin-top: 1.5rem;
+}
+.tc-scene-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.875rem;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  background: #fff;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.tc-scene-card:hover {
+  border-color: #a5b4fc;
+  box-shadow: 0 4px 12px rgba(79 70 229 / 0.1);
+}
+.tc-scene-icon {
+  font-size: 2rem;
+}
+.tc-scene-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #1e1b4b;
+  margin: 0;
+}
+.tc-scene-desc {
+  font-size: 0.875rem;
+  line-height: 1.7;
+  color: #4b5563;
+  margin: 0;
+  flex: 1;
+}
+.tc-scene-check {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin-top: 0.25rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid #f3f4f6;
+}
+.tc-scene-timing {
+  color: #4f46e5;
+  font-weight: 600;
+}
+
+/* ========== 関連リンク ========== */
+.tc-related-list {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.tc-related-item {
+  display: block;
+}
+.tc-related-link {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.tc-related-link:hover {
+  border-color: #4f46e5;
+  box-shadow: 0 2px 8px rgba(79 70 229 / 0.1);
+}
+.tc-related-icon {
+  font-size: 1.75rem;
+  flex-shrink: 0;
+}
+.tc-related-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+.tc-related-title {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #1e1b4b;
+}
+.tc-related-desc {
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+/* ========== FAQ ========== */
+.tc-faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+.tc-faq-item {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+.tc-faq-q {
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 1rem 1.25rem;
+  background: #f8f9ff;
+  margin: 0;
+  display: block;
+  color: #1e1b4b;
+}
+.tc-faq-q::before {
+  content: 'Q. ';
+  color: #4f46e5;
+}
+.tc-faq-a {
+  font-size: 0.9rem;
+  line-height: 1.75;
+  padding: 1rem 1.25rem;
+  margin: 0;
+  color: #4b5563;
+}
+.tc-faq-a::before {
+  content: 'A. ';
+  font-weight: 700;
+  color: #059669;
+}
+
+/* ========== 末尾CTA ========== */
+.tc-bottom-cta {
+  text-align: center;
+  padding: 2.5rem 1.5rem;
+  background: linear-gradient(135deg, #1e1b4b 0%, #4f46e5 100%);
+  border-radius: 1.25rem;
+  margin-block: 3rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+.tc-bottom-cta-text {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #fff;
+  margin: 0;
+  line-height: 1.6;
+}
+.tc-bottom-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.9rem 2.25rem;
+  background: #fff;
+  color: #4f46e5;
+  border-radius: 3rem;
+  font-family: var(--sn-font-rounded, sans-serif);
+  font-size: 1rem;
+  font-weight: 900;
+  text-decoration: none;
+  min-height: 44px;
+  box-shadow: 0 6px 18px rgba(0 0 0 / 0.2);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.tc-bottom-cta-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(0 0 0 / 0.3);
+  text-decoration: none;
+}
+.tc-bottom-cta-note {
+  font-size: 0.78rem;
+  color: rgba(255 255 255 / 0.65);
+  margin: 0;
+}
+
+/* ========== レスポンシブ ========== */
+@media (max-width: 768px) {
+  .tc-science-grid,
+  .tc-scene-grid {
+    grid-template-columns: 1fr;
+  }
+  .tc-score-item {
+    grid-template-columns: 5rem 1fr;
+  }
+  .tc-pro-card-top {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .tc-pro-price {
+    margin-left: 0;
+  }
+  .tc-step-item {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  .tc-pro-cta-btn {
+    width: 100%;
+    justify-content: center;
+  }
+  .tc-bottom-cta-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+@media (max-width: 480px) {
+  .tc-story-header {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .tc-score-item {
+    grid-template-columns: 1fr;
+    gap: 0.25rem;
+  }
+  .tc-score-trait {
+    font-size: 0.75rem;
+  }
+}
+</style>
