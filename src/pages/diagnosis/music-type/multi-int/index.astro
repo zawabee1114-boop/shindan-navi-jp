@@ -1,0 +1,769 @@
+---
+/**
+ * 多重知能×音楽的知能ページ
+ * KW: 多重知能 音楽 / 音楽的知能
+ * 理論: Gardner (1983/1999) 音楽的知能（Musical Intelligence）
+ * 確認日: 2026-05-21
+ * YMYL注意: 子どもの音楽的知能を「伸ばすヒント」のみ（医療・診断言及NG）
+ */
+import BaseLayout from '../../../../layouts/BaseLayout.astro';
+import Container from '../../../../components/Container.astro';
+import TldrBlock from '../../../../components/TldrBlock.astro';
+import ReferenceList from '../../../../components/ReferenceList.astro';
+import ScienceNote from '../../../../components/ScienceNote.astro';
+
+const SITE_URL = 'https://shindan-navi.jp';
+const PAGE_URL = `${SITE_URL}/diagnosis/music-type/multi-int/`;
+
+const title = '多重知能と音楽的知能｜Gardner理論で読み解く音楽の才能と特徴';
+const description =
+  'Howard Gardner（1983）が提唱した「音楽的知能（Musical Intelligence）」の特徴・職業適性・他の知能との組み合わせパターンを解説。子どもの音楽的知能を伸ばすヒントと、多重知能テストへの動線も紹介します。';
+
+const references = [
+  {
+    title: 'Frames of Mind: The Theory of Multiple Intelligences',
+    author: 'Gardner H',
+    year: 1983,
+    publisher: 'Basic Books',
+    url: 'https://www.basicbooks.com/titles/howard-gardner/frames-of-mind/9780465024339/',
+  },
+  {
+    title: 'Intelligence Reframed: Multiple Intelligences for the 21st Century',
+    author: 'Gardner H',
+    year: 1999,
+    publisher: 'Basic Books',
+    url: 'https://www.basicbooks.com/titles/howard-gardner/intelligence-reframed/9780465026104/',
+  },
+  {
+    title: 'The do re mi\'s of everyday life: The structure and personality correlates of music preferences',
+    author: 'Rentfrow PJ, Gosling SD',
+    year: 2003,
+    journal: 'Journal of Personality and Social Psychology',
+    volume: '84(6), 1236–1256',
+    url: 'https://doi.org/10.1037/0022-3514.84.6.1236',
+  },
+];
+
+const strengths = [
+  '音程・リズム・テンポのずれを素早く察知できる',
+  '聴いた曲のメロディーをすぐに再現・口ずさめる',
+  '音楽を通じて感情を豊かに表現・共有できる',
+  '複数の声部（パート）を同時に認識・区別できる',
+  '言語よりも音楽で思考・記憶するタイプが多い',
+  'リズム・韻・反復するパターンへの感覚が鋭い',
+];
+
+const jobs = [
+  { title: '音楽家・演奏家', desc: 'ピアノ・ギター・バイオリン等の楽器演奏者。音楽的知能が最も直接的に活きる職種' },
+  { title: '作曲家・編曲家', desc: 'オリジナル楽曲の創作・既存曲のアレンジ。創造性と音楽的知能の組み合わせが重要' },
+  { title: '音響エンジニア', desc: '音の録音・編集・ミキシング。音への感受性と技術的知識を組み合わせる職種' },
+  { title: '音楽プロデューサー', desc: '楽曲制作の総括・アーティスト育成。音楽的知能と対人的知能の組み合わせが効果的' },
+  { title: '音楽教師・講師', desc: '楽器・声楽・音楽理論の指導。音楽的知能と言語的知能・対人的知能の組み合わせ' },
+  { title: 'DJ・音楽クリエイター', desc: '楽曲の選定・ミックス・制作。リズム感覚と現代的な音楽知識が重要' },
+  { title: '声優・ナレーター', desc: '声の表現力・抑揚・リズム感が重要。音楽的知能が声の演技力に直結することがある' },
+  { title: '映画・ゲーム音楽作曲', desc: '映像・ストーリーに合わせた音楽創作。複数の知能を組み合わせる総合的な職種' },
+];
+
+const combos = [
+  {
+    combo: '音楽的知能 × 言語的知能',
+    desc: '歌詞の創作・音楽評論・音楽ライターとして力を発揮しやすい組み合わせです。音楽を言葉で深く語る力が育ちます。',
+    examples: '作詞家・音楽批評家・音楽ライター',
+  },
+  {
+    combo: '音楽的知能 × 論理数学的知能',
+    desc: '音楽理論・和声学・音響工学への深い理解が育ちやすい組み合わせです。音楽を構造的・数学的に分析する力があります。',
+    examples: '音楽学研究者・音響エンジニア・DTMクリエイター',
+  },
+  {
+    combo: '音楽的知能 × 身体運動的知能',
+    desc: 'リズムと体の動きを連動させる能力が高い組み合わせです。音楽と身体表現を融合させた表現ができます。',
+    examples: 'ダンサー・振付師・パフォーマー・ドラマー',
+  },
+  {
+    combo: '音楽的知能 × 対人的知能',
+    desc: '音楽を通じて人の感情に寄り添い、場の雰囲気を作り出す力が強い組み合わせです。チームの調和を音楽的に整えます。',
+    examples: '音楽プロデューサー・音楽教師・バンドリーダー',
+  },
+  {
+    combo: '音楽的知能 × 内省的知能',
+    desc: '自分の感情を音楽で深く探求する傾向があります。作曲・即興演奏で内面を表現することが得意です。',
+    examples: 'シンガーソングライター・ジャズピアニスト・独立作曲家',
+  },
+];
+
+const kidsHints = [
+  {
+    hint: '多様な音楽に触れる環境を作る',
+    detail: 'クラシック・ジャズ・民族音楽など幅広いジャンルを自然な形で生活の中に取り入れましょう。特定ジャンルを強制せず、子ども自身の反応を観察します。',
+  },
+  {
+    hint: 'リズム遊びを日常に取り入れる',
+    detail: '手拍子・太鼓・ボディパーカッションなど、楽器がなくてもできるリズム遊びが音楽的感覚を育てます。遊びの延長として気軽に行うのがポイントです。',
+  },
+  {
+    hint: '音楽への反応を観察・肯定する',
+    detail: '子どもが音楽に反応する瞬間（体を揺らす・口ずさむ・聴き入る等）を肯定的に受け止めます。「好きなの?」と問いかけることで自己認識を促せます。',
+  },
+  {
+    hint: '楽器体験の機会を作る',
+    detail: '本格的な楽器レッスンでなくても、鍵盤・打楽器・弦楽器に触れる体験が音楽的知能の発達につながります。楽器選びは子どもの興味を優先します。',
+  },
+  {
+    hint: '音楽と他の活動を自然に結びつける',
+    detail: '読み聞かせに音楽を添える・料理しながら歌う・散歩しながらリズムを感じるなど、生活の中で音楽を自然な位置に置きます。',
+  },
+];
+
+const faqs = [
+  {
+    question: '音楽的知能とは何ですか？',
+    answer:
+      'Howard Gardner（1983）が「Frames of Mind」で提唱した多重知能理論の8つの知能のひとつです。音・リズム・メロディー・音色への感受性と、音楽を制作・演奏・鑑賞する能力を指します（出典: ハーバード大学 Project Zero https://www.pz.harvard.edu/projects/multiple-intelligences、2026-05-21確認）。',
+  },
+  {
+    question: '音楽的知能が高いとどんな特徴がありますか？',
+    answer:
+      '音程のずれに敏感に気づく、聴いた曲のメロディーをすぐに再現できる、リズムや韻への感覚が鋭い、感情を音楽で表現できる、などの特徴が挙げられます。ただし個人差が大きく、全ての特徴を持つ必要はありません。',
+  },
+  {
+    question: '音楽的知能は生まれつきですか？鍛えられますか？',
+    answer:
+      'Gardner理論では、知能は経験・学習・環境によって発達するという考えを基本にしています。生まれつきの素養はある程度存在しますが、音楽への継続的な接触・練習・教育で音楽的知能は発達すると考えられています（Gardner, 1999, Intelligence Reframed）。',
+  },
+  {
+    question: 'MUSICモデルとGardnerの音楽的知能は同じですか？',
+    answer:
+      '異なります。Gardner（1983）の音楽的知能は「音楽を作る・演じる・分析する能力の素養」を指します。一方、Rentfrow & Gosling（2003）のMUSICモデルは「どんな音楽ジャンルを好むか」の嗜好の傾向を測定します。前者は才能・能力の軸、後者は好みの軸です。',
+  },
+  {
+    question: '音楽的知能が高い人は全員音楽の仕事につくべきですか？',
+    answer:
+      '必ずしもそうではありません。音楽的知能は職種の断定ではなく、「どの分野で才能が活きやすいか」の参考です。他の知能との組み合わせによって、音楽と異なる分野でも音楽的知能を活かせる場合があります。',
+  },
+  {
+    question: '子どもの音楽的知能はどう判断しますか？',
+    answer:
+      '本ページは子どもの音楽的知能を医学的・臨床的に判定するものではありません。「音楽に強く反応する」「リズムを自然に刻む」「曲を素早く覚える」などの行動観察が参考になりますが、確定的な判定は専門家にお任せください。',
+  },
+  {
+    question: '音楽的知能を多重知能テストで測れますか？',
+    answer:
+      'はい。診断ナビの多重知能テスト（64問）では音楽的知能を含む8知能をスコアで測定できます。8問が音楽的知能に対応した質問で、5段階で自己評価します（/diagnosis/multi-int/）。',
+  },
+  {
+    question: '音楽的知能と音痴は関係がありますか？',
+    answer:
+      'Gardner理論の音楽的知能は総合的な音楽への感受性・能力を指すため、音程の取りやすさ（音痴かどうか）は音楽的知能の一部の側面にすぎません。音程が苦手でもリズム感が高い場合は音楽的知能の一側面が高い場合があります。',
+  },
+  {
+    question: 'INFPやINFJが音楽的知能と組み合わさると？',
+    answer:
+      'MBTI直接との対応は研究的に確認できていませんが、内省傾向が高いタイプが音楽的知能と組み合わさると、音楽を自己表現・内省の手段として深く活用する傾向があります。シンガーソングライター・作曲・音楽鑑賞を通じた感情整理などに向いている場合が多いです。',
+  },
+  {
+    question: '音楽的知能のテストは信頼できますか？',
+    answer:
+      '本サイトの多重知能テストは自己報告式（自分の行動傾向に回答）のため、客観的な能力測定とは異なります。医学的・臨床的な能力評価ではなく、傾向把握のための参考ツールとしてご活用ください。',
+  },
+];
+
+const jsonLdArticle = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  '@id': `${PAGE_URL}#article`,
+  headline: title,
+  url: PAGE_URL,
+  datePublished: '2026-05-21',
+  dateModified: '2026-05-21',
+  inLanguage: 'ja',
+  publisher: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+  },
+  mentions: [
+    {
+      '@type': 'Person',
+      name: 'Howard Gardner',
+      sameAs: 'https://en.wikipedia.org/wiki/Howard_Gardner',
+    },
+    {
+      '@type': 'Thing',
+      name: '多重知能理論（Multiple Intelligences Theory）',
+      sameAs: 'https://www.pz.harvard.edu/projects/multiple-intelligences',
+    },
+  ],
+};
+
+const jsonLdFAQ = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map(({ question, answer }) => ({
+    '@type': 'Question',
+    name: question,
+    acceptedAnswer: { '@type': 'Answer', text: answer },
+  })),
+};
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  canonical={PAGE_URL}
+  jsonLd={[jsonLdArticle, jsonLdFAQ]}
+  ogType="article"
+  publishDate="2026-05-21"
+  lastUpdated="2026-05-21"
+  breadcrumbs={[
+    { name: '診断一覧', url: '/diagnosis/' },
+    { name: '音楽タイプ診断', url: '/diagnosis/music-type/' },
+    { name: '多重知能×音楽', url: '/diagnosis/music-type/multi-int/' },
+  ]}
+>
+  <section class="mi-hero" aria-labelledby="mi-h1">
+    <Container>
+      <div class="mi-hero-inner">
+        <div class="mi-badge">Howard Gardner（1983/1999）音楽的知能理論</div>
+        <h1 id="mi-h1" class="mi-h1">
+          多重知能と音楽的知能<br />
+          <span class="mi-h1-sub">Gardner理論で読み解く音楽の才能と特徴</span>
+        </h1>
+        <p class="mi-hero-lead">
+          「音楽的知能（Musical Intelligence）」とはどんな能力なのか。<br />
+          特徴・職業適性・他の知能との組み合わせを詳しく解説します。
+        </p>
+      </div>
+    </Container>
+  </section>
+
+  <Container>
+    <TldrBlock
+      title="このページのポイント（3行まとめ）"
+      points={[
+        'Gardner（1983）の音楽的知能は「音・リズム・メロディーへの感受性と音楽を制作・演奏・鑑賞する能力」を指し、8つの知能のひとつとしてハーバード大学 Project Zeroが継続研究しています',
+        '音楽的知能が高い人は音程のずれへの敏感さ・リズム感・感情の音楽的表現に優れる傾向があり、音楽家・音響エンジニア・音楽教師・声優など多様な職種で才能を活かせます',
+        '音楽的知能は他の知能（言語・論理・対人・内省等）との組み合わせによって才能の発揮方向が変わります。多重知能テスト（/diagnosis/multi-int/）で自分の8知能プロファイルを確認できます',
+      ]}
+      updatedAt="2026-05-21"
+      sourceLabel="ハーバード大学 Project Zero 公式"
+      sourceUrl="https://www.pz.harvard.edu/projects/multiple-intelligences"
+    />
+
+    <section class="mi-section" aria-labelledby="mi-what-h2">
+      <h2 id="mi-what-h2" class="mi-h2">音楽的知能とは何ですか？（Gardner理論）</h2>
+      <p class="mi-lead">
+        Howard Gardner（1983）は著書「Frames of Mind」で、知能を8つの独立した領域に分けて捉えました。
+        音楽的知能（Musical Intelligence）はその8つのうちの一つです
+        （<a href="https://www.pz.harvard.edu/projects/multiple-intelligences" target="_blank" rel="noopener noreferrer">ハーバード大学 Project Zero</a>、2026-05-21確認）。
+      </p>
+      <p class="mi-body">
+        音楽的知能は「音・リズム・メロディー・音色・和声への感受性と、音楽を認識・分析・制作・演奏する能力の素養」と定義されています。
+        ただし、音楽的知能の高さは音楽の職業的な成功を保証するものではなく、
+        他の知能との組み合わせや環境・努力が同様に重要です。
+      </p>
+      <div class="mi-def-box">
+        <dl class="mi-def-list">
+          <div class="mi-def-row">
+            <dt>提唱者</dt>
+            <dd>Howard Gardner（ハーバード大学名誉教授）</dd>
+          </div>
+          <div class="mi-def-row">
+            <dt>発表年</dt>
+            <dd>1983年「Frames of Mind」/ 1999年「Intelligence Reframed」で更新</dd>
+          </div>
+          <div class="mi-def-row">
+            <dt>定義</dt>
+            <dd>音・リズム・メロディー・音色への感受性と、音楽の制作・演奏・鑑賞能力の素養</dd>
+          </div>
+          <div class="mi-def-row">
+            <dt>研究機関</dt>
+            <dd>
+              ハーバード大学 Project Zero（
+              <a href="https://www.pz.harvard.edu/projects/multiple-intelligences" target="_blank" rel="noopener noreferrer">公式</a>
+              ）が継続研究中
+            </dd>
+          </div>
+          <div class="mi-def-row">
+            <dt>注意</dt>
+            <dd>自己理解・傾向把握のための枠組みです。能力の絶対評価・医療診断には使用できません</dd>
+          </div>
+        </dl>
+      </div>
+    </section>
+
+    <ScienceNote
+      basisText="Gardner H（1983）Frames of Mind（Basic Books）および Gardner H（1999）Intelligence Reframed（Basic Books）。ハーバード大学 Project Zeroが継続研究中（2026-05-21確認）。"
+      basisUrl="https://www.pz.harvard.edu/projects/multiple-intelligences"
+      basisLabel="Project Zero 公式（2026-05-21確認）"
+      notMedical={true}
+      updatedAt="2026-05-21"
+      additionalNote="音楽的知能の高低は学習障害・発達障害の判定には使用できません。専門家（医師・臨床心理士）へご相談ください。"
+    />
+
+    <section class="mi-section" aria-labelledby="mi-strengths-h2">
+      <h2 id="mi-strengths-h2" class="mi-h2">音楽的知能が高い人の特徴</h2>
+      <p class="mi-lead">
+        以下はGardner（1983）の理論に基づく傾向の整理です。
+        全ての特徴を持つ必要はなく、一部に強みが現れる場合もあります。
+      </p>
+      <ul class="mi-strengths-list">
+        {strengths.map((s) => (
+          <li class="mi-strength-item">
+            <span class="mi-strength-icon" aria-hidden="true">🎵</span>
+            <span>{s}</span>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <section class="mi-section" aria-labelledby="mi-jobs-h2">
+      <h2 id="mi-jobs-h2" class="mi-h2">職業適性：音楽的知能が活きる仕事</h2>
+      <p class="mi-lead">
+        音楽的知能が高い傾向がある人が力を発揮しやすい職種を整理しました。
+        他の知能との組み合わせによって、さらに適性の幅が広がります。
+      </p>
+      <div class="mi-jobs-grid">
+        {jobs.map((job) => (
+          <article class="mi-job-card">
+            <h3 class="mi-job-title">{job.title}</h3>
+            <p class="mi-job-desc">{job.desc}</p>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section class="mi-section" aria-labelledby="mi-combos-h2">
+      <h2 id="mi-combos-h2" class="mi-h2">他の知能との組み合わせパターン</h2>
+      <p class="mi-lead">
+        多重知能理論では、人は8つの知能を組み合わせて独自の強みを形成します。
+        音楽的知能がどの知能と組み合わさるかで、才能の発揮方向が変わります。
+      </p>
+      <div class="mi-combos-list">
+        {combos.map((c) => (
+          <article class="mi-combo-card">
+            <h3 class="mi-combo-name">{c.combo}</h3>
+            <p class="mi-combo-desc">{c.desc}</p>
+            <p class="mi-combo-examples">
+              <strong>向く職種・活動:</strong> {c.examples}
+            </p>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section class="mi-section" aria-labelledby="mi-kids-h2">
+      <h2 id="mi-kids-h2" class="mi-h2">子どもの音楽的知能を伸ばすヒント</h2>
+      <p class="mi-lead">
+        Gardner理論では、知能は経験・環境・継続的な接触で発達すると考えます。
+        以下は参考ヒントです。医療・療育的なアドバイスではありません。
+      </p>
+      <div class="mi-kids-disclaimer">
+        <strong>YMYL注記:</strong>
+        本セクションは「参考ヒント」の提供のみです。
+        発達障害・学習障害等の医療的な評価や支援が必要な場合は、
+        医師・専門家にご相談ください。
+      </div>
+      <ol class="mi-kids-list">
+        {kidsHints.map((h, i) => (
+          <li class="mi-kids-item">
+            <div class="mi-kids-num" aria-hidden="true">{i + 1}</div>
+            <div class="mi-kids-body">
+              <h3 class="mi-kids-title">{h.hint}</h3>
+              <p class="mi-kids-detail">{h.detail}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </section>
+
+    <section class="mi-section" aria-labelledby="mi-cta-h2">
+      <h2 id="mi-cta-h2" class="mi-h2">多重知能テストで音楽的知能を確認する</h2>
+      <p class="mi-lead">
+        診断ナビの多重知能テスト（64問・無料）では、
+        音楽的知能を含む8知能すべてのスコアを確認できます。
+        自分の強みの「かたち」を発見しましょう。
+      </p>
+      <div class="mi-cta-box">
+        <div class="mi-cta-inner">
+          <p class="mi-cta-text">
+            8知能プロファイル・無料・登録不要・約5分
+          </p>
+          <a href="/diagnosis/multi-int/" class="mi-cta-btn">
+            多重知能テストを受ける（無料・64問）
+            <span aria-hidden="true"> →</span>
+          </a>
+          <p class="mi-cta-sub">
+            音楽的知能スコアを含む8軸レーダーチャートが無料で見られます
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="mi-section" aria-labelledby="mi-related-h2">
+      <h2 id="mi-related-h2" class="mi-h2">関連ページ</h2>
+      <ul class="mi-related-list">
+        <li class="mi-related-item">
+          <a href="/diagnosis/multi-int/" class="mi-related-link">
+            <span class="mi-related-icon" aria-hidden="true">📚</span>
+            <span class="mi-related-body">
+              <span class="mi-related-title">多重知能テスト（64問・無料）</span>
+              <span class="mi-related-desc">8知能プロファイルを診断。音楽的知能スコアを確認</span>
+            </span>
+          </a>
+        </li>
+        <li class="mi-related-item">
+          <a href="/diagnosis/music-type/" class="mi-related-link">
+            <span class="mi-related-icon" aria-hidden="true">🎵</span>
+            <span class="mi-related-body">
+              <span class="mi-related-title">音楽タイプ診断ハブ</span>
+              <span class="mi-related-desc">MUSICモデル5タイプと音楽嗜好の全体像</span>
+            </span>
+          </a>
+        </li>
+        <li class="mi-related-item">
+          <a href="/diagnosis/music-type/genre/" class="mi-related-link">
+            <span class="mi-related-icon" aria-hidden="true">🎸</span>
+            <span class="mi-related-body">
+              <span class="mi-related-title">ジャンル別性格傾向</span>
+              <span class="mi-related-desc">音楽ジャンルとBig5性格特性の相関</span>
+            </span>
+          </a>
+        </li>
+        <li class="mi-related-item">
+          <a href="/diagnosis/music-type/mbti-music/" class="mi-related-link">
+            <span class="mi-related-icon" aria-hidden="true">🧠</span>
+            <span class="mi-related-body">
+              <span class="mi-related-title">MBTI × 音楽傾向</span>
+              <span class="mi-related-desc">16タイプ別の音楽傾向を詳説</span>
+            </span>
+          </a>
+        </li>
+        <li class="mi-related-item">
+          <a href="/diagnosis/mbti/" class="mi-related-link">
+            <span class="mi-related-icon" aria-hidden="true">💡</span>
+            <span class="mi-related-body">
+              <span class="mi-related-title">MBTI（16タイプ）診断</span>
+              <span class="mi-related-desc">性格傾向を組み合わせて自己理解を深める</span>
+            </span>
+          </a>
+        </li>
+      </ul>
+    </section>
+
+    <section class="mi-section" aria-labelledby="mi-faq-h2">
+      <h2 id="mi-faq-h2" class="mi-h2">よくある質問（Q&A）</h2>
+      <dl class="mi-faq-list">
+        {faqs.map(({ question, answer }) => (
+          <div class="mi-faq-item">
+            <dt class="mi-faq-q">{question}</dt>
+            <dd class="mi-faq-a">{answer}</dd>
+          </div>
+        ))}
+      </dl>
+    </section>
+
+    <ReferenceList references={references} confirmedAt="2026-05-21" />
+  </Container>
+</BaseLayout>
+
+<style>
+.mi-hero {
+  background: linear-gradient(135deg, #7c3aed 0%, #059669 100%);
+  color: #fff;
+  padding-block: 3rem 3.5rem;
+  text-align: center;
+}
+.mi-hero-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+.mi-badge {
+  display: inline-block;
+  background: rgba(255 255 255 / 0.2);
+  border: 1px solid rgba(255 255 255 / 0.4);
+  border-radius: 2rem;
+  padding: 0.25rem 1rem;
+  font-size: 0.75rem;
+}
+.mi-h1 {
+  font-size: clamp(1.5rem, 4.5vw, 2.2rem);
+  font-weight: 700;
+  line-height: 1.3;
+  margin: 0;
+}
+.mi-h1-sub {
+  display: block;
+  font-size: clamp(0.85rem, 2.5vw, 1.1rem);
+  opacity: 0.9;
+}
+.mi-hero-lead {
+  font-size: clamp(0.85rem, 2vw, 1rem);
+  opacity: 0.9;
+  line-height: 1.7;
+  margin: 0;
+}
+
+.mi-section { margin-block: 3rem; }
+.mi-h2 {
+  font-size: clamp(1.2rem, 3.5vw, 1.6rem);
+  font-weight: 700;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--sn-primary);
+}
+.mi-lead {
+  font-size: 1rem;
+  line-height: 1.8;
+  margin-bottom: 1rem;
+  color: #374151;
+}
+.mi-body {
+  font-size: 0.95rem;
+  line-height: 1.8;
+  margin-bottom: 1rem;
+  color: #374151;
+}
+
+.mi-def-box {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  margin-top: 1.25rem;
+}
+.mi-def-list {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.mi-def-row {
+  display: grid;
+  grid-template-columns: 6rem 1fr;
+  gap: 0.5rem;
+  align-items: baseline;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+.mi-def-row dt {
+  font-weight: 700;
+  color: var(--sn-primary);
+}
+.mi-def-row dd { margin: 0; color: #374151; }
+
+.mi-strengths-list {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.mi-strength-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: #374151;
+}
+.mi-strength-icon { font-size: 1.1rem; flex-shrink: 0; }
+
+.mi-jobs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+.mi-job-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 1rem;
+}
+.mi-job-title {
+  font-size: 0.9rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem;
+  color: var(--sn-primary);
+}
+.mi-job-desc {
+  font-size: 0.82rem;
+  line-height: 1.6;
+  color: #4b5563;
+  margin: 0;
+}
+
+.mi-combos-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+.mi-combo-card {
+  border: 1px solid #e5e7eb;
+  border-left: 4px solid var(--sn-primary);
+  border-radius: 0 0.75rem 0.75rem 0;
+  padding: 1rem 1.25rem;
+}
+.mi-combo-name {
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem;
+  color: #1f2937;
+}
+.mi-combo-desc {
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: #374151;
+  margin: 0 0 0.5rem;
+}
+.mi-combo-examples {
+  font-size: 0.82rem;
+  color: #4b5563;
+  margin: 0;
+}
+
+.mi-kids-disclaimer {
+  margin-bottom: 1.25rem;
+  padding: 1rem 1.25rem;
+  background: #fef9c3;
+  border: 1px solid #fde047;
+  border-left: 4px solid #ca8a04;
+  border-radius: 0 0.5rem 0.5rem 0;
+  font-size: 0.875rem;
+  color: #713f12;
+  line-height: 1.6;
+}
+.mi-kids-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.mi-kids-item {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+.mi-kids-num {
+  flex-shrink: 0;
+  width: 2.25rem;
+  height: 2.25rem;
+  background: var(--sn-primary);
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1rem;
+}
+.mi-kids-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin: 0 0 0.25rem;
+  color: #1f2937;
+}
+.mi-kids-detail {
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: #4b5563;
+  margin: 0;
+}
+
+.mi-cta-box {
+  background: linear-gradient(135deg, #ede9fe 0%, #d1fae5 100%);
+  border: 1px solid #c4b5fd;
+  border-radius: 1rem;
+  padding: 2rem;
+  text-align: center;
+  margin-top: 1rem;
+}
+.mi-cta-text {
+  font-size: 0.875rem;
+  color: #4b5563;
+  margin: 0 0 1rem;
+}
+.mi-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  background: var(--sn-primary);
+  color: #fff;
+  font-weight: 700;
+  font-size: 1rem;
+  padding: 0.75rem 2rem;
+  border-radius: 0.5rem;
+  text-decoration: none;
+  transition: opacity 0.15s;
+}
+.mi-cta-btn:hover { opacity: 0.85; }
+.mi-cta-sub {
+  font-size: 0.8rem;
+  color: #6b7280;
+  margin: 0.75rem 0 0;
+}
+
+.mi-related-list {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.mi-related-link {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.15s;
+}
+.mi-related-link:hover { border-color: var(--sn-primary); }
+.mi-related-icon { font-size: 1.5rem; flex-shrink: 0; }
+.mi-related-body { display: flex; flex-direction: column; gap: 0.2rem; }
+.mi-related-title { font-weight: 700; font-size: 0.95rem; }
+.mi-related-desc { font-size: 0.8rem; color: #6b7280; }
+
+.mi-faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+.mi-faq-item {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+.mi-faq-q {
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 1rem 1.25rem;
+  background: #f9fafb;
+  margin: 0;
+  display: block;
+}
+.mi-faq-q::before { content: 'Q. '; color: var(--sn-primary); }
+.mi-faq-a {
+  font-size: 0.875rem;
+  line-height: 1.7;
+  padding: 1rem 1.25rem;
+  margin: 0;
+  color: #4b5563;
+}
+.mi-faq-a::before { content: 'A. '; font-weight: 700; color: #16a34a; }
+
+@media (max-width: 640px) {
+  .mi-def-row { grid-template-columns: 1fr; gap: 0.15rem; }
+  .mi-jobs-grid { grid-template-columns: 1fr 1fr; }
+}
+</style>

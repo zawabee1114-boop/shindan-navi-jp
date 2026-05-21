@@ -1,0 +1,632 @@
+---
+/**
+ * 気分×音楽ページ
+ * KW: 音楽 気分 / 音楽 心理
+ * 理論: North & Hargreaves (2008) / Rentfrow & Gosling (2003) MUSICモデル応用
+ * 確認日: 2026-05-21
+ * YMYL注意: 音楽療法・医学的効能の言及NG。「気分転換のヒント」「自己理解」表現のみ
+ */
+import BaseLayout from '../../../../layouts/BaseLayout.astro';
+import Container from '../../../../components/Container.astro';
+import TldrBlock from '../../../../components/TldrBlock.astro';
+import ReferenceList from '../../../../components/ReferenceList.astro';
+import ScienceNote from '../../../../components/ScienceNote.astro';
+
+const SITE_URL = 'https://shindan-navi.jp';
+const PAGE_URL = `${SITE_URL}/diagnosis/music-type/mood/`;
+
+const title = '気分と音楽の心理学｜場面別に選びたい音楽の傾向と研究的根拠';
+const description =
+  '悲しい時・集中したい時・リラックスしたい時など、気分と音楽の関係を心理学研究をもとに解説。MUSICモデルの応用として、気分別に選びたい音楽の傾向と自己理解への活かし方を紹介します。';
+
+const references = [
+  {
+    title: 'The Social and Applied Psychology of Music',
+    author: 'North AC, Hargreaves DJ',
+    year: 2008,
+    publisher: 'Oxford University Press',
+    url: 'https://global.oup.com/academic/product/the-social-and-applied-psychology-of-music-9780198567424',
+  },
+  {
+    title: 'The do re mi\'s of everyday life: The structure and personality correlates of music preferences',
+    author: 'Rentfrow PJ, Gosling SD',
+    year: 2003,
+    journal: 'Journal of Personality and Social Psychology',
+    volume: '84(6), 1236–1256',
+    url: 'https://doi.org/10.1037/0022-3514.84.6.1236',
+  },
+  {
+    title: 'Why do we listen to music? A uses and gratifications analysis',
+    author: 'Lonsdale AJ, North AC',
+    year: 2011,
+    journal: 'British Journal of Psychology',
+    volume: '102(1), 108–134',
+    url: 'https://doi.org/10.1348/000712610X506831',
+  },
+];
+
+const moodScenes = [
+  {
+    mood: '悲しい・落ち込んでいるとき',
+    emoji: '😔',
+    color: '#4b5563',
+    tendency: '悲しい音楽を選ぶ傾向がある（同調効果）',
+    detail:
+      '多くの人は悲しいときに悲しい音楽を選びます。これは「感情の同調（mood congruent listening）」と呼ばれる現象です。悲しい音楽が自分の感情を「わかってくれる」と感じさせ、気持ちの整理を助けるとされています（North & Hargreaves, 2008）。ただし、これは感情の発散・整理を目的とした自発的な行動であり、医療的な介入ではありません。',
+    hint: '悲しい気分のときに悲しい音楽を聴くことを自分で選ぶのは自然な行動です。気持ちが落ち着いてきたら、テンポの上がる音楽に切り替える人も多いです。',
+    musicTypes: ['Mellow（R&B・ソウル）', 'Sophisticated（バラード系クラシック）'],
+  },
+  {
+    mood: '楽しい・嬉しいとき',
+    emoji: '😄',
+    color: '#d97706',
+    tendency: '明るく活動的な音楽を選ぶ傾向がある',
+    detail:
+      '楽しい気分のときは、その感情を増幅・持続させる音楽を選ぶ傾向があります。テンポが速く、メジャーキーの明るい曲が選ばれやすいです。音楽が良い気分の「記念」として記憶に結びつくことも研究で示されています。',
+    hint: '楽しい場面の音楽をプレイリストに保存しておくと、後で聴くだけで気分が上がりやすくなります。',
+    musicTypes: ['Contemporary（ポップ・EDM）', 'Unpretentious（カントリー・フォーク）'],
+  },
+  {
+    mood: '集中・勉強・作業したいとき',
+    emoji: '📚',
+    color: '#2563eb',
+    tendency: '歌詞なし・テンポが一定の音楽が選ばれやすい',
+    detail:
+      '作業中の音楽選択については、歌詞のある音楽は言語処理を行う脳の部位と競合するため、読み書きの作業では集中力に影響する可能性があります（North & Hargreaves, 2008）。インストゥルメンタル・環境音楽・クラシックは、作業と競合しにくいとされています。ただし個人差は大きく、いつも同じ音楽を流すことでルーティン効果を得る人もいます。',
+    hint: '集中したい作業では、歌詞なしの音楽（クラシック・環境音楽・ローファイなど）を試してみると切り替えの気分転換になります。自分に合うパターンを見つけることが大切です。',
+    musicTypes: ['Sophisticated（クラシック・ジャズ）', '環境音楽・ローファイ'],
+  },
+  {
+    mood: 'リラックスしたいとき',
+    emoji: '😌',
+    color: '#059669',
+    tendency: 'テンポが遅く、音量が小さい音楽を選ぶ傾向がある',
+    detail:
+      'リラックスのために音楽を使うことは多くの人が実践しています。研究では、テンポが遅い（60〜80BPM程度）・ダイナミクスが穏やか・馴染みのある音楽がリラックス場面に選ばれやすいことが示されています（North & Hargreaves, 2008）。ただし本ページでは医学的・生理学的な効能の主張はしません。あくまで自発的な気分転換のヒントとしてご参照ください。',
+    hint: 'リラックスしたい場面では、普段馴染みのあるゆったりした音楽から始めるのがおすすめです。',
+    musicTypes: ['Mellow（R&B・ソフトロック）', 'Sophisticated（クラシック小品・ジャズバラード）'],
+  },
+  {
+    mood: 'モチベーションを上げたいとき',
+    emoji: '💪',
+    color: '#dc2626',
+    tendency: 'テンポが速く、力強い音楽が選ばれる傾向がある',
+    detail:
+      '運動前・仕事前のモチベーション向上のために音楽を使う行動は広く見られます。テンポが速く（120〜140BPM以上）、エネルギーが高い音楽がこの場面に選ばれやすいです。音楽が「気分のスイッチ」として機能することを多くの人が経験的に知っています。',
+    hint: '自分がやる気を感じた時に聴いていた音楽のプレイリストを作っておくと、必要なときに気分の切り替えのきっかけになります。',
+    musicTypes: ['Intense（ロック・メタル）', 'Contemporary（ラップ・EDM）'],
+  },
+];
+
+const faqs = [
+  {
+    question: '悲しいときに悲しい音楽を聴くのはよくないですか？',
+    answer:
+      '一概によくないとは言えません。研究では「感情の同調（mood congruent listening）」が感情の整理・共感に役立つ場合があることが示されています（North & Hargreaves, 2008）。ただし、気分が長期間沈んでいる場合は、音楽選択とは別に専門家への相談を検討することをお勧めします。',
+  },
+  {
+    question: 'クラシックを聴くと頭が良くなりますか？',
+    answer:
+      '「モーツァルト効果」（クラシックを聴くと一時的に空間認識課題の成績が上がる現象）は報告されていますが、効果は一時的かつ再現性に疑問がある点も指摘されています。「クラシックを聴けば賢くなる」という断定的な主張は科学的には支持されていません（2026-05-21時点）。',
+  },
+  {
+    question: '集中力を上げる最も効果的な音楽は何ですか？',
+    answer:
+      '個人差が大きく「最も効果的な音楽」は一概に言えません。歌詞なし音楽が読み書き作業に適しやすいという傾向はありますが、自分で試して「この音楽が合う」と感じるものを見つけるのが最も実用的です。',
+  },
+  {
+    question: 'MUSICモデルは気分と音楽の関係にも使えますか？',
+    answer:
+      'MUSICモデルはもともと「普段の音楽嗜好の傾向」を測定するものです。気分による音楽選択は「状態的な嗜好」であり、「特性的な嗜好」（MUSICモデル）とは異なります。ただし、自分のMUSICタイプを知ることで、気分に応じた音楽選択の傾向を理解する参考になります。',
+  },
+  {
+    question: '音楽で気分を変えることはできますか？',
+    answer:
+      '研究では音楽が感情に影響する場合があることが示されていますが、個人差・状況差が大きく、確実に気分を変えられるとは言えません。自分が過去に「気分が変わった」と感じた音楽の体験を参考にするのが現実的です。',
+  },
+  {
+    question: '気分と音楽の関係は科学的に研究されていますか？',
+    answer:
+      'はい。North & Hargreaves（2008）「The Social and Applied Psychology of Music」をはじめ、音楽心理学・音楽社会学の分野で多くの研究が行われています。本ページはこれらの研究を参考に傾向を整理しています。',
+  },
+  {
+    question: 'このページの情報は医学的なアドバイスですか？',
+    answer:
+      '違います。本ページは自己理解・気分転換の参考情報であり、医療・臨床心理的なアドバイスではありません。心身の不調がある場合は医師・臨床心理士にご相談ください。',
+  },
+  {
+    question: '音楽で不眠を改善できますか？',
+    answer:
+      '本ページでは音楽による医学的効能の主張はしていません。睡眠に問題がある場合は、医師・専門家への相談をお勧めします。睡眠の自己管理の参考として音楽を試みる場合、まずは自分が落ち着くと感じる音楽を小音量で流すことから始めることが多く実践されていますが、効果には個人差があります。',
+  },
+];
+
+const jsonLdArticle = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  '@id': `${PAGE_URL}#article`,
+  headline: title,
+  url: PAGE_URL,
+  datePublished: '2026-05-21',
+  dateModified: '2026-05-21',
+  inLanguage: 'ja',
+  publisher: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+  },
+};
+
+const jsonLdFAQ = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map(({ question, answer }) => ({
+    '@type': 'Question',
+    name: question,
+    acceptedAnswer: { '@type': 'Answer', text: answer },
+  })),
+};
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  canonical={PAGE_URL}
+  jsonLd={[jsonLdArticle, jsonLdFAQ]}
+  ogType="article"
+  publishDate="2026-05-21"
+  lastUpdated="2026-05-21"
+  breadcrumbs={[
+    { name: '診断一覧', url: '/diagnosis/' },
+    { name: '音楽タイプ診断', url: '/diagnosis/music-type/' },
+    { name: '気分×音楽', url: '/diagnosis/music-type/mood/' },
+  ]}
+>
+  <section class="mood-hero" aria-labelledby="mood-h1">
+    <Container>
+      <div class="mood-hero-inner">
+        <div class="mood-badge">音楽心理学・自己理解のヒント</div>
+        <h1 id="mood-h1" class="mood-h1">
+          気分と音楽の心理学<br />
+          <span class="mood-h1-sub">場面別に選びたい音楽の傾向と研究的根拠</span>
+        </h1>
+        <p class="mood-hero-lead">
+          悲しいとき・集中したいとき・リラックスしたいとき。<br />
+          気分と音楽の関係を心理学研究をもとに整理します。
+        </p>
+        <p class="mood-ymyl-note">
+          ※本ページは自己理解・気分転換の参考情報です。医療的なアドバイスではありません。
+        </p>
+      </div>
+    </Container>
+  </section>
+
+  <Container>
+    <TldrBlock
+      title="このページのポイント（3行まとめ）"
+      points={[
+        'North & Hargreaves（2008）の研究では、人は気分に合わせて音楽を選ぶ「感情の同調（mood congruent listening）」の傾向があり、音楽が感情の整理・切り替えのきっかけになることが示されています',
+        '集中時には歌詞なし音楽、リラックス時にはテンポが遅い馴染みの音楽、モチベーション向上時にはエネルギーの高い音楽が選ばれやすい傾向が研究で報告されています',
+        '音楽による効果には個人差があり、本ページは医学的な効能を主張するものではありません。あくまで気分転換の参考情報としてご活用ください',
+      ]}
+      updatedAt="2026-05-21"
+      sourceLabel="North & Hargreaves (2008) Oxford University Press"
+      sourceUrl="https://global.oup.com/academic/product/the-social-and-applied-psychology-of-music-9780198567424"
+    />
+
+    <section class="mood-section" aria-labelledby="mood-intro-h2">
+      <h2 id="mood-intro-h2" class="mood-h2">気分と音楽の関係：心理学的な見方</h2>
+      <p class="mood-lead">
+        音楽心理学の研究者North & Hargreaves（2008）は、人が音楽を聴く理由として
+        「感情の調整」「アイデンティティの確認」「社会的機能」「気分転換」などを挙げています
+        （<a href="https://global.oup.com/academic/product/the-social-and-applied-psychology-of-music-9780198567424" target="_blank" rel="noopener noreferrer">Oxford University Press 公式</a>、2026-05-21確認）。
+      </p>
+      <p class="mood-body">
+        また、Lonsdale & North（2011）の研究では、
+        音楽を聴く主な理由として「気分の維持・向上」「退屈の解消」「感情の発散」が
+        上位に挙げられています
+        （<a href="https://doi.org/10.1348/000712610X506831" target="_blank" rel="noopener noreferrer">British Journal of Psychology, 2011</a>、2026-05-21確認）。
+      </p>
+      <div class="mood-disclaimer">
+        <strong>YMYL注記:</strong>
+        本ページでは音楽による医療・治療的効能の主張は行いません。
+        「気分転換のヒント」「自己理解の参考」としての情報提供に限定しています。
+        心身の不調については必ず専門家にご相談ください。
+      </div>
+    </section>
+
+    <ScienceNote
+      basisText="North AC & Hargreaves DJ（2008）The Social and Applied Psychology of Music（Oxford University Press）および Lonsdale & North（2011）British Journal of Psychology に基づく傾向整理です。"
+      basisUrl="https://global.oup.com/academic/product/the-social-and-applied-psychology-of-music-9780198567424"
+      basisLabel="North & Hargreaves (2008) Oxford University Press"
+      notMedical={true}
+      updatedAt="2026-05-21"
+      additionalNote="音楽の医学的効能・治療効果の主張は本ページに含まれていません。あくまで自己理解・気分転換の参考情報です。"
+    />
+
+    <section class="mood-section" aria-labelledby="mood-scenes-h2">
+      <h2 id="mood-scenes-h2" class="mood-h2">気分別に選びたい音楽の傾向</h2>
+      <p class="mood-lead">
+        各気分のシーンごとに、研究的背景と実践的なヒントを整理しました。
+        あくまで傾向であり、個人差があります。
+      </p>
+      <div class="mood-cards">
+        {moodScenes.map((scene) => (
+          <article class="mood-card" style={`border-left-color: ${scene.color}`}>
+            <div class="mood-card-header">
+              <span class="mood-emoji" aria-hidden="true">{scene.emoji}</span>
+              <div>
+                <h3 class="mood-card-title">{scene.mood}</h3>
+                <p class="mood-tendency">{scene.tendency}</p>
+              </div>
+            </div>
+            <p class="mood-detail">{scene.detail}</p>
+            <div class="mood-hint-box">
+              <p class="mood-hint-label">自己理解ヒント:</p>
+              <p class="mood-hint">{scene.hint}</p>
+            </div>
+            <div class="mood-music-types">
+              <span class="mood-types-label">選ばれやすいMUSICタイプ:</span>
+              {scene.musicTypes.map((t) => (
+                <span class="mood-type-tag">{t}</span>
+              ))}
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section class="mood-section" aria-labelledby="mood-music-model-h2">
+      <h2 id="mood-music-model-h2" class="mood-h2">MUSICモデルを気分管理に活かす</h2>
+      <p class="mood-lead">
+        自分のMUSICタイプ（Mellow/Unpretentious/Sophisticated/Intense/Contemporary）を
+        知ることで、気分に合わせた音楽の選び方の傾向が見えてきます。
+      </p>
+      <div class="mood-table-wrap">
+        <table class="mood-table">
+          <caption class="mood-caption">MUSICタイプ別・気分切り替えの傾向（参考）</caption>
+          <thead>
+            <tr>
+              <th scope="col">MUSICタイプ</th>
+              <th scope="col">リラックス時の傾向</th>
+              <th scope="col">集中時の傾向</th>
+              <th scope="col">元気を出したい時の傾向</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Mellow</td>
+              <td>R&B・ソウルのスロー曲</td>
+              <td>R&Bのインストゥルメンタル</td>
+              <td>アップテンポのR&B</td>
+            </tr>
+            <tr>
+              <td>Unpretentious</td>
+              <td>アコースティックフォーク</td>
+              <td>フォークのインスト</td>
+              <td>明るいカントリー</td>
+            </tr>
+            <tr>
+              <td>Sophisticated</td>
+              <td>クラシック小品・ジャズバラード</td>
+              <td>バロック・ミニマル音楽</td>
+              <td>エネルギッシュなジャズ・交響曲</td>
+            </tr>
+            <tr>
+              <td>Intense</td>
+              <td>アコースティックロック</td>
+              <td>ヘビーなインストゥルメンタル</td>
+              <td>ロック・メタル</td>
+            </tr>
+            <tr>
+              <td>Contemporary</td>
+              <td>チルポップ・ローファイ</td>
+              <td>ローファイヒップホップ</td>
+              <td>アップテンポポップ・EDM</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="mood-note">
+        ※個人差が大きく、上記はあくまで傾向の参考です。自分に合うパターンを試して見つけることが大切です。
+      </p>
+    </section>
+
+    <section class="mood-section" aria-labelledby="mood-related-h2">
+      <h2 id="mood-related-h2" class="mood-h2">関連ページ</h2>
+      <ul class="mood-related-list">
+        <li class="mood-related-item">
+          <a href="/diagnosis/music-type/" class="mood-related-link">
+            <span aria-hidden="true">🎵</span>
+            <span>
+              <strong>音楽タイプ診断ハブ</strong>
+              <span class="mood-related-sub">MUSICモデル5タイプの全体像を確認</span>
+            </span>
+          </a>
+        </li>
+        <li class="mood-related-item">
+          <a href="/diagnosis/music-type/genre/" class="mood-related-link">
+            <span aria-hidden="true">🎸</span>
+            <span>
+              <strong>ジャンル別性格傾向</strong>
+              <span class="mood-related-sub">10ジャンル × 性格の研究的傾向を解説</span>
+            </span>
+          </a>
+        </li>
+        <li class="mood-related-item">
+          <a href="/diagnosis/music-type/mbti-music/" class="mood-related-link">
+            <span aria-hidden="true">🧠</span>
+            <span>
+              <strong>MBTI × 音楽傾向</strong>
+              <span class="mood-related-sub">16タイプ別の音楽傾向を詳説</span>
+            </span>
+          </a>
+        </li>
+        <li class="mood-related-item">
+          <a href="/diagnosis/multi-int/" class="mood-related-link">
+            <span aria-hidden="true">📚</span>
+            <span>
+              <strong>多重知能テスト（無料・64問）</strong>
+              <span class="mood-related-sub">音楽的知能を含む8知能を診断</span>
+            </span>
+          </a>
+        </li>
+      </ul>
+    </section>
+
+    <section class="mood-section" aria-labelledby="mood-faq-h2">
+      <h2 id="mood-faq-h2" class="mood-h2">よくある質問（Q&A）</h2>
+      <dl class="mood-faq-list">
+        {faqs.map(({ question, answer }) => (
+          <div class="mood-faq-item">
+            <dt class="mood-faq-q">{question}</dt>
+            <dd class="mood-faq-a">{answer}</dd>
+          </div>
+        ))}
+      </dl>
+    </section>
+
+    <ReferenceList references={references} confirmedAt="2026-05-21" />
+  </Container>
+</BaseLayout>
+
+<style>
+.mood-hero {
+  background: linear-gradient(135deg, #059669 0%, #2563eb 100%);
+  color: #fff;
+  padding-block: 3rem 3.5rem;
+  text-align: center;
+}
+.mood-hero-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+.mood-badge {
+  display: inline-block;
+  background: rgba(255 255 255 / 0.2);
+  border: 1px solid rgba(255 255 255 / 0.4);
+  border-radius: 2rem;
+  padding: 0.25rem 1rem;
+  font-size: 0.75rem;
+}
+.mood-h1 {
+  font-size: clamp(1.5rem, 4.5vw, 2.2rem);
+  font-weight: 700;
+  line-height: 1.3;
+  margin: 0;
+}
+.mood-h1-sub {
+  display: block;
+  font-size: clamp(0.85rem, 2.5vw, 1.1rem);
+  opacity: 0.9;
+}
+.mood-hero-lead {
+  font-size: clamp(0.85rem, 2vw, 1rem);
+  opacity: 0.9;
+  line-height: 1.7;
+  margin: 0;
+}
+.mood-ymyl-note {
+  font-size: 0.75rem;
+  opacity: 0.8;
+  margin: 0;
+  padding: 0.4rem 1rem;
+  background: rgba(255 255 255 / 0.15);
+  border-radius: 0.25rem;
+}
+
+.mood-section { margin-block: 3rem; }
+.mood-h2 {
+  font-size: clamp(1.2rem, 3.5vw, 1.6rem);
+  font-weight: 700;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--sn-primary);
+}
+.mood-lead {
+  font-size: 1rem;
+  line-height: 1.8;
+  margin-bottom: 1rem;
+  color: #374151;
+}
+.mood-body {
+  font-size: 0.95rem;
+  line-height: 1.8;
+  margin-bottom: 1rem;
+  color: #374151;
+}
+.mood-note {
+  font-size: 0.8rem;
+  color: #6b7280;
+  margin-top: 0.75rem;
+}
+.mood-disclaimer {
+  margin-top: 1.25rem;
+  padding: 1rem 1.25rem;
+  background: #fef9c3;
+  border: 1px solid #fde047;
+  border-left: 4px solid #ca8a04;
+  border-radius: 0 0.5rem 0.5rem 0;
+  font-size: 0.875rem;
+  color: #713f12;
+  line-height: 1.6;
+}
+
+.mood-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  margin-top: 1.5rem;
+}
+.mood-card {
+  border: 1px solid #e5e7eb;
+  border-left: 4px solid var(--sn-primary);
+  border-radius: 0 0.75rem 0.75rem 0;
+  padding: 1.25rem;
+}
+.mood-card-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+.mood-emoji { font-size: 1.75rem; flex-shrink: 0; }
+.mood-card-title {
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 0 0 0.25rem;
+  color: #1f2937;
+}
+.mood-tendency {
+  font-size: 0.8rem;
+  color: #6b7280;
+  margin: 0;
+}
+.mood-detail {
+  font-size: 0.875rem;
+  line-height: 1.7;
+  color: #374151;
+  margin: 0 0 0.75rem;
+}
+.mood-hint-box {
+  background: #f0f9ff;
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+  margin-bottom: 0.75rem;
+}
+.mood-hint-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #0369a1;
+  margin: 0 0 0.25rem;
+}
+.mood-hint {
+  font-size: 0.85rem;
+  line-height: 1.6;
+  color: #374151;
+  margin: 0;
+}
+.mood-music-types {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+.mood-types-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #4b5563;
+}
+.mood-type-tag {
+  font-size: 0.75rem;
+  background: #ede9fe;
+  color: #6d28d9;
+  padding: 0.15rem 0.6rem;
+  border-radius: 1rem;
+}
+
+.mood-table-wrap { overflow-x: auto; margin-top: 1.5rem; }
+.mood-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+.mood-table th,
+.mood-table td {
+  padding: 0.6rem 0.8rem;
+  border: 1px solid #e5e7eb;
+  text-align: left;
+  line-height: 1.5;
+}
+.mood-table thead th {
+  background: var(--sn-primary);
+  color: #fff;
+  font-weight: 600;
+}
+.mood-table tbody tr:nth-child(even) { background: #f9fafb; }
+.mood-caption {
+  font-size: 0.75rem;
+  color: #6b7280;
+  text-align: left;
+  padding: 0.25rem 0 0.5rem;
+}
+
+.mood-related-list {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.mood-related-link {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  text-decoration: none;
+  color: inherit;
+  font-size: 0.9rem;
+  transition: border-color 0.15s;
+}
+.mood-related-link:hover { border-color: var(--sn-primary); }
+.mood-related-link > span:first-child { font-size: 1.5rem; flex-shrink: 0; }
+.mood-related-link > span:last-child {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+.mood-related-sub { font-size: 0.8rem; color: #6b7280; }
+
+.mood-faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+.mood-faq-item {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+.mood-faq-q {
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 1rem 1.25rem;
+  background: #f9fafb;
+  margin: 0;
+  display: block;
+}
+.mood-faq-q::before { content: 'Q. '; color: var(--sn-primary); }
+.mood-faq-a {
+  font-size: 0.875rem;
+  line-height: 1.7;
+  padding: 1rem 1.25rem;
+  margin: 0;
+  color: #4b5563;
+}
+.mood-faq-a::before { content: 'A. '; font-weight: 700; color: #16a34a; }
+</style>

@@ -1,0 +1,558 @@
+---
+/**
+ * ジャンル別性格傾向ページ
+ * KW: 音楽 ジャンル 性格 / 好きな音楽 性格
+ * 理論: Rentfrow & Gosling (2003) MUSICモデル / North & Hargreaves (2008)
+ * 確認日: 2026-05-21
+ */
+import BaseLayout from '../../../../layouts/BaseLayout.astro';
+import Container from '../../../../components/Container.astro';
+import TldrBlock from '../../../../components/TldrBlock.astro';
+import ReferenceList from '../../../../components/ReferenceList.astro';
+import ScienceNote from '../../../../components/ScienceNote.astro';
+
+const SITE_URL = 'https://shindan-navi.jp';
+const PAGE_URL = `${SITE_URL}/diagnosis/music-type/genre/`;
+
+const title = '好きな音楽ジャンルでわかる性格傾向｜10ジャンル別・心理学研究';
+const description =
+  'クラシック・ジャズ・ロック・ポップ・R&Bなど10ジャンルの音楽嗜好と性格傾向の相関を心理学研究をもとに解説。MUSICモデルとBig5性格特性との関連もわかります。';
+
+const references = [
+  {
+    title: 'The do re mi\'s of everyday life: The structure and personality correlates of music preferences',
+    author: 'Rentfrow PJ, Gosling SD',
+    year: 2003,
+    journal: 'Journal of Personality and Social Psychology',
+    volume: '84(6), 1236–1256',
+    url: 'https://doi.org/10.1037/0022-3514.84.6.1236',
+  },
+  {
+    title: 'The Social and Applied Psychology of Music',
+    author: 'North AC, Hargreaves DJ',
+    year: 2008,
+    publisher: 'Oxford University Press',
+    url: 'https://global.oup.com/academic/product/the-social-and-applied-psychology-of-music-9780198567424',
+  },
+  {
+    title: 'Music and personality',
+    author: 'Rentfrow PJ, Gosling SD',
+    year: 2006,
+    journal: 'In P. J. Rentfrow & D. J. Levitin (Eds.), Music and the mind',
+    url: 'https://doi.org/10.1037/0022-3514.84.6.1236',
+  },
+];
+
+const genres = [
+  {
+    name: 'クラシック',
+    emoji: '🎻',
+    musicModel: 'Sophisticated',
+    big5: '開放性↑ 誠実性↑',
+    desc: 'クラシック音楽を好む人は、知的好奇心と美的感覚が高い傾向があります。複雑な構造や感情的深みを持つ音楽を楽しめる開放性の高さが特徴です。思慮深く、新しい知識や文化への関心も旺盛なことが多いです。',
+  },
+  {
+    name: 'ジャズ',
+    emoji: '🎷',
+    musicModel: 'Sophisticated',
+    big5: '開放性↑ 外向性↑',
+    desc: 'ジャズを好む人は、即興・変化・複雑さへの許容度が高い傾向があります。創造性が豊かで、ルールに縛られない自由な発想を好むことが多いです。社交的で知的な面も持ち合わせていることが多いです。',
+  },
+  {
+    name: 'ロック',
+    emoji: '🎸',
+    musicModel: 'Intense / Sophisticated',
+    big5: '開放性↑ 外向性 中程度',
+    desc: 'ロックを好む人は、エネルギーが高く、感情を外に表現したい欲求が強い傾向があります。研究では、ロックファンは開放性が高い一方、内向的な傾向もある複雑な特性が確認されています（Rentfrow & Gosling, 2003）。',
+  },
+  {
+    name: 'ポップ',
+    emoji: '🎤',
+    musicModel: 'Contemporary',
+    big5: '外向性↑ 協調性↑ 誠実性↑',
+    desc: 'ポップ音楽を好む人は、外向的で人当たりがよく、社交的な傾向があります。明るく前向きで、人との繋がりを大切にする協調性の高さも特徴です。一方で開放性は平均的とされる傾向があります。',
+  },
+  {
+    name: 'R&B / ソウル',
+    emoji: '🎵',
+    musicModel: 'Mellow',
+    big5: '外向性↑ 協調性↑ 自尊心↑',
+    desc: 'R&Bやソウルを好む人は、感情的なつながりと温かみを重視する傾向があります。自尊心が高く、社交的で自分自身への肯定感も持ちやすいとされています（Rentfrow & Gosling, 2003）。',
+  },
+  {
+    name: 'ヒップホップ / ラップ',
+    emoji: '🎧',
+    musicModel: 'Contemporary',
+    big5: '外向性↑ 協調性↑',
+    desc: 'ヒップホップを好む人は、外向的で社交的な傾向が見られます。現代性や流行への敏感さ、コミュニティへの所属感を大切にする特性もあります。自己表現欲求が強い傾向も見られます。',
+  },
+  {
+    name: 'メタル / ハードコア',
+    emoji: '🤘',
+    musicModel: 'Intense',
+    big5: '開放性↑ 神経症傾向 複雑',
+    desc: 'メタルを好む人は、外からの印象とは異なり、穏やかで内省的な面を持つことが多いと研究では指摘されています。開放性が高く、感情の強度を音楽を通じて発散する傾向があります。',
+  },
+  {
+    name: 'カントリー / フォーク',
+    emoji: '🪕',
+    musicModel: 'Unpretentious',
+    big5: '外向性↑ 誠実性↑ 協調性↑',
+    desc: 'カントリー・フォークを好む人は、誠実で地に足のついた生き方を重視する傾向があります。家族・コミュニティ・伝統的な価値観を大切にし、協調的で働き者な特性が多く見られます。',
+  },
+  {
+    name: 'EDM / エレクトロニック',
+    emoji: '🎛️',
+    musicModel: 'Contemporary / Intense',
+    big5: '外向性↑ 開放性↑',
+    desc: 'EDMを好む人は、外向的でエネルギッシュな傾向があります。新しい体験や感覚への開放性が高く、社交的なイベントやパーティーを楽しむ志向が強い場合が多いです。',
+  },
+  {
+    name: 'インディー / オルタナティブ',
+    emoji: '🎙️',
+    musicModel: 'Intense / Sophisticated',
+    big5: '開放性↑ 神経症傾向↑（一部）',
+    desc: 'インディー音楽を好む人は、独自性・非主流への指向と開放性の高さが特徴です。感受性が豊かで、芸術的な感性と内省的な側面を持つことが多いとされています。',
+  },
+];
+
+const faqs = [
+  {
+    question: '音楽ジャンルと性格に本当に関係があるのですか？',
+    answer:
+      'Rentfrow & Gosling（2003）の研究では、音楽嗜好とBig5性格特性の間に統計的な相関が確認されています。ただし相関係数は中程度であり、音楽の好みだけで性格を断定することはできません（出典: Journal of Personality and Social Psychology, 2003）。',
+  },
+  {
+    question: '好きなジャンルが複数の場合はどうなりますか？',
+    answer:
+      'MUSICモデルは5次元の連続量（スペクトラム）です。「クラシックとロックが両方好き」という場合、Sophisticated次元とIntense次元の両方が高い傾向として理解できます。複数の次元が高いことは一般的であり、矛盾ではありません。',
+  },
+  {
+    question: '歳をとると好きな音楽は変わりますか？',
+    answer:
+      'はい。研究では年齢とともに音楽嗜好が変化する傾向があります。一般的に若い時期はIntense・Contemporaryへの選好が高く、年齢を重ねるにつれSophisticated・Mellowへの選好が高まる傾向が報告されています（North & Hargreaves, 2008）。',
+  },
+  {
+    question: 'メタルが好きな人は攻撃的ですか？',
+    answer:
+      'いいえ。研究では、メタルを好む人が特に攻撃的であるという証拠は示されていません。むしろ穏やかで創造性が高い傾向が報告されています。メタルは感情の強度を安全に発散する手段として機能することが示唆されています（Rentfrow & Gosling, 2003）。',
+  },
+  {
+    question: '音楽の好みは文化によって変わりますか？',
+    answer:
+      '文化・地域によって流行するジャンルは異なりますが、MUSICモデルの5次元構造は複数文化圏での研究でも概ね再現されています。ただし、文化固有のジャンルへの嗜好は研究の対象外です（2026-05-21時点の情報）。',
+  },
+  {
+    question: 'このページの情報の根拠を確認できますか？',
+    answer:
+      '参考文献セクションに学術論文のDOIリンクを掲載しています。主要根拠はRentfrow & Gosling（2003）の論文（DOI: 10.1037/0022-3514.84.6.1236）で、2026-05-21にアクセス確認済みです。',
+  },
+  {
+    question: '音楽ジャンルの性格傾向は治療や診断に使えますか？',
+    answer:
+      '使えません。本ページは自己理解の参考情報であり、医療・臨床心理的な診断・治療目的には使用できません。心身の不調がある場合は医師・臨床心理士にご相談ください。',
+  },
+  {
+    question: '音楽的知能が高いとどのジャンルが好きになりますか？',
+    answer:
+      'Gardner（1983）の音楽的知能と音楽嗜好ジャンルの直接対応を示す研究は限られています。一般的に音楽的知能が高い人は音楽の複雑な構造への関心が高まるため、SophisticatedタイプのジャンルへのなじみやすさがあるとSするケースがありますが、個人差が大きいです。',
+  },
+  {
+    question: '多重知能テストと合わせて使えますか？',
+    answer:
+      'はい。多重知能テスト（/diagnosis/multi-int/）で音楽的知能スコアを確認し、本ページのジャンル傾向と組み合わせると、「音楽とどう関わるか」の理解が深まります。',
+  },
+  {
+    question: '音楽の好みは変えられますか？',
+    answer:
+      '音楽への露出・文化的経験・年齢によって嗜好は変化します。特定ジャンルを意図的に聴くことで好みが広がる場合もあります。音楽嗜好は固定的なものではなく、経験とともに変化していく傾向があります。',
+  },
+];
+
+const jsonLdArticle = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  '@id': `${PAGE_URL}#article`,
+  headline: title,
+  url: PAGE_URL,
+  datePublished: '2026-05-21',
+  dateModified: '2026-05-21',
+  inLanguage: 'ja',
+  publisher: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+  },
+};
+
+const jsonLdFAQ = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map(({ question, answer }) => ({
+    '@type': 'Question',
+    name: question,
+    acceptedAnswer: { '@type': 'Answer', text: answer },
+  })),
+};
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  canonical={PAGE_URL}
+  jsonLd={[jsonLdArticle, jsonLdFAQ]}
+  ogType="article"
+  publishDate="2026-05-21"
+  lastUpdated="2026-05-21"
+  breadcrumbs={[
+    { name: '診断一覧', url: '/diagnosis/' },
+    { name: '音楽タイプ診断', url: '/diagnosis/music-type/' },
+    { name: 'ジャンル別性格傾向', url: '/diagnosis/music-type/genre/' },
+  ]}
+>
+  <section class="genre-hero" aria-labelledby="genre-h1">
+    <Container>
+      <div class="genre-hero-inner">
+        <div class="genre-badge">心理学研究ベース・MUSICモデル</div>
+        <h1 id="genre-h1" class="genre-h1">
+          好きな音楽ジャンルでわかる性格傾向<br />
+          <span class="genre-h1-sub">10ジャンル × 心理学研究</span>
+        </h1>
+        <p class="genre-hero-lead">
+          クラシック・ロック・ポップ・メタル…あなたが好むジャンルには、<br />
+          性格の傾向が反映されています。研究データをもとに10ジャンルを解説します。
+        </p>
+      </div>
+    </Container>
+  </section>
+
+  <Container>
+    <TldrBlock
+      title="このページのポイント（3行まとめ）"
+      points={[
+        'Rentfrow & Gosling（2003）の研究では、音楽ジャンルの好みとBig5性格特性に統計的な相関が確認されており、クラシック・ジャズはBig5の開放性と、ポップ・R&Bは外向性・協調性と正の相関が見られます',
+        '10ジャンルをMUSICモデル（Mellow/Unpretentious/Sophisticated/Intense/Contemporary）と対応させることで、自分の音楽嗜好と性格傾向の関係を整理しやすくなります',
+        '好きなジャンルが複数の場合もMUSICモデルは5次元スペクトラムとして理解でき、複数次元が高いことは一般的で矛盾ではありません',
+      ]}
+      updatedAt="2026-05-21"
+      sourceLabel="Rentfrow & Gosling (2003) DOI: 10.1037/0022-3514.84.6.1236"
+      sourceUrl="https://doi.org/10.1037/0022-3514.84.6.1236"
+    />
+
+    <section class="genre-section" aria-labelledby="genre-what-h2">
+      <h2 id="genre-what-h2" class="genre-h2">音楽ジャンルと性格の関係とは</h2>
+      <p class="genre-lead">
+        音楽の好みは、単なる趣味の好き嫌いを超え、
+        性格・価値観・感情スタイルを反映することが複数の研究で示されています。
+        ケンブリッジ大学のRentfrow博士らが2003年に発表したMUSICモデルは、
+        音楽嗜好とBig5性格特性の相関を体系的にまとめた代表的研究です
+        （<a href="https://doi.org/10.1037/0022-3514.84.6.1236" target="_blank" rel="noopener noreferrer">Rentfrow & Gosling, 2003</a>、2026-05-21確認）。
+      </p>
+      <p class="genre-body">
+        また、North & Hargreaves（2008）「The Social and Applied Psychology of Music」は
+        音楽嗜好と社会的アイデンティティ・年齢・文化の関係を包括的にまとめています
+        （<a href="https://global.oup.com/academic/product/the-social-and-applied-psychology-of-music-9780198567424" target="_blank" rel="noopener noreferrer">Oxford University Press 公式</a>、2026-05-21確認）。
+      </p>
+    </section>
+
+    <ScienceNote
+      basisText="Rentfrow PJ & Gosling SD（2003）MUSICモデル（JPSP）および North AC & Hargreaves DJ（2008）The Social and Applied Psychology of Music（Oxford University Press）に基づく傾向の整理です。"
+      basisUrl="https://doi.org/10.1037/0022-3514.84.6.1236"
+      basisLabel="Rentfrow & Gosling (2003) 原論文"
+      notMedical={true}
+      updatedAt="2026-05-21"
+      additionalNote="本ページは自己理解の参考情報です。音楽嗜好による確定的な性格判定・医療的診断はできません。"
+    />
+
+    <section class="genre-section" aria-labelledby="genre-list-h2">
+      <h2 id="genre-list-h2" class="genre-h2">10ジャンル別の性格傾向</h2>
+      <p class="genre-lead">
+        各ジャンルの研究的傾向値です。あくまで「傾向」であり、個人差があります。
+        MUSICモデル（5次元）との対応と合わせてご覧ください。
+      </p>
+      <div class="genre-list">
+        {genres.map((g) => (
+          <article class="genre-card" aria-labelledby={`genre-${g.name}`}>
+            <div class="genre-card-header">
+              <span class="genre-emoji" aria-hidden="true">{g.emoji}</span>
+              <div class="genre-card-titles">
+                <h3 id={`genre-${g.name}`} class="genre-name">{g.name}</h3>
+                <div class="genre-meta-row">
+                  <span class="genre-music-model">MUSIC: {g.musicModel}</span>
+                  <span class="genre-big5">Big5: {g.big5}</span>
+                </div>
+              </div>
+            </div>
+            <p class="genre-desc">{g.desc}</p>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section class="genre-section" aria-labelledby="genre-multi-h2">
+      <h2 id="genre-multi-h2" class="genre-h2">好きなジャンルが複数の場合</h2>
+      <p class="genre-lead">
+        多くの人は単一ジャンルだけでなく、複数のジャンルを好みます。
+        MUSICモデルはそのような多様性を5次元スペクトラムで捉えます。
+      </p>
+      <ul class="genre-multi-list">
+        <li>「クラシックとロック」が好き → Sophisticated + Intense が高い複合タイプ</li>
+        <li>「ポップとR&B」が好き → Contemporary + Mellow が高い、社交的・感情豊かなタイプ</li>
+        <li>「フォークとジャズ」が好き → Unpretentious + Sophisticated が高い、誠実で知的なタイプ</li>
+        <li>「メタルとクラシック」が好き → Intense + Sophisticated が高い、感情的深みと知的さを併せ持つタイプ</li>
+      </ul>
+      <p class="genre-body">
+        自分の「主タイプ」と「副タイプ」を見つけることで、
+        より立体的な音楽嗜好の自己理解が得られます。
+      </p>
+    </section>
+
+    <section class="genre-section" aria-labelledby="genre-related-h2">
+      <h2 id="genre-related-h2" class="genre-h2">関連ページ</h2>
+      <ul class="genre-related-list">
+        <li class="genre-related-item">
+          <a href="/diagnosis/music-type/" class="genre-related-link">
+            <span class="genre-related-icon" aria-hidden="true">🎵</span>
+            <span class="genre-related-body">
+              <span class="genre-related-title">音楽タイプ診断ハブ</span>
+              <span class="genre-related-desc">MUSICモデル5タイプの全体像を確認</span>
+            </span>
+          </a>
+        </li>
+        <li class="genre-related-item">
+          <a href="/diagnosis/music-type/mbti-music/" class="genre-related-link">
+            <span class="genre-related-icon" aria-hidden="true">🧠</span>
+            <span class="genre-related-body">
+              <span class="genre-related-title">MBTI × 音楽傾向</span>
+              <span class="genre-related-desc">16タイプ別の音楽傾向を詳説</span>
+            </span>
+          </a>
+        </li>
+        <li class="genre-related-item">
+          <a href="/diagnosis/music-type/multi-int/" class="genre-related-link">
+            <span class="genre-related-icon" aria-hidden="true">🎼</span>
+            <span class="genre-related-body">
+              <span class="genre-related-title">多重知能 × 音楽的知能</span>
+              <span class="genre-related-desc">音楽的知能が高い人の特徴・適職</span>
+            </span>
+          </a>
+        </li>
+        <li class="genre-related-item">
+          <a href="/diagnosis/multi-int/" class="genre-related-link">
+            <span class="genre-related-icon" aria-hidden="true">📚</span>
+            <span class="genre-related-body">
+              <span class="genre-related-title">多重知能テスト（無料・64問）</span>
+              <span class="genre-related-desc">あなたの8知能プロファイルを診断</span>
+            </span>
+          </a>
+        </li>
+        <li class="genre-related-item">
+          <a href="/diagnosis/mbti/" class="genre-related-link">
+            <span class="genre-related-icon" aria-hidden="true">💡</span>
+            <span class="genre-related-body">
+              <span class="genre-related-title">MBTI（16タイプ）診断</span>
+              <span class="genre-related-desc">性格4軸で自己理解を深める</span>
+            </span>
+          </a>
+        </li>
+      </ul>
+    </section>
+
+    <section class="genre-section" aria-labelledby="genre-faq-h2">
+      <h2 id="genre-faq-h2" class="genre-h2">よくある質問（Q&A）</h2>
+      <dl class="genre-faq-list">
+        {faqs.map(({ question, answer }) => (
+          <div class="genre-faq-item">
+            <dt class="genre-faq-q">{question}</dt>
+            <dd class="genre-faq-a">{answer}</dd>
+          </div>
+        ))}
+      </dl>
+    </section>
+
+    <ReferenceList references={references} confirmedAt="2026-05-21" />
+  </Container>
+</BaseLayout>
+
+<style>
+.genre-hero {
+  background: linear-gradient(135deg, #2563eb 0%, #059669 100%);
+  color: #fff;
+  padding-block: 3rem 3.5rem;
+  text-align: center;
+}
+.genre-hero-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+.genre-badge {
+  display: inline-block;
+  background: rgba(255 255 255 / 0.2);
+  border: 1px solid rgba(255 255 255 / 0.4);
+  border-radius: 2rem;
+  padding: 0.25rem 1rem;
+  font-size: 0.75rem;
+}
+.genre-h1 {
+  font-size: clamp(1.5rem, 4.5vw, 2.2rem);
+  font-weight: 700;
+  line-height: 1.3;
+  margin: 0;
+}
+.genre-h1-sub {
+  display: block;
+  font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+  opacity: 0.9;
+}
+.genre-hero-lead {
+  font-size: clamp(0.85rem, 2vw, 1rem);
+  opacity: 0.9;
+  line-height: 1.7;
+  margin: 0;
+}
+
+.genre-section { margin-block: 3rem; }
+.genre-h2 {
+  font-size: clamp(1.2rem, 3.5vw, 1.6rem);
+  font-weight: 700;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--sn-primary);
+}
+.genre-lead {
+  font-size: 1rem;
+  line-height: 1.8;
+  margin-bottom: 1rem;
+  color: #374151;
+}
+.genre-body {
+  font-size: 0.95rem;
+  line-height: 1.8;
+  margin-bottom: 1rem;
+  color: #374151;
+}
+
+.genre-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+.genre-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  transition: box-shadow 0.15s;
+}
+.genre-card:hover { box-shadow: 0 4px 12px rgba(0 0 0 / 0.07); }
+.genre-card-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+.genre-emoji { font-size: 1.75rem; flex-shrink: 0; }
+.genre-card-titles { flex: 1; }
+.genre-name {
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 0 0 0.25rem;
+  color: #1f2937;
+}
+.genre-meta-row {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+.genre-music-model,
+.genre-big5 {
+  font-size: 0.75rem;
+  padding: 0.15rem 0.6rem;
+  border-radius: 1rem;
+}
+.genre-music-model {
+  background: #ede9fe;
+  color: #6d28d9;
+  font-weight: 600;
+}
+.genre-big5 {
+  background: #d1fae5;
+  color: #065f46;
+  font-weight: 600;
+}
+.genre-desc {
+  font-size: 0.875rem;
+  line-height: 1.7;
+  color: #4b5563;
+  margin: 0;
+}
+
+.genre-multi-list {
+  padding-left: 1.5rem;
+  margin: 1rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  line-height: 1.7;
+  color: #374151;
+}
+
+.genre-related-list {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.genre-related-link {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.genre-related-link:hover {
+  border-color: var(--sn-primary);
+  box-shadow: 0 2px 8px rgba(99 102 241 / 0.1);
+}
+.genre-related-icon { font-size: 1.5rem; flex-shrink: 0; }
+.genre-related-body { display: flex; flex-direction: column; gap: 0.2rem; }
+.genre-related-title { font-weight: 700; font-size: 0.95rem; }
+.genre-related-desc { font-size: 0.8rem; color: #6b7280; }
+
+.genre-faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+.genre-faq-item {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+.genre-faq-q {
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 1rem 1.25rem;
+  background: #f9fafb;
+  margin: 0;
+  display: block;
+}
+.genre-faq-q::before { content: 'Q. '; color: var(--sn-primary); }
+.genre-faq-a {
+  font-size: 0.875rem;
+  line-height: 1.7;
+  padding: 1rem 1.25rem;
+  margin: 0;
+  color: #4b5563;
+}
+.genre-faq-a::before { content: 'A. '; font-weight: 700; color: #16a34a; }
+</style>
