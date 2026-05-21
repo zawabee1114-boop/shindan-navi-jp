@@ -2,13 +2,17 @@
 /**
  * /i/[code]/ - 招待コード受け取りページ
  *
- * 招待コードを受け取った側（ユーザーB）の着地ページ。
- * プライバシーモードに応じて情報を表示し、診断ページへ誘導する。
+ * Phase 3.5: Supabase invitations テーブルから取得 + 4プライバシーモード別UI
  *
- * Phase 3.1: LocalStorage からコード情報を参照（クライアントサイド）
- * Phase 3.5: Supabase invitations テーブルから取得
+ * 4モード:
+ *   secret    (こっそり): 招待者が誰かは見えない。診断誘導のみ
+ *   invite    (招待):     招待者から「一緒に診断しよう」
+ *   one_way   (片方向):  招待者の結果を見られるが、受け手の結果は共有されない
+ *   full_share(完全共有): お互いの結果を全公開
  *
- * export const prerender = false; で SSR 動作
+ * ゲスト体験維持: ログイン不要で招待を受け取り診断へ進める
+ *
+ * export const prerender = false; で SSR 動作（Cloudflare Pages）
  */
 
 export const prerender = false;
@@ -19,13 +23,81 @@ import Container from '../../../components/Container.astro';
 const { code } = Astro.params;
 const siteUrl = 'https://shindan-navi.jp';
 const pageUrl = `${siteUrl}/i/${code}/`;
+const normalizedCode = (code ?? '').trim().toUpperCase();
 
-// OGP 用メタ（from パラメータがあれば利用）
 const fromType = Astro.url.searchParams.get('from') ?? '';
+
+// DB から招待情報を取得（SSR）
+let dbInvitation: {
+  valid: boolean;
+  source: string;
+  mode: string | null;
+  inviter_id: string | null;
+  invitation_id: string | null;
+  expires_at: string | null;
+  already_accepted: boolean;
+  inviter_diagnosis_snapshot: Record<string, unknown> | null;
+} | null = null;
+
+if (normalizedCode && /^[ABCDEFGHJKLMNPQRSTUVWXYZ23456789]{4,8}$/.test(normalizedCode)) {
+  try {
+    const verifyUrl = `${siteUrl}/api/invitation/verify/${normalizedCode}`;
+    const res = await fetch(verifyUrl, {
+      headers: { 'Content-Type': 'application/json' },
+    });
+    if (res.ok) {
+      dbInvitation = await res.json();
+    }
+  } catch {
+    // フォールバック: クライアントサイドで処理
+  }
+}
+
+const mode = dbInvitation?.mode ?? 'secret';
+const isValidCode = normalizedCode.length >= 4;
+
 const ogTitle = fromType
   ? `${fromType}タイプのユーザーがあなたとの相性を診断したい｜診断ナビ`
   : `あなたとの相性を診断したい人がいます｜診断ナビ`;
 const ogDescription = '診断ナビで相性チェック。登録不要・完全無料で今すぐ診断できます。';
+
+// モード別設定（SSR 時のデフォルト）
+const modeConfigs = {
+  secret: {
+    icon: '🔮',
+    title: 'だれかがあなたとの相性を確認したい',
+    desc: '診断を受けると相性スコアが表示されます。相手が誰かはわかりません。',
+    ctaLabel: '診断を受けてみる（無料）',
+    badge: 'こっそりモード',
+    badgeColor: '#6b7280',
+  },
+  invite: {
+    icon: '👋',
+    title: 'あなたへの相性診断の招待が届いています',
+    desc: '診断を受けると、招待した相手との相性スコアが確認できます。お互いの結果を基に分析します。',
+    ctaLabel: '診断を受けて相性を確認する（無料）',
+    badge: '招待モード',
+    badgeColor: '#6366f1',
+  },
+  one_way: {
+    icon: '👁️',
+    title: '招待した人の診断結果を見ませんか？',
+    desc: '招待した相手の診断結果との相性スコアが表示されます。あなたの結果は相手には共有されません。',
+    ctaLabel: '診断して相性スコアを見る（無料）',
+    badge: '片方向モード',
+    badgeColor: '#3b82f6',
+  },
+  full_share: {
+    icon: '🤝',
+    title: 'お互いの相性を完全公開で比較しませんか？',
+    desc: 'お互いの診断結果をすべて共有して、リアルな相性スコアを確認します。',
+    ctaLabel: '診断してお互いの相性を見る（無料）',
+    badge: '完全共有モード',
+    badgeColor: '#10b981',
+  },
+};
+
+const config = modeConfigs[mode as keyof typeof modeConfigs] ?? modeConfigs.secret;
 ---
 
 <BaseLayout
@@ -35,86 +107,133 @@ const ogDescription = '診断ナビで相性チェック。登録不要・完全
   noindex={true}
 >
   <Container>
-    <div class="invite-page" id="invite-page" data-code={code} data-from={fromType}>
+    <div
+      class="invite-page"
+      id="invite-page"
+      data-code={normalizedCode}
+      data-from={fromType}
+      data-mode={mode}
+      data-source={dbInvitation?.source ?? 'unknown'}
+      data-invitation-id={dbInvitation?.invitation_id ?? ''}
+      data-valid={isValidCode ? 'true' : 'false'}
+    >
 
-      {/* ローディング状態（JS実行前） */}
+      <!-- ローディング -->
       <div class="invite-loading" id="invite-loading" aria-live="polite">
-        <div class="invite-loading-icon" aria-hidden="true">🔗</div>
+        <div class="invite-loading-spinner" aria-hidden="true"></div>
         <p class="invite-loading-text">招待情報を確認しています...</p>
       </div>
 
-      {/* 招待コンテンツ（JS実行後に表示） */}
+      <!-- 招待コンテンツ -->
       <div class="invite-content" id="invite-content" hidden>
-        <div class="invite-hero">
-          <div class="invite-hero-icon" id="invite-mode-icon" aria-hidden="true">👥</div>
-          <h1 class="invite-hero-title" id="invite-hero-title">
-            相性診断への招待
-          </h1>
-          <p class="invite-hero-desc" id="invite-hero-desc">
-            招待リンクから来てくださいました。診断を受けて相性を確認しましょう。
+
+        <!-- ヒーロー -->
+        <div class="invite-hero" data-mode={mode}>
+          <div class="invite-mode-badge" id="invite-mode-badge" style={`background: ${config.badgeColor}`}>
+            {config.badge}
+          </div>
+          <div class="invite-hero-icon" id="invite-hero-icon" aria-hidden="true">{config.icon}</div>
+          <h1 class="invite-hero-title" id="invite-hero-title">{config.title}</h1>
+          <p class="invite-hero-desc" id="invite-hero-desc">{config.desc}</p>
+        </div>
+
+        <!-- 招待者情報カード（invite / one_way / full_share モードのみ表示） -->
+        <div class="invite-from-card" id="invite-from-card" hidden>
+          <p class="invite-from-label">招待した人</p>
+          <p class="invite-from-type" id="invite-from-type">
+            {fromType ? `${fromType} タイプ` : '—'}
           </p>
         </div>
 
-        <div class="invite-from-card" id="invite-from-card">
-          <p class="invite-from-label">招待した人の情報</p>
-          <p class="invite-from-type" id="invite-from-type">—</p>
+        <!-- プライバシー説明 -->
+        <div class="invite-privacy" id="invite-privacy">
+          <div class="invite-privacy-inner" id="invite-privacy-inner">
+            <!-- JS で mode に応じて差し替え -->
+            <span class="invite-privacy-icon" aria-hidden="true">🔒</span>
+            <p class="invite-privacy-text">あなたの診断結果の扱いについて表示します</p>
+          </div>
         </div>
 
+        <!-- 診断ステップ -->
         <div class="invite-steps">
           <p class="invite-steps-label">診断の流れ</p>
           <ol class="invite-steps-list">
             <li class="invite-steps-item">
               <span class="invite-steps-num" aria-hidden="true">1</span>
-              下のボタンから診断を受ける（無料・登録不要）
+              下のボタンから診断を受ける（登録不要・無料）
             </li>
             <li class="invite-steps-item">
               <span class="invite-steps-num" aria-hidden="true">2</span>
-              あなたの診断が完了すると相性スコアが表示される
+              診断完了後に相性スコアが計算されます
             </li>
             <li class="invite-steps-item">
               <span class="invite-steps-num" aria-hidden="true">3</span>
-              詳細レポートは ¥390 PASS で解放
+              詳細な相性レポートは ¥390 PASS で解放できます
             </li>
           </ol>
         </div>
 
+        <!-- メインCTA -->
         <a
           href="/diagnosis/"
           class="invite-cta-btn"
           id="invite-cta-btn"
           aria-label="診断を受けて相性を確認する"
         >
-          診断を受けて相性を確認する（無料）
-          <span aria-hidden="true">→</span>
+          <span aria-hidden="true">{config.icon}</span>
+          {config.ctaLabel}
         </a>
 
+        <!-- ゲスト安心表示 -->
+        <div class="invite-guest-note">
+          <span aria-hidden="true">✓</span> 登録不要・完全無料・30秒で完了
+        </div>
+
+        <!-- 招待コード表示 -->
         <p class="invite-code-display">
-          招待コード: <code class="invite-code-value" id="invite-code-display">{code}</code>
+          招待コード: <code class="invite-code-value">{normalizedCode}</code>
         </p>
+
+        <!-- 「招待を削除する」オプション（受け手側のプライバシー保護） -->
+        <div class="invite-delete-section" id="invite-delete-section" hidden>
+          <button
+            class="invite-delete-btn"
+            id="invite-delete-btn"
+            type="button"
+            aria-label="この招待から自分のデータを削除する"
+          >
+            この招待から自分を削除する
+          </button>
+        </div>
       </div>
 
-      {/* 無効コード表示 */}
+      <!-- 無効コード -->
       <div class="invite-invalid" id="invite-invalid" hidden>
         <div class="invite-invalid-icon" aria-hidden="true">⚠️</div>
         <h1 class="invite-invalid-title">招待リンクが無効です</h1>
         <p class="invite-invalid-desc">
-          このリンクは有効期限切れ、または無効な招待コードです。<br />
+          このリンクは有効期限切れ、またはすでに取り消された招待です。<br />
           招待した人に新しいリンクを発行してもらってください。
         </p>
         <a href="/diagnosis/" class="invite-fallback-btn">
           診断ページへ →
         </a>
       </div>
+
     </div>
   </Container>
 </BaseLayout>
 
 <script>
-  // クライアントサイドで招待情報を処理
   document.addEventListener('DOMContentLoaded', () => {
-    const page = document.getElementById('invite-page');
-    const code = page?.dataset.code ?? '';
-    const fromType = page?.dataset.from ?? '';
+    const page = document.getElementById('invite-page') as HTMLElement;
+    if (!page) return;
+
+    const code = page.dataset.code ?? '';
+    const fromType = page.dataset.from ?? '';
+    const serverMode = page.dataset.mode ?? 'secret';
+    const source = page.dataset.source ?? 'unknown';
+    const invitationId = page.dataset.invitationId ?? '';
 
     const loading = document.getElementById('invite-loading');
     const content = document.getElementById('invite-content');
@@ -130,97 +249,167 @@ const ogDescription = '診断ナビで相性チェック。登録不要・完全
       invalid?.removeAttribute('hidden');
     }
 
-    // LocalStorage から招待情報を取得
-    const STORAGE_KEY = 'shindan_invitations';
-    let invitation: {
+    // LocalStorage から招待情報を取得（ゲスト生成コードの場合）
+    interface LocalInvitation {
       code: string;
       mode: string;
       resultId: string;
       diagPath: string;
       createdAt: string;
       expiresAt: string;
-    } | null = null;
+    }
+    const STORAGE_KEY = 'shindan_invitations';
+    let localInvitation: LocalInvitation | null = null;
 
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (raw) {
-        const stored = JSON.parse(raw);
-        const inv = stored[code?.toUpperCase()];
+        const stored: Record<string, LocalInvitation> = JSON.parse(raw);
+        const inv = stored[code.toUpperCase()];
         if (inv && new Date(inv.expiresAt) > new Date()) {
-          invitation = inv;
+          localInvitation = inv;
         }
       }
-    } catch {
-      // LocalStorage アクセス失敗は無視
-    }
+    } catch { /* ignore */ }
 
-    // コンテンツ表示
-    if (code && code.length >= 4) {
-      // コードが存在すれば招待として扱う（フォールバック）
-      showContent();
-
-      // モードアイコン設定
-      const modeIconEl = document.getElementById('invite-mode-icon');
-      const titleEl = document.getElementById('invite-hero-title');
-      const descEl = document.getElementById('invite-hero-desc');
-      const fromTypeEl = document.getElementById('invite-from-type');
-      const fromCard = document.getElementById('invite-from-card');
-      const ctaBtn = document.getElementById('invite-cta-btn');
-
-      const mode = invitation?.mode ?? 'secret';
-
-      const modeConfig = {
-        secret: {
-          icon: '❓',
-          title: 'あなたとの相性を診断したい人がいます',
-          desc: '診断を受けると、相性スコアが表示されます。誰かはわかりません。',
-        },
-        invite: {
-          icon: '👋',
-          title: 'あなたへの招待が届きました',
-          desc: '診断を受けると、招待した人との相性スコアが表示されます。',
-        },
-        one_way: {
-          icon: '→',
-          title: 'あなたとの相性を確認しましょう',
-          desc: '招待した人の診断結果との相性スコアが表示されます。',
-        },
-        full_share: {
-          icon: '🤝',
-          title: '相互相性チェックへの招待',
-          desc: 'お互いの診断結果を基にした相性スコアが表示されます。',
-        },
-      };
-
-      const config = modeConfig[mode as keyof typeof modeConfig] ?? modeConfig.secret;
-
-      if (modeIconEl) modeIconEl.textContent = config.icon;
-      if (titleEl) titleEl.textContent = config.title;
-      if (descEl) descEl.textContent = config.desc;
-
-      // fromType があれば表示
-      if (fromType && fromCard && fromTypeEl) {
-        fromTypeEl.textContent = mode === 'secret' ? '（非公開）' : `${fromType} タイプ`;
-      } else if (fromCard) {
-        fromCard.setAttribute('hidden', '');
-      }
-
-      // CTA ボタンの href を診断パスに設定
-      const diagPath = invitation?.diagPath ?? '/diagnosis/';
-      if (ctaBtn) {
-        (ctaBtn as HTMLAnchorElement).href = `${diagPath}?pair=${invitation?.resultId ?? ''}&invite=${code}`;
-      }
-    } else {
+    // 有効なコードかチェック
+    const isValidFormat = /^[A-Z2-9]{4,8}$/.test(code.toUpperCase());
+    if (!isValidFormat) {
       showInvalid();
+      return;
     }
+
+    // source=db かつ DBが「invalid」と返した場合は無効表示
+    // SSR が valid=false を返した場合は page.dataset.valid が 'false'
+    if (page.dataset.valid === 'false') {
+      showInvalid();
+      return;
+    }
+
+    // モードの決定（DB優先 → LocalStorage → デフォルト）
+    let mode = serverMode;
+    let diagPath = '/diagnosis/';
+
+    if (source === 'guest' && localInvitation) {
+      mode = localInvitation.mode;
+      diagPath = localInvitation.diagPath ?? '/diagnosis/';
+    } else if (source === 'guest' && !localInvitation) {
+      // 他人のゲスト生成コード: mode 不明のため secret 扱い
+      mode = 'secret';
+    }
+
+    // モード別UI設定
+    const modeConfig: Record<string, {
+      icon: string;
+      title: string;
+      desc: string;
+      ctaLabel: string;
+      privacyIcon: string;
+      privacyText: string;
+      showFromCard: boolean;
+    }> = {
+      secret: {
+        icon: '🔮',
+        title: 'だれかがあなたとの相性を確認したい',
+        desc: '診断を受けると相性スコアが表示されます。相手が誰かはわかりません。',
+        ctaLabel: '診断を受けてみる（無料）',
+        privacyIcon: '🔒',
+        privacyText: 'あなたの結果は招待した人の画面には表示されません（こっそりモード）',
+        showFromCard: false,
+      },
+      invite: {
+        icon: '👋',
+        title: 'あなたへの相性診断の招待が届いています',
+        desc: '診断を受けると、招待した相手との相性スコアが確認できます。',
+        ctaLabel: '診断を受けて相性を確認する（無料）',
+        privacyIcon: '🤝',
+        privacyText: 'お互いの診断タイプを基に相性スコアが計算されます（双方同意モード）',
+        showFromCard: true,
+      },
+      one_way: {
+        icon: '👁️',
+        title: '招待した人の診断結果を見ませんか？',
+        desc: '招待した相手の診断結果との相性スコアが表示されます。あなたの結果は相手には共有されません。',
+        ctaLabel: '診断して相性スコアを見る（無料）',
+        privacyIcon: '🛡️',
+        privacyText: 'あなたの診断結果は招待した人には共有されません（片方向モード）',
+        showFromCard: true,
+      },
+      full_share: {
+        icon: '🤝',
+        title: 'お互いの相性を完全公開で比較しませんか？',
+        desc: 'お互いの診断結果をすべて共有して、リアルな相性スコアを確認します。',
+        ctaLabel: '診断してお互いの相性を見る（無料）',
+        privacyIcon: '🌐',
+        privacyText: 'お互いの診断結果がすべて共有されます（完全共有モード）',
+        showFromCard: true,
+      },
+    };
+
+    const cfg = modeConfig[mode] ?? modeConfig.secret;
+
+    // UI 更新
+    const heroIconEl = document.getElementById('invite-hero-icon');
+    const titleEl = document.getElementById('invite-hero-title');
+    const descEl = document.getElementById('invite-hero-desc');
+    const fromCard = document.getElementById('invite-from-card');
+    const fromTypeEl = document.getElementById('invite-from-type');
+    const ctaBtn = document.getElementById('invite-cta-btn') as HTMLAnchorElement | null;
+    const privacyInner = document.getElementById('invite-privacy-inner');
+    const deleteSection = document.getElementById('invite-delete-section');
+
+    if (heroIconEl) heroIconEl.textContent = cfg.icon;
+    if (titleEl) titleEl.textContent = cfg.title;
+    if (descEl) descEl.textContent = cfg.desc;
+
+    if (cfg.showFromCard && fromCard) {
+      fromCard.removeAttribute('hidden');
+      if (fromTypeEl && fromType) {
+        fromTypeEl.textContent = `${fromType} タイプ`;
+      }
+    }
+
+    if (privacyInner) {
+      privacyInner.innerHTML = `<span class="invite-privacy-icon" aria-hidden="true">${cfg.privacyIcon}</span><p class="invite-privacy-text">${cfg.privacyText}</p>`;
+    }
+
+    // CTA href 設定
+    const inviteParam = invitationId || code;
+    const resultId = localInvitation?.resultId ?? '';
+    const ctaHref = `${diagPath}?invite=${inviteParam}&from_code=${code}${resultId ? `&pair=${resultId}` : ''}`;
+    if (ctaBtn) ctaBtn.href = ctaHref;
+    if (ctaBtn) ctaBtn.querySelector('span')?.remove(); // icon span を更新
+    if (ctaBtn) {
+      ctaBtn.textContent = cfg.ctaLabel;
+    }
+
+    // 受け手の「招待を削除」ボタン（ログイン時のみ意味があるが、UI は常時表示）
+    if (invitationId && deleteSection) {
+      deleteSection.removeAttribute('hidden');
+      const deleteBtn = document.getElementById('invite-delete-btn');
+      deleteBtn?.addEventListener('click', async () => {
+        if (!confirm('この招待から自分のデータを削除しますか？')) return;
+        // 受け手側の削除: invitee_id と invitee_diagnosis_snapshot をクリア
+        // Phase 3.5 では簡易実装（LocalStorage のコードを削除）
+        try {
+          const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? '{}');
+          delete stored[code.toUpperCase()];
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(stored));
+        } catch { /* ignore */ }
+        deleteBtn.textContent = '削除しました';
+        (deleteBtn as HTMLButtonElement).disabled = true;
+      });
+    }
+
+    showContent();
   });
 </script>
 
 <style>
 .invite-page {
-  max-width: 480px;
+  max-width: 520px;
   margin-inline: auto;
-  padding-block: 3rem;
+  padding-block: 3rem 4rem;
 }
 
 /* ローディング */
@@ -229,48 +418,64 @@ const ogDescription = '診断ナビで相性チェック。登録不要・完全
   flex-direction: column;
   align-items: center;
   gap: 1rem;
-  padding: 3rem;
+  padding: 4rem 2rem;
   text-align: center;
 }
-.invite-loading-icon {
-  font-size: 3rem;
-  animation: pulse 1.5s infinite;
+.invite-loading-spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid var(--sn-border, #e5e7eb);
+  border-top-color: var(--sn-primary, #6366f1);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
 }
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 .invite-loading-text {
   color: var(--sn-muted, #6b7280);
   font-size: 0.95rem;
 }
 
-/* 招待コンテンツ */
+/* コンテンツ全体 */
 .invite-content {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1.25rem;
 }
 
+/* ヒーロー */
 .invite-hero {
   text-align: center;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 0.75rem;
-  padding: 2rem 1.5rem;
+  padding: 2rem 1.5rem 1.75rem;
   background: linear-gradient(135deg, #eef2ff 0%, #faf5ff 100%);
-  border-radius: 1rem;
+  border-radius: 1.25rem;
   border: 1px solid #e0e7ff;
+  position: relative;
+}
+.invite-mode-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 12px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.04em;
 }
 .invite-hero-icon {
-  font-size: 3rem;
+  font-size: 3.5rem;
+  line-height: 1;
 }
 .invite-hero-title {
   font-size: 1.25rem;
   font-family: var(--sn-font-rounded, sans-serif);
   font-weight: 900;
-  color: var(--sn-text, #1e1b4b);
+  color: var(--sn-text, #1f2937);
   margin: 0;
   line-height: 1.4;
 }
@@ -279,41 +484,68 @@ const ogDescription = '診断ナビで相性チェック。登録不要・完全
   color: var(--sn-muted, #4b5563);
   line-height: 1.7;
   margin: 0;
+  max-width: 360px;
 }
 
+/* 招待者カード */
 .invite-from-card {
   padding: 1rem 1.25rem;
-  background: var(--sn-bg-soft, #f9fafb);
-  border-radius: 0.75rem;
+  background: var(--sn-bg-soft, #f3f4f6);
+  border-radius: 0.875rem;
   border: 1px solid var(--sn-border, #e5e7eb);
 }
 .invite-from-label {
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   font-weight: 700;
-  color: var(--sn-primary, #4f46e5);
+  color: var(--sn-primary, #6366f1);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.06em;
   margin: 0 0 0.25rem;
 }
 .invite-from-type {
   font-size: 1rem;
   font-weight: 700;
-  color: var(--sn-text, #1e1b4b);
+  color: var(--sn-text, #1f2937);
   margin: 0;
 }
 
+/* プライバシー表示 */
+.invite-privacy {
+  background: #f0fdf4;
+  border-radius: 0.75rem;
+  border: 1px solid #bbf7d0;
+  padding: 0.875rem 1.25rem;
+}
+.invite-privacy-inner {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+.invite-privacy-icon {
+  font-size: 1.25rem;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.invite-privacy-text {
+  font-size: 0.85rem;
+  color: #166534;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* ステップ */
 .invite-steps {
   padding: 1rem 1.25rem;
   background: #fff;
-  border-radius: 0.75rem;
+  border-radius: 0.875rem;
   border: 1px solid var(--sn-border, #e5e7eb);
 }
 .invite-steps-label {
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   font-weight: 700;
   color: var(--sn-muted, #6b7280);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.06em;
   margin: 0 0 0.75rem;
 }
 .invite-steps-list {
@@ -322,7 +554,7 @@ const ogDescription = '診断ナビで相性チェック。登録不要・完全
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.625rem;
 }
 .invite-steps-item {
   display: flex;
@@ -330,6 +562,7 @@ const ogDescription = '診断ナビで相性チェック。登録不要・完全
   gap: 0.75rem;
   font-size: 0.875rem;
   color: var(--sn-text-soft, #374151);
+  line-height: 1.5;
 }
 .invite-steps-num {
   width: 24px;
@@ -337,7 +570,7 @@ const ogDescription = '診断ナビで相性チェック。登録不要・完全
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--sn-primary, #4f46e5);
+  background: var(--sn-primary, #6366f1);
   color: #fff;
   border-radius: 50%;
   font-size: 0.75rem;
@@ -345,33 +578,46 @@ const ogDescription = '診断ナビで相性チェック。登録不要・完全
   flex-shrink: 0;
 }
 
+/* CTA ボタン */
 .invite-cta-btn {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
   padding: 1rem 2rem;
-  background: var(--sn-primary, #4f46e5);
+  background: var(--sn-primary, #6366f1);
   color: #fff;
   border-radius: 999px;
   font-weight: 700;
   font-size: 1rem;
   text-decoration: none;
   min-height: 52px;
-  transition: transform 0.15s, box-shadow 0.15s;
-  box-shadow: 0 4px 12px rgba(79 70 229 / 0.3);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  box-shadow: 0 4px 16px rgba(99 102 241 / 0.35);
 }
 .invite-cta-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(79 70 229 / 0.4);
+  box-shadow: 0 8px 24px rgba(99 102 241 / 0.45);
   text-decoration: none;
   color: #fff;
 }
 .invite-cta-btn:focus-visible {
-  outline: 3px solid var(--sn-primary, #4f46e5);
+  outline: 3px solid var(--sn-primary, #6366f1);
   outline-offset: 3px;
 }
 
+/* ゲスト安心表示 */
+.invite-guest-note {
+  text-align: center;
+  font-size: 0.8125rem;
+  color: var(--sn-muted, #6b7280);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
+}
+
+/* 招待コード表示 */
 .invite-code-display {
   text-align: center;
   font-size: 0.78rem;
@@ -383,6 +629,32 @@ const ogDescription = '診断ナビで相性チェック。登録不要・完全
   background: var(--sn-bg-soft, #f3f4f6);
   padding: 2px 6px;
   border-radius: 4px;
+  letter-spacing: 0.1em;
+}
+
+/* 招待削除 */
+.invite-delete-section {
+  text-align: center;
+  padding-top: 0.5rem;
+}
+.invite-delete-btn {
+  background: none;
+  border: none;
+  color: var(--sn-muted, #9ca3af);
+  font-size: 0.78rem;
+  cursor: pointer;
+  text-decoration: underline;
+  font-family: inherit;
+  padding: 0.5rem;
+  min-height: 44px;
+}
+.invite-delete-btn:hover {
+  color: var(--sn-error, #ef4444);
+}
+.invite-delete-btn:disabled {
+  cursor: default;
+  color: var(--sn-muted, #9ca3af);
+  text-decoration: none;
 }
 
 /* 無効コード */
@@ -392,15 +664,13 @@ const ogDescription = '診断ナビで相性チェック。登録不要・完全
   flex-direction: column;
   align-items: center;
   gap: 1rem;
-  padding: 3rem 1.5rem;
+  padding: 3.5rem 1.5rem;
 }
-.invite-invalid-icon {
-  font-size: 3rem;
-}
+.invite-invalid-icon { font-size: 3rem; }
 .invite-invalid-title {
   font-size: 1.25rem;
   font-weight: 700;
-  color: var(--sn-text, #1e1b4b);
+  color: var(--sn-text, #1f2937);
   margin: 0;
 }
 .invite-invalid-desc {
@@ -413,7 +683,7 @@ const ogDescription = '診断ナビで相性チェック。登録不要・完全
   display: inline-flex;
   align-items: center;
   padding: 0.75rem 1.75rem;
-  background: var(--sn-primary, #4f46e5);
+  background: var(--sn-primary, #6366f1);
   color: #fff;
   border-radius: 999px;
   font-weight: 700;
@@ -425,5 +695,18 @@ const ogDescription = '診断ナビで相性チェック。登録不要・完全
   opacity: 0.85;
   text-decoration: none;
   color: #fff;
+}
+
+@media (max-width: 480px) {
+  .invite-page {
+    padding-block: 2rem 3rem;
+  }
+  .invite-hero {
+    padding: 1.5rem 1rem 1.25rem;
+  }
+  .invite-cta-btn {
+    font-size: 0.9375rem;
+    padding: 0.875rem 1.5rem;
+  }
 }
 </style>
