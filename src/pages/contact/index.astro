@@ -22,7 +22,12 @@ const inquiryTypes = [
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>{title}</title>
   <meta name="description" content={description} />
+  <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
   <link rel="canonical" href={canonicalURL} />
+
+  <!-- hreflang（日本語単一言語サイト）-->
+  <link rel="alternate" hreflang="ja" href={canonicalURL} />
+  <link rel="alternate" hreflang="x-default" href={canonicalURL} />
 
   <!-- OGP -->
   <meta property="og:type" content="website" />
@@ -30,6 +35,9 @@ const inquiryTypes = [
   <meta property="og:description" content={description} />
   <meta property="og:url" content={canonicalURL} />
   <meta property="og:site_name" content="診断ナビ" />
+  <meta property="og:image" content="https://shindan-navi.jp/ogp-default.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
   <meta property="og:locale" content="ja_JP" />
   <meta name="twitter:card" content="summary" />
 
@@ -192,6 +200,17 @@ const inquiryTypes = [
     .footer-links a:hover { color: #fff; }
     .footer-bottom { font-size: var(--sn-text-xs); border-top: 1px solid rgba(255,255,255,0.1); padding-top: var(--sn-space-6); }
   </style>
+  <!-- GA4 -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-S4WP0YRDWW"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-S4WP0YRDWW');
+  </script>
+
+  <!-- Google AdSense -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3827953973757487" crossorigin="anonymous"></script>
 </head>
 <body>
 
