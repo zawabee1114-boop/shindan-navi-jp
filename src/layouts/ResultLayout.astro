@@ -1,29 +1,13 @@
 ---
 /**
- * ResultLayout.astro - 診断結果ページ共通レイアウト
+ * ResultLayout.astro - 診断結果ページ共通レイアウト v2
  *
- * 8診断の全結果ページで使う共通レイアウト。
- * - ヒーロー: キャラ + タイプ名 + キャッチコピー + シェアボタン
- * - タブUI: 概要 / 強み / 弱み / 仕事 / 恋愛 / 友人 / 家族 / 学校 / 有名人 / 成長
- * - 詳細版（¥390 PASS）誘導CTA
- * - 「統合プロファイル」CTA
- * - 関連診断リンク
- * - SNSシェア（Instagram / X / LINE）
- *
- * 使い方:
- * <ResultLayout
- *   diagnosisId="mbti"
- *   typeId="ENFP"
- *   typeName="運動家"
- *   characterEmoji="🦊"
- *   tagline="自由に飛び回る直感派の理想主義者"
- *   isPaid={false}
- *   shareUrl="https://shindan-navi.jp/diagnosis/mbti/result/enfp/"
- *   relatedDiagnoses={[...]}
- * >
- *   <Fragment slot="overview">...</Fragment>
- *   ...
- * </ResultLayout>
+ * フェーズ2 新デザイン対応:
+ * - ヒーロー: 診断カラーグラデーション + スパークル装飾
+ * - ピル型バッジ（diag-badge クラス）
+ * - グラスモーフィズムキャラクターカード
+ * - sn-card / sn-cta クラス統一
+ * - 5シーン軸 --s-* トークン対応
  */
 
 import BaseLayout from './BaseLayout.astro';
@@ -41,13 +25,19 @@ interface RelatedDiagnosis {
 interface Props {
   /** 診断ID（例: 'mbti'）*/
   diagnosisId: string;
+  /**
+   * 診断カラークラス（design-system-v2.css の .diag-* クラス）
+   * 例: 'diag-mbti' / 'diag-blood' / 'diag-multi' / 'diag-star'
+   *     'diag-perfect' / 'diag-disc' / 'diag-love' / 'diag-money'
+   */
+  diagnosisClass?: string;
   /** タイプ識別子（例: 'ENFP'・URLセーフ）*/
   typeId: string;
   /** タイプ表示名（例: '運動家'）*/
   typeName: string;
   /** 診断表示名（例: 'MBTI'）*/
   diagnosisName: string;
-  /** キャラクター絵文字（本番SVG差し替え前提）*/
+  /** キャラクター絵文字 */
   characterEmoji?: string;
   /** キャラクター名（動物）*/
   characterName?: string;
@@ -57,7 +47,7 @@ interface Props {
   isPaid?: boolean;
   /** シェア用URL */
   shareUrl: string;
-  /** ページタイトル（省略時は自動生成）*/
+  /** ページタイトル */
   pageTitle?: string;
   /** メタディスクリプション */
   pageDescription?: string;
@@ -65,12 +55,13 @@ interface Props {
   relatedDiagnoses?: RelatedDiagnosis[];
   /** 診断一覧への戻りリンク */
   diagnosisListHref?: string;
-  /** 構造化データ（ページ別）*/
+  /** 構造化データ */
   jsonLd?: object | object[];
 }
 
 const {
   diagnosisId,
+  diagnosisClass = '',
   typeId,
   typeName,
   diagnosisName,
@@ -92,18 +83,17 @@ const autoDesc = pageDescription
 
 const shareText = `私の${diagnosisName}は「${typeName}」でした！${tagline} あなたも診断してみて #診断ナビ`;
 
-/** タブ定義（全10タブ） */
 const tabs = [
-  { id: 'overview', label: '概要', icon: '📋', slot: 'overview', freeAccess: true },
-  { id: 'strengths', label: '強み', icon: '💪', slot: 'strengths', freeAccess: true },
-  { id: 'weaknesses', label: '注意点', icon: '⚡', slot: 'weaknesses', freeAccess: true },
-  { id: 'work', label: '仕事', icon: '💼', slot: 'work', freeAccess: false },
-  { id: 'love', label: '恋愛', icon: '💕', slot: 'love', freeAccess: false },
-  { id: 'friend', label: '友人', icon: '👥', slot: 'friend', freeAccess: false },
-  { id: 'family', label: '家族', icon: '🏠', slot: 'family', freeAccess: false },
-  { id: 'school', label: '学校', icon: '📚', slot: 'school', freeAccess: false },
-  { id: 'celebrity', label: '有名人', icon: '⭐', slot: 'celebrity', freeAccess: true },
-  { id: 'growth', label: '成長', icon: '🌱', slot: 'growth', freeAccess: false },
+  { id: 'overview', label: '概要', icon: '📋', freeAccess: true },
+  { id: 'strengths', label: '強み', icon: '💪', freeAccess: true },
+  { id: 'weaknesses', label: '注意点', icon: '⚡', freeAccess: true },
+  { id: 'work', label: '仕事', icon: '💼', freeAccess: false },
+  { id: 'love', label: '恋愛', icon: '💕', freeAccess: false },
+  { id: 'friend', label: '友人', icon: '👥', freeAccess: false },
+  { id: 'family', label: '家族', icon: '🏠', freeAccess: false },
+  { id: 'school', label: '学校', icon: '📚', freeAccess: false },
+  { id: 'celebrity', label: '有名人', icon: '⭐', freeAccess: true },
+  { id: 'growth', label: '成長', icon: '🌱', freeAccess: false },
 ];
 ---
 
@@ -119,47 +109,48 @@ const tabs = [
   ]}
 >
   <div class="rl-page">
-    {/* ---- ヒーローセクション ---- */}
-    <section class="rl-hero" aria-labelledby="result-type-name">
+
+    {/* ---- ヒーロー v2 ---- */}
+    <section class={`rl-hero${diagnosisClass ? ' ' + diagnosisClass : ''}`} aria-labelledby="result-type-name">
+      <span class="rl-sparkle rl-sparkle-1" aria-hidden="true">✦</span>
+      <span class="rl-sparkle rl-sparkle-2" aria-hidden="true">✦</span>
+      <span class="rl-sparkle rl-sparkle-3" aria-hidden="true">✧</span>
+      <span class="rl-sparkle rl-sparkle-4" aria-hidden="true">✦</span>
+
       <Container>
+        <div class="rl-diag-badge-wrap">
+          <span class="diag-badge" aria-label={`${diagnosisName} 診断結果`}>
+            <span aria-hidden="true">📊</span>
+            {diagnosisName} 診断結果
+          </span>
+        </div>
+
         <div class="rl-hero-inner">
-          {/* キャラクターアイコン */}
           <div class="rl-character" aria-label={characterName ?? typeName} role="img">
             <span class="rl-character-emoji" aria-hidden="true">{characterEmoji}</span>
           </div>
 
-          {/* タイプ情報 */}
           <div class="rl-hero-info">
-            <p class="rl-diagnosis-badge">
-              <span aria-hidden="true">📊</span>
-              {diagnosisName} 診断結果
-            </p>
             <h1 id="result-type-name" class="rl-type-name">
               {typeName}
               {typeId !== typeName && (
-                <span class="rl-type-id">（{typeId}）</span>
+                <span class="rl-type-id num">（{typeId}）</span>
               )}
             </h1>
             {characterName && (
               <p class="rl-character-name">{characterName}タイプ</p>
             )}
             <p class="rl-tagline">{tagline}</p>
+            <div class="rl-hero-share-inline">
+              <ShareButtons
+                url={shareUrl}
+                text={shareText}
+                hashtags={['診断ナビ', diagnosisId]}
+                size="sm"
+                showLabel={false}
+              />
+            </div>
           </div>
-        </div>
-
-        {/* シェアボタン（ヒーロー直下） */}
-        <div class="rl-hero-share">
-          <p class="rl-share-label">
-            <span aria-hidden="true">🔗</span>
-            友達にもシェアして相性を調べよう
-          </p>
-          <ShareButtons
-            url={shareUrl}
-            text={shareText}
-            hashtags={['診断ナビ', diagnosisId]}
-            size="md"
-            showLabel={false}
-          />
         </div>
       </Container>
     </section>
@@ -192,28 +183,24 @@ const tabs = [
     <div class="rl-panels">
       <Container class="container--content">
 
-        {/* 概要 */}
         <div role="tabpanel" id="panel-overview" aria-labelledby="tab-overview" class="rl-panel" data-panel="overview">
           <slot name="overview">
             <p class="rl-slot-placeholder">（概要コンテンツは content-writer が執筆予定）</p>
           </slot>
         </div>
 
-        {/* 強み */}
         <div role="tabpanel" id="panel-strengths" aria-labelledby="tab-strengths" class="rl-panel rl-panel--hidden" data-panel="strengths">
           <slot name="strengths">
             <p class="rl-slot-placeholder">（強みコンテンツは content-writer が執筆予定）</p>
           </slot>
         </div>
 
-        {/* 注意点 */}
         <div role="tabpanel" id="panel-weaknesses" aria-labelledby="tab-weaknesses" class="rl-panel rl-panel--hidden" data-panel="weaknesses">
           <slot name="weaknesses">
             <p class="rl-slot-placeholder">（注意点コンテンツは content-writer が執筆予定）</p>
           </slot>
         </div>
 
-        {/* 仕事（有料） */}
         <div role="tabpanel" id="panel-work" aria-labelledby="tab-work" class="rl-panel rl-panel--hidden" data-panel="work" data-paid-required={!isPaid}>
           {isPaid ? (
             <slot name="work">
@@ -226,7 +213,6 @@ const tabs = [
           )}
         </div>
 
-        {/* 恋愛（有料） */}
         <div role="tabpanel" id="panel-love" aria-labelledby="tab-love" class="rl-panel rl-panel--hidden" data-panel="love" data-paid-required={!isPaid}>
           {isPaid ? (
             <slot name="love">
@@ -239,7 +225,6 @@ const tabs = [
           )}
         </div>
 
-        {/* 友人（有料） */}
         <div role="tabpanel" id="panel-friend" aria-labelledby="tab-friend" class="rl-panel rl-panel--hidden" data-panel="friend" data-paid-required={!isPaid}>
           {isPaid ? (
             <slot name="friend">
@@ -252,7 +237,6 @@ const tabs = [
           )}
         </div>
 
-        {/* 家族（有料） */}
         <div role="tabpanel" id="panel-family" aria-labelledby="tab-family" class="rl-panel rl-panel--hidden" data-panel="family" data-paid-required={!isPaid}>
           {isPaid ? (
             <slot name="family">
@@ -265,7 +249,6 @@ const tabs = [
           )}
         </div>
 
-        {/* 学校（有料） */}
         <div role="tabpanel" id="panel-school" aria-labelledby="tab-school" class="rl-panel rl-panel--hidden" data-panel="school" data-paid-required={!isPaid}>
           {isPaid ? (
             <slot name="school">
@@ -278,14 +261,12 @@ const tabs = [
           )}
         </div>
 
-        {/* 有名人 */}
         <div role="tabpanel" id="panel-celebrity" aria-labelledby="tab-celebrity" class="rl-panel rl-panel--hidden" data-panel="celebrity">
           <slot name="celebrity">
             <p class="rl-slot-placeholder">（有名人コンテンツは content-writer が執筆予定）</p>
           </slot>
         </div>
 
-        {/* 成長（有料） */}
         <div role="tabpanel" id="panel-growth" aria-labelledby="tab-growth" class="rl-panel rl-panel--hidden" data-panel="growth" data-paid-required={!isPaid}>
           {isPaid ? (
             <slot name="growth">
@@ -301,11 +282,11 @@ const tabs = [
       </Container>
     </div>
 
-    {/* ---- PASS 誘導CTA（有料未加入ユーザー向け）---- */}
+    {/* ---- PASS CTA ---- */}
     {!isPaid && (
       <section class="rl-cta-section" aria-labelledby="pass-cta-heading">
         <Container class="container--narrow">
-          <div class="rl-cta-card">
+          <div class="rl-cta-card sn-card">
             <p class="rl-cta-icon" aria-hidden="true">🔓</p>
             <h2 id="pass-cta-heading" class="rl-cta-title">
               {typeName}の全詳細を読む
@@ -321,19 +302,17 @@ const tabs = [
               <li>8診断統合プロファイル</li>
               <li>有効期間: 1年間（更新可）</li>
             </ul>
-            <a href="/pro/" class="btn btn-primary btn-lg rl-cta-btn">
-              <span class="badge badge-pass">¥390</span>
+            <a href="/pro/" class="sn-cta rl-cta-btn">
+              <span class="rl-pass-badge sn-pill">¥390</span>
               詳細版を見る（PASS）
             </a>
-            <p class="rl-cta-note">
-              月額ではなく1回払い・全診断の詳細に使えます
-            </p>
+            <p class="rl-cta-note">月額ではなく1回払い・全診断の詳細に使えます</p>
           </div>
         </Container>
       </section>
     )}
 
-    {/* ---- 統合プロファイルCTA ---- */}
+    {/* ---- 統合プロファイル CTA ---- */}
     <section class="rl-profile-cta" aria-labelledby="profile-cta-heading">
       <Container class="container--narrow">
         <div class="rl-profile-card">
@@ -345,7 +324,7 @@ const tabs = [
             複数の診断を受けるほど、あなたの行動パターンが深く分かります。
             8診断を統合した「あなただけのプロファイル」が完成します。
           </p>
-          <a href="/diagnosis/" class="btn btn-secondary rl-profile-btn">
+          <a href="/diagnosis/" class="sn-cta rl-profile-btn">
             <span aria-hidden="true">🔮</span>
             他の診断を受ける
           </a>
@@ -353,21 +332,17 @@ const tabs = [
       </Container>
     </section>
 
-    {/* ---- 関連診断リンク ---- */}
+    {/* ---- 関連診断 ---- */}
     {relatedDiagnoses.length > 0 && (
       <section class="rl-related" aria-labelledby="related-heading">
         <Container>
-          <h2 id="related-heading" class="rl-related-title">
-            関連する診断
-          </h2>
+          <h2 id="related-heading" class="rl-related-title">関連する診断</h2>
           <div class="rl-related-grid">
             {relatedDiagnoses.map((d) => (
-              <a href={d.href} class="rl-related-card">
+              <a href={d.href} class="rl-related-card sn-card">
                 <span class="rl-related-icon" aria-hidden="true">{d.icon}</span>
                 <span class="rl-related-name">{d.title}</span>
-                {d.badge && (
-                  <span class="badge badge-primary">{d.badge}</span>
-                )}
+                {d.badge && <span class="sn-pill">{d.badge}</span>}
               </a>
             ))}
           </div>
@@ -375,7 +350,7 @@ const tabs = [
       </section>
     )}
 
-    {/* ---- 再シェアCTA ---- */}
+    {/* ---- 再シェア ---- */}
     <section class="rl-bottom-share">
       <Container class="container--narrow">
         <p class="rl-bottom-share-title">結果をシェアして友達と比べよう</p>
@@ -395,11 +370,11 @@ const tabs = [
   </div>
 </BaseLayout>
 
-{/* PassCta はインラインコンポーネントとして定義 */}
----
-
 <style>
-  /* ---- ページ全体 ---- */
+  /* ================================================================
+     ResultLayout v2
+     ================================================================ */
+
   .rl-page {
     display: flex;
     flex-direction: column;
@@ -409,99 +384,160 @@ const tabs = [
 
   /* ---- ヒーロー ---- */
   .rl-hero {
-    background: linear-gradient(135deg, var(--sn-primary-bg) 0%, var(--sn-secondary-bg) 100%);
-    padding-block: var(--sn-space-10) var(--sn-space-8);
+    position: relative;
+    overflow: hidden;
+    padding-block: 48px 56px;
+    background: linear-gradient(135deg, #f3efff 0%, #e8e0ff 60%, #ede5ff 100%);
   }
 
+  /* 8診断別ヒーロー背景 */
+  .rl-hero.diag-mbti    { background: linear-gradient(135deg, #f3efff 0%, #e8e0ff 60%, #ede5ff 100%); }
+  .rl-hero.diag-blood   { background: linear-gradient(135deg, #fff0f1 0%, #ffe4e6 60%, #ffeaec 100%); }
+  .rl-hero.diag-multi   { background: linear-gradient(135deg, #fff6ee 0%, #ffe9d5 60%, #fff2e5 100%); }
+  .rl-hero.diag-star    { background: linear-gradient(135deg, #eef6ff 0%, #ddeeff 60%, #e8f3ff 100%); }
+  .rl-hero.diag-perfect { background: linear-gradient(135deg, #fffbea 0%, #fef3c7 60%, #fffde8 100%); }
+  .rl-hero.diag-disc    { background: linear-gradient(135deg, #edfaf7 0%, #d0f5ec 60%, #e4f9f5 100%); }
+  .rl-hero.diag-love    { background: linear-gradient(135deg, #fff0f7 0%, #ffe4f2 60%, #ffedf7 100%); }
+  .rl-hero.diag-money   { background: linear-gradient(135deg, #fdf8f0 0%, #f5e8d0 60%, #faf3e5 100%); }
+
+  .rl-hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(60% 50% at 80% 20%, rgba(255,255,255,.4), transparent 60%),
+      radial-gradient(40% 30% at 10% 80%, rgba(255,255,255,.3), transparent 50%);
+    pointer-events: none;
+  }
+
+  @media (min-width: 768px) {
+    .rl-hero { padding-block: 64px 72px; }
+  }
+
+  /* ---- スパークル ---- */
+  .rl-sparkle {
+    position: absolute;
+    pointer-events: none;
+    color: var(--diag-color, var(--brand-500));
+    opacity: 0;
+    animation: rl-sparkle 3.5s ease-in-out infinite;
+    font-style: normal;
+    user-select: none;
+    font-size: 1rem;
+  }
+
+  .rl-sparkle-1 { top: 12%;  left: 8%;   font-size: 1.1rem; animation-delay: 0s;    animation-duration: 4s; }
+  .rl-sparkle-2 { top: 18%;  right: 14%; font-size: 0.75rem; animation-delay: 1.2s; animation-duration: 3.5s; }
+  .rl-sparkle-3 { bottom: 22%; left: 18%; font-size: 0.65rem; animation-delay: 2.1s; animation-duration: 4.2s; }
+  .rl-sparkle-4 { bottom: 14%; right: 8%; font-size: 1rem;   animation-delay: 0.8s; animation-duration: 3.8s; }
+
+  @keyframes rl-sparkle {
+    0%, 100% { opacity: 0;    transform: scale(1) rotate(0deg); }
+    40%       { opacity: 0.55; transform: scale(1.2) rotate(18deg); }
+    60%       { opacity: 0.7;  transform: scale(1.1) rotate(12deg); }
+  }
+
+  /* ---- 診断バッジ ---- */
+  .rl-diag-badge-wrap {
+    margin-bottom: 20px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ---- ヒーロー内部 ---- */
   .rl-hero-inner {
+    position: relative;
+    z-index: 1;
     display: flex;
     gap: var(--sn-space-6);
     align-items: center;
     flex-wrap: wrap;
-    margin-bottom: var(--sn-space-6);
   }
 
+  /* ---- キャラクター（グラスモーフィズム）---- */
   .rl-character {
-    width: 120px;
-    height: 120px;
-    background: var(--sn-bg-white);
-    border-radius: var(--sn-radius-xl);
-    box-shadow: var(--sn-shadow-md);
+    width: 110px;
+    height: 110px;
+    background: rgba(255, 255, 255, 0.72);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: var(--radius-xl);
+    border: 1.5px solid rgba(255, 255, 255, 0.6);
+    box-shadow:
+      0 8px 24px rgba(0, 0, 0, 0.08),
+      inset 0 1px 0 rgba(255, 255, 255, 0.7);
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
   }
 
+  @media (min-width: 480px) {
+    .rl-character { width: 120px; height: 120px; }
+  }
+
   .rl-character-emoji {
-    font-size: 4rem;
+    font-size: 3.5rem;
     line-height: 1;
   }
 
+  @media (min-width: 480px) {
+    .rl-character-emoji { font-size: 4rem; }
+  }
+
+  /* ---- タイプ情報 ---- */
   .rl-hero-info {
     flex: 1;
     min-width: 220px;
-  }
-
-  .rl-diagnosis-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--sn-space-1);
-    font-size: var(--sn-text-sm);
-    color: var(--sn-muted);
-    margin-bottom: var(--sn-space-2);
+    position: relative;
+    z-index: 1;
   }
 
   .rl-type-name {
     font-family: var(--sn-font-rounded);
-    font-size: var(--sn-text-3xl);
+    font-size: clamp(1.625rem, 5vw, 2.25rem);
     font-weight: 900;
-    color: var(--sn-primary);
-    line-height: 1.2;
-    margin-bottom: var(--sn-space-1);
+    color: var(--ink-900);
+    line-height: 1.25;
+    margin: 0 0 var(--sn-space-2);
+    letter-spacing: -0.01em;
   }
 
   .rl-type-id {
-    font-size: var(--sn-text-xl);
+    font-size: clamp(1.125rem, 3vw, 1.375rem);
     font-weight: 700;
-    color: var(--sn-muted);
+    color: var(--ink-500);
   }
 
   .rl-character-name {
     font-size: var(--sn-text-lg);
     font-weight: 700;
-    color: var(--sn-secondary);
-    margin-bottom: var(--sn-space-2);
+    color: var(--ink-700);
+    margin: 0 0 var(--sn-space-2);
   }
 
   .rl-tagline {
     font-size: var(--sn-text-base);
-    color: var(--sn-text-soft);
+    color: var(--ink-700);
     line-height: var(--sn-leading-base);
+    margin: 0 0 var(--sn-space-4);
+    max-width: 500px;
   }
 
-  .rl-hero-share {
+  .rl-hero-share-inline {
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: var(--sn-space-3);
-  }
-
-  .rl-share-label {
-    display: flex;
-    align-items: center;
     gap: var(--sn-space-2);
-    font-size: var(--sn-text-sm);
-    color: var(--sn-muted);
-    font-weight: 500;
+    flex-wrap: wrap;
   }
 
-  /* ---- タブナビゲーション ---- */
+  /* ---- タブナビ ---- */
   .rl-tab-nav-wrapper {
     position: sticky;
     top: var(--sn-header-h);
-    background: var(--sn-bg-white);
-    border-bottom: 1px solid var(--sn-border);
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--line);
     z-index: 20;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
@@ -522,7 +558,7 @@ const tabs = [
     padding: var(--sn-space-3) var(--sn-space-4);
     font-size: var(--sn-text-sm);
     font-weight: 700;
-    color: var(--sn-muted);
+    color: var(--ink-500);
     background: none;
     border: none;
     border-bottom: 3px solid transparent;
@@ -535,34 +571,30 @@ const tabs = [
     font-family: var(--sn-font-rounded);
   }
 
-  .rl-tab-btn:hover {
-    color: var(--sn-primary);
-  }
+  .rl-tab-btn:hover { color: var(--brand-600); }
 
   .rl-tab-btn[aria-selected="true"] {
-    color: var(--sn-primary);
-    border-bottom-color: var(--sn-primary);
+    color: var(--brand-600);
+    border-bottom-color: var(--brand-500);
+  }
+
+  .rl-tab-btn:focus-visible {
+    outline: 2px solid var(--brand-400);
+    outline-offset: -2px;
+    border-radius: var(--radius-sm);
   }
 
   .rl-tab-label { line-height: 1; }
-
-  .rl-tab-lock {
-    font-size: var(--sn-text-xs);
-    opacity: 0.6;
-  }
+  .rl-tab-lock { font-size: var(--sn-text-xs); opacity: 0.6; }
 
   /* ---- パネル ---- */
-  .rl-panels {
-    min-height: 300px;
-  }
+  .rl-panels { min-height: 300px; }
 
   .rl-panel {
     animation: rl-fadeIn 200ms var(--sn-ease-out) both;
   }
 
-  .rl-panel--hidden {
-    display: none;
-  }
+  .rl-panel--hidden { display: none; }
 
   @keyframes rl-fadeIn {
     from { opacity: 0; transform: translateY(6px); }
@@ -570,62 +602,57 @@ const tabs = [
   }
 
   .rl-slot-placeholder {
-    color: var(--sn-muted);
+    color: var(--ink-400);
     font-size: var(--sn-text-sm);
     text-align: center;
     padding-block: var(--sn-space-8);
   }
 
-  /* ---- ペイウォール ---- */
-  .rl-paywall {
-    padding-block: var(--sn-space-6);
-  }
+  .rl-paywall { padding-block: var(--sn-space-6); }
 
   /* ---- PASS CTA ---- */
   .rl-cta-section {
-    background: var(--sn-primary-bg);
+    background: var(--brand-50);
     padding-block: var(--sn-space-12);
   }
 
   .rl-cta-card {
-    background: var(--sn-bg-white);
-    border-radius: var(--sn-radius-xl);
     padding: var(--sn-space-8);
     text-align: center;
-    box-shadow: var(--sn-shadow-md);
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: var(--sn-space-4);
   }
 
-  .rl-cta-icon {
-    font-size: 3rem;
-    margin: 0;
-  }
+  .rl-cta-icon { font-size: 3rem; margin: 0; }
 
   .rl-cta-title {
     font-family: var(--sn-font-rounded);
     font-size: var(--sn-text-2xl);
     font-weight: 900;
-    color: var(--sn-text);
+    color: var(--ink-900);
     margin: 0;
   }
 
   .rl-cta-desc {
     font-size: var(--sn-text-base);
-    color: var(--sn-text-soft);
+    color: var(--ink-700);
     line-height: var(--sn-leading-base);
     margin: 0;
+    max-width: 480px;
   }
 
   .rl-cta-features {
     list-style: none;
+    padding: 0;
+    margin: 0;
     display: flex;
     flex-direction: column;
     gap: var(--sn-space-2);
     text-align: left;
     align-self: stretch;
+    max-width: 400px;
   }
 
   .rl-cta-features li {
@@ -633,7 +660,7 @@ const tabs = [
     align-items: flex-start;
     gap: var(--sn-space-2);
     font-size: var(--sn-text-sm);
-    color: var(--sn-text-soft);
+    color: var(--ink-700);
   }
 
   .rl-cta-features li::before {
@@ -643,55 +670,74 @@ const tabs = [
     flex-shrink: 0;
   }
 
-  .rl-cta-btn {
-    gap: var(--sn-space-3);
+  .rl-cta-btn { gap: var(--sn-space-3); }
+
+  .rl-pass-badge {
+    background: rgba(255,255,255,.25) !important;
+    color: #fff !important;
+    font-family: 'Inter', system-ui, sans-serif;
+    font-weight: 900;
   }
 
   .rl-cta-note {
     font-size: var(--sn-text-xs);
-    color: var(--sn-muted);
+    color: var(--ink-400);
     margin: 0;
   }
 
-  /* ---- 統合プロファイル ---- */
+  /* ---- 統合プロファイル CTA ---- */
   .rl-profile-cta { padding-block: var(--sn-space-8); }
 
   .rl-profile-card {
-    background: linear-gradient(135deg, var(--sn-primary-bg) 0%, var(--sn-secondary-bg) 100%);
-    border-radius: var(--sn-radius-xl);
+    background: linear-gradient(135deg, var(--brand-50) 0%, #e8f0ff 100%);
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--brand-200);
     padding: var(--sn-space-8);
     text-align: center;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: var(--sn-space-4);
+    position: relative;
+    overflow: hidden;
   }
 
-  .rl-profile-icon {
-    font-size: 3rem;
-    margin: 0;
+  .rl-profile-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(50% 60% at 80% 20%, rgba(124,92,255,.08), transparent 60%);
+    pointer-events: none;
   }
+
+  .rl-profile-icon { font-size: 3rem; margin: 0; position: relative; z-index: 1; }
 
   .rl-profile-title {
     font-family: var(--sn-font-rounded);
     font-size: var(--sn-text-xl);
     font-weight: 900;
-    color: var(--sn-text);
+    color: var(--ink-900);
     margin: 0;
+    position: relative;
+    z-index: 1;
   }
 
   .rl-profile-desc {
     font-size: var(--sn-text-sm);
-    color: var(--sn-muted);
+    color: var(--ink-700);
     line-height: var(--sn-leading-base);
     margin: 0;
     max-width: 440px;
+    position: relative;
+    z-index: 1;
   }
 
   .rl-profile-btn {
     display: inline-flex;
     align-items: center;
     gap: var(--sn-space-2);
+    position: relative;
+    z-index: 1;
   }
 
   /* ---- 関連診断 ---- */
@@ -701,7 +747,7 @@ const tabs = [
     font-family: var(--sn-font-rounded);
     font-size: var(--sn-text-xl);
     font-weight: 700;
-    color: var(--sn-text);
+    color: var(--ink-900);
     margin-bottom: var(--sn-space-5);
     text-align: center;
   }
@@ -718,9 +764,6 @@ const tabs = [
     align-items: center;
     gap: var(--sn-space-2);
     padding: var(--sn-space-4);
-    background: var(--sn-bg-white);
-    border: 1px solid var(--sn-border);
-    border-radius: var(--sn-radius);
     text-decoration: none;
     transition:
       border-color var(--sn-dur-fast) var(--sn-ease),
@@ -730,27 +773,30 @@ const tabs = [
   }
 
   .rl-related-card:hover {
-    border-color: var(--sn-primary-light);
-    box-shadow: var(--sn-shadow);
+    border-color: var(--brand-300);
+    box-shadow: var(--shadow-lg);
     transform: translateY(-2px);
     text-decoration: none;
   }
 
-  .rl-related-icon {
-    font-size: var(--sn-text-2xl);
+  .rl-related-card:focus-visible {
+    outline: 2px solid var(--brand-400);
+    outline-offset: 3px;
   }
+
+  .rl-related-icon { font-size: var(--sn-text-2xl); }
 
   .rl-related-name {
     font-size: var(--sn-text-sm);
     font-weight: 700;
-    color: var(--sn-text);
+    color: var(--ink-900);
     text-align: center;
   }
 
   /* ---- ボトムシェア ---- */
   .rl-bottom-share {
     padding-block: var(--sn-space-8);
-    border-top: 1px solid var(--sn-border);
+    border-top: 1px solid var(--line);
     text-align: center;
   }
 
@@ -758,7 +804,7 @@ const tabs = [
     font-family: var(--sn-font-rounded);
     font-size: var(--sn-text-lg);
     font-weight: 700;
-    color: var(--sn-text);
+    color: var(--ink-900);
     margin-bottom: var(--sn-space-4);
   }
 
@@ -768,71 +814,53 @@ const tabs = [
     gap: var(--sn-space-2);
     margin-top: var(--sn-space-6);
     font-size: var(--sn-text-sm);
-    color: var(--sn-muted);
+    color: var(--ink-400);
     text-decoration: none;
     transition: color var(--sn-dur-fast) var(--sn-ease);
+    min-height: var(--sn-tap-min);
   }
-  .rl-back-link:hover {
-    color: var(--sn-primary);
-    text-decoration: none;
+
+  .rl-back-link:hover { color: var(--brand-600); text-decoration: none; }
+
+  .rl-back-link:focus-visible {
+    outline: 2px solid var(--brand-400);
+    outline-offset: 3px;
+    border-radius: var(--radius-sm);
   }
 </style>
 
-{/* タブ切り替えスクリプト */}
 <script is:inline>
   (function () {
     var tabs = document.querySelectorAll('[role="tab"]');
     var panels = document.querySelectorAll('[role="tabpanel"]');
 
     function activateTab(tabEl) {
-      // 全タブを非アクティブに
-      tabs.forEach(function (t) {
-        t.setAttribute('aria-selected', 'false');
-      });
-      // 全パネルを非表示
-      panels.forEach(function (p) {
-        p.classList.add('rl-panel--hidden');
-      });
-
-      // 選択タブをアクティブに
+      tabs.forEach(function (t) { t.setAttribute('aria-selected', 'false'); });
+      panels.forEach(function (p) { p.classList.add('rl-panel--hidden'); });
       tabEl.setAttribute('aria-selected', 'true');
-      var panelId = tabEl.getAttribute('aria-controls');
-      var panel = document.getElementById(panelId);
-      if (panel) {
-        panel.classList.remove('rl-panel--hidden');
-      }
+      var panel = document.getElementById(tabEl.getAttribute('aria-controls'));
+      if (panel) panel.classList.remove('rl-panel--hidden');
     }
 
-    // 最初のタブを初期化
-    if (tabs.length > 0) {
-      activateTab(tabs[0]);
-    }
+    if (tabs.length > 0) activateTab(tabs[0]);
 
-    // タブクリックイベント
     tabs.forEach(function (tab) {
       tab.addEventListener('click', function () {
         activateTab(tab);
-        // タブがビューポートに入るようにスクロール
         tab.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
       });
 
-      // キーボード操作（矢印キー）
       tab.addEventListener('keydown', function (e) {
-        var currentIndex = Array.from(tabs).indexOf(tab);
-        var nextIndex = -1;
-        if (e.key === 'ArrowRight') {
-          nextIndex = (currentIndex + 1) % tabs.length;
-        } else if (e.key === 'ArrowLeft') {
-          nextIndex = (currentIndex - 1 + tabs.length) % tabs.length;
-        } else if (e.key === 'Home') {
-          nextIndex = 0;
-        } else if (e.key === 'End') {
-          nextIndex = tabs.length - 1;
-        }
-        if (nextIndex >= 0) {
+        var idx = Array.from(tabs).indexOf(tab);
+        var next = -1;
+        if (e.key === 'ArrowRight') next = (idx + 1) % tabs.length;
+        else if (e.key === 'ArrowLeft') next = (idx - 1 + tabs.length) % tabs.length;
+        else if (e.key === 'Home') next = 0;
+        else if (e.key === 'End') next = tabs.length - 1;
+        if (next >= 0) {
           e.preventDefault();
-          tabs[nextIndex].focus();
-          activateTab(tabs[nextIndex]);
+          tabs[next].focus();
+          activateTab(tabs[next]);
         }
       });
     });

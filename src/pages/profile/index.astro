@@ -61,13 +61,19 @@ const jsonLd = [
   breadcrumbs={[{ name: '統合プロファイル', url: '/profile/' }]}
   lastUpdated="2026-05-21"
 >
-  <!-- ヘッダーセクション -->
+  <!-- ヘッダーセクション v2 — パープルグラデーション + スパークル -->
   <section class="prof-header">
+    <span class="prof-sparkle prof-sparkle-1" aria-hidden="true">✦</span>
+    <span class="prof-sparkle prof-sparkle-2" aria-hidden="true">✧</span>
+    <span class="prof-sparkle prof-sparkle-3" aria-hidden="true">✦</span>
+    <span class="prof-sparkle prof-sparkle-4" aria-hidden="true">✧</span>
     <Container>
       <div class="prof-header-inner">
-        <div class="prof-hero-badge" aria-hidden="true">
-          <span class="prof-hero-icon">🎯</span>
-          <span class="prof-hero-label">統合プロファイル</span>
+        <div class="prof-diag-badge-wrap">
+          <span class="diag-badge" aria-label="統合プロファイル">
+            <span aria-hidden="true">🎯</span>
+            統合プロファイル
+          </span>
         </div>
         <h1 class="prof-title">あなたの統合プロファイル</h1>
         <p class="prof-lead">
@@ -267,34 +273,50 @@ const jsonLd = [
 </BaseLayout>
 
 <style>
-  /* ヘッダー */
+  /* ヘッダー v2 */
   .prof-header {
-    background: linear-gradient(135deg, var(--sn-primary-bg, #eef2ff) 0%, var(--sn-bg-soft, #f9fafb) 100%);
-    padding-block: var(--sn-space-10, 2.5rem) var(--sn-space-8, 2rem);
-    border-bottom: 1px solid var(--sn-border, #e5e7eb);
+    background: linear-gradient(135deg, #f3efff 0%, #e8e0ff 60%, #ede5ff 100%);
+    padding-block: var(--sn-space-12, 3rem) var(--sn-space-10, 2.5rem);
+    border-bottom: 1px solid var(--line, #ece9f5);
+    position: relative;
+    overflow: hidden;
+  }
+  .prof-header::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(60% 50% at 80% 20%, rgba(255,255,255,.4), transparent 60%),
+      radial-gradient(40% 30% at 10% 80%, rgba(255,255,255,.3), transparent 50%);
+    pointer-events: none;
+  }
+  .prof-sparkle {
+    position: absolute;
+    pointer-events: none;
+    color: var(--brand-500, #7c5cff);
+    font-style: normal;
+    user-select: none;
+    opacity: 0;
+    animation: prof-sparkle 3.5s ease-in-out infinite;
+  }
+  .prof-sparkle-1 { top: 10%; left: 6%;    font-size: 1rem;   animation-delay: 0s;    animation-duration: 4s; }
+  .prof-sparkle-2 { top: 15%; right: 12%;  font-size: 0.7rem; animation-delay: 1.2s;  animation-duration: 3.5s; }
+  .prof-sparkle-3 { bottom: 20%; left: 16%; font-size: 0.8rem; animation-delay: 2.1s; animation-duration: 4.2s; }
+  .prof-sparkle-4 { bottom: 12%; right: 8%; font-size: 1.1rem; animation-delay: 0.8s; animation-duration: 3.8s; }
+  @keyframes prof-sparkle {
+    0%, 100% { opacity: 0;    transform: scale(1) rotate(0deg); }
+    40%       { opacity: 0.55; transform: scale(1.2) rotate(18deg); }
+    60%       { opacity: 0.7;  transform: scale(1.1) rotate(12deg); }
   }
   .prof-header-inner {
     display: flex;
     flex-direction: column;
     gap: var(--sn-space-4, 1rem);
     max-width: 640px;
+    position: relative;
+    z-index: 1;
   }
-  .prof-hero-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--sn-space-2, 0.5rem);
-    padding: 0.375rem var(--sn-space-4, 1rem);
-    background: var(--sn-primary, #6366f1);
-    color: #fff;
-    border-radius: 999px;
-    width: fit-content;
-  }
-  .prof-hero-icon { font-size: 1rem; }
-  .prof-hero-label {
-    font-size: 0.8125rem;
-    font-weight: 700;
-    letter-spacing: 0.03em;
-  }
+  .prof-diag-badge-wrap { margin-bottom: 4px; }
   .prof-title {
     font-family: var(--sn-font-rounded, sans-serif);
     font-size: clamp(1.5rem, 5vw, 2rem);

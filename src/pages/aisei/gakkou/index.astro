@@ -260,6 +260,9 @@ const references = [
 >
   {/* ========== ヒーロー ========== */}
   <section class="gk-hero" aria-labelledby="gk-h1">
+    <span class="gk-sparkle gk-sparkle-1" aria-hidden="true">✦</span>
+    <span class="gk-sparkle gk-sparkle-2" aria-hidden="true">✧</span>
+    <span class="gk-sparkle gk-sparkle-3" aria-hidden="true">✦</span>
     <Container>
       <div class="gk-hero-inner">
         <div class="gk-badge">学生 × 保護者 両視点・Phase 2 新設</div>
@@ -484,10 +487,39 @@ const references = [
 <style>
 /* ========== ヒーロー ========== */
 .gk-hero {
-  background: linear-gradient(135deg, #1e3a5f 0%, #4338ca 50%, #059669 100%);
+  background: linear-gradient(135deg, #2d3a6b 0%, #3d4d8b 60%, #4d5f9e 100%);
   color: #fff;
   padding-block: 3.5rem 4rem;
   text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.gk-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(60% 50% at 80% 20%, rgba(255,255,255,.15), transparent 60%),
+    radial-gradient(40% 30% at 10% 80%, rgba(255,255,255,.1), transparent 50%);
+  pointer-events: none;
+}
+/* スパークル */
+.gk-sparkle {
+  position: absolute;
+  pointer-events: none;
+  color: rgba(255,255,255,.65);
+  font-style: normal;
+  user-select: none;
+  opacity: 0;
+  animation: gk-sparkle 3.5s ease-in-out infinite;
+}
+.gk-sparkle-1 { top: 12%; left: 8%;    font-size: 1rem;   animation-delay: 0s;    animation-duration: 4s; }
+.gk-sparkle-2 { top: 60%; right: 6%;   font-size: 0.7rem; animation-delay: 1.3s;  animation-duration: 3.5s; }
+.gk-sparkle-3 { bottom: 18%; left: 14%; font-size: 0.8rem; animation-delay: 2s;   animation-duration: 4.2s; }
+@keyframes gk-sparkle {
+  0%, 100% { opacity: 0;   transform: scale(1) rotate(0deg); }
+  40%       { opacity: 0.7; transform: scale(1.2) rotate(15deg); }
+  60%       { opacity: 0.9; transform: scale(1.1) rotate(10deg); }
 }
 .gk-hero-inner {
   display: flex;
@@ -836,4 +868,32 @@ const references = [
   .gk-flow-body { flex-direction: column; }
   .gk-other-grid { grid-template-columns: repeat(2, 1fr); }
 }
+
+  /* axis スパークル */
+  .axis-sparkle {
+    position: absolute;
+    pointer-events: none;
+    color: var(--s-school, #2d3a6b);
+    font-style: normal;
+    user-select: none;
+    opacity: 0;
+    animation: axis-sparkle 3.5s ease-in-out infinite;
+  }
+  .axis-sparkle-1 { top: 12%; right: 8%;  font-size: 1rem;   animation-delay: 0s;    animation-duration: 4s; }
+  .axis-sparkle-2 { top: 60%; right: 4%;  font-size: 0.7rem; animation-delay: 1.2s;  animation-duration: 3.5s; }
+  .axis-sparkle-3 { bottom: 20%; left: 6%; font-size: 0.8rem; animation-delay: 2s;   animation-duration: 4.2s; }
+  @keyframes axis-sparkle {
+    0%, 100% { opacity: 0;    transform: scale(1) rotate(0deg); }
+    40%       { opacity: 0.55; transform: scale(1.2) rotate(18deg); }
+    60%       { opacity: 0.7;  transform: scale(1.1) rotate(12deg); }
+  }
+  .axis-header::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(60% 50% at 80% 20%, rgba(255,255,255,.35), transparent 60%),
+      radial-gradient(40% 30% at 10% 80%, rgba(255,255,255,.25), transparent 50%);
+    pointer-events: none;
+  }
 </style>
