@@ -1,0 +1,983 @@
+---
+/**
+ * 性格は変わるのか？科学的検証ページ
+ * KW: 性格変わる（VOL480 / SD24）
+ * 確認日: 2026-05-21
+ *
+ * 学術根拠:
+ *   - Costa PT, McCrae RR (1992) "Five-Factor Model" NEO Personality Inventory manual
+ *   - Roberts BW, Walton KE, Viechtbauer W (2006) "Patterns of mean-level change in personality traits across the life course"
+ *     Psychological Bulletin, 132(1), 1-25
+ *   - Bleidorn W, Hopwood CJ, Lucas RE (2018) "Life events and personality trait change"
+ *     Journal of Personality, 86(1), 83-96
+ *
+ * SEO/AIO対応:
+ * - JSON-LD: Article + FAQPage + BreadcrumbList
+ * - @id連結: エンティティグラフ形成
+ * - PRO誘導CTA（タイムカプセル機能・3ヶ月追跡）
+ * - TldrBlock / ScienceNote / ReferenceList
+ * - FAQ 12問
+ * - YMYL回避: 医療診断・治療表記ゼロ
+ */
+import BaseLayout from '../../../../layouts/BaseLayout.astro';
+import Container from '../../../../components/Container.astro';
+import TldrBlock from '../../../../components/TldrBlock.astro';
+import ReferenceList from '../../../../components/ReferenceList.astro';
+import ScienceNote from '../../../../components/ScienceNote.astro';
+
+const SITE_URL = 'https://shindan-navi.jp';
+const PAGE_URL = `${SITE_URL}/diagnosis/change/seikaku-kawaru/`;
+const CONFIRMED_AT = '2026-05-21';
+
+const references = [
+  {
+    title: 'Revised NEO Personality Inventory (NEO-PI-R) and NEO Five-Factor Inventory (NEO-FFI) professional manual',
+    author: 'Costa PT, McCrae RR',
+    year: 1992,
+    publisher: 'Psychological Assessment Resources',
+    url: 'https://www.parinc.com/Products/Pkey/276',
+  },
+  {
+    title: 'Patterns of mean-level change in personality traits across the life course: A meta-analysis of longitudinal studies',
+    author: 'Roberts BW, Walton KE, Viechtbauer W',
+    year: 2006,
+    journal: 'Psychological Bulletin',
+    volume: '132(1), 1-25',
+    url: 'https://doi.org/10.1037/0033-2909.132.1.1',
+  },
+  {
+    title: 'Life events and personality trait change',
+    author: 'Bleidorn W, Hopwood CJ, Lucas RE',
+    year: 2018,
+    journal: 'Journal of Personality',
+    volume: '86(1), 83-96',
+    url: 'https://doi.org/10.1111/jopy.12286',
+  },
+];
+
+const faqs = [
+  {
+    question: '性格は本当に変わりますか？',
+    answer:
+      'はい、変わります。Roberts ら（2006）の縦断メタ分析（92研究・50,207人）では、誠実性・協調性・開放性は年齢とともに平均的に変化することが示されています。ただし変化のペースは人それぞれで、大きく変わる人もいれば安定した人もいます。',
+  },
+  {
+    question: '性格が変わるのに何年かかりますか？',
+    answer:
+      'Bleidorn ら（2018）の研究では、大きなライフイベント後1〜2年で特性スコアが有意に変化するケースが確認されています。ただし変化の速さは個人差・イベントの種類・本人の関わり方によって大きく異なります。',
+  },
+  {
+    question: '内向的な性格を外向的に変えられますか？',
+    answer:
+      'Costa & McCrae（1992）の五因子モデルでは、外向性は比較的安定した特性とされています。完全に「逆の性格」になるというより、行動パターンや習慣を変えることで、社交的な場面での振る舞いを変化させることは十分に可能です。',
+  },
+  {
+    question: '年を取ると性格は丸くなると言われますが本当ですか？',
+    answer:
+      'Roberts ら（2006）のメタ分析では、協調性・誠実性は中年以降に上昇する傾向が示されています。また神経症傾向（不安・気分の波）は成人期に低下する傾向があります。「年を取ると丸くなる」という通説には一定の根拠があります。',
+  },
+  {
+    question: '結婚や転職で性格は変わりますか？',
+    answer:
+      'Bleidorn ら（2018）は、結婚・離婚・転職・出産などのライフイベントが特性スコアに有意な変化をもたらすことを示しています。変化の方向（ポジティブ・ネガティブ）はイベントの種類と本人の向き合い方に依存します。',
+  },
+  {
+    question: 'ストレスで性格が変わることはありますか？',
+    answer:
+      '長期的な強いストレスは神経症傾向（不安・抑うつ傾向）を高め、開放性・外向性を一時的に低下させることがあります。ただしストレスが解消されると元の傾向に戻るケースも多く、一時的な状態変化と長期的な特性変化を区別することが重要です。心身の不調が続く場合は専門家にご相談ください。',
+  },
+  {
+    question: '子ども時代の性格は大人になっても続きますか？',
+    answer:
+      'Costa & McCrae（1992）の研究では、幼少期の特性は成人期と中程度の相関があります。しかし相関係数は1ではなく、成長・経験・環境によって変化します。「子ども時代の性格が全て決まる」という考え方は現在の心理学では支持されていません。',
+  },
+  {
+    question: '意図的に性格を変えることはできますか？',
+    answer:
+      '行動の繰り返しを通じた意図的な変化は可能です。Hudson ら（2019）の介入研究では、意図的な行動変化を16週間続けたグループで特性スコアの変化が確認されました（Journal of Experimental Psychology: General, 148(8)）。ただし「性格を根本から作り変える」ではなく、「行動パターンを変える」というアプローチが現実的です。',
+  },
+  {
+    question: 'MBTIタイプは変わることがありますか？',
+    answer:
+      'MBTIテストの結果が変わることはよくあります。これはMBTI理論では認知機能の発達（Beebe 2017）や、テスト時のコンディション・状況によるものとされています。詳しくは「MBTI変わった」ページをご覧ください。',
+  },
+  {
+    question: '「性格が変わった」と周りに言われるのはなぜですか？',
+    answer:
+      '行動パターンの変化は他者の目に「性格の変化」として映ることがあります。転職・引っ越し・新しい人間関係など環境が変わると、今まで見せていなかった一面が表れることもあります。また自分では気づかない変化が、長期間会っていない人には明確に見えることもあります。',
+  },
+  {
+    question: '性格変化を測るにはどうすればよいですか？',
+    answer:
+      '同じ診断を一定期間をおいて複数回受けることで、スコアの変化を追跡できます。診断ナビのPRO会員（タイムカプセル機能）を使うと、過去の診断結果と現在の特性傾向を比較して変化を可視化できます。',
+  },
+  {
+    question: 'このページの内容は医療的なアドバイスですか？',
+    answer:
+      'いいえ。本ページは心理学の学術研究を参照した自己理解のための情報提供です。医療診断・治療・臨床心理学的アセスメントの代替ではありません。心身の不調がある場合は医師・臨床心理士にご相談ください。',
+  },
+];
+
+const jsonLdArticle = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  '@id': `${PAGE_URL}#article`,
+  mainEntityOfPage: { '@type': 'WebPage', '@id': PAGE_URL },
+  headline: '性格は変わるのか？科学が示す変化の仕組みと5つの典型シーン',
+  description:
+    'Costa & McCrae（1992）の五因子モデルと Roberts ら（2006）の縦断メタ分析をもとに、性格が変わるしくみ・変化が起きやすいライフイベント・変化を追跡する方法を解説します。',
+  url: PAGE_URL,
+  datePublished: '2026-05-21',
+  dateModified: CONFIRMED_AT,
+  inLanguage: 'ja',
+  author: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+    name: '診断ナビ',
+  },
+  publisher: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+    name: '診断ナビ',
+  },
+  citation: references.map((ref) => ({
+    '@type': ref.journal ? 'ScholarlyArticle' : 'Book',
+    name: ref.title,
+    author: ref.author,
+    datePublished: String(ref.year),
+    url: ref.url,
+  })),
+};
+
+const jsonLdFAQ = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  '@id': `${PAGE_URL}#faq`,
+  mainEntity: faqs.map(({ question, answer }) => ({
+    '@type': 'Question',
+    name: question,
+    acceptedAnswer: { '@type': 'Answer', text: answer },
+  })),
+};
+
+const jsonLdBreadcrumb = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  '@id': `${PAGE_URL}#breadcrumb`,
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'ホーム', item: SITE_URL },
+    { '@type': 'ListItem', position: 2, name: '診断一覧', item: `${SITE_URL}/diagnosis/` },
+    { '@type': 'ListItem', position: 3, name: '性格変化', item: `${SITE_URL}/diagnosis/change/` },
+    { '@type': 'ListItem', position: 4, name: '性格は変わるのか', item: PAGE_URL },
+  ],
+};
+
+const jsonLdAll = [jsonLdArticle, jsonLdFAQ, jsonLdBreadcrumb];
+---
+
+<BaseLayout
+  title="性格は変わるのか？科学的根拠と変化が起きる5つの場面"
+  description="「性格は変わる」は本当か。Costa & McCrae（1992）五因子モデルと Roberts ら（2006）50,207人の縦断データで解説。ライフイベント別変化パターンとPROで変化を3ヶ月追跡する方法も紹介。"
+  canonical={PAGE_URL}
+  jsonLd={jsonLdAll}
+  ogType="article"
+  publishDate="2026-05-21"
+  lastUpdated={CONFIRMED_AT}
+  breadcrumbs={[
+    { name: '診断一覧', url: '/diagnosis/' },
+    { name: '性格変化', url: '/diagnosis/change/' },
+    { name: '性格は変わるのか', url: '/diagnosis/change/seikaku-kawaru/' },
+  ]}
+>
+  <link rel="canonical" href={PAGE_URL} slot="head" />
+
+  {/* ========== ヒーロー ========== */}
+  <section class="ch-hero" aria-labelledby="ch-hero-h1">
+    <Container>
+      <div class="ch-hero-inner">
+        <div class="ch-hero-badge">Roberts ら 2006 縦断メタ分析（50,207人）に基づく解説</div>
+        <h1 id="ch-hero-h1" class="ch-hero-h1">
+          性格は変わるのか？<br />
+          <span class="ch-hero-sub">科学が示す変化の仕組みと5つの典型シーン</span>
+        </h1>
+        <p class="ch-hero-catch">
+          「この歳になって性格を変えるのは無理」と思っていませんか。<br />
+          心理学の縦断研究は、性格が変わることを数値で示しています。
+        </p>
+        <div class="ch-hero-meta">
+          <time datetime={CONFIRMED_AT}>{CONFIRMED_AT}</time> 時点の情報
+        </div>
+      </div>
+    </Container>
+  </section>
+
+  <Container>
+    {/* ========== このページでわかること ========== */}
+    <div class="ch-aio-block" role="note" aria-label="このページでわかること">
+      <p class="ch-aio-title">このページでわかること</p>
+      <ul class="ch-aio-list">
+        <li>「性格は変わらない」という通説と、科学的縦断研究（92研究・50,207人）が示す実際</li>
+        <li>五因子モデル（特性理論）で「変わりやすい特性」と「安定しやすい特性」の違い</li>
+        <li>ライフイベント（結婚・転職・出産・喪失など）が特性スコアに与える影響</li>
+        <li>性格変化が起きやすい5つの典型シーンと、各シーンの変化パターン</li>
+        <li>自分の特性変化を3ヶ月単位で追跡する方法（診断ナビ PRO タイムカプセル）</li>
+      </ul>
+    </div>
+
+    {/* ========== TL;DR ========== */}
+    <TldrBlock
+      title="性格は変わるのか？ポイントまとめ"
+      points={[
+        'Roberts ら（2006）の92研究・50,207人の縦断メタ分析では、誠実性・協調性は成人期を通じて緩やかに上昇し、神経症傾向は低下する傾向が確認された（Psychological Bulletin 132(1)）',
+        '特性は「変わらない」のではなく「変わりにくい」。変化は数年単位の緩やかなプロセスで起きる',
+        'Bleidorn ら（2018）は、結婚・転職・出産・喪失などのライフイベント後1〜2年で特性スコアが有意に変化するケースを報告',
+        '変化が起きやすい5つの典型シーン: 結婚・転職・出産・大きな喪失体験・長期的な新環境への移行',
+        '変化を把握するには「同じ診断を時間差で複数回受ける」ことが有効。PRO タイムカプセル機能で過去と現在を比較できる',
+      ]}
+      updatedAt={CONFIRMED_AT}
+      sourceLabel="Roberts ら（2006）Psychological Bulletin"
+      sourceUrl="https://doi.org/10.1037/0033-2909.132.1.1"
+    />
+
+    {/* ========== H2-1: 科学的検証 ========== */}
+    <section class="ch-section" aria-labelledby="ch-science-h2">
+      <h2 id="ch-science-h2" class="ch-h2">「性格は変わらない」は本当か</h2>
+      <p class="ch-lead">
+        日常会話では「性格は変わらない」とよく言われます。<br />
+        しかし心理学の縦断研究は、このイメージを数値で否定しています。
+      </p>
+
+      <h3 class="ch-h3">五因子モデルとは何か</h3>
+      <p>
+        Costa & McCrae（1992）が提唱した五因子モデル（Five-Factor Model）は、<br />
+        現在の特性心理学の標準的な枠組みです。<br />
+        5つの特性軸（外向性・神経症傾向・開放性・協調性・誠実性）で特性を測定します。
+      </p>
+      <div class="ch-table-wrap">
+        <table class="ch-table">
+          <caption class="ch-table-caption">五因子モデル：5つの特性軸と変化傾向（Costa & McCrae 1992 / Roberts ら 2006）</caption>
+          <thead>
+            <tr>
+              <th scope="col">特性</th>
+              <th scope="col">内容</th>
+              <th scope="col">成人期の変化傾向</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>外向性</td>
+              <td>社交性・活動性・積極性</td>
+              <td>比較的安定（若干低下傾向）</td>
+            </tr>
+            <tr>
+              <td>神経症傾向</td>
+              <td>不安・気分の波・ストレス反応</td>
+              <td>成人期を通じて低下傾向</td>
+            </tr>
+            <tr>
+              <td>開放性</td>
+              <td>好奇心・創造性・新しい経験への親和性</td>
+              <td>中年以降に若干低下傾向</td>
+            </tr>
+            <tr>
+              <td>協調性</td>
+              <td>他者への親切さ・信頼・協力</td>
+              <td>中年以降に上昇傾向</td>
+            </tr>
+            <tr>
+              <td>誠実性</td>
+              <td>目標志向・規律・責任感</td>
+              <td>成人期を通じて上昇傾向</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="ch-source-note">
+        ※ Roberts ら（2006）の縦断メタ分析（<a href="https://doi.org/10.1037/0033-2909.132.1.1" target="_blank" rel="noopener noreferrer">Psychological Bulletin 132(1)</a>）をもとに作成。個人差あり。
+      </p>
+
+      <h3 class="ch-h3">縦断研究が示す変化の実態</h3>
+      <p>
+        Roberts ら（2006）は92の縦断研究・50,207人のデータを統合したメタ分析を実施しました。<br />
+        主な知見を以下にまとめます。
+      </p>
+      <ul class="ch-bullet-list">
+        <li>誠実性・協調性は成人期（20〜60代）を通じて緩やかに上昇</li>
+        <li>神経症傾向は成人期を通じて緩やかに低下</li>
+        <li>外向性は若年期から中年期にかけてわずかに低下</li>
+        <li>変化の速度は若年期（20〜30代）が最も大きく、高齢期に向けて安定する</li>
+        <li>変化のペースは極めて緩やかで、数ヶ月単位ではなく数年〜数十年単位</li>
+      </ul>
+      <p class="ch-source-note">
+        出典: Roberts BW, Walton KE, Viechtbauer W（2006）<a href="https://doi.org/10.1037/0033-2909.132.1.1" target="_blank" rel="noopener noreferrer">Psychological Bulletin, 132(1), 1-25</a>
+      </p>
+    </section>
+
+    {/* ========== H2-2: ライフイベントと変化 ========== */}
+    <section class="ch-section" aria-labelledby="ch-events-h2">
+      <h2 id="ch-events-h2" class="ch-h2">ライフイベントが性格に与える影響</h2>
+      <p class="ch-lead">
+        縦断研究に加えて、特定のライフイベントが特性スコアを変化させることも示されています。<br />
+        Bleidorn ら（2018）はイベントと特性変化の関係を系統的に分析しています。
+      </p>
+
+      <h3 class="ch-h3">主要ライフイベントと変化パターン</h3>
+      <div class="ch-event-grid">
+        <div class="ch-event-card">
+          <div class="ch-event-icon" aria-hidden="true">💍</div>
+          <h4 class="ch-event-title">結婚</h4>
+          <p class="ch-event-desc">
+            協調性・誠実性の上昇傾向が報告されています。<br />
+            パートナーとの長期的な関与が、協力的・責任感ある行動パターンを強化すると考えられます。
+          </p>
+        </div>
+        <div class="ch-event-card">
+          <div class="ch-event-icon" aria-hidden="true">👶</div>
+          <h4 class="ch-event-title">出産・育児</h4>
+          <p class="ch-event-desc">
+            誠実性の上昇と外向性の一時的な低下が見られるケースがあります。<br />
+            特に育児初期は生活リズムの変化が特性の発現に影響します。
+          </p>
+        </div>
+        <div class="ch-event-card">
+          <div class="ch-event-icon" aria-hidden="true">💼</div>
+          <h4 class="ch-event-title">転職・キャリアチェンジ</h4>
+          <p class="ch-event-desc">
+            自律性・開放性の変化が見られることがあります。<br />
+            新しい環境での役割や人間関係が行動パターンに影響を与えます。
+          </p>
+        </div>
+        <div class="ch-event-card">
+          <div class="ch-event-icon" aria-hidden="true">💔</div>
+          <h4 class="ch-event-title">喪失体験（別れ・死別など）</h4>
+          <p class="ch-event-desc">
+            神経症傾向の一時的な上昇が見られるケースがあります。<br />
+            多くの場合、時間の経過とともに元の傾向に近い状態に戻ることが多いとされています。
+          </p>
+        </div>
+        <div class="ch-event-card">
+          <div class="ch-event-icon" aria-hidden="true">🌍</div>
+          <h4 class="ch-event-title">長期的な新環境（留学・移住）</h4>
+          <p class="ch-event-desc">
+            開放性・外向性に変化が起きやすいとされます。<br />
+            異文化環境への適応が、経験への開放性を高める可能性があります。
+          </p>
+        </div>
+      </div>
+      <p class="ch-source-note">
+        出典: Bleidorn W, Hopwood CJ, Lucas RE（2018）<a href="https://doi.org/10.1111/jopy.12286" target="_blank" rel="noopener noreferrer">Journal of Personality, 86(1), 83-96</a>
+      </p>
+    </section>
+
+    {/* ========== H2-3: 変化が起きる5つの典型シーン ========== */}
+    <section class="ch-section" aria-labelledby="ch-scenes-h2">
+      <h2 id="ch-scenes-h2" class="ch-h2">性格変化が起きやすい5つの典型シーン</h2>
+      <p class="ch-lead">
+        縦断研究とライフイベント研究を統合すると、<br />
+        特性変化が起きやすい「局面」のパターンが見えてきます。
+      </p>
+
+      <div class="ch-scene-list">
+        <div class="ch-scene-item">
+          <div class="ch-scene-num" aria-hidden="true">1</div>
+          <div class="ch-scene-body">
+            <h3 class="ch-scene-title">社会的役割の大きな転換期</h3>
+            <p>
+              就職・結婚・出産・介護開始など「責任範囲が大きく変わる」タイミング。<br />
+              誠実性・協調性が変化しやすい局面です。<br />
+              「自分が変わった」と最も実感しやすい時期でもあります。
+            </p>
+          </div>
+        </div>
+        <div class="ch-scene-item">
+          <div class="ch-scene-num" aria-hidden="true">2</div>
+          <div class="ch-scene-body">
+            <h3 class="ch-scene-title">長期的な対人関係の変化</h3>
+            <p>
+              離婚・死別・深い友人関係の終わりなど「重要な他者との関係」が変わるとき。<br />
+              外向性・神経症傾向に一時的な変化が生じやすいとされます。<br />
+              この変化は「特性が変わった」というよりも「特性の発現が変わった」側面が強いです。
+            </p>
+          </div>
+        </div>
+        <div class="ch-scene-item">
+          <div class="ch-scene-num" aria-hidden="true">3</div>
+          <div class="ch-scene-body">
+            <h3 class="ch-scene-title">長期的な環境の移行</h3>
+            <p>
+              留学・移住・職場の大きな変化など「日常環境が根本から変わる」場面。<br />
+              開放性に変化が見られやすく、新しい行動レパートリーが増えることで<br />
+              「以前とは違う自分」を感じやすくなります。
+            </p>
+          </div>
+        </div>
+        <div class="ch-scene-item">
+          <div class="ch-scene-num" aria-hidden="true">4</div>
+          <div class="ch-scene-body">
+            <h3 class="ch-scene-title">強い成功体験・達成体験</h3>
+            <p>
+              大きな目標を達成した経験は、誠実性・外向性・自己効力感に肯定的な影響を与えます。<br />
+              「できた」という体験の積み重ねが行動パターンを変え、<br />
+              結果として特性の発現が変化することがあります。
+            </p>
+          </div>
+        </div>
+        <div class="ch-scene-item">
+          <div class="ch-scene-num" aria-hidden="true">5</div>
+          <div class="ch-scene-body">
+            <h3 class="ch-scene-title">継続的な自己理解・内省の実践</h3>
+            <p>
+              カウンセリング・コーチング・定期的な自己観察など「意図的な内省を続ける」場合。<br />
+              Bleidorn ら（2018）は意図的な変化努力と特性変化の関連を示唆しています。<br />
+              「気づき」を得た後の行動変化が、特性の緩やかな変化につながります。
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    {/* ========== H2-4: PRO誘導 ========== */}
+    <section class="ch-section ch-pro-section" aria-labelledby="ch-pro-h2">
+      <h2 id="ch-pro-h2" class="ch-h2">自分の特性変化を3ヶ月単位で追跡する</h2>
+      <p class="ch-lead">
+        「自分は変わっているのか」を知るには、<br />
+        同じ診断を一定期間をおいて複数回受けてスコアを比較する方法が有効です。<br />
+        診断ナビ PRO のタイムカプセル機能を使うと、変化を時系列で可視化できます。
+      </p>
+
+      <div class="ch-pro-card">
+        <div class="ch-pro-card-header">
+          <span class="ch-pro-badge">PRO 限定</span>
+          <h3 class="ch-pro-card-title">タイムカプセル機能で特性変化を追跡する</h3>
+        </div>
+        <div class="ch-pro-card-body">
+          <div class="ch-pro-features">
+            <div class="ch-pro-feature">
+              <span class="ch-pro-feature-icon" aria-hidden="true">⏳</span>
+              <div>
+                <strong>今日の診断結果を「封印」</strong>
+                <p>8診断のスコアを記録して、未来の自分へのメッセージとともに保存。</p>
+              </div>
+            </div>
+            <div class="ch-pro-feature">
+              <span class="ch-pro-feature-icon" aria-hidden="true">📈</span>
+              <div>
+                <strong>特性変化グラフで可視化</strong>
+                <p>3ヶ月後・6ヶ月後・1年後の結果と並べて、変化の方向と大きさをグラフで確認。</p>
+              </div>
+            </div>
+            <div class="ch-pro-feature">
+              <span class="ch-pro-feature-icon" aria-hidden="true">✉️</span>
+              <div>
+                <strong>過去の自分へのメッセージ</strong>
+                <p>「今の悩み」を記録しておくと、1年後の自分が「あのときの気持ち」を振り返られます。</p>
+              </div>
+            </div>
+          </div>
+          <a href="/pro/" class="ch-pro-cta-btn" aria-label="PRO会員の詳細を見る（タイムカプセル機能）">
+            PRO でタイムカプセルを始める →
+          </a>
+          <p class="ch-pro-cta-note">¥590/月・いつでも解約可</p>
+        </div>
+      </div>
+    </section>
+
+    {/* ========== Science Note ========== */}
+    <ScienceNote
+      basisText="Costa & McCrae（1992）五因子モデル・Roberts ら（2006）縦断メタ分析（92研究・50,207人）・Bleidorn ら（2018）ライフイベントと特性変化研究"
+      basisUrl="https://doi.org/10.1037/0033-2909.132.1.1"
+      basisLabel="Roberts ら（2006）Psychological Bulletin"
+      notMedical={true}
+      updatedAt={CONFIRMED_AT}
+      additionalNote="特性変化の傾向は平均値であり、個人差が非常に大きい。「自分がどのくらい変わったか」を把握するには個人レベルの継続的な測定が必要です。"
+    />
+
+    {/* ========== ReferenceList ========== */}
+    <ReferenceList references={references} confirmedAt={CONFIRMED_AT} />
+
+    {/* ========== 関連ページ ========== */}
+    <section class="ch-section" aria-labelledby="ch-related-h2">
+      <h2 id="ch-related-h2" class="ch-h2">関連ページ</h2>
+      <ul class="ch-related-list">
+        <li class="ch-related-item">
+          <a href="/diagnosis/change/seikaku-kawatta/" class="ch-related-link">
+            <span class="ch-related-icon" aria-hidden="true">🔄</span>
+            <span class="ch-related-body">
+              <span class="ch-related-title">性格が変わった気がする人へ</span>
+              <span class="ch-related-desc">変化を実感するサインと、過去の自分との比較方法</span>
+            </span>
+          </a>
+        </li>
+        <li class="ch-related-item">
+          <a href="/diagnosis/change/kawaru-kikkake/" class="ch-related-link">
+            <span class="ch-related-icon" aria-hidden="true">✨</span>
+            <span class="ch-related-body">
+              <span class="ch-related-title">性格が変わるきっかけ10選</span>
+              <span class="ch-related-desc">結婚・転職・出産など変化を生む典型的なきっかけと変化パターン</span>
+            </span>
+          </a>
+        </li>
+        <li class="ch-related-item">
+          <a href="/diagnosis/change/mbti-kawatta/" class="ch-related-link">
+            <span class="ch-related-icon" aria-hidden="true">🎭</span>
+            <span class="ch-related-body">
+              <span class="ch-related-title">MBTIタイプが変わった？</span>
+              <span class="ch-related-desc">MBTI結果が変化する理由と、認知機能発達段階の解説</span>
+            </span>
+          </a>
+        </li>
+        <li class="ch-related-item">
+          <a href="/diagnosis/multi-int/" class="ch-related-link">
+            <span class="ch-related-icon" aria-hidden="true">🧠</span>
+            <span class="ch-related-body">
+              <span class="ch-related-title">多重知能テスト</span>
+              <span class="ch-related-desc">Gardner理論で8つの知能プロファイルを発見</span>
+            </span>
+          </a>
+        </li>
+        <li class="ch-related-item">
+          <a href="/profile/" class="ch-related-link">
+            <span class="ch-related-icon" aria-hidden="true">📊</span>
+            <span class="ch-related-body">
+              <span class="ch-related-title">統合プロファイル</span>
+              <span class="ch-related-desc">全診断結果を統合した自己理解レポート</span>
+            </span>
+          </a>
+        </li>
+      </ul>
+    </section>
+
+    {/* ========== FAQ ========== */}
+    <section class="ch-section" aria-labelledby="ch-faq-h2">
+      <h2 id="ch-faq-h2" class="ch-h2">よくある質問</h2>
+      <dl class="ch-faq-list">
+        {faqs.map(({ question, answer }) => (
+          <div class="ch-faq-item">
+            <dt class="ch-faq-q">{question}</dt>
+            <dd class="ch-faq-a">{answer}</dd>
+          </div>
+        ))}
+      </dl>
+    </section>
+  </Container>
+</BaseLayout>
+
+<style>
+/* ========== ヒーロー ========== */
+.ch-hero {
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+  color: #fff;
+  padding-block: 3.5rem 4rem;
+  text-align: center;
+}
+.ch-hero-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+.ch-hero-badge {
+  display: inline-block;
+  background: rgba(255 255 255 / 0.18);
+  border: 1px solid rgba(255 255 255 / 0.4);
+  border-radius: 2rem;
+  padding: 0.25rem 1rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+}
+.ch-hero-h1 {
+  font-size: clamp(1.75rem, 5vw, 2.5rem);
+  font-family: var(--sn-font-rounded, sans-serif);
+  font-weight: 700;
+  line-height: 1.3;
+  margin: 0;
+}
+.ch-hero-sub {
+  display: block;
+  font-size: clamp(0.9rem, 2.5vw, 1.15rem);
+  opacity: 0.9;
+  margin-top: 0.25rem;
+}
+.ch-hero-catch {
+  font-size: clamp(0.9rem, 2vw, 1rem);
+  opacity: 0.9;
+  line-height: 1.8;
+  margin: 0;
+}
+.ch-hero-meta {
+  font-size: 0.78rem;
+  opacity: 0.65;
+}
+
+/* ========== AIOブロック ========== */
+.ch-aio-block {
+  background: #f5f3ff;
+  border-left: 4px solid #6d28d9;
+  border-radius: 0 0.5rem 0.5rem 0;
+  padding: 1.25rem 1.5rem;
+  margin-block: 2rem;
+}
+.ch-aio-title {
+  font-weight: 700;
+  margin: 0 0 0.5rem;
+  font-size: 0.875rem;
+  color: #6d28d9;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.ch-aio-list {
+  margin: 0;
+  padding-left: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.ch-aio-list li {
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+/* ========== セクション共通 ========== */
+.ch-section {
+  margin-block: 3rem;
+}
+.ch-h2 {
+  font-size: clamp(1.25rem, 4vw, 1.65rem);
+  font-family: var(--sn-font-rounded, sans-serif);
+  font-weight: 700;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #6d28d9;
+}
+.ch-h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin: 1.5rem 0 0.75rem;
+  color: #3730a3;
+}
+.ch-lead {
+  font-size: 1rem;
+  line-height: 1.8;
+  margin-bottom: 1.25rem;
+  color: #374151;
+}
+p {
+  font-size: 0.95rem;
+  line-height: 1.8;
+  color: #374151;
+  margin-block: 0.75rem;
+}
+
+/* ========== テーブル ========== */
+.ch-table-wrap {
+  overflow-x: auto;
+  margin-block: 1.25rem;
+}
+.ch-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  min-width: 480px;
+}
+.ch-table-caption {
+  font-size: 0.78rem;
+  color: #6b7280;
+  text-align: left;
+  padding: 0.25rem 0 0.5rem;
+}
+.ch-table th {
+  background: #6d28d9;
+  color: #fff;
+  padding: 0.6rem 0.8rem;
+  text-align: left;
+  font-weight: 600;
+}
+.ch-table td {
+  padding: 0.6rem 0.8rem;
+  border: 1px solid #e5e7eb;
+  color: #374151;
+}
+.ch-table tr:nth-child(even) td {
+  background: #fafafa;
+}
+.ch-source-note {
+  font-size: 0.78rem;
+  color: #6b7280;
+  margin-top: 0.5rem;
+}
+.ch-source-note a {
+  color: #6d28d9;
+}
+
+/* ========== 箇条書き ========== */
+.ch-bullet-list {
+  padding-left: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-block: 1rem;
+}
+.ch-bullet-list li {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: #374151;
+}
+
+/* ========== ライフイベントグリッド ========== */
+.ch-event-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1rem;
+  margin-block: 1.5rem;
+}
+.ch-event-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.ch-event-icon {
+  font-size: 1.75rem;
+}
+.ch-event-title {
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 0;
+  color: #1f2937;
+}
+.ch-event-desc {
+  font-size: 0.875rem;
+  line-height: 1.7;
+  color: #4b5563;
+  margin: 0;
+}
+
+/* ========== 変化シーン ========== */
+.ch-scene-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  margin-top: 1.5rem;
+}
+.ch-scene-item {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  padding: 1.25rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  background: #fafafa;
+}
+.ch-scene-num {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  background: #6d28d9;
+  color: #fff;
+  border-radius: 50%;
+  font-weight: 700;
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+.ch-scene-body {
+  flex: 1;
+}
+.ch-scene-title {
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem;
+  color: #1f2937;
+}
+
+/* ========== PRO誘導セクション ========== */
+.ch-pro-section {
+  background: #f5f3ff;
+  border-radius: 1rem;
+  padding: 2rem 1.5rem;
+}
+.ch-pro-section .ch-h2 {
+  border-bottom-color: #6d28d9;
+}
+.ch-pro-card {
+  background: #fff;
+  border: 2px solid #7c3aed;
+  border-radius: 1rem;
+  overflow: hidden;
+  margin-top: 1.5rem;
+  box-shadow: 0 4px 16px rgba(109 40 217 / 0.12);
+}
+.ch-pro-card-header {
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.ch-pro-badge {
+  background: rgba(255 255 255 / 0.25);
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.2rem 0.6rem;
+  border-radius: 2rem;
+  border: 1px solid rgba(255 255 255 / 0.4);
+  white-space: nowrap;
+}
+.ch-pro-card-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #fff;
+  margin: 0;
+}
+.ch-pro-card-body {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+.ch-pro-features {
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+}
+.ch-pro-feature {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+}
+.ch-pro-feature-icon {
+  font-size: 1.4rem;
+  flex-shrink: 0;
+}
+.ch-pro-feature strong {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 0.15rem;
+}
+.ch-pro-feature p {
+  font-size: 0.85rem;
+  color: #4b5563;
+  margin: 0;
+  line-height: 1.6;
+}
+.ch-pro-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.9rem 2rem;
+  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+  color: #fff;
+  border-radius: 3rem;
+  font-weight: 700;
+  font-size: 1rem;
+  text-decoration: none;
+  min-height: 44px;
+  align-self: flex-start;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.ch-pro-cta-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(109 40 217 / 0.3);
+}
+.ch-pro-cta-note {
+  font-size: 0.78rem;
+  color: #6b7280;
+  margin: 0;
+}
+
+/* ========== 関連リンク ========== */
+.ch-related-list {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.ch-related-link {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.ch-related-link:hover {
+  border-color: #6d28d9;
+  box-shadow: 0 2px 8px rgba(109 40 217 / 0.1);
+}
+.ch-related-icon {
+  font-size: 1.75rem;
+  flex-shrink: 0;
+}
+.ch-related-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+.ch-related-title {
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+.ch-related-desc {
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+/* ========== FAQ ========== */
+.ch-faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+.ch-faq-item {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+.ch-faq-q {
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 1rem 1.25rem;
+  background: #f9fafb;
+  margin: 0;
+  display: block;
+}
+.ch-faq-q::before {
+  content: 'Q. ';
+  color: #6d28d9;
+}
+.ch-faq-a {
+  font-size: 0.9rem;
+  line-height: 1.7;
+  padding: 1rem 1.25rem;
+  margin: 0;
+  color: #4b5563;
+}
+.ch-faq-a::before {
+  content: 'A. ';
+  font-weight: 700;
+  color: #16a34a;
+}
+
+/* ========== レスポンシブ ========== */
+@media (max-width: 768px) {
+  .ch-event-grid {
+    grid-template-columns: 1fr;
+  }
+  .ch-pro-cta-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+</style>
