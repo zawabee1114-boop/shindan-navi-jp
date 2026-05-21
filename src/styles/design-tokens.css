@@ -1,145 +1,213 @@
 /* ================================================================
-   診断ナビ（shindan-navi.jp）デザイントークン v1.0
+   診断ナビ（shindan-navi.jp）デザイントークン v2.0
    ----------------------------------------------------------------
-   【UI変更前提設計】
-   - 全コンポーネントは必ずこの変数を参照する
-   - 直接色指定・マジックナンバー禁止
-   - テーマ大幅変更はこのファイル1つを書き換えるだけで完結する
+   【2026-05-22 Claude Design ハンドオフ v2 刷新】
+   - Brand: #7c5cff（パープル）中心に全パレット再設計
+   - 8診断・5シーン別カラー 追加
+   - 後方互換: --sn-* エイリアスを --brand-* 等に橋渡し
+   - 既存コンポーネントの --sn-* 参照は引き続き動作する
 
    テーマ変更ガイド:
-   1. --sn-primary / --sn-secondary / --sn-accent を変更 → 全体の色調が変わる
-   2. --sn-font-family / --sn-font-rounded を変更 → フォントが変わる
-   3. --sn-radius を変更 → 全カードの角丸が変わる
+   1. --brand-500 を変更 → 全体の色調が変わる
+   2. --sn-font-family を変更 → フォントが変わる
+   3. --radius-* を変更 → 全カードの角丸が変わる
    4. Google Fonts の読み込み（BaseLayout.astro）も同時に変更すること
-
-   現在: パープル系（診断・活気系・暫定カラー）
-   2026-05-20 初期設定
    ================================================================ */
 
 :root {
-  /* ---- プライマリカラー（暫定・変更前提） ---- */
-  --sn-primary:           #6366f1;   /* インディゴ: メインアクション */
-  --sn-primary-dark:      #4f46e5;   /* ホバー・アクティブ */
-  --sn-primary-light:     #a5b4fc;   /* ライト：バッジ背景等 */
-  --sn-primary-bg:        #eef2ff;   /* 極薄：セクション背景等 */
+  /* ===================================================================
+     NEW v2: Brand カラーパレット（Claude Design ハンドオフより）
+     =================================================================== */
+  --brand-500: #7c5cff;
+  --brand-600: #6a47ff;
+  --brand-700: #5435e8;
+  --brand-400: #9b85ff;
+  --brand-300: #c2b3ff;
+  --brand-200: #e0d8ff;
+  --brand-100: #efeaff;
+  --brand-50:  #f6f3ff;
 
-  /* ---- セカンダリカラー（暫定・変更前提） ---- */
-  --sn-secondary:         #ec4899;   /* ピンク: アクセント・恋愛軸 */
-  --sn-secondary-dark:    #db2777;
-  --sn-secondary-light:   #f9a8d4;
-  --sn-secondary-bg:      #fdf2f8;
+  /* ===================================================================
+     NEW v2: 8診断別カラー（ハンドオフ完全準拠）
+     =================================================================== */
+  --d-mbti:    #8b5cf6;   /* MBTI 紫 */
+  --d-blood:   #ff6f7a;   /* 血液型 珊瑚 */
+  --d-multi:   #ff9a4d;   /* 多重知能 オレンジ */
+  --d-star:    #4ea4f0;   /* 星座 青 */
+  --d-perfect: #f0c14e;   /* 完璧主義 黄 */
+  --d-disc:    #34c0a8;   /* DiSC ティール */
+  --d-love:    #ff7ab3;   /* 恋愛 ピンク */
+  --d-money:   #c8a26a;   /* 金銭 ベージュ */
 
-  /* ---- アクセントカラー（暫定・変更前提） ---- */
-  --sn-accent:            #f59e0b;   /* アンバー: 強調・バッジ・レベル */
-  --sn-accent-dark:       #d97706;
-  --sn-accent-light:      #fcd34d;
+  /* ===================================================================
+     NEW v2: 5シーン軸カラー
+     =================================================================== */
+  --s-work:   #5b8def;   /* 仕事 */
+  --s-love:   #ff6f9c;   /* 恋愛 */
+  --s-friend: #7ec79b;   /* 友人 */
+  --s-family: #ff8a6b;   /* 家族 */
+  --s-school: #2d3a6b;   /* 学校 */
+
+  /* ===================================================================
+     NEW v2: サーフェス / インク
+     =================================================================== */
+  --bg:        #f7f6fb;
+  --surface:   #ffffff;
+  --surface-2: #f9f8fd;
+  --line:      #ece9f5;
+  --line-2:    #e3dff1;
+
+  --ink-900: #1f2235;
+  --ink-700: #3b3d56;
+  --ink-500: #6e6e89;
+  --ink-400: #9b9bb3;
+  --ink-300: #c9c9d8;
+
+  /* ===================================================================
+     NEW v2: エフェクト（シャドウ・角丸・グラデーション）
+     =================================================================== */
+  --shadow-sm:  0 1px 2px rgba(31,34,53,.04), 0 1px 1px rgba(31,34,53,.03);
+  --shadow-md:  0 4px 14px rgba(95,75,210,.08), 0 2px 4px rgba(31,34,53,.04);
+  --shadow-lg:  0 12px 32px rgba(95,75,210,.12), 0 4px 8px rgba(31,34,53,.05);
+  --shadow-cta: 0 10px 22px rgba(108,71,255,.32), 0 2px 4px rgba(108,71,255,.18);
+
+  --radius-sm:   8px;
+  --radius-md:   14px;
+  --radius-lg:   20px;
+  --radius-xl:   28px;
+  --radius-pill: 999px;
+
+  --hero-grad:   radial-gradient(120% 80% at 20% 0%, #f5e8ff 0%, #efeaff 35%, #e8f0ff 70%, #f3efff 100%);
+  --hero-grad-2: linear-gradient(180deg, #faf5ff 0%, #efeaff 50%, #e9efff 100%);
+
+  /* ===================================================================
+     後方互換エイリアス（既存 --sn-* コンポーネントが引き続き動作）
+     =================================================================== */
+
+  /* プライマリカラー → brand に橋渡し */
+  --sn-primary:           var(--brand-500);
+  --sn-primary-dark:      var(--brand-600);
+  --sn-primary-light:     var(--brand-300);
+  --sn-primary-bg:        var(--brand-50);
+
+  /* セカンダリ（恋愛ピンク）*/
+  --sn-secondary:         var(--d-love);
+  --sn-secondary-dark:    #e85899;
+  --sn-secondary-light:   #ffb4d4;
+  --sn-secondary-bg:      #fff0f7;
+
+  /* アクセント（完璧主義黄）*/
+  --sn-accent:            var(--d-perfect);
+  --sn-accent-dark:       #d4a43a;
+  --sn-accent-light:      #f8db8a;
   --sn-accent-bg:         #fffbeb;
 
-  /* ---- 成功・警告・エラー ---- */
+  /* ステータス */
   --sn-success:           #10b981;
   --sn-success-bg:        #ecfdf5;
-  --sn-warning:           #f59e0b;
+  --sn-warning:           var(--d-perfect);
   --sn-warning-bg:        #fffbeb;
-  --sn-error:             #ef4444;
-  --sn-error-bg:          #fef2f2;
+  --sn-error:             var(--d-blood);
+  --sn-error-bg:          #fff0f1;
 
-  /* ---- テキスト ---- */
-  --sn-text:              #1f2937;   /* メインテキスト */
-  --sn-text-soft:         #374151;   /* サブテキスト */
-  --sn-muted:             #6b7280;   /* 補助テキスト */
-  --sn-muted-light:       #9ca3af;   /* プレースホルダー等 */
+  /* テキスト → ink トークンに橋渡し */
+  --sn-text:              var(--ink-900);
+  --sn-text-soft:         var(--ink-700);
+  --sn-muted:             var(--ink-500);
+  --sn-muted-light:       var(--ink-400);
 
-  /* ---- 背景・カード ---- */
-  --sn-bg:                #fafafa;   /* ページ背景 */
-  --sn-bg-white:          #ffffff;   /* カード・モーダル */
-  --sn-bg-soft:           #f3f4f6;   /* グレー系背景 */
-  --sn-border:            #e5e7eb;   /* ボーダー基本 */
-  --sn-border-soft:       #f3f4f6;   /* ソフトボーダー */
+  /* 背景・カード → surface/bg に橋渡し */
+  --sn-bg:                var(--bg);
+  --sn-bg-white:          var(--surface);
+  --sn-bg-soft:           var(--surface-2);
+  --sn-border:            var(--line);
+  --sn-border-soft:       var(--surface-2);
 
-  /* ---- シーン軸別カラー（5軸固定） ---- */
-  --sn-scene-work:        #3b82f6;   /* 仕事軸: ブルー */
-  --sn-scene-work-bg:     #eff6ff;
-  --sn-scene-love:        #ec4899;   /* 恋愛軸: ピンク */
-  --sn-scene-love-bg:     #fdf2f8;
-  --sn-scene-friend:      #10b981;   /* 友人軸: グリーン */
-  --sn-scene-friend-bg:   #ecfdf5;
-  --sn-scene-family:      #f59e0b;   /* 家族軸: アンバー */
-  --sn-scene-family-bg:   #fffbeb;
-  --sn-scene-school:      #8b5cf6;   /* 学校軸: バイオレット */
-  --sn-scene-school-bg:   #f5f3ff;
+  /* シーン軸別カラー → --s-* に橋渡し */
+  --sn-scene-work:        var(--s-work);
+  --sn-scene-work-bg:     #eef3ff;
+  --sn-scene-love:        var(--s-love);
+  --sn-scene-love-bg:     #fff0f6;
+  --sn-scene-friend:      var(--s-friend);
+  --sn-scene-friend-bg:   #f0fbf4;
+  --sn-scene-family:      var(--s-family);
+  --sn-scene-family-bg:   #fff4f0;
+  --sn-scene-school:      var(--s-school);
+  --sn-scene-school-bg:   #edf0f8;
 
-  /* ---- 診断別カラー（8診断） ---- */
-  --sn-diag-mbti:         #6366f1;   /* MBTI */
-  --sn-diag-blood:        #ef4444;   /* 血液型 */
-  --sn-diag-multi-int:    #10b981;   /* 多重知能 */
-  --sn-diag-perfectionism:#f59e0b;   /* 完璧主義 */
-  --sn-diag-disc:         #3b82f6;   /* DiSC */
-  --sn-diag-love:         #ec4899;   /* 恋愛スタイル */
-  --sn-diag-seiza:        #8b5cf6;   /* 星座 */
-  --sn-diag-money:        #14b8a6;   /* 金銭感覚 */
+  /* 診断別カラー → --d-* に橋渡し */
+  --sn-diag-mbti:         var(--d-mbti);
+  --sn-diag-blood:        var(--d-blood);
+  --sn-diag-multi-int:    var(--d-multi);
+  --sn-diag-perfectionism:var(--d-perfect);
+  --sn-diag-disc:         var(--d-disc);
+  --sn-diag-love:         var(--d-love);
+  --sn-diag-seiza:        var(--d-star);
+  --sn-diag-money:        var(--d-money);
 
-  /* ---- タイポグラフィ ---- */
+  /* タイポグラフィ */
   --sn-font-family:       'Noto Sans JP', 'Hiragino Sans', system-ui, sans-serif;
-  --sn-font-rounded:      'M PLUS Rounded 1c', 'Noto Sans JP', system-ui, sans-serif;
+  --sn-font-rounded:      'Noto Sans JP', 'M PLUS Rounded 1c', system-ui, sans-serif;
   --sn-font-mono:         'SF Mono', 'Roboto Mono', Menlo, Consolas, monospace;
+  --sn-font-en:           'Inter', system-ui, sans-serif;
 
   /* フォントサイズ（モバイル基準） */
-  --sn-text-xs:           0.75rem;   /* 12px */
-  --sn-text-sm:           0.875rem;  /* 14px */
-  --sn-text-base:         1rem;      /* 16px - モバイル最小 */
-  --sn-text-lg:           1.125rem;  /* 18px */
-  --sn-text-xl:           1.25rem;   /* 20px */
-  --sn-text-2xl:          1.5rem;    /* 24px */
-  --sn-text-3xl:          1.875rem;  /* 30px */
-  --sn-text-4xl:          2.25rem;   /* 36px */
+  --sn-text-xs:           0.75rem;    /* 12px */
+  --sn-text-sm:           0.875rem;   /* 14px */
+  --sn-text-base:         1rem;       /* 16px */
+  --sn-text-lg:           1.125rem;   /* 18px */
+  --sn-text-xl:           1.25rem;    /* 20px */
+  --sn-text-2xl:          1.5rem;     /* 24px */
+  --sn-text-3xl:          1.875rem;   /* 30px */
+  --sn-text-4xl:          2.25rem;    /* 36px */
 
   /* 行間 */
   --sn-leading-tight:     1.4;
-  --sn-leading-base:      1.8;       /* 長文の行間 */
+  --sn-leading-base:      1.8;
   --sn-leading-relaxed:   2.0;
 
-  /* ---- スペーシング（Tailwindライク） ---- */
-  --sn-space-1:           0.25rem;   /* 4px */
-  --sn-space-2:           0.5rem;    /* 8px */
-  --sn-space-3:           0.75rem;   /* 12px */
-  --sn-space-4:           1rem;      /* 16px */
-  --sn-space-5:           1.25rem;   /* 20px */
-  --sn-space-6:           1.5rem;    /* 24px */
-  --sn-space-8:           2rem;      /* 32px */
-  --sn-space-10:          2.5rem;    /* 40px */
-  --sn-space-12:          3rem;      /* 48px */
-  --sn-space-16:          4rem;      /* 64px */
-  --sn-space-20:          5rem;      /* 80px */
+  /* スペーシング */
+  --sn-space-1:           0.25rem;    /* 4px */
+  --sn-space-2:           0.5rem;     /* 8px */
+  --sn-space-3:           0.75rem;    /* 12px */
+  --sn-space-4:           1rem;       /* 16px */
+  --sn-space-5:           1.25rem;    /* 20px */
+  --sn-space-6:           1.5rem;     /* 24px */
+  --sn-space-8:           2rem;       /* 32px */
+  --sn-space-10:          2.5rem;     /* 40px */
+  --sn-space-12:          3rem;       /* 48px */
+  --sn-space-16:          4rem;       /* 64px */
+  --sn-space-20:          5rem;       /* 80px */
 
-  /* ---- レイアウト ---- */
-  --sn-max-w:             1200px;    /* サイト最大幅 */
-  --sn-max-w-content:     800px;     /* 記事・ツール幅 */
-  --sn-max-w-narrow:      640px;     /* フォーム・カード幅 */
-  --sn-header-h:          60px;      /* ヘッダー高さ */
-  --sn-bottom-nav-h:      64px;      /* モバイルボトムナビ高さ */
+  /* レイアウト */
+  --sn-max-w:             1200px;
+  --sn-max-w-content:     800px;
+  --sn-max-w-narrow:      640px;
+  --sn-header-h:          60px;
+  --sn-bottom-nav-h:      64px;
 
-  /* ---- タップターゲット ---- */
-  --sn-tap-min:           44px;      /* Apple HIG 最小タップ領域 */
+  /* タップターゲット */
+  --sn-tap-min:           44px;
 
-  /* ---- 角丸 ---- */
+  /* 角丸 → radius トークンに橋渡し */
   --sn-radius-xs:         4px;
-  --sn-radius-sm:         8px;
-  --sn-radius-md:         12px;
-  --sn-radius:            16px;      /* デフォルト */
-  --sn-radius-lg:         20px;
-  --sn-radius-xl:         24px;
-  --sn-radius-2xl:        32px;
-  --sn-radius-pill:       999px;
+  --sn-radius-sm:         var(--radius-sm);
+  --sn-radius-md:         var(--radius-md);
+  --sn-radius:            var(--radius-lg);
+  --sn-radius-lg:         var(--radius-lg);
+  --sn-radius-xl:         var(--radius-xl);
+  --sn-radius-2xl:        36px;
+  --sn-radius-pill:       var(--radius-pill);
 
-  /* ---- シャドウ ---- */
-  --sn-shadow-xs:         0 1px 2px rgba(0, 0, 0, 0.04);
-  --sn-shadow-sm:         0 2px 8px rgba(0, 0, 0, 0.06);
-  --sn-shadow:            0 4px 12px rgba(0, 0, 0, 0.08);
-  --sn-shadow-md:         0 6px 20px rgba(0, 0, 0, 0.10);
-  --sn-shadow-lg:         0 12px 32px rgba(0, 0, 0, 0.12);
-  --sn-shadow-xl:         0 20px 48px rgba(0, 0, 0, 0.15);
+  /* シャドウ → shadow トークンに橋渡し */
+  --sn-shadow-xs:         0 1px 2px rgba(0,0,0,.04);
+  --sn-shadow-sm:         var(--shadow-sm);
+  --sn-shadow:            var(--shadow-md);
+  --sn-shadow-md:         var(--shadow-md);
+  --sn-shadow-lg:         var(--shadow-lg);
+  --sn-shadow-xl:         0 20px 48px rgba(95,75,210,.18);
 
-  /* ---- トランジション ---- */
+  /* トランジション */
   --sn-ease:              cubic-bezier(0.4, 0, 0.2, 1);
   --sn-ease-bounce:       cubic-bezier(0.34, 1.56, 0.64, 1);
   --sn-ease-in:           cubic-bezier(0.4, 0, 1, 1);
@@ -148,15 +216,15 @@
   --sn-dur-base:          220ms;
   --sn-dur-slow:          360ms;
 
-  /* ---- ゲーミフィケーション ---- */
-  --sn-level-color:       var(--sn-accent);      /* レベルバッジ */
-  --sn-rare-color:        #8b5cf6;               /* レアリティ: レア */
-  --sn-super-rare-color:  #f59e0b;               /* レアリティ: SR */
+  /* ゲーミフィケーション */
+  --sn-level-color:       var(--sn-accent);
+  --sn-rare-color:        var(--brand-500);
+  --sn-super-rare-color:  var(--d-perfect);
 
-  /* ---- PRO / PASS 識別色 ---- */
-  --sn-pass-color:        #3b82f6;               /* ¥390 PASS */
-  --sn-pass-bg:           #eff6ff;
-  --sn-pro-color:         #6366f1;               /* ¥590/月 PRO */
-  --sn-pro-bg:            #eef2ff;
-  --sn-pro-gradient:      linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  /* PRO / PASS 識別色 */
+  --sn-pass-color:        var(--s-work);
+  --sn-pass-bg:           #eef3ff;
+  --sn-pro-color:         var(--brand-500);
+  --sn-pro-bg:            var(--brand-50);
+  --sn-pro-gradient:      linear-gradient(135deg, var(--brand-500) 0%, var(--brand-400) 100%);
 }
