@@ -1,0 +1,109 @@
+---
+/**
+ * ViralCompatPrompt.astro
+ * 診断完了直後に表示する「友達にも診断してもらおう」プロンプト
+ *
+ * Phase 3.5: E-3 実装
+ * K>1 バイラル係数のためのCTA
+ * - 診断タイプ × 相性スコアへの好奇心喚起
+ * - InviteViralBlock（React）を中に組み込み可能
+ *
+ * Props:
+ *   myTypeName   - 自分のタイプ名（例: 言語・言語知能）
+ *   diagName     - 診断名（例: 多重知能診断）
+ *   resultId     - 自分の診断結果ID
+ *   diagPath     - 診断のルートパス
+ *   compatNote   - 相性への誘い文句
+ */
+
+import InviteViralBlock from './InviteViralBlock.tsx';
+
+interface Props {
+  myTypeName: string;
+  diagName: string;
+  resultId: string;
+  diagPath?: string;
+  compatNote?: string;
+}
+
+const {
+  myTypeName,
+  diagName,
+  resultId,
+  diagPath = '/diagnosis/',
+  compatNote,
+} = Astro.props;
+
+const defaultCompatNote = `${myTypeName}タイプは、相性によって仕事・恋愛・友人関係の築き方が大きく変わります。`;
+const noteText = compatNote ?? defaultCompatNote;
+---
+
+<section class="vcp-section" aria-labelledby="vcp-heading">
+  <div class="vcp-header">
+    <span class="vcp-icon" aria-hidden="true">🤝</span>
+    <div>
+      <h2 class="vcp-title" id="vcp-heading">
+        友達にも診断してもらおう
+      </h2>
+      <p class="vcp-note">{noteText}</p>
+    </div>
+  </div>
+
+  <InviteViralBlock
+    client:visible
+    resultId={resultId}
+    diagName={diagName}
+    myTypeName={myTypeName}
+    diagPath={diagPath}
+  />
+</section>
+
+<style>
+.vcp-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sn-space-4);
+  padding: var(--sn-space-6);
+  background: linear-gradient(135deg, #eef2ff 0%, #faf5ff 100%);
+  border-radius: var(--sn-radius-xl);
+  border: 1px solid #e0e7ff;
+}
+
+.vcp-header {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sn-space-3);
+}
+
+.vcp-icon {
+  font-size: 2rem;
+  line-height: 1;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.vcp-title {
+  font-family: var(--sn-font-rounded);
+  font-size: var(--sn-text-xl);
+  font-weight: 900;
+  color: var(--sn-text);
+  margin: 0 0 var(--sn-space-1);
+}
+
+.vcp-note {
+  font-size: var(--sn-text-sm);
+  color: var(--sn-muted);
+  line-height: var(--sn-leading-base);
+  margin: 0;
+}
+
+@media (max-width: 640px) {
+  .vcp-section {
+    padding: var(--sn-space-4);
+  }
+  .vcp-header {
+    flex-direction: column;
+    gap: var(--sn-space-2);
+  }
+}
+</style>
