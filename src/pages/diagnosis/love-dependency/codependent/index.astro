@@ -1,0 +1,886 @@
+---
+/**
+ * 共依存的傾向 詳細ページ【最重要 YMYL注意】
+ * KW: 共依存 恋愛 / 共依存的傾向 / 恋愛 自己犠牲
+ * 学術根拠:
+ *   - Ainsworth MDS (1978) Patterns of Attachment
+ *   - Hazan C, Shaver PR (1987) DOI: 10.1037/0022-3514.52.3.511
+ *   - Mikulincer M, Shaver PR (2007) Attachment in Adulthood
+ *
+ * YMYL最重要（共依存ページは特に厳守）:
+ *   - 「共依存症」「共依存性パーソナリティ」等の医学用語 絶対NG
+ *   - 「治療」「治す」「回復」（依存症文脈）NG → 「向き合う」「整える」
+ *   - 「依存症からの回復は専門機関」を明示（ただし「依存症」と断定しない）
+ *   - 全ページに「公認心理師・臨床心理士相談推奨」を明示
+ *   - パートナーとの境界線（boundary）の扱いは慎重に
+ *
+ * 確認日: 2026-05-21
+ */
+import BaseLayout from '../../../../layouts/BaseLayout.astro';
+import Container from '../../../../components/Container.astro';
+import TldrBlock from '../../../../components/TldrBlock.astro';
+import ScienceNote from '../../../../components/ScienceNote.astro';
+import ReferenceList from '../../../../components/ReferenceList.astro';
+
+const SITE_URL = 'https://shindan-navi.jp';
+const PAGE_URL = `${SITE_URL}/diagnosis/love-dependency/codependent/`;
+const UPDATED_AT = '2026-05-21';
+
+const references = [
+  {
+    title: 'Patterns of Attachment: A Psychological Study of the Strange Situation',
+    author: 'Ainsworth MDS, Blehar MC, Waters E, Wall S',
+    year: 1978,
+    publisher: 'Lawrence Erlbaum Associates',
+    url: 'https://psycnet.apa.org/record/1979-22063-000',
+  },
+  {
+    title: 'Romantic love conceptualized as an attachment process',
+    author: 'Hazan C, Shaver PR',
+    year: 1987,
+    journal: 'Journal of Personality and Social Psychology',
+    volume: '52(3), 511-524',
+    url: 'https://doi.org/10.1037/0022-3514.52.3.511',
+  },
+  {
+    title: 'Attachment in Adulthood: Structure, Dynamics, and Change',
+    author: 'Mikulincer M, Shaver PR',
+    year: 2007,
+    publisher: 'Guilford Press',
+    url: 'https://www.guilford.com/books/Attachment-in-Adulthood/Mikulincer-Shaver/9781462543854',
+  },
+  {
+    title: '公認心理師・臨床心理士への相談窓口（日本臨床心理士会）',
+    author: '一般社団法人日本臨床心理士会',
+    year: 2024,
+    url: 'https://www.jsccp.jp/',
+  },
+  {
+    title: 'こころの健康相談統一ダイヤル（厚生労働省）',
+    author: '厚生労働省',
+    year: 2024,
+    url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/hukushi_kaigo/shougaishahukushi/kokoro/index.html',
+  },
+];
+
+const faqs = [
+  {
+    question: '共依存的傾向とはどういう状態ですか？',
+    answer:
+      '共依存的傾向とは、パートナーのニーズや感情を自分より常に優先し、境界線（boundary）があいまいになりやすい関係パターンの傾向を指します。「相手を助けることへの強い欲求」「自分を後回しにすることへの違和感のなさ」「相手なしには自分が機能しないような感覚」が特徴として現れます。これは医学的診断カテゴリではなく、恋愛における性格傾向の自己理解として扱います。',
+  },
+  {
+    question: 'このページの「共依存的傾向」は「共依存症」と同じですか？',
+    answer:
+      'いいえ、異なります。このページで扱う「共依存的傾向」は、恋愛における自己犠牲・境界線の曖昧さ・相手のニーズ最優先という性格特性の傾向として扱います。医学的概念としての「共依存（codependency）」の診断・評価は行いません。強い苦しさを感じている場合は、公認心理師・臨床心理士への相談をご検討ください（日本臨床心理士会: https://www.jsccp.jp/）。',
+  },
+  {
+    question: '境界線（boundary）とは何ですか？',
+    answer:
+      '境界線とは「自分と相手の感情・責任・ニーズを分ける心理的・行動的な線引き」です。「相手の感情は相手のもの、自分の感情は自分のもの」という認識が境界線の基本です。共依存的傾向が強い場合、この境界線が曖昧になり、相手の感情に引きずられたり、相手の問題を自分が全部解決しようとしたりします。',
+  },
+  {
+    question: '共依存的傾向を持つ人の強みは何ですか？',
+    answer:
+      '深い共感力・相手の痛みや必要性に素早く気づける感受性・徹底して支えようとする思いやりが、共依存的傾向の強みです。これらは人間関係の豊かさや職業的なケア能力にも表れることがあります。傾向を知った上でバランスを整えることが、その強みを活かす鍵になります。',
+  },
+  {
+    question: '「自分を犠牲にすること」をやめるにはどうすればいいですか？',
+    answer:
+      '「やめる」という目標より「自分のニーズに少しずつ気づく」ことが出発点になります。「今、自分は何を感じているか？」「今、自分は何が必要か？」を一日一度問いかける習慣が参考になります。深く染み込んだパターンへの変化には時間がかかります。公認心理師・臨床心理士のサポートが有効な場合があります（日本臨床心理士会: https://www.jsccp.jp/）。',
+  },
+  {
+    question: '相手を「助けたい」という気持ちは悪いことですか？',
+    answer:
+      'いいえ、違います。相手を助けたいという思いは、深い思いやりの表れです。気をつけたいのは「助けることが自分の存在意義になっている」「助けることをやめると関係が壊れると恐れている」という状態です。「自分を犠牲にして助ける」より「自分も大切にしながら支える」バランスを意識することが、長期的に関係を支えます。',
+  },
+  {
+    question: '共依存的傾向はどうやって気づきますか？',
+    answer:
+      '「相手の気分が悪いと、自分のせいと感じやすい」「相手を怒らせることへの強い恐れがある」「自分の意見よりパートナーの意見を常に優先する」「相手が良ければ自分は後回しでいいと感じる」などの傾向が続く場合、共依存的なパターンが関与している可能性があります。自己理解の出発点として参考にしてください。',
+  },
+  {
+    question: '強い苦しさを感じている場合はどうすればいいですか？',
+    answer:
+      '恋愛関係での強い苦しさ・自分が存在しないような感覚・抑うつ・強い不安が続く場合は、公認心理師・臨床心理士への相談が重要な選択肢です。日本臨床心理士会（https://www.jsccp.jp/）や厚生労働省のこころの健康相談統一ダイヤル（0570-064-556）を参照してください。一人で抱え込まないことが大切です。',
+  },
+  {
+    question: '共依存的傾向は変わりますか？',
+    answer:
+      'はい、変容することがあります。自己理解の深まり・境界線への意識・信頼できる関係の経験・専門家のサポートによって、少しずつパターンが整ってきます。急速な変化を目指すより、小さな気づきを積み重ねることが大切です（Mikulincer & Shaver 2007）。',
+  },
+  {
+    question: 'パートナーとの関係をどう見直せばいいですか？',
+    answer:
+      '「この関係の中で、自分はどのくらい自分でいられるか」を一度振り返ることが出発点になります。「自分の気持ち・趣味・友人関係は、パートナーとは独立して存在しているか」という問いが自己理解の参考になります。関係を見直すことは「別れる」ということではなく、「対等なパートナーシップを育てる」ことです。',
+  },
+  {
+    question: 'このページの内容は医学的なものですか？',
+    answer:
+      'いいえ、違います。このページは恋愛における共依存的傾向の自己理解を目的とした参考情報です。医学的診断・臨床評価・依存症の判定は行いません。心身の不調が続く場合は、医師・臨床心理士にご相談ください。',
+  },
+  {
+    question: '他の愛着スタイルとどう違いますか？',
+    answer:
+      '不安型は「見捨てられる不安」から確認行動が出やすいです。共依存的傾向はさらに進み「自分の存在価値がパートナーの満足と一体化」し、自己犠牲と支配的な「助け」のパターンが繰り返されやすい点が特徴です。どちらも医学的診断ではなく、自己理解の参考フレームとして扱います。',
+  },
+];
+
+const jsonLdArticle = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  '@id': `${PAGE_URL}#article`,
+  headline: '共依存的傾向とは【恋愛の自己犠牲・境界線・向き合い方】',
+  url: PAGE_URL,
+  datePublished: '2026-05-21',
+  dateModified: UPDATED_AT,
+  inLanguage: 'ja',
+  author: { '@type': 'Organization', '@id': `${SITE_URL}/#organization`, name: '診断ナビ' },
+  publisher: { '@type': 'Organization', '@id': `${SITE_URL}/#organization`, name: '診断ナビ' },
+  citation: [
+    {
+      '@type': 'CreativeWork',
+      name: 'Romantic love conceptualized as an attachment process',
+      author: 'Hazan C, Shaver PR',
+      datePublished: '1987',
+      url: 'https://doi.org/10.1037/0022-3514.52.3.511',
+    },
+  ],
+};
+
+const jsonLdFAQ = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  '@id': `${PAGE_URL}#faq`,
+  mainEntity: faqs.map(({ question, answer }) => ({
+    '@type': 'Question',
+    name: question,
+    acceptedAnswer: { '@type': 'Answer', text: answer },
+  })),
+};
+
+const jsonLdBreadcrumb = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'ホーム', item: SITE_URL },
+    { '@type': 'ListItem', position: 2, name: '診断一覧', item: `${SITE_URL}/diagnosis/` },
+    { '@type': 'ListItem', position: 3, name: '恋愛における依存的傾向', item: `${SITE_URL}/diagnosis/love-dependency/` },
+    { '@type': 'ListItem', position: 4, name: '共依存的傾向', item: PAGE_URL },
+  ],
+};
+
+const jsonLdAll = [jsonLdArticle, jsonLdFAQ, jsonLdBreadcrumb];
+
+const selfCareItems = [
+  {
+    icon: '🪞',
+    title: '「自分のニーズ」に気づく習慣',
+    desc: '「今、自分は何を感じているか」「今、自分は何が必要か」を一日一度問いかけます。「わからない」という答えでも大丈夫です。問い続けることが気づきの始まりです。',
+  },
+  {
+    icon: '🔴',
+    title: '「No」と言う小さな練習',
+    desc: '大きな拒絶ではなく、小さな「今日は一人でいたい」「これは自分には難しい」を伝える練習。境界線は一度に作るものでなく、少しずつ育てていくものです。',
+  },
+  {
+    icon: '🌸',
+    title: '自分だけの時間・趣味を守る',
+    desc: 'パートナーと関係のない「自分のための時間」を週に一度以上設けます。相手のことを考えない時間を持つことが、自己の回復につながります。',
+  },
+  {
+    icon: '🗣️',
+    title: '信頼できる人に話す',
+    desc: '友人・家族・相談窓口・専門家に「自分が感じていること」を話すことで、パターンへの外部からの視点が得られます。一人で抱え込まないことが大切です。',
+  },
+];
+
+const boundaryExamples = [
+  { bad: '「自分が我慢すれば関係は続く」', good: '「自分が消耗したら関係も長続きしない」' },
+  { bad: '「相手を怒らせてはいけない」', good: '「自分の気持ちを伝えることは相手への尊重でもある」' },
+  { bad: '「相手の問題は自分が解決しなければ」', good: '「相手の問題は相手のもの。サポートは対等に」' },
+];
+---
+
+<BaseLayout
+  title="共依存的傾向とは【恋愛の自己犠牲・境界線・向き合い方ガイド】"
+  description="パートナーへの自己犠牲・境界線の曖昧さなど共依存的傾向の特徴を解説。医学的診断ではなく性格傾向の自己理解ガイド。専門家相談推奨あり。"
+  canonical={PAGE_URL}
+  jsonLd={jsonLdAll}
+  ogType="article"
+  publishDate="2026-05-21"
+  lastUpdated={UPDATED_AT}
+  breadcrumbs={[
+    { name: '診断一覧', url: '/diagnosis/' },
+    { name: '恋愛における依存的傾向', url: '/diagnosis/love-dependency/' },
+    { name: '共依存的傾向', url: '/diagnosis/love-dependency/codependent/' },
+  ]}
+>
+  {/* ========== ヒーロー ========== */}
+  <section class="cd-hero" aria-labelledby="cd-h1">
+    <div class="cd-hero-inner">
+      <div class="cd-hero-badge">愛着スタイル · Codependent tendency</div>
+      <div class="cd-hero-icon" aria-hidden="true">🤝</div>
+      <h1 id="cd-h1" class="cd-hero-h1">共依存的傾向</h1>
+      <p class="cd-hero-en">Codependent tendency in relationships</p>
+      <p class="cd-hero-catch">
+        パートナーのために自分を後回しにしやすい傾向。<br />
+        深い共感力と思いやりは、大切な強みです。
+      </p>
+      {/* YMYL最重要免責 */}
+      <div class="cd-hero-disclaimer" role="alert" aria-label="重要なお知らせ">
+        <span aria-hidden="true">⚠️</span>
+        <div>
+          <strong>重要：</strong>このページは<strong>医学的診断ではありません</strong>。
+          「共依存症」「依存症」の判定・治療は行いません。
+          恋愛傾向の自己理解のための参考情報です。
+          強い苦しさがある場合は
+          <a href="https://www.jsccp.jp/" target="_blank" rel="noopener noreferrer">公認心理師・臨床心理士</a>
+          または
+          <a href="https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/hukushi_kaigo/shougaishahukushi/kokoro/index.html" target="_blank" rel="noopener noreferrer">厚生労働省の相談窓口</a>
+          へご相談ください。
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <Container>
+    <TldrBlock
+      title="このページでわかること"
+      points={[
+        "共依存的傾向とは、パートナーのニーズを常に優先し自己犠牲・境界線の曖昧さが出やすい恋愛傾向の自己理解フレームです（「共依存症」等の医学的診断とは異なります）",
+        "深い共感力・思いやりが強み。気をつけたい傾向・境界線（boundary）の考え方・self-careを解説します",
+        "強い苦しさがある場合は公認心理師・臨床心理士（日本臨床心理士会: https://www.jsccp.jp/）または厚生労働省の相談窓口をご利用ください"
+      ]}
+      updatedAt={UPDATED_AT}
+      sourceLabel="Hazan & Shaver (1987) DOI: 10.1037/0022-3514.52.3.511"
+      sourceUrl="https://doi.org/10.1037/0022-3514.52.3.511"
+    />
+
+    {/* ========== YMYL重要免責（ページ内で強調） ========== */}
+    <div class="cd-important-disclaimer" role="note" aria-label="このページの位置づけ">
+      <h2 class="cd-disclaimer-heading">
+        <span aria-hidden="true">📋</span> このページの位置づけ
+      </h2>
+      <ul class="cd-disclaimer-list">
+        <li>このページは「<strong>恋愛における共依存的傾向</strong>」を<strong>性格特性の傾向として自己理解する</strong>ための参考情報です</li>
+        <li>医学的な「共依存（codependency）」の診断・「依存症」の判定・「パーソナリティ障害」の評価は行いません</li>
+        <li>「症」「病」「障害」「治療」「治す」等の医学的表現は使用せず、<strong>「傾向」「境界線」「向き合い方」</strong>として扱います</li>
+        <li>強い苦しさ・抑うつ感・自己嫌悪が続く場合は、<strong>専門機関への相談を強くお勧めします</strong></li>
+      </ul>
+    </div>
+
+    {/* ========== 特徴 ========== */}
+    <section class="cd-section" aria-labelledby="cd-traits-h2">
+      <h2 id="cd-traits-h2" class="cd-h2">共依存的傾向の主な特徴</h2>
+      <p class="cd-lead">
+        共依存的傾向とは、パートナーとの関係において「自分よりも相手のニーズを常に優先する」
+        「相手の感情や問題に強く引き込まれる」「自己犠牲が自然な状態として続く」
+        行動・思考のパターンが繰り返される傾向です。
+        愛着理論の文脈では、不安型の特性が深まった形として捉えられることもあります
+        （<a href="https://doi.org/10.1037/0022-3514.52.3.511" target="_blank" rel="noopener noreferrer">Hazan & Shaver 1987</a>）。
+      </p>
+      <ul class="cd-trait-list">
+        <li class="cd-trait-item">
+          <span class="cd-trait-icon" aria-hidden="true">🎭</span>
+          <div class="cd-trait-body">
+            <p class="cd-trait-title">自分のニーズより相手のニーズを常に優先する</p>
+            <p class="cd-trait-desc">
+              「相手が喜べば自分は後回しでいい」という感覚が自然に続きます。
+              自分のニーズを主張することへの強い抵抗感が伴います。
+            </p>
+          </div>
+        </li>
+        <li class="cd-trait-item">
+          <span class="cd-trait-icon" aria-hidden="true">🌊</span>
+          <div class="cd-trait-body">
+            <p class="cd-trait-title">相手の感情・状態に強く引き込まれる</p>
+            <p class="cd-trait-desc">
+              パートナーが不機嫌・悲しい・怒っているとき、
+              自分まで同じように感情が揺れ動く傾向があります。
+              「相手の気分が自分の気分を決める」状態になりやすいです。
+            </p>
+          </div>
+        </li>
+        <li class="cd-trait-item">
+          <span class="cd-trait-icon" aria-hidden="true">🔗</span>
+          <div class="cd-trait-body">
+            <p class="cd-trait-title">境界線（boundary）が曖昧になりやすい</p>
+            <p class="cd-trait-desc">
+              「自分の感情」と「相手の感情」の区別が難しくなります。
+              相手の問題を自分が全て解決しようとしたり、
+              相手の気持ちを自分のもの（「きっとこう思っている」）として読み込みすぎたりします。
+            </p>
+          </div>
+        </li>
+        <li class="cd-trait-item">
+          <span class="cd-trait-icon" aria-hidden="true">💝</span>
+          <div class="cd-trait-body">
+            <p class="cd-trait-title">「助けること」への強い欲求</p>
+            <p class="cd-trait-desc">
+              困っているパートナーを助けることに強い使命感・存在意義を感じます。
+              これは深い思いやりの表れでもありますが、
+              「助けないといけない」という強迫的な感覚が伴う場合は注意が必要です。
+            </p>
+          </div>
+        </li>
+        <li class="cd-trait-item">
+          <span class="cd-trait-icon" aria-hidden="true">😶</span>
+          <div class="cd-trait-body">
+            <p class="cd-trait-title">自分の意見・感情を押し込める傾向</p>
+            <p class="cd-trait-desc">
+              「自分の気持ちを言うと相手を傷つける」「関係が壊れる」という恐れから、
+              自分の意見や感情を表現することを避けやすい傾向があります。
+            </p>
+          </div>
+        </li>
+      </ul>
+    </section>
+
+    {/* ========== 強み ========== */}
+    <section class="cd-section" aria-labelledby="cd-strengths-h2">
+      <h2 id="cd-strengths-h2" class="cd-h2">共依存的傾向の強み</h2>
+      <p class="cd-lead">
+        共依存的傾向は「悪い性格」ではありません。深い共感力と思いやりは本物の強みです。
+        「バランスを整える」ことが目標であり、「強みを手放す」必要はありません。
+      </p>
+      <div class="cd-strengths-grid">
+        <div class="cd-strength-card">
+          <div class="cd-strength-icon" aria-hidden="true">💜</div>
+          <h3 class="cd-strength-title">深い共感力</h3>
+          <p class="cd-strength-desc">相手の痛みや必要性に素早く気づき、寄り添う力があります。</p>
+        </div>
+        <div class="cd-strength-card">
+          <div class="cd-strength-icon" aria-hidden="true">🤲</div>
+          <h3 class="cd-strength-title">徹底した思いやり</h3>
+          <p class="cd-strength-desc">相手を支えることへの献身は、深い愛情の表れです。</p>
+        </div>
+        <div class="cd-strength-card">
+          <div class="cd-strength-icon" aria-hidden="true">🌡️</div>
+          <h3 class="cd-strength-title">感情への敏感さ</h3>
+          <p class="cd-strength-desc">パートナーや周囲の微細な変化・感情を読む力があります。</p>
+        </div>
+        <div class="cd-strength-card">
+          <div class="cd-strength-icon" aria-hidden="true">🔥</div>
+          <h3 class="cd-strength-title">関係への誠実さ</h3>
+          <p class="cd-strength-desc">関係を大切に維持しようとする強い意志があります。</p>
+        </div>
+      </div>
+    </section>
+
+    {/* ========== 境界線について ========== */}
+    <section class="cd-section" aria-labelledby="cd-boundary-h2">
+      <h2 id="cd-boundary-h2" class="cd-h2">境界線（boundary）の考え方</h2>
+      <p class="cd-lead">
+        境界線とは「自分と相手の感情・責任・ニーズを分ける心理的・行動的な線引き」です。
+        境界線は「冷たさ」ではなく、<strong>対等な関係を育てるための基盤</strong>です。
+      </p>
+      <div class="cd-boundary-table-wrap">
+        <table class="cd-boundary-table">
+          <caption class="cd-table-caption">境界線のある考え方の例（2026-05-21 時点）</caption>
+          <thead>
+            <tr>
+              <th scope="col">よくある思考パターン</th>
+              <th scope="col">境界線を意識した考え方</th>
+            </tr>
+          </thead>
+          <tbody>
+            {boundaryExamples.map((ex) => (
+              <tr>
+                <td class="cd-boundary-bad">{ex.bad}</td>
+                <td class="cd-boundary-good">{ex.good}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p class="cd-body">
+        境界線は一度に完璧に引けるものではありません。
+        小さなところから少しずつ練習することが、長期的な変化につながります。
+        難しさを感じる場合、公認心理師・臨床心理士のサポートが有効です。
+      </p>
+    </section>
+
+    {/* ========== 気をつけたい傾向 ========== */}
+    <section class="cd-section" aria-labelledby="cd-careful-h2">
+      <h2 id="cd-careful-h2" class="cd-h2">気をつけたい傾向</h2>
+      <p class="cd-lead">
+        「気をつけたい傾向」は自己批判のためではなく、自己理解のためのものです。
+        知ることが、自分が楽になる第一歩です。
+      </p>
+      <ol class="cd-careful-list">
+        <li class="cd-careful-item">
+          <span class="cd-careful-num" aria-hidden="true">1</span>
+          <div>
+            <p class="cd-careful-title">自分が消耗しても気づきにくい</p>
+            <p class="cd-careful-desc">
+              「まだ大丈夫」という感覚が続いても、体や気持ちは疲弊していることがあります。
+              定期的に「自分の状態」を確認する習慣が助けになります。
+            </p>
+          </div>
+        </li>
+        <li class="cd-careful-item">
+          <span class="cd-careful-num" aria-hidden="true">2</span>
+          <div>
+            <p class="cd-careful-title">「助けること」が関係の支配につながることがある</p>
+            <p class="cd-careful-desc">
+              相手のためにすることが、「相手なしでは存在できない」関係を作ることがあります。
+              これは相手への愛情より、自分の不安の管理と関連していることがあります。
+            </p>
+          </div>
+        </li>
+        <li class="cd-careful-item">
+          <span class="cd-careful-num" aria-hidden="true">3</span>
+          <div>
+            <p class="cd-careful-title">関係以外の人間関係が薄くなることがある</p>
+            <p class="cd-careful-desc">
+              パートナーとの関係に全エネルギーが向かうと、友人・家族・趣味が後回しになりがちです。
+              恋愛以外のつながりが、精神的な健康の土台になります。
+            </p>
+          </div>
+        </li>
+      </ol>
+    </section>
+
+    {/* ========== Self-care ========== */}
+    <section class="cd-section" aria-labelledby="cd-selfcare-h2">
+      <h2 id="cd-selfcare-h2" class="cd-h2">共依存的傾向のself-care</h2>
+      <p class="cd-lead">
+        self-careは「相手を愛するのをやめる」ことではありません。
+        「自分を同じくらい大切にすること」が、長期的に相手を支える力になります。
+      </p>
+      <div class="cd-selfcare-grid">
+        {selfCareItems.map((item) => (
+          <div class="cd-selfcare-card">
+            <div class="cd-selfcare-icon" aria-hidden="true">{item.icon}</div>
+            <h3 class="cd-selfcare-title">{item.title}</h3>
+            <p class="cd-selfcare-desc">{item.desc}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    {/* ========== 専門家相談推奨（強化版） ========== */}
+    <section class="cd-section cd-section--consult" aria-labelledby="cd-consult-h2">
+      <h2 id="cd-consult-h2" class="cd-h2">
+        <span aria-hidden="true">🌿</span> 専門家への相談について（重要）
+      </h2>
+      <p class="cd-lead">
+        共依存的傾向への自己理解は大切な一歩ですが、
+        深く染み込んだパターンへの変化には、専門家のサポートが大きな力になります。
+        以下に当てはまる場合は、相談を検討してください。
+      </p>
+      <ul class="cd-consult-list">
+        <li>自分が消耗し続けていても関係を離れられない状態が続く</li>
+        <li>抑うつ感・強い不安・自己嫌悪が継続している</li>
+        <li>パートナーに依存するような行動が止められない感覚がある</li>
+        <li>日常生活（仕事・食事・睡眠）に影響が出ている</li>
+      </ul>
+      <div class="cd-consult-links">
+        <a href="https://www.jsccp.jp/" target="_blank" rel="noopener noreferrer" class="cd-consult-btn">
+          日本臨床心理士会（公認心理師・臨床心理士を探す）
+          <span aria-hidden="true">→</span>
+        </a>
+        <a
+          href="https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/hukushi_kaigo/shougaishahukushi/kokoro/index.html"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="cd-consult-btn cd-consult-btn--secondary"
+        >
+          厚労省 こころの健康相談統一ダイヤル（0570-064-556）
+          <span aria-hidden="true">→</span>
+        </a>
+      </div>
+      <p class="cd-consult-note">
+        専門家への相談は「弱さ」ではなく「自分を大切にする選択」です。
+        一人で抱え込まないことが、長期的な変化の土台になります。
+      </p>
+    </section>
+
+    {/* ========== 他タイプへの動線 ========== */}
+    <section class="cd-section" aria-labelledby="cd-other-h2">
+      <h2 id="cd-other-h2" class="cd-h2">他の愛着スタイルも確認する</h2>
+      <ul class="cd-other-list">
+        <li><a href="/diagnosis/love-dependency/" class="cd-other-link">恋愛における依存的傾向 ハブページ（4タイプ概観）</a></li>
+        <li><a href="/diagnosis/love-dependency/anxious/" class="cd-other-link">不安型 愛着スタイル詳細</a></li>
+        <li><a href="/diagnosis/love-dependency/avoidant/" class="cd-other-link">回避型 愛着スタイル詳細</a></li>
+        <li><a href="/diagnosis/love-dependency/secure/" class="cd-other-link">安定型 愛着スタイル詳細</a></li>
+      </ul>
+    </section>
+
+    <ScienceNote
+      basisText="Ainsworth MDS（1978）Patterns of Attachment / Hazan C, Shaver PR（1987）DOI: 10.1037/0022-3514.52.3.511 / Mikulincer M, Shaver PR（2007）Attachment in Adulthood に基づく自己理解参考情報。「共依存的傾向」は恋愛における性格特性の傾向として扱います。医学的な「共依存（codependency）」の診断・依存症の判定・パーソナリティ障害の評価は行いません。"
+      basisUrl="https://doi.org/10.1037/0022-3514.52.3.511"
+      basisLabel="Hazan & Shaver (1987) DOI確認済"
+      notMedical={true}
+      updatedAt={UPDATED_AT}
+      additionalNote="強い苦しさ・抑うつ・自己嫌悪が続く場合は、公認心理師・臨床心理士への相談を強くお勧めします（日本臨床心理士会: https://www.jsccp.jp/ / 厚労省: 0570-064-556）。"
+    />
+
+    <section class="cd-section" aria-labelledby="cd-faq-h2">
+      <h2 id="cd-faq-h2" class="cd-h2">よくある質問</h2>
+      <dl class="cd-faq-list">
+        {faqs.map(({ question, answer }) => (
+          <div class="cd-faq-item">
+            <dt class="cd-faq-q">{question}</dt>
+            <dd class="cd-faq-a">{answer}</dd>
+          </div>
+        ))}
+      </dl>
+    </section>
+
+    <p class="cd-academic-note">
+      本ページは Ainsworth MDS（1978）/ Hazan C, Shaver PR（1987）DOI: 10.1037/0022-3514.52.3.511 /
+      Mikulincer M, Shaver PR（2007）に基づく自己理解参考情報です。
+      「共依存症」等の医学的・臨床的な診断ではありません。確認日: {UPDATED_AT}。
+      強い苦しさがある場合は公認心理師・臨床心理士にご相談ください。
+    </p>
+
+    <ReferenceList references={references} confirmedAt={UPDATED_AT} />
+  </Container>
+</BaseLayout>
+
+<style>
+.cd-hero {
+  background: linear-gradient(135deg, #7c3aed 0%, #db2777 100%);
+  color: #fff;
+  padding-block: 2.5rem 3rem;
+  text-align: center;
+}
+.cd-hero-inner {
+  max-width: 700px;
+  margin: 0 auto;
+  padding-inline: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+.cd-hero-badge {
+  display: inline-block;
+  background: rgba(255 255 255 / 0.15);
+  border: 1px solid rgba(255 255 255 / 0.35);
+  border-radius: 2rem;
+  padding: 0.2rem 0.85rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.04em;
+}
+.cd-hero-icon { font-size: 3rem; }
+.cd-hero-h1 {
+  font-size: clamp(1.8rem, 5.5vw, 2.8rem);
+  font-family: var(--sn-font-rounded, sans-serif);
+  font-weight: 700;
+  margin: 0;
+}
+.cd-hero-en {
+  font-size: 0.78rem;
+  opacity: 0.7;
+  margin: 0;
+  letter-spacing: 0.04em;
+}
+.cd-hero-catch {
+  font-size: clamp(0.88rem, 2.2vw, 1rem);
+  opacity: 0.9;
+  line-height: 1.7;
+  margin: 0;
+}
+.cd-hero-disclaimer {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  background: rgba(255 255 200 / 0.15);
+  border: 1.5px solid rgba(255 255 200 / 0.5);
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+  font-size: 0.78rem;
+  line-height: 1.6;
+  text-align: left;
+  max-width: 580px;
+}
+.cd-hero-disclaimer a { color: #fde68a; font-weight: 700; }
+
+/* 重要免責 */
+.cd-important-disclaimer {
+  background: #fff7ed;
+  border: 2px solid #f97316;
+  border-radius: 0.75rem;
+  padding: 1.25rem 1.5rem;
+  margin-block: 2rem;
+}
+.cd-disclaimer-heading {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #9a3412;
+  margin: 0 0 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.cd-disclaimer-list {
+  margin: 0;
+  padding-left: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.cd-disclaimer-list li {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: #7c2d12;
+}
+
+.cd-section { margin-block: 2.5rem; }
+.cd-h2 {
+  font-size: clamp(1.2rem, 3.5vw, 1.55rem);
+  font-family: var(--sn-font-rounded, sans-serif);
+  font-weight: 700;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #7c3aed;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.cd-lead {
+  font-size: 0.98rem;
+  line-height: 1.8;
+  margin-bottom: 1rem;
+  color: #374151;
+}
+.cd-lead a { color: #7c3aed; }
+.cd-lead strong { color: #4c1d95; }
+.cd-body {
+  font-size: 0.95rem;
+  line-height: 1.8;
+  color: #374151;
+  margin-bottom: 1rem;
+}
+
+.cd-trait-list {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+.cd-trait-item {
+  display: flex;
+  gap: 0.85rem;
+  align-items: flex-start;
+  padding: 0.9rem 1rem;
+  background: #faf5ff;
+  border: 1px solid #ddd6fe;
+  border-radius: 0.65rem;
+}
+.cd-trait-icon { font-size: 1.5rem; flex-shrink: 0; }
+.cd-trait-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #4c1d95;
+  margin: 0 0 0.25rem;
+}
+.cd-trait-desc {
+  font-size: 0.87rem;
+  line-height: 1.65;
+  color: #4b5563;
+  margin: 0;
+}
+
+.cd-strengths-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 0.85rem;
+  margin-top: 1rem;
+}
+.cd-strength-card {
+  background: #fdf4ff;
+  border: 1px solid #e9d5ff;
+  border-radius: 0.65rem;
+  padding: 1rem;
+}
+.cd-strength-icon { font-size: 1.5rem; margin-bottom: 0.4rem; }
+.cd-strength-title { font-size: 0.9rem; font-weight: 700; margin: 0 0 0.3rem; color: #4c1d95; }
+.cd-strength-desc { font-size: 0.83rem; line-height: 1.6; color: #4b5563; margin: 0; }
+
+/* 境界線テーブル */
+.cd-boundary-table-wrap { overflow-x: auto; margin-block: 1.25rem; }
+.cd-boundary-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+.cd-boundary-table th,
+.cd-boundary-table td {
+  padding: 0.65rem 0.9rem;
+  border: 1px solid #e5e7eb;
+  text-align: left;
+  line-height: 1.55;
+}
+.cd-boundary-table th { background: #f3f4f6; font-weight: 700; }
+.cd-boundary-bad { color: #9a3412; background: #fef2f2; }
+.cd-boundary-good { color: #065f46; background: #f0fdf4; font-weight: 600; }
+.cd-table-caption {
+  font-size: 0.78rem;
+  color: var(--sn-muted, #6b7280);
+  text-align: left;
+  padding: 0.25rem 0 0.5rem;
+}
+
+.cd-careful-list {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+.cd-careful-item {
+  display: flex;
+  gap: 0.85rem;
+  align-items: flex-start;
+}
+.cd-careful-num {
+  flex-shrink: 0;
+  width: 2rem;
+  height: 2rem;
+  background: #7c3aed;
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+.cd-careful-title { font-size: 0.95rem; font-weight: 700; color: #1f2937; margin: 0 0 0.25rem; }
+.cd-careful-desc { font-size: 0.87rem; line-height: 1.65; color: #4b5563; margin: 0; }
+
+.cd-selfcare-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 0.85rem;
+  margin-top: 1rem;
+}
+.cd-selfcare-card {
+  background: #f0fdf4;
+  border: 1px solid #a7f3d0;
+  border-radius: 0.65rem;
+  padding: 1rem;
+}
+.cd-selfcare-icon { font-size: 1.5rem; margin-bottom: 0.4rem; }
+.cd-selfcare-title { font-size: 0.9rem; font-weight: 700; margin: 0 0 0.3rem; color: #065f46; }
+.cd-selfcare-desc { font-size: 0.83rem; line-height: 1.65; color: #374151; margin: 0; }
+
+/* 専門家相談（強化版） */
+.cd-section--consult {
+  background: #f0fdf4;
+  border: 2px solid #059669;
+  border-radius: 0.75rem;
+  padding: 1.75rem 1.5rem;
+}
+.cd-consult-list {
+  padding-left: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  margin-block: 1rem 1.25rem;
+}
+.cd-consult-list li { font-size: 0.9rem; line-height: 1.6; color: #065f46; font-weight: 600; }
+.cd-consult-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+.cd-consult-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: #059669;
+  color: #fff;
+  font-size: 0.88rem;
+  font-weight: 700;
+  padding: 0.65rem 1.25rem;
+  border-radius: 2rem;
+  text-decoration: none;
+  transition: background 0.15s;
+}
+.cd-consult-btn:hover { background: #047857; }
+.cd-consult-btn--secondary {
+  background: #fff;
+  color: #059669;
+  border: 2px solid #059669;
+}
+.cd-consult-btn--secondary:hover { background: #f0fdf4; }
+.cd-consult-note {
+  margin-top: 1rem;
+  font-size: 0.85rem;
+  color: #065f46;
+  font-style: italic;
+}
+
+.cd-other-list {
+  list-style: none;
+  padding: 0;
+  margin: 0.75rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.cd-other-link {
+  display: block;
+  padding: 0.65rem 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  text-decoration: none;
+  color: #7c3aed;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: border-color 0.15s, background 0.15s;
+}
+.cd-other-link:hover { border-color: #7c3aed; background: #faf5ff; }
+
+.cd-faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  margin-top: 1.25rem;
+}
+.cd-faq-item {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.65rem;
+  overflow: hidden;
+}
+.cd-faq-q {
+  font-weight: 700;
+  font-size: 0.9rem;
+  padding: 0.85rem 1.1rem;
+  background: #faf5ff;
+  margin: 0;
+  display: block;
+  line-height: 1.5;
+}
+.cd-faq-q::before { content: 'Q. '; color: #7c3aed; }
+.cd-faq-a {
+  font-size: 0.87rem;
+  line-height: 1.7;
+  padding: 0.85rem 1.1rem;
+  margin: 0;
+  color: #4b5563;
+}
+.cd-faq-a::before { content: 'A. '; font-weight: 700; color: #059669; }
+
+.cd-academic-note {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  border-top: 1px solid #e5e7eb;
+  padding-top: 1.5rem;
+  margin-top: 2rem;
+  line-height: 1.6;
+}
+
+@media (max-width: 640px) {
+  .cd-strengths-grid, .cd-selfcare-grid { grid-template-columns: 1fr; }
+  .cd-consult-links { flex-direction: column; }
+}
+</style>

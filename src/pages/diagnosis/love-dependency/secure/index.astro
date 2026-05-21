@@ -1,0 +1,804 @@
+---
+/**
+ * 安定型 愛着スタイル 詳細ページ
+ * KW: 安定型 愛着スタイル / 恋愛 安定型 / 健全な恋愛 特徴
+ * 学術根拠:
+ *   - Ainsworth MDS (1978) Patterns of Attachment
+ *   - Hazan C, Shaver PR (1987) DOI: 10.1037/0022-3514.52.3.511
+ *   - Mikulincer M, Shaver PR (2007) Attachment in Adulthood
+ *
+ * YMYL:
+ *   - 「完璧な人間」「理想の性格」と断定しない（心理的決定論NG）
+ *   - 「治療」等は不要だが、専門家相談は他タイプへの関係で有用と明示
+ *   - 専門家相談推奨を他タイプとの関係文脈で明示
+ *
+ * 確認日: 2026-05-21
+ */
+import BaseLayout from '../../../../layouts/BaseLayout.astro';
+import Container from '../../../../components/Container.astro';
+import TldrBlock from '../../../../components/TldrBlock.astro';
+import ScienceNote from '../../../../components/ScienceNote.astro';
+import ReferenceList from '../../../../components/ReferenceList.astro';
+
+const SITE_URL = 'https://shindan-navi.jp';
+const PAGE_URL = `${SITE_URL}/diagnosis/love-dependency/secure/`;
+const UPDATED_AT = '2026-05-21';
+
+const references = [
+  {
+    title: 'Patterns of Attachment: A Psychological Study of the Strange Situation',
+    author: 'Ainsworth MDS, Blehar MC, Waters E, Wall S',
+    year: 1978,
+    publisher: 'Lawrence Erlbaum Associates',
+    url: 'https://psycnet.apa.org/record/1979-22063-000',
+  },
+  {
+    title: 'Romantic love conceptualized as an attachment process',
+    author: 'Hazan C, Shaver PR',
+    year: 1987,
+    journal: 'Journal of Personality and Social Psychology',
+    volume: '52(3), 511-524',
+    url: 'https://doi.org/10.1037/0022-3514.52.3.511',
+  },
+  {
+    title: 'Attachment in Adulthood: Structure, Dynamics, and Change',
+    author: 'Mikulincer M, Shaver PR',
+    year: 2007,
+    publisher: 'Guilford Press',
+    url: 'https://www.guilford.com/books/Attachment-in-Adulthood/Mikulincer-Shaver/9781462543854',
+  },
+  {
+    title: '公認心理師・臨床心理士への相談窓口（日本臨床心理士会）',
+    author: '一般社団法人日本臨床心理士会',
+    year: 2024,
+    url: 'https://www.jsccp.jp/',
+  },
+];
+
+const faqs = [
+  {
+    question: '安定型の愛着スタイルとはどういう傾向ですか？',
+    answer:
+      '安定型は、パートナーとの適切な距離感を保ちながら感情を率直に共有できる傾向です。見捨てられ不安が低く、親密さへの過度な不快感もなく、独立性と依存のバランスが取れています。Hazan & Shaver（1987）の研究では、安定型が成人の約55〜60%にみられる最も多い傾向として報告されています（DOI: 10.1037/0022-3514.52.3.511）。',
+  },
+  {
+    question: '安定型は「完璧な性格」ですか？',
+    answer:
+      'いいえ、そうではありません。安定型の傾向を持つ人にも、強い感情の波を持つパートナーへの対応に戸惑う場面があります。全ての状況で安定を維持できるわけでなく、環境やストレスによって傾向が揺れることもあります。「どのタイプが優れている」ではなく、自己理解と対話が最も重要です。',
+  },
+  {
+    question: '安定型はなぜ感情共有が自然にできるのですか？',
+    answer:
+      '安定型は「感情を表現しても関係が壊れない」という内的な安心感（安全ベース）を持ちやすい傾向があります。Mikulincer & Shaver（2007）は「安全ベースの機能（secure base functioning）」として、安定型が感情の開示と自律のバランスを柔軟に取れることを示しています。',
+  },
+  {
+    question: '安定型と不安型のパートナーとの関係はどうなりますか？',
+    answer:
+      '安定型パートナーは、不安型の見捨てられ不安を自然に和らげる「安全ベース」として機能しやすいです。ただし、不安型のパートナーの全ての不安を安定型が解決することは不可能です。「安心感を提供しながら、自分の限界も伝える」バランスが関係の持続性につながります。',
+  },
+  {
+    question: '安定型と回避型のパートナーとの関係はどうなりますか？',
+    answer:
+      '安定型は回避型の距離ニーズを比較的受け入れやすい傾向があります。押しつけず待てる姿勢が、回避型が少しずつ心を開くきっかけになることがあります。ただし、感情共有が長期的に少ない状態が続くと安定型パートナーも孤独を感じることがあるため、率直なコミュニケーションが重要です。',
+  },
+  {
+    question: '安定型の傾向を育てることはできますか？',
+    answer:
+      'はい、できます。Mikulincer & Shaver（2007）は「安全ベースとなる経験の蓄積（安定した関係・自己への気づき・専門家のサポート）」によって他の愛着タイプの人も安定型に近づく可能性があることを示しています。愛着スタイルは固定した性格ではなく、変容しうるものです。',
+  },
+  {
+    question: '安定型でも関係に悩みますか？',
+    answer:
+      'はい、あります。安定型の傾向を持っていても、環境・ストレス・パートナーとの相性・コミュニケーションの課題など、さまざまな悩みは生じます。「安定型だから問題ない」ということではなく、どのタイプでも自己理解と対話が関係の基盤です。',
+  },
+  {
+    question: 'このページの内容は医学的なものですか？',
+    answer:
+      'いいえ、違います。このページは安定型愛着スタイルの傾向を自己理解するための参考情報です。医学的診断・臨床評価の代替にはなりません。心身の不調が続く場合は、医師・臨床心理士にご相談ください。',
+  },
+];
+
+const jsonLdArticle = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  '@id': `${PAGE_URL}#article`,
+  headline: '安定型 愛着スタイルとは【恋愛の傾向と他タイプとの関係構築ガイド】',
+  url: PAGE_URL,
+  datePublished: '2026-05-21',
+  dateModified: UPDATED_AT,
+  inLanguage: 'ja',
+  author: { '@type': 'Organization', '@id': `${SITE_URL}/#organization`, name: '診断ナビ' },
+  publisher: { '@type': 'Organization', '@id': `${SITE_URL}/#organization`, name: '診断ナビ' },
+  citation: [
+    {
+      '@type': 'CreativeWork',
+      name: 'Romantic love conceptualized as an attachment process',
+      author: 'Hazan C, Shaver PR',
+      datePublished: '1987',
+      url: 'https://doi.org/10.1037/0022-3514.52.3.511',
+    },
+  ],
+};
+
+const jsonLdFAQ = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  '@id': `${PAGE_URL}#faq`,
+  mainEntity: faqs.map(({ question, answer }) => ({
+    '@type': 'Question',
+    name: question,
+    acceptedAnswer: { '@type': 'Answer', text: answer },
+  })),
+};
+
+const jsonLdBreadcrumb = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'ホーム', item: SITE_URL },
+    { '@type': 'ListItem', position: 2, name: '診断一覧', item: `${SITE_URL}/diagnosis/` },
+    { '@type': 'ListItem', position: 3, name: '恋愛における依存的傾向', item: `${SITE_URL}/diagnosis/love-dependency/` },
+    { '@type': 'ListItem', position: 4, name: '安定型', item: PAGE_URL },
+  ],
+};
+
+const jsonLdAll = [jsonLdArticle, jsonLdFAQ, jsonLdBreadcrumb];
+
+// 他タイプとの関係構築のコツ
+const relationshipTips = [
+  {
+    type: '不安型パートナーとの場合',
+    icon: '💭',
+    color: '#dc2626',
+    tips: [
+      '「どこにいても戻ってくる」という安心感を言葉と行動で示す',
+      '確認行動を責めず、「なぜ不安を感じているか」を一緒に探る',
+      '自分の限界も率直に伝えることで、関係の持続性が高まる',
+    ],
+  },
+  {
+    type: '回避型パートナーとの場合',
+    icon: '🧭',
+    color: '#2563eb',
+    tips: [
+      '一人の時間への欲求を尊重し、「逃げている」と解釈しない',
+      '感情共有を強要せず、「安全な場所がある」ことを示す',
+      '距離が必要な理由を話し合える機会を、穏やかに提供する',
+    ],
+  },
+  {
+    type: '共依存的傾向のパートナーとの場合',
+    icon: '🤝',
+    color: '#7c3aed',
+    tips: [
+      '相手の「助けたい」欲求を否定せず、自分のニーズも伝える対等さを大切に',
+      '「全て受け取ること」と「自分の空間を守ること」のバランスを意識する',
+      '必要であれば、お互いが専門家のサポートを求めることを自然に提案できる',
+    ],
+  },
+];
+---
+
+<BaseLayout
+  title="安定型 愛着スタイルとは【恋愛の傾向と他タイプとの関係構築】"
+  description="適切な距離感・率直な感情共有が特徴の安定型愛着スタイルを解説。Hazan & Shaver（1987）の愛着理論に基づく自己理解ガイド。他タイプとの関係構築のコツも紹介。"
+  canonical={PAGE_URL}
+  jsonLd={jsonLdAll}
+  ogType="article"
+  publishDate="2026-05-21"
+  lastUpdated={UPDATED_AT}
+  breadcrumbs={[
+    { name: '診断一覧', url: '/diagnosis/' },
+    { name: '恋愛における依存的傾向', url: '/diagnosis/love-dependency/' },
+    { name: '安定型', url: '/diagnosis/love-dependency/secure/' },
+  ]}
+>
+  {/* ========== ヒーロー ========== */}
+  <section class="sc-hero" aria-labelledby="sc-h1">
+    <div class="sc-hero-inner">
+      <div class="sc-hero-badge">愛着スタイル · Secure Attachment</div>
+      <div class="sc-hero-icon" aria-hidden="true">⚓</div>
+      <h1 id="sc-h1" class="sc-hero-h1">安定型</h1>
+      <p class="sc-hero-en">Secure Attachment Style</p>
+      <p class="sc-hero-catch">
+        適切な距離感で感情共有が自然にできる傾向。<br />
+        良好な関係の基盤になりやすい愛着スタイルです。
+      </p>
+      <div class="sc-hero-note" role="note">
+        <span aria-hidden="true">📌</span>
+        <span>
+          このページは<strong>医学的診断ではありません</strong>。
+          恋愛傾向の自己理解のための参考情報です。
+          安定型でも悩みは生じます。困ったときは<a href="https://www.jsccp.jp/" target="_blank" rel="noopener noreferrer">公認心理師・臨床心理士</a>へご相談ください。
+        </span>
+      </div>
+    </div>
+  </section>
+
+  <Container>
+    <TldrBlock
+      title="このページでわかること"
+      points={[
+        "安定型愛着スタイルとは、見捨てられ不安が低く・親密さと自律のバランスが取れている恋愛傾向です。Hazan & Shaver（1987）の研究で成人の約55〜60%が該当（DOI: 10.1037/0022-3514.52.3.511）",
+        "良好な関係の基盤になりやすい傾向の特徴・強み・気をつけたい点を解説します。安定型は「完璧」ではなく、どの状況でも悩みは生じます",
+        "不安型・回避型・共依存的傾向のパートナーとの関係構築のコツも紹介します"
+      ]}
+      updatedAt={UPDATED_AT}
+      sourceLabel="Hazan & Shaver (1987) DOI: 10.1037/0022-3514.52.3.511"
+      sourceUrl="https://doi.org/10.1037/0022-3514.52.3.511"
+    />
+
+    {/* ========== 特徴 ========== */}
+    <section class="sc-section" aria-labelledby="sc-traits-h2">
+      <h2 id="sc-traits-h2" class="sc-h2">安定型の主な特徴</h2>
+      <p class="sc-lead">
+        Hazan &amp; Shaver（1987）は成人の愛着スタイル研究において、
+        安定型を「パートナーとの親密さに心地よさを感じ、見捨てられることへの不安も過度な依存もない傾向」として描写しています
+        （<a href="https://doi.org/10.1037/0022-3514.52.3.511" target="_blank" rel="noopener noreferrer">DOI: 10.1037/0022-3514.52.3.511</a>）。
+        安定型が成人の多数を占める（約55〜60%）傾向として報告されています。
+      </p>
+      <ul class="sc-trait-list">
+        <li class="sc-trait-item">
+          <span class="sc-trait-icon" aria-hidden="true">⚖️</span>
+          <div class="sc-trait-body">
+            <p class="sc-trait-title">親密さと自律のバランスが取れている</p>
+            <p class="sc-trait-desc">
+              パートナーに深く関わりながら、自分の時間・空間も自然に確保できます。
+              「近すぎず、遠すぎず」の距離感を柔軟に調整しやすい傾向があります。
+            </p>
+          </div>
+        </li>
+        <li class="sc-trait-item">
+          <span class="sc-trait-icon" aria-hidden="true">💬</span>
+          <div class="sc-trait-body">
+            <p class="sc-trait-title">感情共有が比較的自然にできる</p>
+            <p class="sc-trait-desc">
+              「感情を表現しても関係が壊れない」という内的な安心感を持ちやすく、
+              自分の気持ちをパートナーに伝えることへの抵抗が少ない傾向があります。
+            </p>
+          </div>
+        </li>
+        <li class="sc-trait-item">
+          <span class="sc-trait-icon" aria-hidden="true">🌊</span>
+          <div class="sc-trait-body">
+            <p class="sc-trait-title">見捨てられ不安が比較的低い</p>
+            <p class="sc-trait-desc">
+              パートナーの返信が遅くても、出かけても「関係が終わった」と解釈しにくい傾向があります。
+              Mikulincer &amp; Shaver（2007）は「脅威への反応が穏やか」として描写しています。
+            </p>
+          </div>
+        </li>
+        <li class="sc-trait-item">
+          <span class="sc-trait-icon" aria-hidden="true">🤝</span>
+          <div class="sc-trait-body">
+            <p class="sc-trait-title">対話で関係の課題に取り組める</p>
+            <p class="sc-trait-desc">
+              関係に問題が起きたとき、回避したり過剰反応したりせず、
+              対話で向き合おうとする傾向があります。
+            </p>
+          </div>
+        </li>
+        <li class="sc-trait-item">
+          <span class="sc-trait-icon" aria-hidden="true">🔁</span>
+          <div class="sc-trait-body">
+            <p class="sc-trait-title">パートナーへの安全基地機能を果たしやすい</p>
+            <p class="sc-trait-desc">
+              安定型はパートナーにとって「戻ってこられる安全な場所（secure base）」として
+              機能しやすいです。これが不安型・回避型パートナーの傾向を穏やかにすることがあります。
+            </p>
+          </div>
+        </li>
+      </ul>
+    </section>
+
+    {/* ========== 強み ========== */}
+    <section class="sc-section" aria-labelledby="sc-strengths-h2">
+      <h2 id="sc-strengths-h2" class="sc-h2">安定型の強み</h2>
+      <p class="sc-lead">
+        安定型の傾向は、良好な関係を育てる上で多くの強みをもたらします。
+        ただし「安定型だから全ての関係がうまくいく」わけではなく、
+        どのタイプでも自己理解と対話が最も重要です。
+      </p>
+      <div class="sc-strengths-grid">
+        <div class="sc-strength-card">
+          <div class="sc-strength-icon" aria-hidden="true">🏄</div>
+          <h3 class="sc-strength-title">関係の波に振り回されにくい</h3>
+          <p class="sc-strength-desc">感情の波が大きくなっても、全体的なバランスを保ちやすい傾向があります。</p>
+        </div>
+        <div class="sc-strength-card">
+          <div class="sc-strength-icon" aria-hidden="true">🗣️</div>
+          <h3 class="sc-strength-title">率直なコミュニケーション</h3>
+          <p class="sc-strength-desc">自分の気持ち・ニーズを表現しやすく、対話で関係を調整できます。</p>
+        </div>
+        <div class="sc-strength-card">
+          <div class="sc-strength-icon" aria-hidden="true">⚓</div>
+          <h3 class="sc-strength-title">パートナーへの安定感提供</h3>
+          <p class="sc-strength-desc">不安型・回避型・共依存的傾向のパートナーへの安全基地になりやすいです。</p>
+        </div>
+        <div class="sc-strength-card">
+          <div class="sc-strength-icon" aria-hidden="true">🌿</div>
+          <h3 class="sc-strength-title">長期的な関係構築に強い</h3>
+          <p class="sc-strength-desc">感情的消耗が少なく、長期にわたって関係を育て続けることができます。</p>
+        </div>
+      </div>
+    </section>
+
+    {/* ========== 気をつけたい傾向（少ない） ========== */}
+    <section class="sc-section" aria-labelledby="sc-careful-h2">
+      <h2 id="sc-careful-h2" class="sc-h2">気をつけたい傾向</h2>
+      <p class="sc-lead">
+        安定型でも、特定の文脈で気をつけたい傾向があります。
+        「安定型だから大丈夫」という思い込みより、自己観察を続けることが大切です。
+      </p>
+      <ol class="sc-careful-list">
+        <li class="sc-careful-item">
+          <span class="sc-careful-num" aria-hidden="true">1</span>
+          <div>
+            <p class="sc-careful-title">不安型パートナーの感情の波に戸惑うことがある</p>
+            <p class="sc-careful-desc">
+              安定型の「大丈夫」という感覚が、不安型の強い感情の波と噛み合わないことがあります。
+              「なぜこんなに不安になるのか」を理解しようとする姿勢が関係を助けます。
+            </p>
+          </div>
+        </li>
+        <li class="sc-careful-item">
+          <span class="sc-careful-num" aria-hidden="true">2</span>
+          <div>
+            <p class="sc-careful-title">回避型パートナーの距離に孤独を感じることがある</p>
+            <p class="sc-careful-desc">
+              回避型の「一人になりたい」傾向が続くと、安定型パートナーも孤独感を感じることがあります。
+              自分の感情ニーズも率直に伝えることが関係の対等さを守ります。
+            </p>
+          </div>
+        </li>
+        <li class="sc-careful-item">
+          <span class="sc-careful-num" aria-hidden="true">3</span>
+          <div>
+            <p class="sc-careful-title">全ての責任を引き受けようとしないこと</p>
+            <p class="sc-careful-desc">
+              安定型が関係の「調整役」になりすぎると消耗することがあります。
+              対等なパートナーシップでは、双方が関係に責任を持つことが大切です。
+            </p>
+          </div>
+        </li>
+      </ol>
+    </section>
+
+    {/* ========== 他タイプとの関係構築 ========== */}
+    <section class="sc-section" aria-labelledby="sc-relation-h2">
+      <h2 id="sc-relation-h2" class="sc-h2">他の愛着スタイルとの関係構築のコツ</h2>
+      <p class="sc-lead">
+        安定型は他タイプのパートナーとの関係に適応しやすい傾向がありますが、
+        各タイプの特性を理解した上でのアプローチが関係の質を高めます。
+      </p>
+      <div class="sc-relation-grid">
+        {relationshipTips.map((rt) => (
+          <div class="sc-relation-card" style={`--type-color: ${rt.color}`}>
+            <div class="sc-relation-icon" aria-hidden="true">{rt.icon}</div>
+            <h3 class="sc-relation-type">{rt.type}</h3>
+            <ul class="sc-relation-tips">
+              {rt.tips.map((tip) => (
+                <li class="sc-relation-tip">{tip}</li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    {/* ========== 安定型を育てることについて ========== */}
+    <section class="sc-section sc-section--develop" aria-labelledby="sc-develop-h2">
+      <h2 id="sc-develop-h2" class="sc-h2">安定型の傾向を育てることについて</h2>
+      <p class="sc-lead">
+        安定型の傾向は先天的に決まるものではなく、経験・環境・自己理解によって育まれます。
+        Mikulincer &amp; Shaver（2007）は以下のような「安全ベースの経験」が変化を促すことを示しています：
+      </p>
+      <ul class="sc-develop-list">
+        <li>
+          <strong>安全な関係の経験</strong>：信頼できるパートナー・友人・家族との継続的な関係が、安全感の土台を育てます
+        </li>
+        <li>
+          <strong>自己への気づき</strong>：自分の傾向を知ること・感情を言語化することが、反射的な反応を変えていきます
+        </li>
+        <li>
+          <strong>専門家のサポート</strong>：必要であれば、公認心理師・臨床心理士との対話が変容を促します
+        </li>
+      </ul>
+      <p class="sc-body">
+        どの愛着タイプの人も、意識的な取り組みによって安定型に近づく可能性があります。
+        急速な変化ではなく、時間をかけた積み重ねが大切です。
+      </p>
+    </section>
+
+    {/* ========== 専門家相談推奨 ========== */}
+    <section class="sc-section sc-section--consult" aria-labelledby="sc-consult-h2">
+      <h2 id="sc-consult-h2" class="sc-h2">専門家への相談について</h2>
+      <p class="sc-lead">
+        安定型の傾向を持っていても、恋愛・人間関係での悩みは生じます。
+        自己理解だけでは難しい場合や、パートナーとの課題が深い場合は、
+        公認心理師・臨床心理士への相談が有効な選択肢です。
+      </p>
+      <div class="sc-consult-links">
+        <a href="https://www.jsccp.jp/" target="_blank" rel="noopener noreferrer" class="sc-consult-btn">
+          日本臨床心理士会（公認心理師・臨床心理士を探す）
+          <span aria-hidden="true">→</span>
+        </a>
+        <a
+          href="https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/hukushi_kaigo/shougaishahukushi/kokoro/index.html"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="sc-consult-btn sc-consult-btn--secondary"
+        >
+          厚労省 こころの健康相談窓口
+          <span aria-hidden="true">→</span>
+        </a>
+      </div>
+    </section>
+
+    {/* ========== 他タイプへの動線 ========== */}
+    <section class="sc-section" aria-labelledby="sc-other-h2">
+      <h2 id="sc-other-h2" class="sc-h2">他の愛着スタイルも確認する</h2>
+      <ul class="sc-other-list">
+        <li><a href="/diagnosis/love-dependency/" class="sc-other-link">恋愛における依存的傾向 ハブページ（4タイプ概観）</a></li>
+        <li><a href="/diagnosis/love-dependency/anxious/" class="sc-other-link">不安型 愛着スタイル詳細</a></li>
+        <li><a href="/diagnosis/love-dependency/avoidant/" class="sc-other-link">回避型 愛着スタイル詳細</a></li>
+        <li><a href="/diagnosis/love-dependency/codependent/" class="sc-other-link">共依存的傾向 詳細</a></li>
+      </ul>
+    </section>
+
+    {/* ========== 関連診断 ========== */}
+    <section class="sc-section" aria-labelledby="sc-related-h2">
+      <h2 id="sc-related-h2" class="sc-h2">関連する診断</h2>
+      <ul class="sc-related-list">
+        <li><a href="/diagnosis/love-style/" class="sc-related-link">恋愛スタイル診断（J.A.Lee 1973 理論）</a></li>
+        <li><a href="/diagnosis/mbti-compat/love/" class="sc-related-link">MBTI恋愛相性診断</a></li>
+        <li><a href="/diagnosis/friend-compat/" class="sc-related-link">友達相性診断</a></li>
+        <li><a href="/diagnosis/multi-int/" class="sc-related-link">多重知能テスト</a></li>
+      </ul>
+    </section>
+
+    <ScienceNote
+      basisText="Ainsworth MDS（1978）Patterns of Attachment / Hazan C, Shaver PR（1987）DOI: 10.1037/0022-3514.52.3.511 / Mikulincer M, Shaver PR（2007）Attachment in Adulthood に基づく自己理解参考情報。安定型愛着スタイルは恋愛傾向の自己理解フレームワークです。「安定型＝完璧」ではなく、傾向の把握を目的としています。"
+      basisUrl="https://doi.org/10.1037/0022-3514.52.3.511"
+      basisLabel="Hazan & Shaver (1987) DOI確認済"
+      notMedical={true}
+      updatedAt={UPDATED_AT}
+      additionalNote="どの愛着タイプでも悩みは生じます。心身の不調が続く場合は医師・臨床心理士にご相談ください。"
+    />
+
+    <section class="sc-section" aria-labelledby="sc-faq-h2">
+      <h2 id="sc-faq-h2" class="sc-h2">よくある質問</h2>
+      <dl class="sc-faq-list">
+        {faqs.map(({ question, answer }) => (
+          <div class="sc-faq-item">
+            <dt class="sc-faq-q">{question}</dt>
+            <dd class="sc-faq-a">{answer}</dd>
+          </div>
+        ))}
+      </dl>
+    </section>
+
+    <p class="sc-academic-note">
+      本ページは Ainsworth MDS（1978）/ Hazan C, Shaver PR（1987）DOI: 10.1037/0022-3514.52.3.511 /
+      Mikulincer M, Shaver PR（2007）に基づく自己理解参考情報です。
+      医学的・臨床的な診断ではありません。確認日: {UPDATED_AT}。
+    </p>
+
+    <ReferenceList references={references} confirmedAt={UPDATED_AT} />
+  </Container>
+</BaseLayout>
+
+<style>
+.sc-hero {
+  background: linear-gradient(135deg, #059669 0%, #0891b2 100%);
+  color: #fff;
+  padding-block: 2.5rem 3rem;
+  text-align: center;
+}
+.sc-hero-inner {
+  max-width: 680px;
+  margin: 0 auto;
+  padding-inline: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+.sc-hero-badge {
+  display: inline-block;
+  background: rgba(255 255 255 / 0.15);
+  border: 1px solid rgba(255 255 255 / 0.35);
+  border-radius: 2rem;
+  padding: 0.2rem 0.85rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.04em;
+}
+.sc-hero-icon { font-size: 3rem; }
+.sc-hero-h1 {
+  font-size: clamp(2rem, 6vw, 3rem);
+  font-family: var(--sn-font-rounded, sans-serif);
+  font-weight: 700;
+  margin: 0;
+}
+.sc-hero-en {
+  font-size: 0.82rem;
+  opacity: 0.7;
+  margin: 0;
+  letter-spacing: 0.05em;
+}
+.sc-hero-catch {
+  font-size: clamp(0.88rem, 2.2vw, 1rem);
+  opacity: 0.9;
+  line-height: 1.7;
+  margin: 0;
+}
+.sc-hero-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.4rem;
+  background: rgba(255 255 255 / 0.12);
+  border: 1px solid rgba(255 255 255 / 0.35);
+  border-radius: 0.5rem;
+  padding: 0.65rem 0.9rem;
+  font-size: 0.78rem;
+  line-height: 1.5;
+  text-align: left;
+  max-width: 520px;
+}
+.sc-hero-note a { color: #fde68a; font-weight: 700; }
+
+.sc-section { margin-block: 2.5rem; }
+.sc-h2 {
+  font-size: clamp(1.2rem, 3.5vw, 1.55rem);
+  font-family: var(--sn-font-rounded, sans-serif);
+  font-weight: 700;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #059669;
+}
+.sc-lead {
+  font-size: 0.98rem;
+  line-height: 1.8;
+  margin-bottom: 1rem;
+  color: #374151;
+}
+.sc-lead a { color: #059669; }
+.sc-body {
+  font-size: 0.95rem;
+  line-height: 1.8;
+  color: #374151;
+  margin-bottom: 1rem;
+}
+
+.sc-trait-list {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+.sc-trait-item {
+  display: flex;
+  gap: 0.85rem;
+  align-items: flex-start;
+  padding: 0.9rem 1rem;
+  background: #f0fdf4;
+  border: 1px solid #a7f3d0;
+  border-radius: 0.65rem;
+}
+.sc-trait-icon { font-size: 1.5rem; flex-shrink: 0; }
+.sc-trait-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #065f46;
+  margin: 0 0 0.25rem;
+}
+.sc-trait-desc {
+  font-size: 0.87rem;
+  line-height: 1.65;
+  color: #4b5563;
+  margin: 0;
+}
+
+.sc-strengths-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 0.85rem;
+  margin-top: 1rem;
+}
+.sc-strength-card {
+  background: #ecfdf5;
+  border: 1px solid #6ee7b7;
+  border-radius: 0.65rem;
+  padding: 1rem;
+}
+.sc-strength-icon { font-size: 1.5rem; margin-bottom: 0.4rem; }
+.sc-strength-title { font-size: 0.9rem; font-weight: 700; margin: 0 0 0.3rem; color: #065f46; }
+.sc-strength-desc { font-size: 0.83rem; line-height: 1.6; color: #4b5563; margin: 0; }
+
+.sc-careful-list {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+.sc-careful-item {
+  display: flex;
+  gap: 0.85rem;
+  align-items: flex-start;
+}
+.sc-careful-num {
+  flex-shrink: 0;
+  width: 2rem;
+  height: 2rem;
+  background: #059669;
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+.sc-careful-title { font-size: 0.95rem; font-weight: 700; color: #1f2937; margin: 0 0 0.25rem; }
+.sc-careful-desc { font-size: 0.87rem; line-height: 1.65; color: #4b5563; margin: 0; }
+
+/* 他タイプとの関係構築 */
+.sc-relation-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+.sc-relation-card {
+  border: 2px solid var(--type-color, #059669);
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+}
+.sc-relation-icon { font-size: 1.75rem; margin-bottom: 0.4rem; }
+.sc-relation-type {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--type-color, #059669);
+  margin: 0 0 0.75rem;
+}
+.sc-relation-tips {
+  padding-left: 1.25rem;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.sc-relation-tip {
+  font-size: 0.84rem;
+  line-height: 1.6;
+  color: #374151;
+}
+
+/* 安定型を育てる */
+.sc-section--develop {
+  background: #f0fdf4;
+  border: 1px solid #a7f3d0;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+}
+.sc-develop-list {
+  padding-left: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-block: 1rem;
+}
+.sc-develop-list li {
+  font-size: 0.9rem;
+  line-height: 1.65;
+  color: #065f46;
+}
+.sc-develop-list strong { color: #047857; }
+
+/* 専門家相談 */
+.sc-section--consult {
+  background: #f0fdf4;
+  border: 1px solid #a7f3d0;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+}
+.sc-consult-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+.sc-consult-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: #059669;
+  color: #fff;
+  font-size: 0.88rem;
+  font-weight: 700;
+  padding: 0.65rem 1.25rem;
+  border-radius: 2rem;
+  text-decoration: none;
+  transition: background 0.15s;
+}
+.sc-consult-btn:hover { background: #047857; }
+.sc-consult-btn--secondary {
+  background: #fff;
+  color: #059669;
+  border: 2px solid #059669;
+}
+.sc-consult-btn--secondary:hover { background: #f0fdf4; }
+
+.sc-other-list, .sc-related-list {
+  list-style: none;
+  padding: 0;
+  margin: 0.75rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.sc-other-link, .sc-related-link {
+  display: block;
+  padding: 0.65rem 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  text-decoration: none;
+  color: #059669;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: border-color 0.15s, background 0.15s;
+}
+.sc-other-link:hover, .sc-related-link:hover {
+  border-color: #059669;
+  background: #f0fdf4;
+}
+
+.sc-faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  margin-top: 1.25rem;
+}
+.sc-faq-item {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.65rem;
+  overflow: hidden;
+}
+.sc-faq-q {
+  font-weight: 700;
+  font-size: 0.9rem;
+  padding: 0.85rem 1.1rem;
+  background: #f0fdf4;
+  margin: 0;
+  display: block;
+  line-height: 1.5;
+}
+.sc-faq-q::before { content: 'Q. '; color: #059669; }
+.sc-faq-a {
+  font-size: 0.87rem;
+  line-height: 1.7;
+  padding: 0.85rem 1.1rem;
+  margin: 0;
+  color: #4b5563;
+}
+.sc-faq-a::before { content: 'A. '; font-weight: 700; color: #059669; }
+
+.sc-academic-note {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  border-top: 1px solid #e5e7eb;
+  padding-top: 1.5rem;
+  margin-top: 2rem;
+  line-height: 1.6;
+}
+
+@media (max-width: 640px) {
+  .sc-strengths-grid { grid-template-columns: 1fr; }
+  .sc-relation-grid { grid-template-columns: 1fr; }
+  .sc-consult-links { flex-direction: column; }
+}
+</style>

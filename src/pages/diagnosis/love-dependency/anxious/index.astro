@@ -1,0 +1,855 @@
+---
+/**
+ * 不安型 愛着スタイル 詳細ページ
+ * KW: 不安型 愛着スタイル / 恋愛 不安型 / 恋愛 見捨てられ不安
+ * 学術根拠:
+ *   - Ainsworth MDS (1978) Patterns of Attachment
+ *   - Hazan C, Shaver PR (1987) DOI: 10.1037/0022-3514.52.3.511
+ *   - Mikulincer M, Shaver PR (2007) Attachment in Adulthood
+ *
+ * YMYL最重要:
+ *   - 「不安型愛着障害」「依存症」等の医学用語 絶対NG
+ *   - 「治療」「治す」NG → 「向き合い方」「self-care」「マネジメント」
+ *   - 全ページに「公認心理師・臨床心理士相談推奨」を明示
+ *
+ * 確認日: 2026-05-21
+ */
+import BaseLayout from '../../../../layouts/BaseLayout.astro';
+import Container from '../../../../components/Container.astro';
+import TldrBlock from '../../../../components/TldrBlock.astro';
+import ScienceNote from '../../../../components/ScienceNote.astro';
+import ReferenceList from '../../../../components/ReferenceList.astro';
+
+const SITE_URL = 'https://shindan-navi.jp';
+const PAGE_URL = `${SITE_URL}/diagnosis/love-dependency/anxious/`;
+const UPDATED_AT = '2026-05-21';
+
+const references = [
+  {
+    title: 'Patterns of Attachment: A Psychological Study of the Strange Situation',
+    author: 'Ainsworth MDS, Blehar MC, Waters E, Wall S',
+    year: 1978,
+    publisher: 'Lawrence Erlbaum Associates',
+    url: 'https://psycnet.apa.org/record/1979-22063-000',
+  },
+  {
+    title: 'Romantic love conceptualized as an attachment process',
+    author: 'Hazan C, Shaver PR',
+    year: 1987,
+    journal: 'Journal of Personality and Social Psychology',
+    volume: '52(3), 511-524',
+    url: 'https://doi.org/10.1037/0022-3514.52.3.511',
+  },
+  {
+    title: 'Attachment in Adulthood: Structure, Dynamics, and Change',
+    author: 'Mikulincer M, Shaver PR',
+    year: 2007,
+    publisher: 'Guilford Press',
+    url: 'https://www.guilford.com/books/Attachment-in-Adulthood/Mikulincer-Shaver/9781462543854',
+  },
+  {
+    title: '公認心理師・臨床心理士への相談窓口（日本臨床心理士会）',
+    author: '一般社団法人日本臨床心理士会',
+    year: 2024,
+    url: 'https://www.jsccp.jp/',
+  },
+];
+
+// JSON-LD
+const jsonLdArticle = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  '@id': `${PAGE_URL}#article`,
+  headline: '不安型 愛着スタイルとは【恋愛における依存的傾向の自己理解ガイド】',
+  url: PAGE_URL,
+  datePublished: '2026-05-21',
+  dateModified: UPDATED_AT,
+  inLanguage: 'ja',
+  author: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+    name: '診断ナビ',
+  },
+  publisher: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+    name: '診断ナビ',
+  },
+  about: {
+    '@type': 'Thing',
+    name: '不安型愛着スタイル（Anxious Attachment Style）',
+    description: 'Ainsworth（1978）・Hazan & Shaver（1987）の愛着理論に基づく成人の恋愛傾向の自己理解フレームワーク。医学的診断ではありません。',
+  },
+  citation: [
+    {
+      '@type': 'CreativeWork',
+      name: 'Romantic love conceptualized as an attachment process',
+      author: 'Hazan C, Shaver PR',
+      datePublished: '1987',
+      url: 'https://doi.org/10.1037/0022-3514.52.3.511',
+    },
+  ],
+};
+
+const faqs = [
+  {
+    question: '不安型の愛着スタイルとはどういう傾向ですか？',
+    answer:
+      '不安型は、パートナーとの関係で「見捨てられるかもしれない」という不安が出やすい恋愛傾向です。相手の反応に敏感で、確認行動・頻繁な連絡・感情表現の強さが特徴として現れます。Hazan & Shaver（1987）の研究では、この傾向は乳幼児期の不一致な養育経験との関連が示されています（DOI: 10.1037/0022-3514.52.3.511）。',
+  },
+  {
+    question: '不安型は「依存体質」ということですか？',
+    answer:
+      'いいえ、違います。不安型は「深く愛する誠実さ」「感受性の豊かさ」の表れでもあります。「依存体質」という否定的なラベルより、「見捨てられ不安が高まりやすい愛着傾向」として理解することが自己理解の出発点になります。医学的な依存症・パーソナリティ障害とは異なります。',
+  },
+  {
+    question: '不安型の人が恋愛で苦しくなりやすいのはなぜですか？',
+    answer:
+      '不安型は、パートナーの反応が少し薄れるだけで「嫌われた？」「終わりかも」という解釈が瞬時に浮かびやすい傾向があります。Mikulincer & Shaver（2007）は、この「脅威への過敏な反応」が不安型の中心的特徴であることを示しています。苦しさはその敏感さの裏返しです。',
+  },
+  {
+    question: '不安型の傾向は変わりますか？',
+    answer:
+      'はい、変容することがあります。Mikulincer & Shaver（2007）は「安全ベースの経験（安定した関係・自己への気づき・専門家のサポート）」によって愛着傾向が安定型に近づく可能性を示しています。急激な変化ではなく、時間をかけて少しずつ整えることが大切です。',
+  },
+  {
+    question: '不安型と回避型のパートナーとの関係はどうなりやすいですか？',
+    answer:
+      '不安型と回避型のカップルは、「近づきたい/距離を置きたい」という相反するニーズがぶつかりやすいパターンです。「追いかけるほど逃げる」という循環が生まれることがあります。これは悪意ではなく愛着スタイルの違いによるものです。対話によって双方の傾向を理解することが重要です。',
+  },
+  {
+    question: 'パートナーへの確認を止めるにはどうすればいいですか？',
+    answer:
+      '「確認したい衝動を感じたとき、まず立ち止まって『今、自分は何に不安を感じているか』を言葉にしてみる」ことが一つの方法です。これはself-careの実践であり、「意思の弱さ」を克服する話ではありません。繰り返す苦しさがある場合は、公認心理師・臨床心理士のサポートも選択肢の一つです（日本臨床心理士会: https://www.jsccp.jp/）。',
+  },
+  {
+    question: '不安型の強みは何ですか？',
+    answer:
+      '深い誠実さ・愛情表現の豊かさ・パートナーの変化への鋭い感受性・関係を大切にする真剣さが、不安型の主な強みです。感受性の高さは、相手の感情の変化にいち早く気づける洞察力にもなります。',
+  },
+  {
+    question: '安定型パートナーと付き合うとどうなりますか？',
+    answer:
+      '安定型のパートナーは「置かれても戻ってくる」という安全感を自然に提供しやすいため、不安型の見捨てられ不安が徐々に緩和されやすいことが研究で示されています。ただし安定型パートナーに「全ての不安を解決してもらう」ことを期待すると、関係に負担がかかります。',
+  },
+  {
+    question: '不安型はどのようにself-careできますか？',
+    answer:
+      '不安を感じたとき「感情日記」をつけて自分の傾向を観察する方法・「一人で楽しめる時間を意識的に作る」方法・「パートナーに確認する前に24時間待つ」ルールを設ける方法などが参考になります。苦しさが強い場合は、公認心理師・臨床心理士に相談することも重要な選択肢です。',
+  },
+  {
+    question: 'このページの内容は医学的なものですか？',
+    answer:
+      'いいえ、違います。このページは恋愛における不安型傾向の自己理解を目的とした参考情報です。医学的診断・臨床評価・治療の代替にはなりません。心身の不調が続く場合は、医師・臨床心理士へご相談ください。',
+  },
+];
+
+const jsonLdFAQ = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  '@id': `${PAGE_URL}#faq`,
+  mainEntity: faqs.map(({ question, answer }) => ({
+    '@type': 'Question',
+    name: question,
+    acceptedAnswer: { '@type': 'Answer', text: answer },
+  })),
+};
+
+const jsonLdBreadcrumb = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'ホーム', item: SITE_URL },
+    { '@type': 'ListItem', position: 2, name: '診断一覧', item: `${SITE_URL}/diagnosis/` },
+    { '@type': 'ListItem', position: 3, name: '恋愛における依存的傾向', item: `${SITE_URL}/diagnosis/love-dependency/` },
+    { '@type': 'ListItem', position: 4, name: '不安型', item: PAGE_URL },
+  ],
+};
+
+const jsonLdAll = [jsonLdArticle, jsonLdFAQ, jsonLdBreadcrumb];
+
+const selfCareItems = [
+  {
+    icon: '📓',
+    title: '感情観察日記',
+    desc: '不安を感じたとき、何がトリガーになったかをメモする習慣。「連絡が2時間来なかったら不安になった」と記録するだけで、パターンへの気づきが生まれます。',
+  },
+  {
+    icon: '⏱️',
+    title: '24時間ルール',
+    desc: '「確認したい衝動が来たら、まず24時間待ってみる」ルールを自分で設ける。多くの場合、衝動は時間とともに落ち着きます。',
+  },
+  {
+    icon: '🌱',
+    title: '一人の時間を設計する',
+    desc: '趣味・友人との時間・自分だけの楽しみを意識的に週に一度以上確保する。恋愛以外の満足感が、パートナーへの依存度を自然に下げることがあります。',
+  },
+  {
+    icon: '🗣️',
+    title: '気持ちを率直に言葉にする',
+    desc: '「不安だから確認してしまう」ではなく「〇〇のときに不安を感じた」と言語化してパートナーに伝える練習。確認行動より対話が関係を安定させます。',
+  },
+];
+---
+
+<BaseLayout
+  title="不安型 愛着スタイルとは【恋愛の傾向と向き合い方】"
+  description="見捨てられ不安・確認行動など不安型愛着スタイルの特徴を解説。Hazan & Shaver（1987）の愛着理論に基づく自己理解ガイド。医学的診断ではありません。"
+  canonical={PAGE_URL}
+  jsonLd={jsonLdAll}
+  ogType="article"
+  publishDate="2026-05-21"
+  lastUpdated={UPDATED_AT}
+  breadcrumbs={[
+    { name: '診断一覧', url: '/diagnosis/' },
+    { name: '恋愛における依存的傾向', url: '/diagnosis/love-dependency/' },
+    { name: '不安型', url: '/diagnosis/love-dependency/anxious/' },
+  ]}
+>
+  {/* ========== ヒーロー ========== */}
+  <section class="an-hero" aria-labelledby="an-h1">
+    <div class="an-hero-inner">
+      <div class="an-hero-badge">愛着スタイル · Anxious Attachment</div>
+      <div class="an-hero-icon" aria-hidden="true">💭</div>
+      <h1 id="an-h1" class="an-hero-h1">不安型</h1>
+      <p class="an-hero-en">Anxious Attachment Style</p>
+      <p class="an-hero-catch">
+        相手の反応に敏感で、深くつながりたいと感じる傾向。<br />
+        その感受性は、深い愛情と誠実さの表れでもあります。
+      </p>
+      <div class="an-hero-disclaimer" role="note">
+        <span aria-hidden="true">⚠️</span>
+        <span>
+          このページは<strong>医学的診断ではありません</strong>。
+          恋愛傾向の自己理解のための参考情報です。
+          強い苦しさがある場合は<a href="https://www.jsccp.jp/" target="_blank" rel="noopener noreferrer">公認心理師・臨床心理士</a>へご相談ください。
+        </span>
+      </div>
+    </div>
+  </section>
+
+  <Container>
+    <TldrBlock
+      title="このページでわかること"
+      points={[
+        "不安型愛着スタイルとは、パートナーの反応に敏感で見捨てられ不安が出やすい恋愛傾向です（医学的診断ではなく性格特性の傾向として扱います）",
+        "深い感受性と誠実な愛情が強み。気をつけたい傾向・パートナー側の理解のポイント・self-careを解説します",
+        "強い苦しさがある場合は公認心理師・臨床心理士への相談が重要な選択肢です（日本臨床心理士会: https://www.jsccp.jp/）"
+      ]}
+      updatedAt={UPDATED_AT}
+      sourceLabel="Hazan & Shaver (1987) DOI: 10.1037/0022-3514.52.3.511"
+      sourceUrl="https://doi.org/10.1037/0022-3514.52.3.511"
+    />
+
+    {/* ========== 特徴 ========== */}
+    <section class="an-section" aria-labelledby="an-traits-h2">
+      <h2 id="an-traits-h2" class="an-h2">不安型の主な特徴</h2>
+      <p class="an-lead">
+        Hazan &amp; Shaver（1987）が提唱した成人の愛着スタイル分類において、
+        不安型は「親密さへの強い欲求」と「見捨てられることへの不安」が共存する傾向として描かれています
+        （<a href="https://doi.org/10.1037/0022-3514.52.3.511" target="_blank" rel="noopener noreferrer">DOI: 10.1037/0022-3514.52.3.511</a>）。
+      </p>
+      <ul class="an-trait-list">
+        <li class="an-trait-item">
+          <span class="an-trait-icon" aria-hidden="true">📱</span>
+          <div class="an-trait-body">
+            <p class="an-trait-title">相手の反応への過敏さ</p>
+            <p class="an-trait-desc">
+              返信の速さ・メッセージのトーン・表情の変化に敏感に反応します。
+              「何か変わった？」という疑問が素早く浮かびやすい傾向があります。
+            </p>
+          </div>
+        </li>
+        <li class="an-trait-item">
+          <span class="an-trait-icon" aria-hidden="true">🔄</span>
+          <div class="an-trait-body">
+            <p class="an-trait-title">確認行動が増えやすい</p>
+            <p class="an-trait-desc">
+              不安が高まると、連絡・確認・関係の確認をしたくなります。
+              これは「弱さ」ではなく、安心感を得ようとする自然な反応です。
+            </p>
+          </div>
+        </li>
+        <li class="an-trait-item">
+          <span class="an-trait-icon" aria-hidden="true">💌</span>
+          <div class="an-trait-body">
+            <p class="an-trait-title">深いつながりへの欲求</p>
+            <p class="an-trait-desc">
+              表面的な関係より、深い感情的つながりを強く求める傾向があります。
+              「本当に自分を理解してほしい」という欲求が根底にあります。
+            </p>
+          </div>
+        </li>
+        <li class="an-trait-item">
+          <span class="an-trait-icon" aria-hidden="true">🌊</span>
+          <div class="an-trait-body">
+            <p class="an-trait-title">感情の波が大きくなりやすい</p>
+            <p class="an-trait-desc">
+              安心しているときと不安なときの感情の差が大きくなりやすい傾向です。
+              これは感情の豊かさと表裏一体の特徴です。
+            </p>
+          </div>
+        </li>
+        <li class="an-trait-item">
+          <span class="an-trait-icon" aria-hidden="true">🔮</span>
+          <div class="an-trait-body">
+            <p class="an-trait-title">最悪のシナリオを想像しやすい</p>
+            <p class="an-trait-desc">
+              「返信がない＝嫌われた」など、ネガティブな解釈に飛びやすい傾向があります。
+              Mikulincer &amp; Shaver（2007）は「脅威への過敏な解釈」として記述しています。
+            </p>
+          </div>
+        </li>
+      </ul>
+    </section>
+
+    {/* ========== 強み ========== */}
+    <section class="an-section" aria-labelledby="an-strengths-h2">
+      <h2 id="an-strengths-h2" class="an-h2">不安型の強み</h2>
+      <p class="an-lead">
+        不安型の傾向は、深い愛情と感受性の豊かさと表裏一体です。
+        弱点として捉えるよりも、自分の資質として理解することが自己理解の第一歩です。
+      </p>
+      <div class="an-strengths-grid">
+        <div class="an-strength-card">
+          <div class="an-strength-icon" aria-hidden="true">❤️</div>
+          <h3 class="an-strength-title">深い誠実さ</h3>
+          <p class="an-strength-desc">パートナーを深く大切にし、関係に誠実に向き合う強さがあります。</p>
+        </div>
+        <div class="an-strength-card">
+          <div class="an-strength-icon" aria-hidden="true">🌟</div>
+          <h3 class="an-strength-title">豊かな感受性</h3>
+          <p class="an-strength-desc">パートナーの微細な変化に気づける洞察力は、深い理解につながります。</p>
+        </div>
+        <div class="an-strength-card">
+          <div class="an-strength-icon" aria-hidden="true">💬</div>
+          <h3 class="an-strength-title">感情表現の豊かさ</h3>
+          <p class="an-strength-desc">自分の気持ちを言語化・表現することへの抵抗が少なく、対話を深めやすい。</p>
+        </div>
+        <div class="an-strength-card">
+          <div class="an-strength-icon" aria-hidden="true">🔥</div>
+          <h3 class="an-strength-title">関係への真剣さ</h3>
+          <p class="an-strength-desc">恋愛を軽く扱わず、真剣に向き合う姿勢がパートナーに伝わります。</p>
+        </div>
+      </div>
+    </section>
+
+    {/* ========== 気をつけたい傾向 ========== */}
+    <section class="an-section" aria-labelledby="an-careful-h2">
+      <h2 id="an-careful-h2" class="an-h2">気をつけたい傾向</h2>
+      <p class="an-lead">
+        「気をつけたい傾向」は欠点ではなく、自己理解によって向き合える特性です。
+        「直す」ものではなく、「知っておく」ことで自分が楽になれるものです。
+      </p>
+      <ol class="an-careful-list">
+        <li class="an-careful-item">
+          <span class="an-careful-num" aria-hidden="true">1</span>
+          <div>
+            <p class="an-careful-title">確認行動がパートナーにプレッシャーを与えることがある</p>
+            <p class="an-careful-desc">
+              悪意のない確認も、頻度が高くなると相手にとって負担になります。
+              「なぜ確認したくなるのか」を自分に問うことが、別の解決策の発見につながります。
+            </p>
+          </div>
+        </li>
+        <li class="an-careful-item">
+          <span class="an-careful-num" aria-hidden="true">2</span>
+          <div>
+            <p class="an-careful-title">ネガティブな解釈が先走ることがある</p>
+            <p class="an-careful-desc">
+              事実より解釈が先行すると、存在しない問題で消耗することがあります。
+              「事実は何か / 解釈は何か」を分けて考える習慣が役立ちます。
+            </p>
+          </div>
+        </li>
+        <li class="an-careful-item">
+          <span class="an-careful-num" aria-hidden="true">3</span>
+          <div>
+            <p class="an-careful-title">恋愛以外のことが後回しになりやすい</p>
+            <p class="an-careful-desc">
+              強い不安のとき、仕事・趣味・友人関係より恋愛に意識が集中しすぎることがあります。
+              恋愛以外の満足感が、心の安定をつくる土台になります。
+            </p>
+          </div>
+        </li>
+      </ol>
+    </section>
+
+    {/* ========== パートナー側の理解 ========== */}
+    <section class="an-section an-section--partner" aria-labelledby="an-partner-h2">
+      <h2 id="an-partner-h2" class="an-h2">パートナー側の理解のために</h2>
+      <p class="an-lead">
+        不安型の傾向を持つパートナーと関係を育てる上で、理解しておくと助けになる視点です。
+      </p>
+      <ul class="an-partner-list">
+        <li>確認行動は「あなたへの不信」ではなく「安心したいという欲求」から来ています</li>
+        <li>「大丈夫だよ」という一言が、不安を大きく和らげることがあります</li>
+        <li>感情の波が激しいとき、解決より「話を聞くこと」が先に必要な場合が多いです</li>
+        <li>相手を変えようとするより、「なぜそう感じるか」を一緒に理解する姿勢が関係を安定させます</li>
+      </ul>
+    </section>
+
+    {/* ========== Self-care ========== */}
+    <section class="an-section" aria-labelledby="an-selfcare-h2">
+      <h2 id="an-selfcare-h2" class="an-h2">不安型のself-care</h2>
+      <p class="an-lead">
+        self-careは「不安型を直す」ためではありません。
+        自分が少し楽に生きるための、自分への配慮です。
+      </p>
+      <div class="an-selfcare-grid">
+        {selfCareItems.map((item) => (
+          <div class="an-selfcare-card">
+            <div class="an-selfcare-icon" aria-hidden="true">{item.icon}</div>
+            <h3 class="an-selfcare-title">{item.title}</h3>
+            <p class="an-selfcare-desc">{item.desc}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    {/* ========== 専門家相談推奨 ========== */}
+    <section class="an-section an-section--consult" aria-labelledby="an-consult-h2">
+      <h2 id="an-consult-h2" class="an-h2">困っているときは専門家へ</h2>
+      <p class="an-lead">
+        不安の強さが日常生活や関係に大きく影響している場合、
+        公認心理師・臨床心理士のサポートが有効な選択肢です。
+        自己理解だけでは難しい場合は、専門家の力を借りることを検討してください。
+      </p>
+      <div class="an-consult-links">
+        <a href="https://www.jsccp.jp/" target="_blank" rel="noopener noreferrer" class="an-consult-btn">
+          日本臨床心理士会（公認心理師・臨床心理士を探す）
+          <span aria-hidden="true">→</span>
+        </a>
+        <a
+          href="https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/hukushi_kaigo/shougaishahukushi/kokoro/index.html"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="an-consult-btn an-consult-btn--secondary"
+        >
+          厚労省 こころの健康相談窓口
+          <span aria-hidden="true">→</span>
+        </a>
+      </div>
+    </section>
+
+    {/* ========== 他タイプへの動線 ========== */}
+    <section class="an-section" aria-labelledby="an-other-h2">
+      <h2 id="an-other-h2" class="an-h2">他の愛着スタイルも確認する</h2>
+      <ul class="an-other-list">
+        <li><a href="/diagnosis/love-dependency/" class="an-other-link">恋愛における依存的傾向 ハブページ（4タイプ概観）</a></li>
+        <li><a href="/diagnosis/love-dependency/avoidant/" class="an-other-link">回避型 愛着スタイル詳細</a></li>
+        <li><a href="/diagnosis/love-dependency/codependent/" class="an-other-link">共依存的傾向 詳細</a></li>
+        <li><a href="/diagnosis/love-dependency/secure/" class="an-other-link">安定型 愛着スタイル詳細</a></li>
+      </ul>
+    </section>
+
+    {/* ========== 関連診断 ========== */}
+    <section class="an-section" aria-labelledby="an-related-h2">
+      <h2 id="an-related-h2" class="an-h2">関連する診断</h2>
+      <ul class="an-related-list">
+        <li><a href="/diagnosis/love-style/" class="an-related-link">恋愛スタイル診断（J.A.Lee 1973 理論）</a></li>
+        <li><a href="/diagnosis/mbti-compat/love/" class="an-related-link">MBTI恋愛相性診断</a></li>
+        <li><a href="/diagnosis/friend-compat/" class="an-related-link">友達相性診断</a></li>
+      </ul>
+    </section>
+
+    {/* ========== Science Note ========== */}
+    <ScienceNote
+      basisText="Ainsworth MDS（1978）Patterns of Attachment / Hazan C, Shaver PR（1987）DOI: 10.1037/0022-3514.52.3.511 / Mikulincer M, Shaver PR（2007）Attachment in Adulthood に基づく自己理解参考情報。不安型愛着スタイルは成人の恋愛傾向の自己理解フレームワークであり、医学的診断カテゴリではありません。"
+      basisUrl="https://doi.org/10.1037/0022-3514.52.3.511"
+      basisLabel="Hazan & Shaver (1987) DOI確認済"
+      notMedical={true}
+      updatedAt={UPDATED_AT}
+      additionalNote="「不安型愛着障害」「依存症」等の医学的診断・治療は行いません。心身の不調が続く場合は医師・臨床心理士にご相談ください。"
+    />
+
+    {/* ========== FAQ ========== */}
+    <section class="an-section" aria-labelledby="an-faq-h2">
+      <h2 id="an-faq-h2" class="an-h2">よくある質問</h2>
+      <dl class="an-faq-list">
+        {faqs.map(({ question, answer }) => (
+          <div class="an-faq-item">
+            <dt class="an-faq-q">{question}</dt>
+            <dd class="an-faq-a">{answer}</dd>
+          </div>
+        ))}
+      </dl>
+    </section>
+
+    <p class="an-academic-note">
+      本ページは Ainsworth MDS（1978）/ Hazan C, Shaver PR（1987）DOI: 10.1037/0022-3514.52.3.511 /
+      Mikulincer M, Shaver PR（2007）に基づく自己理解参考情報です。
+      医学的・臨床的な診断ではありません。確認日: {UPDATED_AT}。
+    </p>
+
+    <ReferenceList references={references} confirmedAt={UPDATED_AT} />
+  </Container>
+</BaseLayout>
+
+<style>
+/* ========== ヒーロー ========== */
+.an-hero {
+  background: linear-gradient(135deg, #dc2626 0%, #7c3aed 100%);
+  color: #fff;
+  padding-block: 2.5rem 3rem;
+  text-align: center;
+}
+.an-hero-inner {
+  max-width: 680px;
+  margin: 0 auto;
+  padding-inline: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+.an-hero-badge {
+  display: inline-block;
+  background: rgba(255 255 255 / 0.15);
+  border: 1px solid rgba(255 255 255 / 0.35);
+  border-radius: 2rem;
+  padding: 0.2rem 0.85rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.04em;
+}
+.an-hero-icon {
+  font-size: 3rem;
+}
+.an-hero-h1 {
+  font-size: clamp(2rem, 6vw, 3rem);
+  font-family: var(--sn-font-rounded, sans-serif);
+  font-weight: 700;
+  margin: 0;
+}
+.an-hero-en {
+  font-size: 0.82rem;
+  opacity: 0.7;
+  margin: 0;
+  letter-spacing: 0.05em;
+}
+.an-hero-catch {
+  font-size: clamp(0.88rem, 2.2vw, 1rem);
+  opacity: 0.9;
+  line-height: 1.7;
+  margin: 0;
+}
+.an-hero-disclaimer {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.4rem;
+  background: rgba(255 255 255 / 0.12);
+  border: 1px solid rgba(255 255 255 / 0.35);
+  border-radius: 0.5rem;
+  padding: 0.65rem 0.9rem;
+  font-size: 0.78rem;
+  line-height: 1.5;
+  text-align: left;
+  max-width: 520px;
+}
+.an-hero-disclaimer a {
+  color: #fde68a;
+  font-weight: 700;
+}
+
+/* ========== セクション共通 ========== */
+.an-section {
+  margin-block: 2.5rem;
+}
+.an-h2 {
+  font-size: clamp(1.2rem, 3.5vw, 1.55rem);
+  font-family: var(--sn-font-rounded, sans-serif);
+  font-weight: 700;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #dc2626;
+}
+.an-lead {
+  font-size: 0.98rem;
+  line-height: 1.8;
+  margin-bottom: 1rem;
+  color: #374151;
+}
+.an-lead a {
+  color: #dc2626;
+}
+
+/* ========== 特徴リスト ========== */
+.an-trait-list {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+.an-trait-item {
+  display: flex;
+  gap: 0.85rem;
+  align-items: flex-start;
+  padding: 0.9rem 1rem;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 0.65rem;
+}
+.an-trait-icon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+.an-trait-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #991b1b;
+  margin: 0 0 0.25rem;
+}
+.an-trait-desc {
+  font-size: 0.87rem;
+  line-height: 1.65;
+  color: #4b5563;
+  margin: 0;
+}
+.an-trait-desc a {
+  color: #dc2626;
+}
+
+/* ========== 強みグリッド ========== */
+.an-strengths-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 0.85rem;
+  margin-top: 1rem;
+}
+.an-strength-card {
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  border-radius: 0.65rem;
+  padding: 1rem;
+}
+.an-strength-icon {
+  font-size: 1.5rem;
+  margin-bottom: 0.4rem;
+}
+.an-strength-title {
+  font-size: 0.9rem;
+  font-weight: 700;
+  margin: 0 0 0.3rem;
+  color: #9a3412;
+}
+.an-strength-desc {
+  font-size: 0.83rem;
+  line-height: 1.6;
+  color: #4b5563;
+  margin: 0;
+}
+
+/* ========== 気をつけたい傾向 ========== */
+.an-careful-list {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  counter-reset: an-careful;
+}
+.an-careful-item {
+  display: flex;
+  gap: 0.85rem;
+  align-items: flex-start;
+}
+.an-careful-num {
+  flex-shrink: 0;
+  width: 2rem;
+  height: 2rem;
+  background: #dc2626;
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+.an-careful-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0 0 0.25rem;
+}
+.an-careful-desc {
+  font-size: 0.87rem;
+  line-height: 1.65;
+  color: #4b5563;
+  margin: 0;
+}
+
+/* ========== パートナー理解 ========== */
+.an-section--partner {
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+}
+.an-partner-list {
+  padding-left: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+.an-partner-list li {
+  font-size: 0.9rem;
+  line-height: 1.65;
+  color: #1e40af;
+}
+
+/* ========== Self-care ========== */
+.an-selfcare-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 0.85rem;
+  margin-top: 1rem;
+}
+.an-selfcare-card {
+  background: #f0fdf4;
+  border: 1px solid #a7f3d0;
+  border-radius: 0.65rem;
+  padding: 1rem;
+}
+.an-selfcare-icon {
+  font-size: 1.5rem;
+  margin-bottom: 0.4rem;
+}
+.an-selfcare-title {
+  font-size: 0.9rem;
+  font-weight: 700;
+  margin: 0 0 0.3rem;
+  color: #065f46;
+}
+.an-selfcare-desc {
+  font-size: 0.83rem;
+  line-height: 1.65;
+  color: #374151;
+  margin: 0;
+}
+
+/* ========== 専門家相談 ========== */
+.an-section--consult {
+  background: #f0fdf4;
+  border: 1px solid #a7f3d0;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+}
+.an-consult-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+.an-consult-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: #059669;
+  color: #fff;
+  font-size: 0.88rem;
+  font-weight: 700;
+  padding: 0.65rem 1.25rem;
+  border-radius: 2rem;
+  text-decoration: none;
+  transition: background 0.15s;
+}
+.an-consult-btn:hover {
+  background: #047857;
+}
+.an-consult-btn--secondary {
+  background: #fff;
+  color: #059669;
+  border: 2px solid #059669;
+}
+.an-consult-btn--secondary:hover {
+  background: #f0fdf4;
+}
+
+/* ========== 他タイプ・関連リンク ========== */
+.an-other-list,
+.an-related-list {
+  list-style: none;
+  padding: 0;
+  margin: 0.75rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.an-other-link,
+.an-related-link {
+  display: block;
+  padding: 0.65rem 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  text-decoration: none;
+  color: #dc2626;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: border-color 0.15s, background 0.15s;
+}
+.an-other-link:hover,
+.an-related-link:hover {
+  border-color: #dc2626;
+  background: #fef2f2;
+}
+
+/* ========== FAQ ========== */
+.an-faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  margin-top: 1.25rem;
+}
+.an-faq-item {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.65rem;
+  overflow: hidden;
+}
+.an-faq-q {
+  font-weight: 700;
+  font-size: 0.9rem;
+  padding: 0.85rem 1.1rem;
+  background: #fef2f2;
+  margin: 0;
+  display: block;
+  line-height: 1.5;
+}
+.an-faq-q::before {
+  content: 'Q. ';
+  color: #dc2626;
+}
+.an-faq-a {
+  font-size: 0.87rem;
+  line-height: 1.7;
+  padding: 0.85rem 1.1rem;
+  margin: 0;
+  color: #4b5563;
+}
+.an-faq-a::before {
+  content: 'A. ';
+  font-weight: 700;
+  color: #059669;
+}
+
+/* ========== 学術注記 ========== */
+.an-academic-note {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  border-top: 1px solid #e5e7eb;
+  padding-top: 1.5rem;
+  margin-top: 2rem;
+  line-height: 1.6;
+}
+
+@media (max-width: 640px) {
+  .an-strengths-grid,
+  .an-selfcare-grid {
+    grid-template-columns: 1fr;
+  }
+}
+</style>

@@ -1,0 +1,745 @@
+---
+/**
+ * 回避型 愛着スタイル 詳細ページ
+ * KW: 回避型 愛着スタイル / 恋愛 回避型 / 親密さ 苦手 恋愛
+ * 学術根拠:
+ *   - Ainsworth MDS (1978) Patterns of Attachment
+ *   - Hazan C, Shaver PR (1987) DOI: 10.1037/0022-3514.52.3.511
+ *   - Mikulincer M, Shaver PR (2007) Attachment in Adulthood
+ *
+ * YMYL最重要:
+ *   - 「回避性パーソナリティ障害」「AvPD」等の医学用語 絶対NG
+ *   - 「治療」「治す」NG → 「向き合い方」「self-care」「マネジメント」
+ *   - 専門家相談推奨を明示
+ *
+ * 確認日: 2026-05-21
+ */
+import BaseLayout from '../../../../layouts/BaseLayout.astro';
+import Container from '../../../../components/Container.astro';
+import TldrBlock from '../../../../components/TldrBlock.astro';
+import ScienceNote from '../../../../components/ScienceNote.astro';
+import ReferenceList from '../../../../components/ReferenceList.astro';
+
+const SITE_URL = 'https://shindan-navi.jp';
+const PAGE_URL = `${SITE_URL}/diagnosis/love-dependency/avoidant/`;
+const UPDATED_AT = '2026-05-21';
+
+const references = [
+  {
+    title: 'Patterns of Attachment: A Psychological Study of the Strange Situation',
+    author: 'Ainsworth MDS, Blehar MC, Waters E, Wall S',
+    year: 1978,
+    publisher: 'Lawrence Erlbaum Associates',
+    url: 'https://psycnet.apa.org/record/1979-22063-000',
+  },
+  {
+    title: 'Romantic love conceptualized as an attachment process',
+    author: 'Hazan C, Shaver PR',
+    year: 1987,
+    journal: 'Journal of Personality and Social Psychology',
+    volume: '52(3), 511-524',
+    url: 'https://doi.org/10.1037/0022-3514.52.3.511',
+  },
+  {
+    title: 'Attachment in Adulthood: Structure, Dynamics, and Change',
+    author: 'Mikulincer M, Shaver PR',
+    year: 2007,
+    publisher: 'Guilford Press',
+    url: 'https://www.guilford.com/books/Attachment-in-Adulthood/Mikulincer-Shaver/9781462543854',
+  },
+  {
+    title: '公認心理師・臨床心理士への相談窓口（日本臨床心理士会）',
+    author: '一般社団法人日本臨床心理士会',
+    year: 2024,
+    url: 'https://www.jsccp.jp/',
+  },
+];
+
+const faqs = [
+  {
+    question: '回避型の愛着スタイルとはどういう傾向ですか？',
+    answer:
+      '回避型は、親密さへの慎重さと自立を重視する恋愛傾向です。パートナーとの距離感を自分でコントロールしたい・感情を深く共有することへの不快感が出やすい傾向があります。Hazan & Shaver（1987）の研究では、回避型は成人の約25〜30%にみられる傾向として報告されています（DOI: 10.1037/0022-3514.52.3.511）。',
+  },
+  {
+    question: '回避型は「人が嫌い」ということですか？',
+    answer:
+      'いいえ、違います。回避型は「人が嫌い」ではなく、「深く近づくことで傷つくリスクを避ける」心理的パターンです。Ainsworth（1978）は回避型の起源として「感情表現に十分な応答が得られなかった早期経験」との関連を示しています。自立や自律を心地よく感じることが多いです。',
+  },
+  {
+    question: '回避型はなぜ感情共有を避けるのですか？',
+    answer:
+      '回避型は感情を外に出すことへの不安・「弱さを見せると関係が変わる」という潜在的な信念を持ちやすい傾向があります。Mikulincer & Shaver（2007）は「感情を最小化することで安心を維持する戦略」として描写しています。意図的に冷たくしているわけではありません。',
+  },
+  {
+    question: '回避型の人は恋愛に向いていませんか？',
+    answer:
+      'いいえ、そうではありません。回避型は「自立した関係」「相手を尊重する関係」を自然に維持しやすい強みがあります。距離感の合うパートナーや、「一人の時間」を大切にできる関係スタイルで深い絆が育まれることもあります。',
+  },
+  {
+    question: '不安型のパートナーとの関係はどうなりやすいですか？',
+    answer:
+      '不安型と回避型のカップルは「追いかける/逃げる」というサイクルが生まれやすいです。このパターンは双方が悪いわけでなく、愛着スタイルの違いによる相互作用です。お互いのスタイルを言語化することと、第三者（カウンセラー）が入ることで改善しやすくなります。',
+  },
+  {
+    question: '回避型はパートナーを愛せていないのですか？',
+    answer:
+      'いいえ、違います。感情表現が少ない・距離を置くことは「愛情の欠如」ではありません。回避型は深く愛しながら、表現の方法が異なる場合が多いです。「どのように愛情を表現するか」を言語化することが、関係の誤解を減らします。',
+  },
+  {
+    question: '回避型の強みは何ですか？',
+    answer:
+      '自律性の高さ・冷静な判断力・感情に流されない安定感・相手の空間を尊重できる点が、回避型の主な強みです。パートナーの自立を自然に尊重できるため、過干渉になりにくい傾向があります。',
+  },
+  {
+    question: '回避型の傾向は変わりますか？',
+    answer:
+      'はい、変容することがあります。安全ベースとなる関係の経験・自己理解の深まり・必要であれば専門家のサポートによって、親密さへの慎重さが和らぐことがあります（Mikulincer & Shaver 2007）。急速な変化を求めるより、少しずつ安全な感覚を積み重ねることが大切です。',
+  },
+  {
+    question: 'self-careとしてできることはありますか？',
+    answer:
+      '「感情に気づいたら、その場で表現せずに一旦観察する」練習・「小さな感情共有を少しずつ試みる」経験の積み重ねが参考になります。人との深いつながりに不快感があるとき、それがどこから来ているかを自分に問いかけてみることも一つのself-careです。',
+  },
+  {
+    question: 'このページの内容は医学的なものですか？',
+    answer:
+      'いいえ、違います。このページは回避型愛着スタイルの傾向を自己理解するための参考情報です。「回避性パーソナリティ障害（AvPD）」等の医学的診断とは異なります。心身の不調が続く場合は、医師・臨床心理士にご相談ください。',
+  },
+];
+
+const jsonLdArticle = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  '@id': `${PAGE_URL}#article`,
+  headline: '回避型 愛着スタイルとは【恋愛の傾向と向き合い方】',
+  url: PAGE_URL,
+  datePublished: '2026-05-21',
+  dateModified: UPDATED_AT,
+  inLanguage: 'ja',
+  author: { '@type': 'Organization', '@id': `${SITE_URL}/#organization`, name: '診断ナビ' },
+  publisher: { '@type': 'Organization', '@id': `${SITE_URL}/#organization`, name: '診断ナビ' },
+  citation: [
+    {
+      '@type': 'CreativeWork',
+      name: 'Romantic love conceptualized as an attachment process',
+      author: 'Hazan C, Shaver PR',
+      datePublished: '1987',
+      url: 'https://doi.org/10.1037/0022-3514.52.3.511',
+    },
+  ],
+};
+
+const jsonLdFAQ = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  '@id': `${PAGE_URL}#faq`,
+  mainEntity: faqs.map(({ question, answer }) => ({
+    '@type': 'Question',
+    name: question,
+    acceptedAnswer: { '@type': 'Answer', text: answer },
+  })),
+};
+
+const jsonLdBreadcrumb = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'ホーム', item: SITE_URL },
+    { '@type': 'ListItem', position: 2, name: '診断一覧', item: `${SITE_URL}/diagnosis/` },
+    { '@type': 'ListItem', position: 3, name: '恋愛における依存的傾向', item: `${SITE_URL}/diagnosis/love-dependency/` },
+    { '@type': 'ListItem', position: 4, name: '回避型', item: PAGE_URL },
+  ],
+};
+
+const jsonLdAll = [jsonLdArticle, jsonLdFAQ, jsonLdBreadcrumb];
+
+const selfCareItems = [
+  {
+    icon: '🗣️',
+    title: '小さな感情共有を試みる',
+    desc: '「今日は疲れた」「これが好きだった」など、小さな感情の表現を少しずつ増やす練習。大きな開示ではなく、小さな一歩から始めます。',
+  },
+  {
+    icon: '🧘',
+    title: '距離感の欲求を観察する',
+    desc: '「なぜ今、距離を置きたいのか」を観察してみる。傷つきを避けているのか、単に一人の時間が必要なのかを区別することが助けになります。',
+  },
+  {
+    icon: '💬',
+    title: '一人の時間を率直に伝える',
+    desc: '「少し一人の時間が欲しい」と率直に伝えることは、冷たさではなく誠実さです。パートナーへの説明が、誤解を防ぎます。',
+  },
+  {
+    icon: '📚',
+    title: '愛着スタイルへの理解を深める',
+    desc: 'Mikulincer & Shaver（2007）の研究では、自分の傾向への気づきが変容の第一歩であることが示されています。知ることが、整えることの出発点です。',
+  },
+];
+---
+
+<BaseLayout
+  title="回避型 愛着スタイルとは【恋愛の傾向と向き合い方】"
+  description="自立重視・親密さへの慎重さなど回避型愛着スタイルの特徴を解説。Hazan & Shaver（1987）の愛着理論に基づく自己理解ガイド。医学的診断ではありません。"
+  canonical={PAGE_URL}
+  jsonLd={jsonLdAll}
+  ogType="article"
+  publishDate="2026-05-21"
+  lastUpdated={UPDATED_AT}
+  breadcrumbs={[
+    { name: '診断一覧', url: '/diagnosis/' },
+    { name: '恋愛における依存的傾向', url: '/diagnosis/love-dependency/' },
+    { name: '回避型', url: '/diagnosis/love-dependency/avoidant/' },
+  ]}
+>
+  {/* ========== ヒーロー ========== */}
+  <section class="av-hero" aria-labelledby="av-h1">
+    <div class="av-hero-inner">
+      <div class="av-hero-badge">愛着スタイル · Avoidant Attachment</div>
+      <div class="av-hero-icon" aria-hidden="true">🧭</div>
+      <h1 id="av-h1" class="av-hero-h1">回避型</h1>
+      <p class="av-hero-en">Avoidant Attachment Style</p>
+      <p class="av-hero-catch">
+        自立を重視し、親密さに慎重になりやすい傾向。<br />
+        その冷静さと自律性は、大切な強みです。
+      </p>
+      <div class="av-hero-disclaimer" role="note">
+        <span aria-hidden="true">⚠️</span>
+        <span>
+          このページは<strong>医学的診断ではありません</strong>。
+          恋愛傾向の自己理解のための参考情報です。
+          強い苦しさがある場合は<a href="https://www.jsccp.jp/" target="_blank" rel="noopener noreferrer">公認心理師・臨床心理士</a>へご相談ください。
+        </span>
+      </div>
+    </div>
+  </section>
+
+  <Container>
+    <TldrBlock
+      title="このページでわかること"
+      points={[
+        "回避型愛着スタイルとは、自立を重視し親密さへの距離感コントロールが強く出る恋愛傾向です（医学的診断ではなく性格特性の傾向として扱います）",
+        "冷静な判断力と自律性が強み。「冷たい」のではなく「近づき方が異なる」傾向として理解します。気をつけたい傾向とself-careを解説します",
+        "「回避性パーソナリティ障害」等の医学的診断とは異なります。強い苦しさがある場合は公認心理師・臨床心理士への相談が重要な選択肢です"
+      ]}
+      updatedAt={UPDATED_AT}
+      sourceLabel="Hazan & Shaver (1987) DOI: 10.1037/0022-3514.52.3.511"
+      sourceUrl="https://doi.org/10.1037/0022-3514.52.3.511"
+    />
+
+    {/* ========== 特徴 ========== */}
+    <section class="av-section" aria-labelledby="av-traits-h2">
+      <h2 id="av-traits-h2" class="av-h2">回避型の主な特徴</h2>
+      <p class="av-lead">
+        Hazan &amp; Shaver（1987）は成人の愛着スタイル研究において、
+        回避型を「親密さへの不快感と自立への強い指向」として描写しています
+        （<a href="https://doi.org/10.1037/0022-3514.52.3.511" target="_blank" rel="noopener noreferrer">DOI: 10.1037/0022-3514.52.3.511</a>）。
+        これは冷たさや愛情の欠如ではなく、<strong>近づき方のスタイルの違い</strong>として理解することが重要です。
+      </p>
+      <ul class="av-trait-list">
+        <li class="av-trait-item">
+          <span class="av-trait-icon" aria-hidden="true">🏔️</span>
+          <div class="av-trait-body">
+            <p class="av-trait-title">自立性を重視する</p>
+            <p class="av-trait-desc">
+              パートナーに頼りすぎず、自分のことは自分でこなすスタイルを自然に好みます。
+              誰かに頼ることへの抵抗感が出やすい傾向があります。
+            </p>
+          </div>
+        </li>
+        <li class="av-trait-item">
+          <span class="av-trait-icon" aria-hidden="true">📏</span>
+          <div class="av-trait-body">
+            <p class="av-trait-title">距離感のコントロールへの強い関心</p>
+            <p class="av-trait-desc">
+              「近づきすぎ」と感じると、自然と引いたり距離を置いたりします。
+              これは防衛的な反応であり、意図的な冷たさではありません。
+            </p>
+          </div>
+        </li>
+        <li class="av-trait-item">
+          <span class="av-trait-icon" aria-hidden="true">💭</span>
+          <div class="av-trait-body">
+            <p class="av-trait-title">感情共有への慎重さ</p>
+            <p class="av-trait-desc">
+              自分の感情・弱さを見せることへの抵抗があります。
+              「感情を出すと関係が変わるかもしれない」という潜在的な不安と関連することがあります。
+            </p>
+          </div>
+        </li>
+        <li class="av-trait-item">
+          <span class="av-trait-icon" aria-hidden="true">🔒</span>
+          <div class="av-trait-body">
+            <p class="av-trait-title">一人の時間を重視する</p>
+            <p class="av-trait-desc">
+              一人で過ごす時間に心地よさ・回復感を覚えます。
+              パートナーへの愛情があっても、一人になりたい欲求が生まれます。
+            </p>
+          </div>
+        </li>
+        <li class="av-trait-item">
+          <span class="av-trait-icon" aria-hidden="true">🎯</span>
+          <div class="av-trait-body">
+            <p class="av-trait-title">感情より論理で考えやすい</p>
+            <p class="av-trait-desc">
+              問題が起きたとき、感情で反応するより状況を冷静に分析しようとします。
+              Mikulincer &amp; Shaver（2007）は「感情の最小化」として記述しています。
+            </p>
+          </div>
+        </li>
+      </ul>
+    </section>
+
+    {/* ========== 強み ========== */}
+    <section class="av-section" aria-labelledby="av-strengths-h2">
+      <h2 id="av-strengths-h2" class="av-h2">回避型の強み</h2>
+      <p class="av-lead">
+        回避型の特性は「問題」ではなく、文脈によっては大きな強みになります。
+        自分の資質として理解することが、自己理解の出発点です。
+      </p>
+      <div class="av-strengths-grid">
+        <div class="av-strength-card">
+          <div class="av-strength-icon" aria-hidden="true">⚡</div>
+          <h3 class="av-strength-title">高い自律性</h3>
+          <p class="av-strength-desc">自分で物事を判断・解決できる力があります。感情に引きずられず冷静に動けます。</p>
+        </div>
+        <div class="av-strength-card">
+          <div class="av-strength-icon" aria-hidden="true">🧠</div>
+          <h3 class="av-strength-title">冷静な判断力</h3>
+          <p class="av-strength-desc">感情が高ぶる場面でも、論理的に状況を分析できる力があります。</p>
+        </div>
+        <div class="av-strength-card">
+          <div class="av-strength-icon" aria-hidden="true">🕊️</div>
+          <h3 class="av-strength-title">相手の空間を尊重</h3>
+          <p class="av-strength-desc">過干渉にならず、パートナーの自立と個人空間を自然に尊重できます。</p>
+        </div>
+        <div class="av-strength-card">
+          <div class="av-strength-icon" aria-hidden="true">🛡️</div>
+          <h3 class="av-strength-title">感情的消耗が少ない</h3>
+          <p class="av-strength-desc">感情の波に振り回されにくく、安定した状態を維持しやすい傾向があります。</p>
+        </div>
+      </div>
+    </section>
+
+    {/* ========== 気をつけたい傾向 ========== */}
+    <section class="av-section" aria-labelledby="av-careful-h2">
+      <h2 id="av-careful-h2" class="av-h2">気をつけたい傾向</h2>
+      <p class="av-lead">
+        「気をつけたい傾向」は欠点ではなく、自己理解によって向き合える特性です。
+        「直す」ものではなく「知っておく」ことで、関係のすれ違いを減らせます。
+      </p>
+      <ol class="av-careful-list">
+        <li class="av-careful-item">
+          <span class="av-careful-num" aria-hidden="true">1</span>
+          <div>
+            <p class="av-careful-title">パートナーが孤独を感じることがある</p>
+            <p class="av-careful-desc">
+              距離を置く傾向が、パートナーには「愛されていない」と映ることがあります。
+              「距離が必要な理由」を言語化して伝えることが誤解を防ぎます。
+            </p>
+          </div>
+        </li>
+        <li class="av-careful-item">
+          <span class="av-careful-num" aria-hidden="true">2</span>
+          <div>
+            <p class="av-careful-title">感情を閉じ込めて消耗することがある</p>
+            <p class="av-careful-desc">
+              感情を外に出さない傾向が続くと、内側に蓄積して疲弊することがあります。
+              信頼できる場所での感情表現の練習が、長期的な健康につながります。
+            </p>
+          </div>
+        </li>
+        <li class="av-careful-item">
+          <span class="av-careful-num" aria-hidden="true">3</span>
+          <div>
+            <p class="av-careful-title">関係が浅いまま終わることがある</p>
+            <p class="av-careful-desc">
+              親密さへの慎重さが過剰になると、関係が深まる前に離れることが繰り返されることがあります。
+              「なぜ距離を置きたくなったか」を振り返ることが助けになります。
+            </p>
+          </div>
+        </li>
+      </ol>
+    </section>
+
+    {/* ========== パートナー側の理解 ========== */}
+    <section class="av-section av-section--partner" aria-labelledby="av-partner-h2">
+      <h2 id="av-partner-h2" class="av-h2">パートナー側の理解のために</h2>
+      <p class="av-lead">
+        回避型の傾向を持つパートナーと関係を育てる上で、助けになる視点を紹介します。
+      </p>
+      <ul class="av-partner-list">
+        <li>「距離を置く」行動は拒絶ではなく、安心感を保つための傾向です</li>
+        <li>一人の時間を確保できると、パートナーはより心地よく関係に戻れます</li>
+        <li>感情の共有を「求める」より「安全な場所を提供する」姿勢が近づくきっかけになります</li>
+        <li>「あなたが距離を置いてもここにいる」という安心感の提供が、信頼を育てます</li>
+      </ul>
+    </section>
+
+    {/* ========== Self-care ========== */}
+    <section class="av-section" aria-labelledby="av-selfcare-h2">
+      <h2 id="av-selfcare-h2" class="av-h2">回避型のself-care</h2>
+      <p class="av-lead">
+        self-careは「回避型を直す」ためではなく、自分が少し楽に生きるための自己配慮です。
+      </p>
+      <div class="av-selfcare-grid">
+        {selfCareItems.map((item) => (
+          <div class="av-selfcare-card">
+            <div class="av-selfcare-icon" aria-hidden="true">{item.icon}</div>
+            <h3 class="av-selfcare-title">{item.title}</h3>
+            <p class="av-selfcare-desc">{item.desc}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    {/* ========== 専門家相談推奨 ========== */}
+    <section class="av-section av-section--consult" aria-labelledby="av-consult-h2">
+      <h2 id="av-consult-h2" class="av-h2">困っているときは専門家へ</h2>
+      <p class="av-lead">
+        距離感や感情共有の難しさが日常生活・関係に大きく影響している場合、
+        公認心理師・臨床心理士のサポートが有効な選択肢です。
+      </p>
+      <div class="av-consult-links">
+        <a href="https://www.jsccp.jp/" target="_blank" rel="noopener noreferrer" class="av-consult-btn">
+          日本臨床心理士会（公認心理師・臨床心理士を探す）
+          <span aria-hidden="true">→</span>
+        </a>
+        <a
+          href="https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/hukushi_kaigo/shougaishahukushi/kokoro/index.html"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="av-consult-btn av-consult-btn--secondary"
+        >
+          厚労省 こころの健康相談窓口
+          <span aria-hidden="true">→</span>
+        </a>
+      </div>
+    </section>
+
+    {/* ========== 他タイプへの動線 ========== */}
+    <section class="av-section" aria-labelledby="av-other-h2">
+      <h2 id="av-other-h2" class="av-h2">他の愛着スタイルも確認する</h2>
+      <ul class="av-other-list">
+        <li><a href="/diagnosis/love-dependency/" class="av-other-link">恋愛における依存的傾向 ハブページ（4タイプ概観）</a></li>
+        <li><a href="/diagnosis/love-dependency/anxious/" class="av-other-link">不安型 愛着スタイル詳細</a></li>
+        <li><a href="/diagnosis/love-dependency/codependent/" class="av-other-link">共依存的傾向 詳細</a></li>
+        <li><a href="/diagnosis/love-dependency/secure/" class="av-other-link">安定型 愛着スタイル詳細</a></li>
+      </ul>
+    </section>
+
+    <ScienceNote
+      basisText="Ainsworth MDS（1978）Patterns of Attachment / Hazan C, Shaver PR（1987）DOI: 10.1037/0022-3514.52.3.511 / Mikulincer M, Shaver PR（2007）Attachment in Adulthood に基づく自己理解参考情報。回避型愛着スタイルは恋愛傾向の自己理解フレームワークであり、医学的診断カテゴリとは異なります。"
+      basisUrl="https://doi.org/10.1037/0022-3514.52.3.511"
+      basisLabel="Hazan & Shaver (1987) DOI確認済"
+      notMedical={true}
+      updatedAt={UPDATED_AT}
+      additionalNote="「回避性パーソナリティ障害（AvPD）」等の医学的診断とは異なります。心身の不調が続く場合は医師・臨床心理士にご相談ください。"
+    />
+
+    <section class="av-section" aria-labelledby="av-faq-h2">
+      <h2 id="av-faq-h2" class="av-h2">よくある質問</h2>
+      <dl class="av-faq-list">
+        {faqs.map(({ question, answer }) => (
+          <div class="av-faq-item">
+            <dt class="av-faq-q">{question}</dt>
+            <dd class="av-faq-a">{answer}</dd>
+          </div>
+        ))}
+      </dl>
+    </section>
+
+    <p class="av-academic-note">
+      本ページは Ainsworth MDS（1978）/ Hazan C, Shaver PR（1987）DOI: 10.1037/0022-3514.52.3.511 /
+      Mikulincer M, Shaver PR（2007）に基づく自己理解参考情報です。
+      医学的・臨床的な診断ではありません。確認日: {UPDATED_AT}。
+    </p>
+
+    <ReferenceList references={references} confirmedAt={UPDATED_AT} />
+  </Container>
+</BaseLayout>
+
+<style>
+.av-hero {
+  background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+  color: #fff;
+  padding-block: 2.5rem 3rem;
+  text-align: center;
+}
+.av-hero-inner {
+  max-width: 680px;
+  margin: 0 auto;
+  padding-inline: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+.av-hero-badge {
+  display: inline-block;
+  background: rgba(255 255 255 / 0.15);
+  border: 1px solid rgba(255 255 255 / 0.35);
+  border-radius: 2rem;
+  padding: 0.2rem 0.85rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.04em;
+}
+.av-hero-icon { font-size: 3rem; }
+.av-hero-h1 {
+  font-size: clamp(2rem, 6vw, 3rem);
+  font-family: var(--sn-font-rounded, sans-serif);
+  font-weight: 700;
+  margin: 0;
+}
+.av-hero-en {
+  font-size: 0.82rem;
+  opacity: 0.7;
+  margin: 0;
+  letter-spacing: 0.05em;
+}
+.av-hero-catch {
+  font-size: clamp(0.88rem, 2.2vw, 1rem);
+  opacity: 0.9;
+  line-height: 1.7;
+  margin: 0;
+}
+.av-hero-disclaimer {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.4rem;
+  background: rgba(255 255 255 / 0.12);
+  border: 1px solid rgba(255 255 255 / 0.35);
+  border-radius: 0.5rem;
+  padding: 0.65rem 0.9rem;
+  font-size: 0.78rem;
+  line-height: 1.5;
+  text-align: left;
+  max-width: 520px;
+}
+.av-hero-disclaimer a { color: #fde68a; font-weight: 700; }
+
+.av-section { margin-block: 2.5rem; }
+.av-h2 {
+  font-size: clamp(1.2rem, 3.5vw, 1.55rem);
+  font-family: var(--sn-font-rounded, sans-serif);
+  font-weight: 700;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #2563eb;
+}
+.av-lead {
+  font-size: 0.98rem;
+  line-height: 1.8;
+  margin-bottom: 1rem;
+  color: #374151;
+}
+.av-lead a { color: #2563eb; }
+.av-lead strong { color: #1e40af; }
+
+.av-trait-list {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+.av-trait-item {
+  display: flex;
+  gap: 0.85rem;
+  align-items: flex-start;
+  padding: 0.9rem 1rem;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 0.65rem;
+}
+.av-trait-icon { font-size: 1.5rem; flex-shrink: 0; }
+.av-trait-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #1e40af;
+  margin: 0 0 0.25rem;
+}
+.av-trait-desc {
+  font-size: 0.87rem;
+  line-height: 1.65;
+  color: #4b5563;
+  margin: 0;
+}
+
+.av-strengths-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 0.85rem;
+  margin-top: 1rem;
+}
+.av-strength-card {
+  background: #f0f9ff;
+  border: 1px solid #bae6fd;
+  border-radius: 0.65rem;
+  padding: 1rem;
+}
+.av-strength-icon { font-size: 1.5rem; margin-bottom: 0.4rem; }
+.av-strength-title { font-size: 0.9rem; font-weight: 700; margin: 0 0 0.3rem; color: #0c4a6e; }
+.av-strength-desc { font-size: 0.83rem; line-height: 1.6; color: #4b5563; margin: 0; }
+
+.av-careful-list {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+.av-careful-item {
+  display: flex;
+  gap: 0.85rem;
+  align-items: flex-start;
+}
+.av-careful-num {
+  flex-shrink: 0;
+  width: 2rem;
+  height: 2rem;
+  background: #2563eb;
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+.av-careful-title { font-size: 0.95rem; font-weight: 700; color: #1f2937; margin: 0 0 0.25rem; }
+.av-careful-desc { font-size: 0.87rem; line-height: 1.65; color: #4b5563; margin: 0; }
+
+.av-section--partner {
+  background: #fefce8;
+  border: 1px solid #fde68a;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+}
+.av-partner-list {
+  padding-left: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+.av-partner-list li { font-size: 0.9rem; line-height: 1.65; color: #92400e; }
+
+.av-selfcare-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 0.85rem;
+  margin-top: 1rem;
+}
+.av-selfcare-card {
+  background: #f0fdf4;
+  border: 1px solid #a7f3d0;
+  border-radius: 0.65rem;
+  padding: 1rem;
+}
+.av-selfcare-icon { font-size: 1.5rem; margin-bottom: 0.4rem; }
+.av-selfcare-title { font-size: 0.9rem; font-weight: 700; margin: 0 0 0.3rem; color: #065f46; }
+.av-selfcare-desc { font-size: 0.83rem; line-height: 1.65; color: #374151; margin: 0; }
+
+.av-section--consult {
+  background: #f0fdf4;
+  border: 1px solid #a7f3d0;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+}
+.av-consult-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+.av-consult-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: #059669;
+  color: #fff;
+  font-size: 0.88rem;
+  font-weight: 700;
+  padding: 0.65rem 1.25rem;
+  border-radius: 2rem;
+  text-decoration: none;
+  transition: background 0.15s;
+}
+.av-consult-btn:hover { background: #047857; }
+.av-consult-btn--secondary {
+  background: #fff;
+  color: #059669;
+  border: 2px solid #059669;
+}
+.av-consult-btn--secondary:hover { background: #f0fdf4; }
+
+.av-other-list, .av-related-list {
+  list-style: none;
+  padding: 0;
+  margin: 0.75rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.av-other-link, .av-related-link {
+  display: block;
+  padding: 0.65rem 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  text-decoration: none;
+  color: #2563eb;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: border-color 0.15s, background 0.15s;
+}
+.av-other-link:hover, .av-related-link:hover {
+  border-color: #2563eb;
+  background: #eff6ff;
+}
+
+.av-faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  margin-top: 1.25rem;
+}
+.av-faq-item {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.65rem;
+  overflow: hidden;
+}
+.av-faq-q {
+  font-weight: 700;
+  font-size: 0.9rem;
+  padding: 0.85rem 1.1rem;
+  background: #eff6ff;
+  margin: 0;
+  display: block;
+  line-height: 1.5;
+}
+.av-faq-q::before { content: 'Q. '; color: #2563eb; }
+.av-faq-a {
+  font-size: 0.87rem;
+  line-height: 1.7;
+  padding: 0.85rem 1.1rem;
+  margin: 0;
+  color: #4b5563;
+}
+.av-faq-a::before { content: 'A. '; font-weight: 700; color: #059669; }
+
+.av-academic-note {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  border-top: 1px solid #e5e7eb;
+  padding-top: 1.5rem;
+  margin-top: 2rem;
+  line-height: 1.6;
+}
+
+@media (max-width: 640px) {
+  .av-strengths-grid, .av-selfcare-grid { grid-template-columns: 1fr; }
+}
+</style>
