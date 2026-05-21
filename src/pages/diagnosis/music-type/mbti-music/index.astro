@@ -1,0 +1,581 @@
+---
+/**
+ * MBTI × 音楽タイプページ
+ * KW: MBTI 音楽 / MBTI 好きな音楽
+ * 理論: Rentfrow & Gosling (2003) / Big5-MBTI 対応傾向
+ * 確認日: 2026-05-21
+ * 注意: 実在ミュージシャン名NG / 直接のMBTI×音楽研究は未確認・Big5を介した示唆として表記
+ */
+import BaseLayout from '../../../../layouts/BaseLayout.astro';
+import Container from '../../../../components/Container.astro';
+import TldrBlock from '../../../../components/TldrBlock.astro';
+import ReferenceList from '../../../../components/ReferenceList.astro';
+import ScienceNote from '../../../../components/ScienceNote.astro';
+
+const SITE_URL = 'https://shindan-navi.jp';
+const PAGE_URL = `${SITE_URL}/diagnosis/music-type/mbti-music/`;
+
+const title = 'MBTIと音楽の好みの関係｜16タイプ別の音楽傾向を心理学的に解説';
+const description =
+  'MBTIの16タイプと音楽の好みの関係をBig5研究を介して解説。NF型はMellow・Sophisticated、NT型はSophisticated・Intense寄りなど、タイプ別の音楽傾向を整理します。実在ミュージシャン名の断定的な引用はせず、科学的根拠を明示した参考情報です。';
+
+const references = [
+  {
+    title: 'The do re mi\'s of everyday life: The structure and personality correlates of music preferences',
+    author: 'Rentfrow PJ, Gosling SD',
+    year: 2003,
+    journal: 'Journal of Personality and Social Psychology',
+    volume: '84(6), 1236–1256',
+    url: 'https://doi.org/10.1037/0022-3514.84.6.1236',
+  },
+  {
+    title: 'The Social and Applied Psychology of Music',
+    author: 'North AC, Hargreaves DJ',
+    year: 2008,
+    publisher: 'Oxford University Press',
+    url: 'https://global.oup.com/academic/product/the-social-and-applied-psychology-of-music-9780198567424',
+  },
+];
+
+// 16タイプ × 音楽傾向（Big5傾向値を介した示唆・個人差大）
+const mbtiTypes = [
+  // NF群（開放性↑・協調性↑傾向）
+  { type: 'INFP', label: '内向・直感・感情・知覚', musicModel: 'Mellow / Sophisticated', genres: 'ソウル・インディーフォーク・クラシックバラード', reason: '開放性・感受性が高い傾向。感情的深みを持つ音楽との親和性が高い' },
+  { type: 'INFJ', label: '内向・直感・感情・判断', musicModel: 'Sophisticated / Mellow', genres: 'クラシック・アンビエント・ジャズ', reason: '開放性・内省傾向が高く、複雑で意味深な音楽を好む傾向' },
+  { type: 'ENFP', label: '外向・直感・感情・知覚', musicModel: 'Mellow / Contemporary', genres: 'ポップ・R&B・インディーポップ', reason: '外向性・開放性が高く、感情的で変化に富む音楽を好む傾向' },
+  { type: 'ENFJ', label: '外向・直感・感情・判断', musicModel: 'Mellow / Contemporary', genres: 'R&B・ポップス・ゴスペル', reason: '外向性・協調性が高く、感情共有ができる音楽が多い傾向' },
+  // NT群（開放性↑・論理傾向）
+  { type: 'INTJ', label: '内向・直感・思考・判断', musicModel: 'Sophisticated / Intense', genres: 'クラシック・エレクトロニック・プログレッシブロック', reason: '開放性が高く、複雑な構造を持つ音楽への関心が高い傾向' },
+  { type: 'INTP', label: '内向・直感・思考・知覚', musicModel: 'Sophisticated / Intense', genres: 'クラシック・ジャズ・プログレッシブロック', reason: '開放性と分析的傾向が高く、構造的な音楽に引かれる傾向' },
+  { type: 'ENTP', label: '外向・直感・思考・知覚', musicModel: 'Intense / Sophisticated', genres: 'ロック・ジャズ・エレクトロニック', reason: '開放性・外向性が高く、刺激的で変化に富む音楽を好む傾向' },
+  { type: 'ENTJ', label: '外向・直感・思考・判断', musicModel: 'Intense / Sophisticated', genres: 'クラシック（大編成）・ロック・ジャズ', reason: '開放性と外向性が高く、力強い音楽表現を好む傾向' },
+  // SF群（協調性↑・感覚傾向）
+  { type: 'ISFP', label: '内向・感覚・感情・知覚', musicModel: 'Mellow / Unpretentious', genres: 'R&B・アコースティック・フォーク', reason: '協調性と感受性が高く、感情的でシンプルな音楽を好む傾向' },
+  { type: 'ISFJ', label: '内向・感覚・感情・判断', musicModel: 'Unpretentious / Mellow', genres: 'フォーク・カントリー・ソフトポップ', reason: '協調性・誠実性が高く、馴染みのある温かみのある音楽を好む傾向' },
+  { type: 'ESFP', label: '外向・感覚・感情・知覚', musicModel: 'Contemporary / Mellow', genres: 'ポップ・R&B・ダンスミュージック', reason: '外向性・協調性が高く、社交的で明るい音楽を好む傾向' },
+  { type: 'ESFJ', label: '外向・感覚・感情・判断', musicModel: 'Contemporary / Unpretentious', genres: 'ポップス・カントリー・ゴスペル', reason: '外向性・協調性が高く、共有しやすい明るい音楽を好む傾向' },
+  // ST群（誠実性↑・感覚傾向）
+  { type: 'ISTP', label: '内向・感覚・思考・知覚', musicModel: 'Intense / Unpretentious', genres: 'ロック・カントリー・インストゥルメンタル', reason: '誠実性と感覚傾向から、シンプルで力強い音楽を好む傾向' },
+  { type: 'ISTJ', label: '内向・感覚・思考・判断', musicModel: 'Unpretentious / Sophisticated', genres: 'クラシック・カントリー・フォーク', reason: '誠実性が高く、秩序立った伝統的な音楽を好む傾向' },
+  { type: 'ESTP', label: '外向・感覚・思考・知覚', musicModel: 'Contemporary / Intense', genres: 'ポップ・ロック・ヒップホップ', reason: '外向性と感覚傾向から、エネルギーが高く即効性のある音楽を好む傾向' },
+  { type: 'ESTJ', label: '外向・感覚・思考・判断', musicModel: 'Unpretentious / Contemporary', genres: 'カントリー・ポップス・クラシックロック', reason: '誠実性・外向性が高く、わかりやすく力強い音楽を好む傾向' },
+];
+
+const typeGroups = [
+  { name: 'NFタイプ群（直感×感情）', types: ['INFP', 'INFJ', 'ENFP', 'ENFJ'], music: 'Mellow / Sophisticated 寄り', desc: '開放性・感受性が高い傾向。感情的な深みと芸術性を持つ音楽との親和性が高いとされています。' },
+  { name: 'NTタイプ群（直感×思考）', types: ['INTJ', 'INTP', 'ENTP', 'ENTJ'], music: 'Sophisticated / Intense 寄り', desc: '開放性と論理的傾向が高い場合が多く、複雑な構造を持つ音楽や刺激的な音楽を好む傾向があります。' },
+  { name: 'SFタイプ群（感覚×感情）', types: ['ISFP', 'ISFJ', 'ESFP', 'ESFJ'], music: 'Mellow / Unpretentious / Contemporary 寄り', desc: '協調性が高い場合が多く、温かみがあり馴染みやすい音楽を好む傾向があります。' },
+  { name: 'STタイプ群（感覚×思考）', types: ['ISTP', 'ISTJ', 'ESTP', 'ESTJ'], music: 'Unpretentious / Contemporary 寄り', desc: '誠実性・安定性が高い場合が多く、シンプルで明快な音楽を好む傾向があります。' },
+];
+
+const faqs = [
+  {
+    question: 'MBTIと音楽の好みに直接的な科学的証拠はありますか？',
+    answer:
+      'MBTIと音楽嗜好を直接測定した大規模な学術研究は、2026-05-21時点では確認できていません。本ページの記述は、MBTIとBig5の対応傾向（Rentfrow & Gosling, 2003 等）を介した間接的な示唆として提供しています。確定的な対応関係ではありません。',
+  },
+  {
+    question: 'INFPがクラシックを好まない場合、おかしいですか？',
+    answer:
+      'おかしくありません。本ページの傾向は「研究的に多い傾向」であり、個人が必ずその傾向に当てはまるわけではありません。MBTIや音楽嗜好は非常に個人差が大きく、傾向から外れることは一般的です。',
+  },
+  {
+    question: 'MBTIの音楽傾向は占いと同じですか？',
+    answer:
+      '占いとは異なります。本ページはRentfrow & Gosling（2003）の音楽嗜好とBig5の相関研究、およびBig5とMBTIの対応傾向を介した推論に基づいています。ただし、直接のMBTI×音楽研究が不足しているため、推論の確実性は限定的です。',
+  },
+  {
+    question: 'ENTPはどんな音楽が好きですか？',
+    answer:
+      'Big5を介した傾向としては、外向性・開放性が高いENTPタイプはIntense（ロック・パンク）やSophisticated（ジャズ）への親和性が高いとされています。ただし個人差が大きく、これは傾向の参考です。',
+  },
+  {
+    question: 'INTJとINTPの音楽の好みは違いますか？',
+    answer:
+      '研究的傾向としてはどちらも開放性が高い傾向があり、Sophisticated（クラシック・ジャズ）への親和性は共通して高いとされます。INTJは誠実性も高い傾向があるため、より体系的・構造的な音楽への関心が強まる可能性があります。ただし個人差は大きいです。',
+  },
+  {
+    question: 'MBTIを知ることで音楽の好みを予測できますか？',
+    answer:
+      'ある程度の傾向の参考にはなりますが、予測精度は限定的です。音楽嗜好は性格だけでなく、文化的背景・成育環境・年齢・経験など多くの要因に影響されます。',
+  },
+  {
+    question: '多重知能テストと組み合わせると何がわかりますか？',
+    answer:
+      'MBTI（性格傾向）+ 多重知能（才能の方向性）+ 音楽タイプ（嗜好）を組み合わせることで、「音楽とどう関わるか」の多面的な自己理解が得られます。たとえば「INFP × 音楽的知能高 × Mellow」の場合、感受性豊かで音楽を深く楽しむタイプとして自己理解できます。',
+  },
+  {
+    question: 'このページは占い・運命論的な内容ですか？',
+    answer:
+      '違います。研究的な傾向を参考情報として提供しており、性格や運命を音楽の好みで断定する意図はありません。あくまで自己理解のきっかけとしてご活用ください。',
+  },
+  {
+    question: '好きな音楽ジャンルでMBTIタイプを特定できますか？',
+    answer:
+      'できません。音楽嗜好はMBTIタイプの一要素に過ぎず、逆方向（音楽からMBTIを特定）の精度は非常に低いです。MBTIの判定は正式な診断ツールをご利用ください。',
+  },
+  {
+    question: '音楽の好みは変えた方がいいですか？',
+    answer:
+      '変える必要はありません。音楽嗜好は個人の豊かさの一部です。ただし、新しいジャンルに触れることで開放性が広がったり、新しい自己発見につながる場合もあります。本ページは特定ジャンルを推奨・非推奨するものではありません。',
+  },
+];
+
+const jsonLdArticle = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  '@id': `${PAGE_URL}#article`,
+  headline: title,
+  url: PAGE_URL,
+  datePublished: '2026-05-21',
+  dateModified: '2026-05-21',
+  inLanguage: 'ja',
+  publisher: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+  },
+};
+
+const jsonLdFAQ = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map(({ question, answer }) => ({
+    '@type': 'Question',
+    name: question,
+    acceptedAnswer: { '@type': 'Answer', text: answer },
+  })),
+};
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  canonical={PAGE_URL}
+  jsonLd={[jsonLdArticle, jsonLdFAQ]}
+  ogType="article"
+  publishDate="2026-05-21"
+  lastUpdated="2026-05-21"
+  breadcrumbs={[
+    { name: '診断一覧', url: '/diagnosis/' },
+    { name: '音楽タイプ診断', url: '/diagnosis/music-type/' },
+    { name: 'MBTI×音楽', url: '/diagnosis/music-type/mbti-music/' },
+  ]}
+>
+  <section class="mm-hero" aria-labelledby="mm-h1">
+    <Container>
+      <div class="mm-hero-inner">
+        <div class="mm-badge">Big5研究を介した示唆・個人差あり</div>
+        <h1 id="mm-h1" class="mm-h1">
+          MBTIと音楽の好みの関係<br />
+          <span class="mm-h1-sub">16タイプ別の音楽傾向を心理学的に解説</span>
+        </h1>
+        <p class="mm-hero-lead">
+          MBTIの16タイプは、どんな音楽ジャンルに引かれやすいのでしょうか。<br />
+          Big5との対応傾向を介して、タイプ別の音楽嗜好の傾向を整理します。
+        </p>
+        <p class="mm-caveat">
+          ※直接のMBTI×音楽研究は確認できていません。Big5経由の間接的示唆として提供します。
+        </p>
+      </div>
+    </Container>
+  </section>
+
+  <Container>
+    <TldrBlock
+      title="このページのポイント（3行まとめ）"
+      points={[
+        'MBTIとBig5の対応傾向（開放性↑→NF/NT）× Rentfrow & Gosling（2003）のMUSICモデルを組み合わせると、NFタイプはMellow・Sophisticated寄り、NTタイプはSophisticated・Intense寄りの傾向が示唆されます',
+        '16タイプ個別の音楽嗜好研究は2026-05-21時点では確認できておらず、本ページはBig5を介した間接的な推論です。個人差が大きく、傾向からの外れは一般的です',
+        'MBTI × 多重知能テスト × 音楽タイプを組み合わせることで、音楽との関わり方の多面的な自己理解が得られます（詳細: /diagnosis/multi-int/）',
+      ]}
+      updatedAt="2026-05-21"
+      sourceLabel="Rentfrow & Gosling (2003) DOI: 10.1037/0022-3514.84.6.1236"
+      sourceUrl="https://doi.org/10.1037/0022-3514.84.6.1236"
+    />
+
+    <section class="mm-section" aria-labelledby="mm-intro-h2">
+      <h2 id="mm-intro-h2" class="mm-h2">MBTIと音楽嗜好の関係：研究的根拠と限界</h2>
+      <p class="mm-lead">
+        MBTIと音楽嗜好を直接測定した大規模研究は、2026-05-21時点では確認できていません。
+        本ページは以下の2段階の対応を介した間接的な推論を提供しています。
+      </p>
+      <ol class="mm-steps">
+        <li>MBTIとBig5の対応傾向（例: NF型は開放性が高い傾向）</li>
+        <li>Rentfrow & Gosling（2003）のBig5とMUSICモデルの相関</li>
+      </ol>
+      <p class="mm-body">
+        Rentfrow & Gosling（2003）は、Big5の開放性とSophisticated（クラシック・ジャズ）次元に
+        正の相関があることを報告しています
+        （<a href="https://doi.org/10.1037/0022-3514.84.6.1236" target="_blank" rel="noopener noreferrer">Journal of Personality and Social Psychology, 2003</a>、2026-05-21確認）。
+      </p>
+      <div class="mm-warning">
+        <strong>重要:</strong>
+        本ページの傾向は推論の確実性に限界があります。
+        MBTIタイプで音楽嗜好を断定することはできません。
+        個人差が大きく、傾向から外れることは一般的です。
+      </div>
+    </section>
+
+    <ScienceNote
+      basisText="Rentfrow PJ & Gosling SD（2003）MUSICモデルとBig5性格特性の相関研究。MBTIとの直接対応は本ページ作成時点（2026-05-21）では確認できていません。Big5を介した間接的な示唆として整理しています。"
+      basisUrl="https://doi.org/10.1037/0022-3514.84.6.1236"
+      basisLabel="Rentfrow & Gosling (2003) 原論文"
+      notMedical={true}
+      updatedAt="2026-05-21"
+      additionalNote="占い・運命論的な使用を想定していません。自己理解のきっかけとしてご活用ください。"
+    />
+
+    <section class="mm-section" aria-labelledby="mm-groups-h2">
+      <h2 id="mm-groups-h2" class="mm-h2">MBTIタイプ群別の音楽傾向（4群）</h2>
+      <p class="mm-lead">
+        まず4つのタイプ群（NF・NT・SF・ST）での傾向を確認しましょう。
+        個別タイプは下の表でご覧ください。
+      </p>
+      <div class="mm-groups-grid">
+        {typeGroups.map((group) => (
+          <article class="mm-group-card">
+            <h3 class="mm-group-name">{group.name}</h3>
+            <div class="mm-group-types">
+              {group.types.map((t) => (
+                <span class="mm-type-badge">{t}</span>
+              ))}
+            </div>
+            <p class="mm-group-music">
+              <strong>音楽傾向（示唆）:</strong> {group.music}
+            </p>
+            <p class="mm-group-desc">{group.desc}</p>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section class="mm-section" aria-labelledby="mm-table-h2">
+      <h2 id="mm-table-h2" class="mm-h2">16タイプ × 音楽傾向一覧</h2>
+      <p class="mm-lead">
+        各タイプの傾向を一覧で確認できます。
+        全て「Big5を介した間接的示唆」であり、個人差が大きいことをご了承ください。
+      </p>
+      <div class="mm-table-wrap">
+        <table class="mm-table">
+          <caption class="mm-caption">16タイプ × 音楽傾向の示唆（2026-05-21 / Big5経由・個人差あり）</caption>
+          <thead>
+            <tr>
+              <th scope="col">MBTIタイプ</th>
+              <th scope="col">MUSICモデル傾向</th>
+              <th scope="col">ジャンル傾向（例）</th>
+              <th scope="col">背景</th>
+            </tr>
+          </thead>
+          <tbody>
+            {mbtiTypes.map((row) => (
+              <tr>
+                <td>
+                  <strong>{row.type}</strong>
+                  <div class="mm-type-label">{row.label}</div>
+                </td>
+                <td>{row.musicModel}</td>
+                <td>{row.genres}</td>
+                <td class="mm-reason">{row.reason}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p class="mm-note">
+        ※個人差が非常に大きく、上記傾向に当てはまらない方が多い場合もあります。参考情報としてご活用ください。
+      </p>
+    </section>
+
+    <section class="mm-section" aria-labelledby="mm-related-h2">
+      <h2 id="mm-related-h2" class="mm-h2">関連ページ</h2>
+      <ul class="mm-related-list">
+        <li class="mm-related-item">
+          <a href="/diagnosis/music-type/" class="mm-related-link">
+            <span class="mm-related-icon" aria-hidden="true">🎵</span>
+            <span class="mm-related-body">
+              <span class="mm-related-title">音楽タイプ診断ハブ</span>
+              <span class="mm-related-desc">MUSICモデル5タイプの全体像</span>
+            </span>
+          </a>
+        </li>
+        <li class="mm-related-item">
+          <a href="/diagnosis/music-type/genre/" class="mm-related-link">
+            <span class="mm-related-icon" aria-hidden="true">🎸</span>
+            <span class="mm-related-body">
+              <span class="mm-related-title">ジャンル別性格傾向</span>
+              <span class="mm-related-desc">10ジャンル × Big5性格特性の相関</span>
+            </span>
+          </a>
+        </li>
+        <li class="mm-related-item">
+          <a href="/diagnosis/music-type/multi-int/" class="mm-related-link">
+            <span class="mm-related-icon" aria-hidden="true">🎼</span>
+            <span class="mm-related-body">
+              <span class="mm-related-title">多重知能 × 音楽的知能</span>
+              <span class="mm-related-desc">音楽的知能が高い人の特徴・適職</span>
+            </span>
+          </a>
+        </li>
+        <li class="mm-related-item">
+          <a href="/diagnosis/mbti/" class="mm-related-link">
+            <span class="mm-related-icon" aria-hidden="true">🧠</span>
+            <span class="mm-related-body">
+              <span class="mm-related-title">MBTI（16タイプ）診断</span>
+              <span class="mm-related-desc">自分のMBTIタイプを確認する</span>
+            </span>
+          </a>
+        </li>
+        <li class="mm-related-item">
+          <a href="/diagnosis/multi-int/" class="mm-related-link">
+            <span class="mm-related-icon" aria-hidden="true">📚</span>
+            <span class="mm-related-body">
+              <span class="mm-related-title">多重知能テスト（無料・64問）</span>
+              <span class="mm-related-desc">8知能プロファイルを組み合わせて理解を深める</span>
+            </span>
+          </a>
+        </li>
+      </ul>
+    </section>
+
+    <section class="mm-section" aria-labelledby="mm-faq-h2">
+      <h2 id="mm-faq-h2" class="mm-h2">よくある質問（Q&A）</h2>
+      <dl class="mm-faq-list">
+        {faqs.map(({ question, answer }) => (
+          <div class="mm-faq-item">
+            <dt class="mm-faq-q">{question}</dt>
+            <dd class="mm-faq-a">{answer}</dd>
+          </div>
+        ))}
+      </dl>
+    </section>
+
+    <ReferenceList references={references} confirmedAt="2026-05-21" />
+  </Container>
+</BaseLayout>
+
+<style>
+.mm-hero {
+  background: linear-gradient(135deg, #1e40af 0%, #7c3aed 100%);
+  color: #fff;
+  padding-block: 3rem 3.5rem;
+  text-align: center;
+}
+.mm-hero-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+.mm-badge {
+  display: inline-block;
+  background: rgba(255 255 255 / 0.2);
+  border: 1px solid rgba(255 255 255 / 0.4);
+  border-radius: 2rem;
+  padding: 0.25rem 1rem;
+  font-size: 0.75rem;
+}
+.mm-h1 {
+  font-size: clamp(1.5rem, 4.5vw, 2.2rem);
+  font-weight: 700;
+  line-height: 1.3;
+  margin: 0;
+}
+.mm-h1-sub {
+  display: block;
+  font-size: clamp(0.85rem, 2.5vw, 1.1rem);
+  opacity: 0.9;
+}
+.mm-hero-lead {
+  font-size: clamp(0.85rem, 2vw, 1rem);
+  opacity: 0.9;
+  line-height: 1.7;
+  margin: 0;
+}
+.mm-caveat {
+  font-size: 0.75rem;
+  opacity: 0.8;
+  margin: 0;
+  padding: 0.4rem 1rem;
+  background: rgba(255 255 255 / 0.15);
+  border-radius: 0.25rem;
+}
+
+.mm-section { margin-block: 3rem; }
+.mm-h2 {
+  font-size: clamp(1.2rem, 3.5vw, 1.6rem);
+  font-weight: 700;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--sn-primary);
+}
+.mm-lead {
+  font-size: 1rem;
+  line-height: 1.8;
+  margin-bottom: 1rem;
+  color: #374151;
+}
+.mm-body {
+  font-size: 0.95rem;
+  line-height: 1.8;
+  margin-bottom: 1rem;
+  color: #374151;
+}
+.mm-note {
+  font-size: 0.8rem;
+  color: #6b7280;
+  margin-top: 0.75rem;
+}
+.mm-steps {
+  padding-left: 1.5rem;
+  margin: 0.75rem 0;
+  font-size: 0.9rem;
+  line-height: 1.8;
+  color: #374151;
+}
+.mm-warning {
+  margin-top: 1rem;
+  padding: 1rem 1.25rem;
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  border-left: 4px solid #ea580c;
+  border-radius: 0 0.5rem 0.5rem 0;
+  font-size: 0.875rem;
+  color: #7c2d12;
+  line-height: 1.6;
+}
+
+.mm-groups-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+.mm-group-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+}
+.mm-group-name {
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin: 0 0 0.75rem;
+  color: var(--sn-primary);
+}
+.mm-group-types {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.75rem;
+}
+.mm-type-badge {
+  font-size: 0.75rem;
+  font-weight: 700;
+  background: var(--sn-primary);
+  color: #fff;
+  padding: 0.15rem 0.5rem;
+  border-radius: 0.25rem;
+}
+.mm-group-music {
+  font-size: 0.85rem;
+  margin: 0 0 0.5rem;
+  color: #374151;
+}
+.mm-group-desc {
+  font-size: 0.82rem;
+  line-height: 1.6;
+  color: #4b5563;
+  margin: 0;
+}
+
+.mm-table-wrap { overflow-x: auto; margin-top: 1.5rem; }
+.mm-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+  min-width: 600px;
+}
+.mm-table th,
+.mm-table td {
+  padding: 0.55rem 0.75rem;
+  border: 1px solid #e5e7eb;
+  text-align: left;
+  line-height: 1.5;
+  vertical-align: top;
+}
+.mm-table thead th {
+  background: var(--sn-primary);
+  color: #fff;
+  font-weight: 600;
+}
+.mm-table tbody tr:nth-child(even) { background: #f9fafb; }
+.mm-type-label {
+  font-size: 0.7rem;
+  color: #6b7280;
+  margin-top: 0.15rem;
+}
+.mm-reason { font-size: 0.78rem; color: #4b5563; }
+.mm-caption {
+  font-size: 0.72rem;
+  color: #6b7280;
+  text-align: left;
+  padding: 0.25rem 0 0.5rem;
+}
+
+.mm-related-list {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.mm-related-link {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.15s;
+}
+.mm-related-link:hover { border-color: var(--sn-primary); }
+.mm-related-icon { font-size: 1.5rem; flex-shrink: 0; }
+.mm-related-body { display: flex; flex-direction: column; gap: 0.2rem; }
+.mm-related-title { font-weight: 700; font-size: 0.95rem; }
+.mm-related-desc { font-size: 0.8rem; color: #6b7280; }
+
+.mm-faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+.mm-faq-item {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+.mm-faq-q {
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 1rem 1.25rem;
+  background: #f9fafb;
+  margin: 0;
+  display: block;
+}
+.mm-faq-q::before { content: 'Q. '; color: var(--sn-primary); }
+.mm-faq-a {
+  font-size: 0.875rem;
+  line-height: 1.7;
+  padding: 1rem 1.25rem;
+  margin: 0;
+  color: #4b5563;
+}
+.mm-faq-a::before { content: 'A. '; font-weight: 700; color: #16a34a; }
+
+@media (max-width: 640px) {
+  .mm-groups-grid { grid-template-columns: 1fr; }
+}
+</style>
