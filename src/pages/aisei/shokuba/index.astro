@@ -82,6 +82,9 @@ const jsonLd = [
 >
   <!-- ヘッダー -->
   <section class="axis-header axis-header--work">
+    <span class="axis-sparkle axis-sparkle-1" aria-hidden="true">✦</span>
+    <span class="axis-sparkle axis-sparkle-2" aria-hidden="true">✧</span>
+    <span class="axis-sparkle axis-sparkle-3" aria-hidden="true">✦</span>
     <Container>
       <div class="axis-header-inner">
         <div class="axis-icon" aria-hidden="true">💼</div>
@@ -205,8 +208,17 @@ const jsonLd = [
 </BaseLayout>
 
 <style>
-  .axis-header { padding-block: var(--sn-space-8, 2rem); border-bottom: 1px solid var(--sn-border, #e5e7eb); }
-  .axis-header--work { background: linear-gradient(135deg, #eff6ff 0%, var(--sn-bg-soft, #f9fafb) 100%); }
+  .axis-header {
+    padding-block: var(--sn-space-10, 2.5rem) var(--sn-space-8, 2rem);
+    border-bottom: 1px solid var(--line, #ece9f5);
+    position: relative;
+    overflow: hidden;
+  }
+  .axis-header--work {
+    linear-gradient(135deg, #eef3ff 0%, #d4e3ff 60%, #e8f0ff 100%)
+    position: relative;
+    overflow: hidden;
+  }
   .axis-header-inner { display: flex; align-items: flex-start; gap: var(--sn-space-4, 1rem); }
   .axis-icon { font-size: 2.5rem; flex-shrink: 0; line-height: 1; }
   .axis-title { font-family: var(--sn-font-rounded, sans-serif); font-size: clamp(1.25rem, 4vw, 1.75rem); font-weight: 900; color: var(--sn-text, #111827); margin: 0 0 var(--sn-space-2, 0.5rem); }
@@ -232,4 +244,32 @@ const jsonLd = [
   .axis-diag-card > span:first-child { font-size: 1.5rem; flex-shrink: 0; }
   .axis-diag-card strong { display: block; font-size: var(--sn-text-sm, 0.875rem); font-weight: 700; color: var(--sn-text, #111827); }
   .axis-diag-card span:last-child { font-size: var(--sn-text-xs, 0.75rem); color: var(--sn-muted, #9ca3af); }
+
+  /* axis スパークル */
+  .axis-sparkle {
+    position: absolute;
+    pointer-events: none;
+    color: var(--s-work, #5b8def);
+    font-style: normal;
+    user-select: none;
+    opacity: 0;
+    animation: axis-sparkle 3.5s ease-in-out infinite;
+  }
+  .axis-sparkle-1 { top: 12%; right: 8%;  font-size: 1rem;   animation-delay: 0s;    animation-duration: 4s; }
+  .axis-sparkle-2 { top: 60%; right: 4%;  font-size: 0.7rem; animation-delay: 1.2s;  animation-duration: 3.5s; }
+  .axis-sparkle-3 { bottom: 20%; left: 6%; font-size: 0.8rem; animation-delay: 2s;   animation-duration: 4.2s; }
+  @keyframes axis-sparkle {
+    0%, 100% { opacity: 0;    transform: scale(1) rotate(0deg); }
+    40%       { opacity: 0.55; transform: scale(1.2) rotate(18deg); }
+    60%       { opacity: 0.7;  transform: scale(1.1) rotate(12deg); }
+  }
+  .axis-header::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(60% 50% at 80% 20%, rgba(255,255,255,.35), transparent 60%),
+      radial-gradient(40% 30% at 10% 80%, rgba(255,255,255,.25), transparent 50%);
+    pointer-events: none;
+  }
 </style>

@@ -2,8 +2,11 @@
  * ShareCardGenerator.tsx
  * Canvas API で診断結果シェアカード PNG を生成
  *
- * Phase 3.5: 画像内にタイプ名・相性スコア・shindan-navi.jp ロゴを埋め込み
- * バイラル設計: シェア先で「自分も診断したい」と思わせる
+ * Phase 2: 新デザインシステム v2 対応
+ *   - デザイントークン brand-500 (#7c5cff) をデフォルトプライマリに
+ *   - ヒーローグラデーション と整合したカード背景
+ *   - shindan-navi.jp ウォーターマーク（ロゴピル）を強化
+ *   - Noto Sans JP + Inter フォント体系統一
  *
  * 使用場面:
  *   - 診断結果ページ末尾の「友達に送る」ボタン隣
@@ -19,7 +22,7 @@ interface ShareCardGeneratorProps {
   /** 相性スコア（0-100）がある場合 */
   compatibilityScore?: number;
   compatibilityLabel?: string;
-  /** ブランドカラー（デフォルト: --sn-primary） */
+  /** ブランドカラー（デフォルト: brand-500 #7c5cff） */
   primaryColor?: string;
   /** 追加シェアテキスト */
   shareText?: string;
@@ -50,6 +53,35 @@ function drawRoundRect(
   ctx.closePath();
 }
 
+/** primaryColor をもとに薄いグラデーション開始色を生成（ヒーロー背景と整合） */
+function buildBgGradient(
+  ctx: CanvasRenderingContext2D,
+  primaryColor: string
+): CanvasGradient {
+  // デフォルト（brand-500系）と診断色系でグラデーションを切り替え
+  const colorMap: Record<string, [string, string]> = {
+    '#7c5cff': ['#f3efff', '#e8e0ff'], // brand/mbti – purple
+    '#6366f1': ['#f3efff', '#e8e0ff'], // 旧primary – purple
+    '#e06090': ['#fff0f7', '#ffe4f2'], // love – pink
+    '#ff6f9c': ['#fff0f7', '#ffe4f2'], // love – pink
+    '#f97316': ['#fff6ee', '#ffe9d5'], // multi – orange
+    '#3b82f6': ['#eef6ff', '#ddeeff'], // star – blue
+    '#4f7fff': ['#eef3ff', '#d4e3ff'], // work – blue
+    '#eab308': ['#fffbea', '#fef3c7'], // perfect – yellow
+    '#14b8a6': ['#edfaf7', '#d0f5ec'], // disc – teal
+    '#7ec79b': ['#f0fbf4', '#c8f0d8'], // friend – green
+    '#c8a46e': ['#fdf8f0', '#f5e8d0'], // money – beige
+  };
+  const found = colorMap[primaryColor.toLowerCase()];
+  const [from, to] = found ?? ['#f3efff', '#e8e0ff'];
+
+  const grad = ctx.createLinearGradient(0, 0, CARD_W, CARD_H);
+  grad.addColorStop(0, from);
+  grad.addColorStop(0.6, to);
+  grad.addColorStop(1, from);
+  return grad;
+}
+
 function generateCard(
   canvas: HTMLCanvasElement,
   props: ShareCardGeneratorProps
@@ -60,7 +92,7 @@ function generateCard(
     diagName,
     compatibilityScore,
     compatibilityLabel,
-    primaryColor = '#6366f1',
+    primaryColor = '#7c5cff',
     shareText,
   } = props;
 
@@ -69,19 +101,39 @@ function generateCard(
   const ctx = canvas.getContext('2d');
   if (!ctx) return;
 
-  // ---- 背景グラデーション ----
-  const grad = ctx.createLinearGradient(0, 0, CARD_W, CARD_H);
-  grad.addColorStop(0, '#eef2ff');
-  grad.addColorStop(1, '#faf5ff');
-  ctx.fillStyle = grad;
+  // ---- 背景グラデーション（ヒーロー背景と整合） ----
+  ctx.fillStyle = buildBgGradient(ctx, primaryColor);
   ctx.fillRect(0, 0, CARD_W, CARD_H);
 
-  // ---- メインカード（白い丸カード） ----
+  // ---- 光彩オーバーレイ（右上・左下） ----
+  const glow1 = ctx.createRadialGradient(CARD_W * 0.8, CARD_H * 0.2, 0, CARD_W * 0.8, CARD_H * 0.2, 340);
+  glow1.addColorStop(0, 'rgba(255,255,255,0.28)');
+  glow1.addColorStop(1, 'rgba(255,255,255,0)');
+  ctx.fillStyle = glow1;
+  ctx.fillRect(0, 0, CARD_W, CARD_H);
+
+  const glow2 = ctx.createRadialGradient(CARD_W * 0.1, CARD_H * 0.9, 0, CARD_W * 0.1, CARD_H * 0.9, 260);
+  glow2.addColorStop(0, 'rgba(255,255,255,0.18)');
+  glow2.addColorStop(1, 'rgba(255,255,255,0)');
+  ctx.fillStyle = glow2;
+  ctx.fillRect(0, 0, CARD_W, CARD_H);
+
+  // ---- メインカード（グラスモーフィズム調 白カード） ----
   ctx.save();
   drawRoundRect(ctx, 80, 60, CARD_W - 160, CARD_H - 120, 48);
-  ctx.fillStyle = 'rgba(255,255,255,0.92)';
-  ctx.shadowColor = 'rgba(99,102,241,0.15)';
-  ctx.shadowBlur = 60;
+  ctx.fillStyle = 'rgba(255,255,255,0.82)';
+  ctx.shadowColor = 'rgba(124,92,255,0.12)';
+  ctx.shadowBlur = 64;
+  ctx.fill();
+  ctx.restore();
+
+  // ---- カード内側上部の白→透明ハイライト ----
+  ctx.save();
+  const highlight = ctx.createLinearGradient(0, 60, 0, 200);
+  highlight.addColorStop(0, 'rgba(255,255,255,0.55)');
+  highlight.addColorStop(1, 'rgba(255,255,255,0)');
+  drawRoundRect(ctx, 80, 60, CARD_W - 160, 140, 48);
+  ctx.fillStyle = highlight;
   ctx.fill();
   ctx.restore();
 
@@ -92,39 +144,52 @@ function generateCard(
   ctx.fill();
   ctx.restore();
 
-  // ---- 診断名ラベル ----
+  // ---- 診断名ラベル（pill型） ----
   ctx.save();
-  ctx.font = 'bold 36px "Noto Sans JP", sans-serif';
-  ctx.fillStyle = '#9ca3af';
-  ctx.fillText(diagName, 148, 148);
+  const diagLabelText = diagName;
+  ctx.font = 'bold 30px "Noto Sans JP", sans-serif';
+  const diagLabelW = ctx.measureText(diagLabelText).width + 48;
+  drawRoundRect(ctx, 148, 110, diagLabelW, 52, 26);
+  ctx.fillStyle = primaryColor;
+  ctx.globalAlpha = 0.12;
+  ctx.fill();
+  ctx.globalAlpha = 1;
+  ctx.fillStyle = primaryColor;
+  ctx.fillText(diagLabelText, 172, 146);
   ctx.restore();
 
   // ---- タイプアイコン（大） ----
   ctx.font = '160px serif';
-  ctx.fillText(typeIcon, 140, 380);
+  ctx.fillText(typeIcon, 140, 400);
 
   // ---- タイプ名 ----
   ctx.save();
   ctx.font = 'bold 96px "Noto Sans JP", sans-serif';
   ctx.fillStyle = '#1f2937';
-  // 長い名前は縮小
-  const maxW = CARD_W - 480;
+  const maxW = CARD_W - 500;
   let fontSize = 96;
   while (ctx.measureText(typeName).width > maxW && fontSize > 48) {
     fontSize -= 4;
     ctx.font = `bold ${fontSize}px "Noto Sans JP", sans-serif`;
   }
-  ctx.fillText(typeName, 360, 320);
+  ctx.fillText(typeName, 360, 330);
+  ctx.restore();
+
+  // ---- サブコピー「タイプ」テキスト ----
+  ctx.save();
+  ctx.font = '34px "Noto Sans JP", sans-serif';
+  ctx.fillStyle = '#6b7280';
+  ctx.fillText('タイプ', 360 + ctx.measureText(typeName).width + 16, 328);
   ctx.restore();
 
   // ---- 相性スコア（ある場合） ----
   if (compatibilityScore !== undefined) {
     const scoreX = 360;
-    const scoreY = 430;
+    const scoreY = 440;
 
-    // バッジ背景
     ctx.save();
-    drawRoundRect(ctx, scoreX, scoreY - 52, 320, 72, 36);
+    const scoreLabelW = 340;
+    drawRoundRect(ctx, scoreX, scoreY - 52, scoreLabelW, 72, 36);
     ctx.fillStyle = primaryColor;
     ctx.fill();
     ctx.restore();
@@ -143,36 +208,47 @@ function generateCard(
   // ---- シェアテキスト ----
   if (shareText) {
     ctx.save();
-    ctx.font = '32px "Noto Sans JP", sans-serif';
+    ctx.font = '30px "Noto Sans JP", sans-serif';
     ctx.fillStyle = '#4b5563';
-    // 折り返し処理（60文字ごと）
-    const words = shareText;
     const lineLen = 30;
-    for (let i = 0; i < Math.min(2, Math.ceil(words.length / lineLen)); i++) {
-      ctx.fillText(words.slice(i * lineLen, (i + 1) * lineLen), 360, 520 + i * 48);
+    for (let i = 0; i < Math.min(2, Math.ceil(shareText.length / lineLen)); i++) {
+      ctx.fillText(shareText.slice(i * lineLen, (i + 1) * lineLen), 360, 510 + i * 48);
     }
     ctx.restore();
   }
 
-  // ---- ウォーターマーク（ロゴ）---- バイラル装置
+  // ---- ウォーターマーク ロゴピル（v2 強化版） ----
   ctx.save();
-  // ロゴ背景
-  drawRoundRect(ctx, CARD_W - 420, CARD_H - 160, 340, 80, 40);
-  ctx.fillStyle = primaryColor;
-  ctx.globalAlpha = 0.9;
-  ctx.fill();
-  ctx.globalAlpha = 1;
+  const logoW = 360;
+  const logoH = 76;
+  const logoX = CARD_W - logoW - 88;
+  const logoY = CARD_H - logoH - 68;
 
-  ctx.font = 'bold 34px "Noto Sans JP", sans-serif';
+  // ピル背景（primaryColor + グラデーション）
+  const logoPillGrad = ctx.createLinearGradient(logoX, logoY, logoX + logoW, logoY + logoH);
+  logoPillGrad.addColorStop(0, primaryColor);
+  logoPillGrad.addColorStop(1, `${primaryColor}cc`);
+  drawRoundRect(ctx, logoX, logoY, logoW, logoH, logoH / 2);
+  ctx.fillStyle = logoPillGrad;
+  ctx.shadowColor = `${primaryColor}40`;
+  ctx.shadowBlur = 16;
+  ctx.fill();
+  ctx.shadowBlur = 0;
+
+  // ロゴテキスト（中央揃え）
+  ctx.font = 'bold 34px "Noto Sans JP", "Inter", sans-serif';
   ctx.fillStyle = '#ffffff';
-  ctx.fillText(LOGO_TEXT, CARD_W - 400, CARD_H - 108);
+  const logoTextW = ctx.measureText(LOGO_TEXT).width;
+  ctx.fillText(LOGO_TEXT, logoX + (logoW - logoTextW) / 2, logoY + logoH * 0.65);
   ctx.restore();
 
-  // ---- 「無料・登録不要」メッセージ ----
+  // ---- 「完全無料・登録不要」メッセージ ----
   ctx.save();
-  ctx.font = '28px "Noto Sans JP", sans-serif';
+  ctx.font = '26px "Noto Sans JP", sans-serif';
   ctx.fillStyle = '#9ca3af';
-  ctx.fillText('完全無料・登録不要で診断できます', CARD_W - 720, CARD_H - 92);
+  const freeText = '完全無料・登録不要で診断できます';
+  const freeTextW = ctx.measureText(freeText).width;
+  ctx.fillText(freeText, logoX + (logoW - freeTextW) / 2, logoY - 16);
   ctx.restore();
 }
 
@@ -182,7 +258,7 @@ export default function ShareCardGenerator({
   diagName,
   compatibilityScore,
   compatibilityLabel,
-  primaryColor = '#6366f1',
+  primaryColor = '#7c5cff',
   shareText,
 }: ShareCardGeneratorProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -322,11 +398,12 @@ export default function ShareCardGenerator({
         .scg-canvas {
           width: 100%;
           height: auto;
-          border-radius: 12px;
-          border: 1px solid var(--sn-border);
+          border-radius: 16px;
+          border: 1.5px solid rgba(124,92,255,0.15);
           display: none;
           max-height: 320px;
           object-fit: contain;
+          box-shadow: 0 8px 24px rgba(124,92,255,0.08);
         }
         .scg-canvas--visible {
           display: block;
@@ -338,9 +415,9 @@ export default function ShareCardGenerator({
           align-items: center;
           gap: 0.5rem;
           padding: 2rem;
-          background: var(--sn-bg-soft);
-          border-radius: 12px;
-          border: 2px dashed var(--sn-border);
+          background: var(--sn-bg-soft, #f8f7ff);
+          border-radius: 16px;
+          border: 2px dashed rgba(124,92,255,0.25);
           text-align: center;
         }
         .scg-placeholder-icon {
@@ -348,7 +425,7 @@ export default function ShareCardGenerator({
         }
         .scg-placeholder-text {
           font-size: 0.875rem;
-          color: var(--sn-muted);
+          color: var(--sn-muted, #9ca3af);
           margin: 0;
         }
 
@@ -379,7 +456,7 @@ export default function ShareCardGenerator({
           transform: translateY(-1px);
         }
         .scg-btn:focus-visible {
-          outline: 2px solid var(--sn-primary);
+          outline: 2px solid var(--brand-500, #7c5cff);
           outline-offset: 2px;
         }
         .scg-btn:disabled {
@@ -389,14 +466,14 @@ export default function ShareCardGenerator({
         }
 
         .scg-btn--generate {
-          background: var(--sn-primary);
+          background: var(--brand-500, #7c5cff);
           color: #fff;
           flex: 1;
         }
         .scg-btn--download {
-          background: var(--sn-bg-soft);
-          color: var(--sn-text-soft);
-          border: 1px solid var(--sn-border);
+          background: var(--sn-bg-soft, #f8f7ff);
+          color: var(--sn-text-soft, #6b7280);
+          border: 1px solid rgba(124,92,255,0.2);
         }
         .scg-btn--line {
           background: #00b900;
@@ -419,7 +496,7 @@ export default function ShareCardGenerator({
 
         .scg-hint {
           font-size: 0.78rem;
-          color: var(--sn-muted);
+          color: var(--sn-muted, #9ca3af);
           text-align: center;
           margin: 0;
         }

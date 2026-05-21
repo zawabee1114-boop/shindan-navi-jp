@@ -159,29 +159,31 @@ const jsonLdBreadcrumb = {
       <span aria-current="page">{detail.japaneseName}</span>
     </nav>
 
-    <!-- ヘッダーカード -->
-    <div
-      style={`background: ${colors.bg}; border: 2px solid ${colors.border}; border-radius: 1rem; padding: 1.5rem; margin-bottom: 2rem;`}
-    >
-      <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap;">
-        <span style="font-size: 3.5rem; line-height: 1;">{detail.symbol}</span>
-        <div>
-          <h1 style={`font-size: clamp(1.5rem, 4vw, 2rem); font-weight: 800; color: ${colors.text}; margin: 0 0 0.25rem;`}>
-            【{detail.japaneseName}】性格特性 完全ガイド
-          </h1>
-          <p style={`font-size: 0.9rem; color: ${colors.text}; opacity: 0.8; margin: 0;`}>
-            {detail.englishName} ｜ {detail.dateRange} ｜ エレメント: {
-              detail.element === 'fire' ? '🔥 火' :
-              detail.element === 'earth' ? '🌍 地' :
-              detail.element === 'air' ? '💨 風' : '💧 水'
-            } ｜ 守護星: {detail.rulingPlanet}
-          </p>
+    <!-- ヒーローカード v2 (diag-star) -->
+    <section class="zodiac-hero diag-star" aria-labelledby="zodiac-type-name">
+      <span class="zd-sparkle zd-sparkle--1" aria-hidden="true">✦</span>
+      <span class="zd-sparkle zd-sparkle--2" aria-hidden="true">✦</span>
+      <span class="zd-sparkle zd-sparkle--3" aria-hidden="true">✦</span>
+      <span class="zd-sparkle zd-sparkle--4" aria-hidden="true">✦</span>
+      <div class="zodiac-hero-inner">
+        <div class="zd-icon-card">
+          <span style="font-size: 3.2rem; line-height: 1;" aria-hidden="true">{detail.symbol}</span>
         </div>
+        <span class="diag-badge" aria-label="星座性格診断">星座性格診断</span>
+        <h1 id="zodiac-type-name" class="zd-type-name">
+          {detail.japaneseName}
+        </h1>
+        <p class="zd-tagline">{detail.catchphrase}</p>
+        <p class="zd-meta">
+          {detail.englishName} ｜ {detail.dateRange} ｜
+          エレメント: {
+            detail.element === 'fire' ? '🔥 火' :
+            detail.element === 'earth' ? '🌍 地' :
+            detail.element === 'air' ? '💨 風' : '💧 水'
+          } ｜ 守護星: {detail.rulingPlanet}
+        </p>
       </div>
-      <p style={`font-size: 1rem; font-weight: 600; color: ${colors.text}; margin: 0;`}>
-        {detail.catchphrase}
-      </p>
-    </div>
+    </section>
 
     <!-- 鮮度バッジ -->
     <p style="font-size: 0.8rem; color: var(--sn-muted); margin-bottom: 1.5rem;">
@@ -457,4 +459,90 @@ const jsonLdBreadcrumb = {
       最終更新: <time datetime={meta.updatedAt}>{meta.updatedAt.replace(/-/g, '/')}</time>
     </p>
   </Container>
+
+<style>
+  /* ===== zodiac hero v2 ===== */
+  .zodiac-hero {
+    position: relative;
+    overflow: hidden;
+    padding-block: 40px 48px;
+    background: linear-gradient(135deg, #eef6ff 0%, #ddeeff 60%, #e8f3ff 100%);
+    margin-bottom: 2rem;
+    border-radius: 1rem;
+  }
+  .zodiac-hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 50% 60% at 80% 20%, rgba(255,255,255,.32) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 50% at 15% 85%, rgba(255,255,255,.2) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .zodiac-hero-inner {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0.6rem;
+    padding-inline: 1.5rem;
+  }
+  .zd-icon-card {
+    width: 90px;
+    height: 90px;
+    display: grid;
+    place-items: center;
+    background: rgba(255,255,255,0.72);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 1.25rem;
+    border: 1.5px solid rgba(255,255,255,0.6);
+    box-shadow: 0 6px 20px rgba(0,0,0,.07), inset 0 1px 0 rgba(255,255,255,.7);
+    margin-bottom: 0.25rem;
+  }
+  .zd-type-name {
+    font-size: clamp(1.6rem, 5vw, 2.2rem);
+    font-weight: 800;
+    color: var(--diag-color, var(--brand-500, #7c5cff));
+    margin: 0;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+  }
+  .zd-tagline {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--sn-text, #1f2937);
+    margin: 0;
+  }
+  .zd-meta {
+    font-size: 0.8rem;
+    color: var(--sn-muted, #9ca3af);
+    margin: 0;
+  }
+  /* スパークル */
+  .zd-sparkle {
+    position: absolute;
+    pointer-events: none;
+    font-size: 1.1rem;
+    color: var(--diag-color, #3b82f6);
+    opacity: 0;
+    animation: zd-sparkle 3.5s ease-in-out infinite;
+  }
+  .zd-sparkle--1 { top: 14%;  left:  8%; animation-delay: 0s;    font-size: 1rem; }
+  .zd-sparkle--2 { top: 20%;  right: 10%; animation-delay: 0.9s; font-size: 0.85rem; }
+  .zd-sparkle--3 { bottom: 22%; left: 12%; animation-delay: 1.7s; font-size: 0.75rem; }
+  .zd-sparkle--4 { bottom: 15%; right:  7%; animation-delay: 2.5s; font-size: 0.9rem; }
+  @keyframes zd-sparkle {
+    0%, 100% { opacity: 0;    transform: scale(1)   rotate(0deg); }
+    40%       { opacity: 0.55; transform: scale(1.2) rotate(18deg); }
+    60%       { opacity: 0.7;  transform: scale(1.1) rotate(12deg); }
+  }
+  @media (max-width: 768px) {
+    .zodiac-hero { padding-block: 32px 40px; }
+    .zd-icon-card { width: 72px; height: 72px; }
+    .zd-type-name { font-size: clamp(1.4rem, 6vw, 1.8rem); }
+  }
+</style>
 </BaseLayout>

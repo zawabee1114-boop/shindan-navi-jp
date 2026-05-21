@@ -32,9 +32,17 @@ const diagnoses = [
   breadcrumbs={[{ name: 'マイページ', url: '/me/' }]}
 >
   <section class="me-header">
+    <span class="me-sparkle me-sparkle-1" aria-hidden="true">✦</span>
+    <span class="me-sparkle me-sparkle-2" aria-hidden="true">✧</span>
+    <span class="me-sparkle me-sparkle-3" aria-hidden="true">✦</span>
     <Container>
       <div class="me-header-inner">
-        <div class="me-avatar" aria-hidden="true">👤</div>
+        <div class="me-diag-badge-wrap">
+          <span class="diag-badge" aria-label="マイページ">
+            <span aria-hidden="true">👤</span>
+            マイページ
+          </span>
+        </div>
         <div class="me-header-body">
           <h1 class="me-title">マイページ</h1>
           <p class="me-subtitle" id="me-progress-label">最初の診断を受けてプロファイルを作ろう</p>
@@ -218,18 +226,44 @@ const diagnoses = [
 
 <style>
   .me-header {
-    background: linear-gradient(135deg, var(--sn-primary-bg) 0%, var(--sn-bg-soft) 100%);
+    background: linear-gradient(135deg, var(--brand-50, #f6f3ff) 0%, #e8e0ff 60%, #ede5ff 100%);
     padding-block: var(--sn-space-10) var(--sn-space-6);
+    position: relative;
+    overflow: hidden;
   }
-  .me-header-inner { display: flex; align-items: center; gap: var(--sn-space-5); }
-  .me-avatar {
-    font-size: 3.5rem;
-    width: 80px; height: 80px;
-    display: flex; align-items: center; justify-content: center;
-    background: var(--sn-primary-bg);
-    border-radius: 50%;
-    border: 3px solid var(--sn-primary-light);
-    flex-shrink: 0;
+  .me-header::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(60% 50% at 80% 20%, rgba(255,255,255,.4), transparent 60%),
+      radial-gradient(40% 30% at 10% 80%, rgba(255,255,255,.3), transparent 50%);
+    pointer-events: none;
+  }
+  .me-sparkle {
+    position: absolute;
+    pointer-events: none;
+    color: var(--brand-500, #7c5cff);
+    font-style: normal;
+    user-select: none;
+    opacity: 0;
+    animation: me-sparkle 3.5s ease-in-out infinite;
+  }
+  .me-sparkle-1 { top: 12%; left: 8%;    font-size: 1rem;   animation-delay: 0s;   animation-duration: 4s; }
+  .me-sparkle-2 { top: 20%; right: 12%;  font-size: 0.7rem; animation-delay: 1.2s; animation-duration: 3.5s; }
+  .me-sparkle-3 { bottom: 18%; left: 18%; font-size: 0.8rem; animation-delay: 2s;  animation-duration: 4.2s; }
+  @keyframes me-sparkle {
+    0%, 100% { opacity: 0;    transform: scale(1) rotate(0deg); }
+    40%       { opacity: 0.55; transform: scale(1.2) rotate(18deg); }
+    60%       { opacity: 0.7;  transform: scale(1.1) rotate(12deg); }
+  }
+  .me-diag-badge-wrap { margin-bottom: 12px; position: relative; z-index: 1; }
+  .me-header-inner {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sn-space-3);
+    position: relative;
+    z-index: 1;
   }
   .me-title { font-family: var(--sn-font-rounded); font-size: var(--sn-text-3xl); font-weight: 900; color: var(--sn-text); margin: 0; }
   .me-subtitle { font-size: var(--sn-text-base); color: var(--sn-muted); margin: var(--sn-space-1) 0 0; }
