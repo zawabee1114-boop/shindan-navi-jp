@@ -1,0 +1,1082 @@
+---
+/**
+ * 完璧主義 治し方 - サブページ
+ * KW: 完璧主義 治し方（VOL1,900/SD20）
+ *
+ * YMYL注意（最重要）:
+ * - URLスラッグは naoshikata（検索意図対応）
+ * - タイトルに「治し方」キーワード含める（SEO）
+ * - 本文では「治す」「治療」絶対NG → 「向き合う」「整える」「マネジメント」
+ * - 「疾患」「障害」絶対NG
+ * - 「専門家相談」表現をYMYL境界部分に明示
+ *
+ * 学術根拠:
+ * - Hewitt & Flett (1991) 多次元完璧主義尺度
+ * - Beck AT (1979) Cognitive Therapy - CBT
+ * - Hayes SC et al. (1999) ACT
+ * - Neff KD (2003) Self-Compassion
+ * - Shafran R, Cooper Z, Fairburn CG (2002) Clinical perfectionism
+ * - Kabat-Zinn J (1994) Mindfulness
+ *
+ * 確認日: 2026-05-21
+ */
+
+import BaseLayout from '../../../../layouts/BaseLayout.astro';
+import Container from '../../../../components/Container.astro';
+import TldrBlock from '../../../../components/TldrBlock.astro';
+import ReferenceList from '../../../../components/ReferenceList.astro';
+import ScienceNote from '../../../../components/ScienceNote.astro';
+
+const SITE_URL = 'https://shindan-navi.jp';
+const PAGE_URL = `${SITE_URL}/diagnosis/perfectionism/naoshikata/`;
+const UPDATED_AT = '2026-05-21';
+
+const title = '完璧主義の治し方｜科学的アプローチで向き合うガイド｜診断ナビ';
+const description =
+  '「完璧主義の治し方」を心理学で整理。CBT・ACT・マインドフルネス・セルフコンパッション・行動活性化の5手法を科学的に解説。4タイプ別の向き合い方と、よくある誤解も紹介。2026-05-21時点の情報。';
+
+// JSON-LD: Article
+const jsonLdArticle = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  '@id': `${PAGE_URL}#article`,
+  headline: '完璧主義の「治し方」とされる手法を心理学で整理｜向き合い方の科学的ガイド',
+  description,
+  url: PAGE_URL,
+  datePublished: UPDATED_AT,
+  dateModified: UPDATED_AT,
+  inLanguage: 'ja',
+  author: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+    name: '診断ナビ',
+    url: SITE_URL,
+  },
+  publisher: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+    name: '診断ナビ',
+    url: SITE_URL,
+  },
+  about: {
+    '@type': 'Thing',
+    name: '完璧主義 向き合い方 心理学',
+  },
+  citation: [
+    {
+      '@type': 'ScholarlyArticle',
+      name: 'Perfectionism in the self and social contexts',
+      author: 'Hewitt PL, Flett GL',
+      datePublished: '1991',
+      url: 'https://doi.org/10.1037/0022-3514.60.3.456',
+    },
+    {
+      '@type': 'ScholarlyArticle',
+      name: 'Clinical perfectionism: A cognitive-behavioural analysis',
+      author: 'Shafran R, Cooper Z, Fairburn CG',
+      datePublished: '2002',
+      url: 'https://doi.org/10.1016/S0005-7967(01)00059-6',
+    },
+    {
+      '@type': 'ScholarlyArticle',
+      name: 'Self-compassion: An alternative conceptualization of a healthy attitude toward oneself',
+      author: 'Neff KD',
+      datePublished: '2003',
+      url: 'https://doi.org/10.1207/S15327957PSPR0702_02',
+    },
+  ],
+};
+
+// FAQ 10問
+const faqs = [
+  {
+    question: '完璧主義は向き合えるようになりますか？',
+    answer:
+      '完璧主義は「完全に消える」ものではなく、「上手にマネジメントできるようになる」ものです。Stoeber & Otto（2006）の研究では、適応的完璧主義（高い基準 + 自己への柔軟さ）と不適応的完璧主義（高い基準 + 自己批判）は区別でき、後者から前者への移行が目標とされています。',
+  },
+  {
+    question: 'CBTとACTはどちらが効果的ですか？',
+    answer:
+      '個人の傾向によって合いやすい方法が異なります。CBTは「思考を変える」アプローチで、歪んだ思考パターンに気づきやすい方に合いやすいです。ACTは「思考を変えようとせず、価値に沿って行動する」アプローチで、思考との格闘を手放したい方に合いやすいです。両者を組み合わせることも可能です。',
+  },
+  {
+    question: 'マインドフルネスは完璧主義に効果がありますか？',
+    answer:
+      'マインドフルネスは「今この瞬間に意識を向け、判断せず観察する」練習です。完璧主義が強い場合、「完璧にやらなければ」という思考に飲み込まれやすいため、マインドフルネスで「思考に気づき、一歩引いて見る」習慣を養うことが有効とされています（Kabat-Zinn, 1994）。',
+  },
+  {
+    question: 'セルフコンパッションとは何ですか？',
+    answer:
+      'Neff（2003）が提唱した概念で、「自分に対して親友に接するような優しさを向ける」心理的スキルです。3要素は「自己への優しさ（Self-Kindness）」「人間共通の経験（Common Humanity）」「マインドフルな観察（Mindfulness）」です（参照: https://doi.org/10.1207/S15327957PSPR0702_02）。',
+  },
+  {
+    question: '向き合い始めてから何ヶ月で変化を感じられますか？',
+    answer:
+      '個人差があります。CBTを用いた介入研究では6〜12週間のプログラムで思考パターンの変化が報告されています（Shafran et al., 2002）。変化は急激ではなく少しずつ積み重なるため、「何ヶ月で完成する」より「毎週小さな体験を積む」視点で進めることが適切です。',
+  },
+  {
+    question: '専門家に相談するタイミングはいつですか？',
+    answer:
+      '完璧主義の傾向が日常生活（睡眠・食事・人間関係・仕事）に継続して支障をきたしている場合は、臨床心理士・公認心理師・医師への相談を選択肢として検討することが適切です。本ページの情報は自己理解・傾向把握のための参考情報であり、専門的な支援の代替ではありません。',
+  },
+  {
+    question: '薬での向き合い方はありますか？',
+    answer:
+      '完璧主義そのものに対して薬が処方されることはありません。医薬品（薬物療法）は、強迫症状や不安・抑うつなど医師が診断した状態に対して検討されます。完璧主義への主なアプローチは心理的手法（CBT・ACT・マインドフルネス等）が中心です。心身の不調がある場合は必ず医師にご相談ください。',
+  },
+  {
+    question: '自助書籍だけで向き合えますか？',
+    answer:
+      '軽度〜中程度の傾向であれば、自助書籍・ワークブックを活用したセルフヘルプが有効なことがあります。CBTベースの書籍（『いやな気分よ、さようなら』バーンズ著など）やセルフコンパッションのワークブックが参考になります。ただし、日常生活への支障が大きい場合は専門家への相談も選択肢です。',
+  },
+  {
+    question: '完璧主義の強みを残しながら向き合えますか？',
+    answer:
+      '可能です。Stoeber & Otto（2006）の研究では、「適応的完璧主義」（高い基準 + 自己への柔軟さ）は職務パフォーマンスや達成感と正の関連があるとされています。目標は「高い基準をなくす」ではなく「自己批判を減らし、消耗しない向き合い方を身につける」ことです。',
+  },
+  {
+    question: 'パートナーに完璧主義を整えてほしい場合はどうすればいいですか？',
+    answer:
+      'まず「相手が変わることを強要しない」が基本です。完璧主義の傾向は本人の自己理解から変化が始まります。診断ナビの完璧主義診断を「一緒に試してみる」形で共有することが、会話のきっかけになることがあります。相手の傾向を批判するより、具体的に「こうすると助かる」を伝えることが関係を守ります。',
+  },
+];
+
+const jsonLdFAQ = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  '@id': `${PAGE_URL}#faq`,
+  mainEntity: faqs.map(({ question, answer }) => ({
+    '@type': 'Question',
+    name: question,
+    acceptedAnswer: { '@type': 'Answer', text: answer },
+  })),
+};
+
+const jsonLdBreadcrumb = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'ホーム', item: SITE_URL },
+    { '@type': 'ListItem', position: 2, name: '診断一覧', item: `${SITE_URL}/diagnosis/` },
+    {
+      '@type': 'ListItem',
+      position: 3,
+      name: '完璧主義診断',
+      item: `${SITE_URL}/diagnosis/perfectionism/`,
+    },
+    { '@type': 'ListItem', position: 4, name: '完璧主義の向き合い方', item: PAGE_URL },
+  ],
+};
+
+const jsonLdAll = [jsonLdArticle, jsonLdFAQ, jsonLdBreadcrumb];
+
+// 参考文献
+const references = [
+  {
+    title:
+      'Perfectionism in the self and social contexts: Conceptualization, assessment, and association with psychopathology',
+    author: 'Hewitt PL, Flett GL',
+    year: 1991,
+    journal: 'Journal of Personality and Social Psychology',
+    volume: '60(3)',
+    pages: '456-470',
+    url: 'https://doi.org/10.1037/0022-3514.60.3.456',
+  },
+  {
+    title: 'Clinical perfectionism: A cognitive-behavioural analysis',
+    author: 'Shafran R, Cooper Z, Fairburn CG',
+    year: 2002,
+    journal: 'Behaviour Research and Therapy',
+    volume: '40(7)',
+    pages: '773-791',
+    url: 'https://doi.org/10.1016/S0005-7967(01)00059-6',
+  },
+  {
+    title: 'Acceptance and Commitment Therapy: An Experiential Approach to Behavior Change',
+    author: 'Hayes SC, Strosahl KD, Wilson KG',
+    year: 1999,
+    publisher: 'Guilford Press',
+  },
+  {
+    title:
+      'Self-compassion: An alternative conceptualization of a healthy attitude toward oneself',
+    author: 'Neff KD',
+    year: 2003,
+    journal: 'Self and Identity',
+    volume: '2(2)',
+    pages: '85-101',
+    url: 'https://doi.org/10.1207/S15327957PSPR0702_02',
+  },
+  {
+    title: 'Wherever You Go, There You Are: Mindfulness Meditation in Everyday Life',
+    author: 'Kabat-Zinn J',
+    year: 1994,
+    publisher: 'Hyperion',
+  },
+  {
+    title: 'Positive conceptions of perfectionism: Approaches, evidence, challenges',
+    author: 'Stoeber J, Otto K',
+    year: 2006,
+    journal: 'Personality and Social Psychology Review',
+    volume: '10(4)',
+    pages: '295-319',
+    url: 'https://doi.org/10.1207/s15327957pspr1004_2',
+  },
+  {
+    title: 'The dimensions of perfectionism',
+    author: 'Frost RO, Marten P, Lahart C, Rosenblate R',
+    year: 1990,
+    journal: 'Cognitive Therapy and Research',
+    volume: '14(5)',
+    pages: '449-468',
+    url: 'https://doi.org/10.1007/BF01172967',
+  },
+];
+
+// 5手法データ
+const approaches = [
+  {
+    id: 'cbt',
+    icon: '🧠',
+    name: 'CBT（認知行動療法）',
+    nameEn: 'Cognitive Behavioral Therapy',
+    basis: 'Beck (1979) / Shafran et al. (2002)',
+    summary: '思考パターンの歪みに気づき、現実的な見方に修正する。完璧主義研究への適用が最も豊富なアプローチ。',
+    method: '思考記録法・行動実験・認知再構成',
+    suitable: '「思考が先に動く」タイプ・白黒思考が強い人',
+    timeframe: '6〜12週間のプログラムで変化の報告あり',
+  },
+  {
+    id: 'act',
+    icon: '🌿',
+    name: 'ACT（アクセプタンス&コミットメント・セラピー）',
+    nameEn: 'Acceptance and Commitment Therapy',
+    basis: 'Hayes, Strosahl & Wilson (1999)',
+    summary: '思考を「変えよう」とせず、距離を置いて観察し、自分の価値に沿った行動を選ぶ。完璧主義との「格闘」をやめることで消耗を減らす。',
+    method: 'コグニティブ・デフュージョン・価値の明確化・コミットメント',
+    suitable: '思考に飲み込まれやすい人・「変えなければ」という圧力が強い人',
+    timeframe: '8〜12週間で主要効果の報告が多い',
+  },
+  {
+    id: 'mindfulness',
+    icon: '🪷',
+    name: 'マインドフルネス',
+    nameEn: 'Mindfulness',
+    basis: 'Kabat-Zinn (1994)',
+    summary: '今この瞬間に意識を向け、判断せず観察する練習。完璧主義が強いと「完璧にやらなければ」という思考に飲み込まれやすいため、思考から一歩引く力を養う。',
+    method: '呼吸法・ボディスキャン・マインドフルな日常動作',
+    suitable: '気持ちが将来の不安や過去の失敗に向きやすい人',
+    timeframe: '8週間MBSR（マインドフルネスストレス低減法）が標準的',
+  },
+  {
+    id: 'compassion',
+    icon: '💛',
+    name: 'セルフコンパッション',
+    nameEn: 'Self-Compassion',
+    basis: 'Neff (2003)',
+    summary: '自己批判の代わりに「自分に親友のような優しさを向ける」心理的スキル。自分への厳しさが消耗の主因になっている場合に特に有効。',
+    method: 'セルフコンパッション瞑想・自己への言葉かけの変換',
+    suitable: '自己批判が強い人・失敗に長く引きずられやすい人',
+    timeframe: '練習を続けるほど蓄積効果が出やすい（数週間から変化の報告あり）',
+  },
+  {
+    id: 'activation',
+    icon: '🚶',
+    name: '行動活性化（Behavioral Activation）',
+    nameEn: 'Behavioral Activation',
+    basis: 'Martell, Addis & Jacobson (2001)',
+    summary: '完璧主義による「先延ばし・回避」を直接ターゲットにする。「完璧な状態で始める」のではなく「小さく始めて達成体験を積む」ことで行動のサイクルを変える。',
+    method: 'スモールステップ計画・活動記録・強化スケジューリング',
+    suitable: '先延ばし型・なかなか動き出せない人',
+    timeframe: '2〜4週間で行動パターンの変化が出やすい',
+  },
+];
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  canonical={PAGE_URL}
+  jsonLd={jsonLdAll}
+  ogType="article"
+  publishDate={UPDATED_AT}
+  lastUpdated={UPDATED_AT}
+  breadcrumbs={[
+    { name: '診断一覧', url: '/diagnosis/' },
+    { name: '完璧主義診断', url: '/diagnosis/perfectionism/' },
+    { name: '完璧主義の向き合い方', url: '/diagnosis/perfectionism/naoshikata/' },
+  ]}
+>
+  <section class="nh-hero" aria-labelledby="nh-h1">
+    <Container>
+      <nav class="nh-breadcrumb" aria-label="パンくずリスト">
+        <ol class="nh-breadcrumb-list">
+          <li><a href="/">ホーム</a></li>
+          <li><a href="/diagnosis/">診断一覧</a></li>
+          <li><a href="/diagnosis/perfectionism/">完璧主義診断</a></li>
+          <li aria-current="page">向き合い方ガイド</li>
+        </ol>
+      </nav>
+      <div class="nh-hero-inner">
+        <div class="nh-hero-badge">心理学・CBT / ACT / マインドフルネス</div>
+        <h1 id="nh-h1" class="nh-h1">
+          完璧主義の「治し方」とされる手法を心理学で整理
+          <span class="nh-h1-sub">向き合い方の科学的ガイド</span>
+        </h1>
+        <p class="nh-hero-meta">
+          <time datetime={UPDATED_AT}>{UPDATED_AT}</time> 時点の情報
+        </p>
+      </div>
+    </Container>
+  </section>
+
+  <Container>
+    <TldrBlock
+      title="このページでわかること"
+      points={[
+        '「治す」ではなく「向き合う・整える・マネジメントする」が現代心理学の主流の考え方です',
+        'CBT・ACT・マインドフルネス・セルフコンパッション・行動活性化の5手法を科学的根拠とともに比較します',
+        '完璧主義4タイプ（徹底型・こだわり型・先延ばし型・期待型）別の推奨アプローチと、よくある誤解も解説します',
+      ]}
+      updatedAt={UPDATED_AT}
+      sourceLabel="Shafran et al. (2002) Clinical perfectionism"
+      sourceUrl="https://doi.org/10.1016/S0005-7967(01)00059-6"
+    />
+
+    {/* ========== 定義パラグラフ ========== */}
+    <section class="nh-section" aria-labelledby="nh-def-h2">
+      <h2 id="nh-def-h2" class="nh-h2">「治す」ではなく「向き合う」が現代心理学の主流</h2>
+      <p class="nh-body">
+        「完璧主義の治し方」というキーワードで検索している方の多くは、
+        「この傾向をどうにかしたい」「消耗を減らしたい」という切実な気持ちを持っています。
+        その気持ちは正当です。しかし、現代心理学の視点から見ると、
+        完璧主義は「治す（cure）」対象ではなく「向き合う・マネジメントする」対象です。
+      </p>
+      <div class="nh-callout">
+        <p class="nh-callout-text">
+          Stoeber & Otto（2006）の研究では、完璧主義には「適応的（adaptive）」な側面と
+          「不適応的（maladaptive）」な側面があり、両者は区別できると示されています。
+          適応的完璧主義（高い基準 + 自己への柔軟さ）を持つ人は、
+          不適応的完璧主義（高い基準 + 自己批判）より
+          長期的なパフォーマンスと達成感が高い傾向があります
+          （<a href="https://doi.org/10.1207/s15327957pspr1004_2" target="_blank" rel="noopener noreferrer">Stoeber & Otto, 2006</a>、2026-05-21確認）。
+        </p>
+      </div>
+      <p class="nh-body">
+        目標は「高い基準をなくすこと」ではありません。
+        「自己批判を減らし、高い基準と自己への優しさを両立させること」が、
+        多くの心理学的アプローチが共通して目指すゴールです。
+      </p>
+    </section>
+
+    {/* ========== 5手法を科学的に整理 ========== */}
+    <section class="nh-section" aria-labelledby="nh-methods-h2">
+      <h2 id="nh-methods-h2" class="nh-h2">「向き合い方」として研究されている5つの手法</h2>
+      <p class="nh-body">
+        完璧主義の傾向と向き合うために研究・活用されている心理学的アプローチを、
+        科学的根拠と特徴とともに整理します。
+      </p>
+
+      {/* 比較テーブル */}
+      <div class="nh-table-wrap">
+        <table class="nh-table">
+          <caption class="nh-table-caption">完璧主義と向き合う5手法の比較（2026-05-21時点）</caption>
+          <thead>
+            <tr>
+              <th scope="col">手法</th>
+              <th scope="col">中心的な考え方</th>
+              <th scope="col">特に合いやすい人</th>
+              <th scope="col">学術根拠</th>
+            </tr>
+          </thead>
+          <tbody>
+            {approaches.map((a) => (
+              <tr>
+                <td><strong>{a.name}</strong></td>
+                <td>{a.summary.split('。')[0]}。</td>
+                <td>{a.suitable}</td>
+                <td>{a.basis}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* 各手法の詳細 */}
+      <div class="nh-methods-list">
+        {approaches.map((a) => (
+          <div class="nh-method-card">
+            <div class="nh-method-header">
+              <span class="nh-method-icon" aria-hidden="true">{a.icon}</span>
+              <div>
+                <h3 class="nh-method-name">{a.name}</h3>
+                <p class="nh-method-basis">根拠: {a.basis}</p>
+              </div>
+            </div>
+            <p class="nh-method-summary">{a.summary}</p>
+            <dl class="nh-method-dl">
+              <div class="nh-method-dl-row">
+                <dt>主な手法</dt>
+                <dd>{a.method}</dd>
+              </div>
+              <div class="nh-method-dl-row">
+                <dt>特に合いやすい</dt>
+                <dd>{a.suitable}</dd>
+              </div>
+              <div class="nh-method-dl-row">
+                <dt>目安期間</dt>
+                <dd>{a.timeframe}</dd>
+              </div>
+            </dl>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    {/* ========== 4タイプ別推奨アプローチ ========== */}
+    <section class="nh-section" aria-labelledby="nh-types-h2">
+      <h2 id="nh-types-h2" class="nh-h2">4タイプ別・推奨する向き合い方</h2>
+      <p class="nh-body">
+        完璧主義のタイプによって、消耗の原因と効果的なアプローチが異なります。
+        自分のタイプに合った入口から始めることが、変化を積み重ねるコツです。
+      </p>
+
+      <div class="nh-types-grid">
+        <div class="nh-type-card nh-type-card--thorough">
+          <div class="nh-type-header">
+            <span class="nh-type-icon" aria-hidden="true">🔱</span>
+            <h3 class="nh-type-title">徹底型 — 完璧達成のリフレーミング</h3>
+          </div>
+          <p class="nh-type-challenge"><strong>主な消耗原因:</strong> 自己評価が厳しく、達成感が得にくい</p>
+          <div class="nh-type-approach">
+            <p class="nh-type-approach-label">推奨アプローチ</p>
+            <ul class="nh-type-list">
+              <li><strong>CBT（認知再構成）:</strong> 「完璧でないと意味がない」という思考を「今の最善」に再定義する練習</li>
+              <li><strong>セルフコンパッション:</strong> 達成後も自己批判が続く場合に、自分への優しさを育てる</li>
+              <li><strong>プロセス記録:</strong> 完了した仕事の「うまくいった点」を毎日3つ書く</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="nh-type-card nh-type-card--particular">
+          <div class="nh-type-header">
+            <span class="nh-type-icon" aria-hidden="true">⚙️</span>
+            <h3 class="nh-type-title">こだわり型 — 「足りる」基準の設定</h3>
+          </div>
+          <p class="nh-type-challenge"><strong>主な消耗原因:</strong> こだわりのルール維持に消耗し、変化への適応が難しい</p>
+          <div class="nh-type-approach">
+            <p class="nh-type-approach-label">推奨アプローチ</p>
+            <ul class="nh-type-list">
+              <li><strong>ACT（価値の明確化）:</strong> どのこだわりが本当に大切な価値に基づくかを整理する</li>
+              <li><strong>行動実験（CBT）:</strong> 「ルール通りでなくてもいい場面」を週1回試して体験を積む</li>
+              <li><strong>マインドフルネス:</strong> こだわりが乱れた時の感情に距離をとって観察する練習</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="nh-type-card nh-type-card--procrastinating">
+          <div class="nh-type-header">
+            <span class="nh-type-icon" aria-hidden="true">⏳</span>
+            <h3 class="nh-type-title">先延ばし型 — スモールステップ</h3>
+          </div>
+          <p class="nh-type-challenge"><strong>主な消耗原因:</strong> 完璧にできない恐れが行動を止め、機会を逃す</p>
+          <div class="nh-type-approach">
+            <p class="nh-type-approach-label">推奨アプローチ</p>
+            <ul class="nh-type-list">
+              <li><strong>行動活性化:</strong> 「5分だけ始める」ルールで着手のハードルを下げる</li>
+              <li><strong>CBT（思考記録）:</strong> 「失敗したら最悪だ」という思考と実際の可能性を比較する</li>
+              <li><strong>セルフコンパッション:</strong> 失敗への恐れに自己批判でなく優しさで応じる練習</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="nh-type-card nh-type-card--expecting">
+          <div class="nh-type-header">
+            <span class="nh-type-icon" aria-hidden="true">🌟</span>
+            <h3 class="nh-type-title">期待型 — 自己境界の設定</h3>
+          </div>
+          <p class="nh-type-challenge"><strong>主な消耗原因:</strong> 他者の期待への過剰な応答で、自分が後回しになる</p>
+          <div class="nh-type-approach">
+            <p class="nh-type-approach-label">推奨アプローチ</p>
+            <ul class="nh-type-list">
+              <li><strong>ACT（価値の明確化）:</strong> 「誰かのため」と「自分のため」の区別を日常的に確認する</li>
+              <li><strong>CBT（認知チェック）:</strong> 「他者が完璧を求めている」と感じた時、実際に言われたか確認する</li>
+              <li><strong>セルフコンパッション:</strong> 断ることや弱さを見せることへの自己批判を和らげる</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="nh-cta-box">
+        <p class="nh-cta-text">自分のタイプを先に確認してから取り組むと、より効果的です。</p>
+        <a href="/diagnosis/perfectionism/" class="nh-cta-btn">
+          完璧主義タイプを診断する（無料・3分）
+          <span aria-hidden="true">→</span>
+        </a>
+      </div>
+    </section>
+
+    {/* ========== よくある誤解 ========== */}
+    <section class="nh-section" aria-labelledby="nh-myths-h2">
+      <h2 id="nh-myths-h2" class="nh-h2">「向き合い方」でよくある3つの誤解</h2>
+      <p class="nh-body">
+        完璧主義と向き合おうとする際に陥りやすい誤解を整理します。
+        誤解を持ったまま取り組むと、逆に消耗が増えることがあります。
+      </p>
+
+      <div class="nh-myths-list">
+        <div class="nh-myth-card">
+          <div class="nh-myth-header">
+            <span class="nh-myth-badge nh-myth-badge--myth">誤解</span>
+            <p class="nh-myth-text">「完璧主義は完全に消えるはず」</p>
+          </div>
+          <div class="nh-myth-fact">
+            <span class="nh-myth-badge nh-myth-badge--fact">実態</span>
+            <p class="nh-myth-text">
+              傾向が「完全に消える」ことはほとんどありません。
+              目指すのは「上手にマネジメントできるようになること」です。
+              高い基準は維持しながら、自己批判を減らし、消耗しない付き合い方を身につけます。
+            </p>
+          </div>
+        </div>
+
+        <div class="nh-myth-card">
+          <div class="nh-myth-header">
+            <span class="nh-myth-badge nh-myth-badge--myth">誤解</span>
+            <p class="nh-myth-text">「向き合えれば弱点がなくなる」</p>
+          </div>
+          <div class="nh-myth-fact">
+            <span class="nh-myth-badge nh-myth-badge--fact">実態</span>
+            <p class="nh-myth-text">
+              完璧主義の傾向が完全になくなると仮定した場合、
+              強みとして機能していた「高い基準・丁寧さ・品質へのこだわり」も薄れる可能性があります。
+              向き合い方の目標は「弱点を消す」ではなく「強みを活かしながら、消耗パターンを整える」です。
+            </p>
+          </div>
+        </div>
+
+        <div class="nh-myth-card">
+          <div class="nh-myth-header">
+            <span class="nh-myth-badge nh-myth-badge--myth">誤解</span>
+            <p class="nh-myth-text">「完璧に向き合わなければいけない」</p>
+          </div>
+          <div class="nh-myth-fact">
+            <span class="nh-myth-badge nh-myth-badge--fact">実態</span>
+            <p class="nh-myth-text">
+              「完璧に向き合おう」とすること自体が完璧主義の罠です。
+              変化は少しずつ積み重なるものであり、
+              「今日できる小さな練習を1つやる」という視点の方が長続きします。
+              「完璧な向き合い方」を目指す必要はありません。
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    {/* ========== ScienceNote ========== */}
+    <ScienceNote
+      basisText="本ページで紹介している心理学的アプローチ（CBT・ACT・マインドフルネス・セルフコンパッション・行動活性化）はいずれも学術研究に基づく手法です。Shafran, Cooper & Fairburn（2002）は完璧主義へのCBT適用を、Neff（2003）はセルフコンパッションの理論を、Hayes et al.（1999）はACTを体系化しています。本ページは自己理解・傾向把握のための情報提供を目的としており、心理療法・医療の代替ではありません。"
+      basisUrl="https://doi.org/10.1016/S0005-7967(01)00059-6"
+      basisLabel="Shafran et al. (2002) Behaviour Research and Therapy"
+      notMedical={true}
+      updatedAt={UPDATED_AT}
+      additionalNote="日常生活に継続して支障が出ている場合は、臨床心理士・公認心理師・医師への相談を選択肢として検討してください。薬物療法は完璧主義そのものに対して処方されるものではなく、医師が診断した状態に対して検討されます。"
+    />
+
+    {/* ========== FAQ ========== */}
+    <section class="nh-section" aria-labelledby="nh-faq-h2">
+      <h2 id="nh-faq-h2" class="nh-h2">よくある質問</h2>
+      <dl class="nh-faq-list">
+        {faqs.map(({ question, answer }) => (
+          <div class="nh-faq-item">
+            <dt class="nh-faq-q">{question}</dt>
+            <dd class="nh-faq-a">{answer}</dd>
+          </div>
+        ))}
+      </dl>
+    </section>
+
+    {/* ========== 関連ページ ========== */}
+    <section class="nh-section" aria-labelledby="nh-related-h2">
+      <h2 id="nh-related-h2" class="nh-h2">もっと深く知る</h2>
+      <ul class="nh-related-list">
+        <li class="nh-related-item">
+          <a href="/diagnosis/perfectionism/" class="nh-related-link">
+            <span class="nh-related-icon" aria-hidden="true">📋</span>
+            <span class="nh-related-body">
+              <span class="nh-related-title">完璧主義診断（メイン）</span>
+              <span class="nh-related-desc">28問・約3分でタイプを判定。CBTTips・仕事・恋愛の向き合い方を確認</span>
+            </span>
+          </a>
+        </li>
+        <li class="nh-related-item">
+          <a href="/diagnosis/perfectionism/yametai/" class="nh-related-link">
+            <span class="nh-related-icon" aria-hidden="true">💭</span>
+            <span class="nh-related-body">
+              <span class="nh-related-title">完璧主義をやめたい方へ</span>
+              <span class="nh-related-desc">「やめたい」と感じた時の5サインとCBT5ステップを詳しく解説</span>
+            </span>
+          </a>
+        </li>
+        <li class="nh-related-item">
+          <a href="/diagnosis/perfectionism/work/" class="nh-related-link">
+            <span class="nh-related-icon" aria-hidden="true">💼</span>
+            <span class="nh-related-body">
+              <span class="nh-related-title">完璧主義 × 仕事</span>
+              <span class="nh-related-desc">強みと注意点・上司・部下・同僚との付き合い方を解説</span>
+            </span>
+          </a>
+        </li>
+      </ul>
+    </section>
+
+    {/* ========== 参考文献 ========== */}
+    <ReferenceList references={references} confirmedAt={UPDATED_AT} />
+  </Container>
+</BaseLayout>
+
+<style>
+/* ========== ヒーロー ========== */
+.nh-hero {
+  background: linear-gradient(135deg, #059669 0%, #0891b2 100%);
+  color: #fff;
+  padding-block: 2.5rem 3rem;
+}
+.nh-breadcrumb {
+  margin-bottom: 1.5rem;
+}
+.nh-breadcrumb-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  opacity: 0.8;
+}
+.nh-breadcrumb-list li::after {
+  content: '›';
+  margin-left: 0.5rem;
+}
+.nh-breadcrumb-list li:last-child::after {
+  content: '';
+}
+.nh-breadcrumb-list a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.nh-hero-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.nh-hero-badge {
+  display: inline-block;
+  background: rgba(255 255 255 / 0.2);
+  border: 1px solid rgba(255 255 255 / 0.4);
+  border-radius: 2rem;
+  padding: 0.2rem 0.85rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  align-self: flex-start;
+}
+.nh-h1 {
+  font-size: clamp(1.4rem, 3.5vw, 2rem);
+  font-family: var(--sn-font-rounded, sans-serif);
+  font-weight: 700;
+  line-height: 1.4;
+  margin: 0;
+}
+.nh-h1-sub {
+  display: block;
+  font-size: clamp(1rem, 2.5vw, 1.3rem);
+  opacity: 0.88;
+  font-weight: 600;
+  margin-top: 0.25rem;
+}
+.nh-hero-meta {
+  font-size: 0.78rem;
+  opacity: 0.7;
+  margin: 0;
+}
+
+/* ========== セクション共通 ========== */
+.nh-section {
+  margin-block: 3rem;
+}
+.nh-h2 {
+  font-size: clamp(1.2rem, 3.5vw, 1.6rem);
+  font-family: var(--sn-font-rounded, sans-serif);
+  font-weight: 700;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #059669;
+}
+.nh-body {
+  font-size: 0.95rem;
+  line-height: 1.8;
+  color: #374151;
+  margin-bottom: 0.75rem;
+}
+
+/* ========== コールアウト ========== */
+.nh-callout {
+  background: #f0fdf4;
+  border-left: 4px solid #059669;
+  border-radius: 0 0.5rem 0.5rem 0;
+  padding: 1rem 1.25rem;
+  margin-block: 1.25rem;
+}
+.nh-callout-text {
+  font-size: 0.9rem;
+  line-height: 1.7;
+  color: #1f2937;
+  margin: 0;
+}
+.nh-callout-text a {
+  color: #047857;
+}
+
+/* ========== 比較テーブル ========== */
+.nh-table-wrap {
+  overflow-x: auto;
+  margin-block: 1.5rem;
+}
+.nh-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+.nh-table th,
+.nh-table td {
+  padding: 0.6rem 0.8rem;
+  border: 1px solid #e5e7eb;
+  text-align: left;
+  line-height: 1.5;
+  vertical-align: top;
+}
+.nh-table thead th {
+  background: #059669;
+  color: #fff;
+  font-weight: 600;
+}
+.nh-table tbody tr:nth-child(even) {
+  background: #f9fafb;
+}
+.nh-table-caption {
+  font-size: 0.78rem;
+  color: var(--sn-muted, #6b7280);
+  text-align: left;
+  padding: 0.25rem 0 0.5rem;
+}
+
+/* ========== 手法カード ========== */
+.nh-methods-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  margin-top: 1.5rem;
+}
+.nh-method-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+}
+.nh-method-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+.nh-method-icon {
+  font-size: 1.75rem;
+  flex-shrink: 0;
+  line-height: 1;
+}
+.nh-method-name {
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin: 0 0 0.2rem;
+  color: #1f2937;
+}
+.nh-method-basis {
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin: 0;
+}
+.nh-method-summary {
+  font-size: 0.9rem;
+  line-height: 1.7;
+  color: #374151;
+  margin-bottom: 0.75rem;
+}
+.nh-method-dl {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin: 0;
+  border-top: 1px solid #f3f4f6;
+  padding-top: 0.75rem;
+}
+.nh-method-dl-row {
+  display: grid;
+  grid-template-columns: 7rem 1fr;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+}
+.nh-method-dl-row dt {
+  font-weight: 700;
+  color: #6b7280;
+  line-height: 1.5;
+}
+.nh-method-dl-row dd {
+  margin: 0;
+  line-height: 1.5;
+  color: #374151;
+}
+
+/* ========== タイプグリッド ========== */
+.nh-types-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1rem;
+  margin-block: 1.5rem;
+}
+.nh-type-card {
+  border: 2px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+}
+.nh-type-card--thorough { border-top-color: #6366f1; }
+.nh-type-card--particular { border-top-color: #059669; }
+.nh-type-card--procrastinating { border-top-color: #d97706; }
+.nh-type-card--expecting { border-top-color: #db2777; }
+.nh-type-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+.nh-type-icon {
+  font-size: 1.5rem;
+}
+.nh-type-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin: 0;
+  color: #1f2937;
+  line-height: 1.4;
+}
+.nh-type-challenge {
+  font-size: 0.83rem;
+  line-height: 1.5;
+  color: #6b7280;
+  margin-bottom: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  background: #f9fafb;
+  border-radius: 0.375rem;
+}
+.nh-type-approach {
+  border-top: 1px solid #f3f4f6;
+  padding-top: 0.75rem;
+}
+.nh-type-approach-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #059669;
+  margin: 0 0 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.nh-type-list {
+  padding-left: 1.25rem;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.nh-type-list li {
+  font-size: 0.85rem;
+  line-height: 1.55;
+  color: #374151;
+}
+
+/* ========== CTA ========== */
+.nh-cta-box {
+  margin-top: 2rem;
+  background: linear-gradient(135deg, #f0fdf4, #ecfdf5);
+  border: 1px solid #a7f3d0;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  text-align: center;
+}
+.nh-cta-text {
+  font-size: 0.9rem;
+  color: #374151;
+  margin: 0 0 1rem;
+}
+.nh-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #059669;
+  color: #fff;
+  font-weight: 700;
+  font-size: 1rem;
+  padding: 0.75rem 2rem;
+  border-radius: 2.5rem;
+  text-decoration: none;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.nh-cta-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(5 150 105 / 0.3);
+}
+
+/* ========== 誤解カード ========== */
+.nh-myths-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  margin-top: 1.5rem;
+}
+.nh-myth-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+.nh-myth-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.75rem 1.25rem;
+  background: #fef2f2;
+}
+.nh-myth-fact {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.75rem 1.25rem;
+  background: #f0fdf4;
+}
+.nh-myth-badge {
+  display: inline-block;
+  flex-shrink: 0;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.2rem 0.6rem;
+  border-radius: 1rem;
+  letter-spacing: 0.04em;
+  margin-top: 0.1rem;
+}
+.nh-myth-badge--myth {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+.nh-myth-badge--fact {
+  background: #d1fae5;
+  color: #065f46;
+}
+.nh-myth-text {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  margin: 0;
+  color: #374151;
+}
+.nh-myth-header .nh-myth-text {
+  font-weight: 700;
+  color: #991b1b;
+}
+
+/* ========== FAQ ========== */
+.nh-faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+.nh-faq-item {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+.nh-faq-q {
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 1rem 1.25rem;
+  background: #f9fafb;
+  margin: 0;
+  display: block;
+}
+.nh-faq-q::before {
+  content: 'Q. ';
+  color: #059669;
+}
+.nh-faq-a {
+  font-size: 0.9rem;
+  line-height: 1.7;
+  padding: 1rem 1.25rem;
+  margin: 0;
+  color: #4b5563;
+}
+.nh-faq-a::before {
+  content: 'A. ';
+  font-weight: 700;
+  color: #059669;
+}
+
+/* ========== 関連リンク ========== */
+.nh-related-list {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.nh-related-link {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.nh-related-link:hover {
+  border-color: #059669;
+  box-shadow: 0 2px 8px rgba(5 150 105 / 0.1);
+}
+.nh-related-icon {
+  font-size: 1.75rem;
+  flex-shrink: 0;
+}
+.nh-related-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+.nh-related-title {
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+.nh-related-desc {
+  font-size: 0.8rem;
+  color: var(--sn-muted, #6b7280);
+}
+
+/* ========== レスポンシブ ========== */
+@media (max-width: 640px) {
+  .nh-types-grid {
+    grid-template-columns: 1fr;
+  }
+  .nh-method-dl-row {
+    grid-template-columns: 1fr;
+    gap: 0.15rem;
+  }
+}
+</style>

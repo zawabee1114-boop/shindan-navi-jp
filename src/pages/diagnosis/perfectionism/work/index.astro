@@ -1,0 +1,1320 @@
+---
+/**
+ * 完璧主義 仕事 - サブページ
+ * KW: 完璧主義 仕事（VOL320/SD14）
+ * Phase 2 拡張: Week 5-6
+ *
+ * YMYL注意:
+ * - 「治す」「治療」「疾患」「障害」絶対NG
+ * - 「燃え尽き症候群」→「燃え尽き状態」「疲弊」表現を使う
+ * - 「向き合う」「整える」「マネジメント」表現を使う
+ * - Big5/OCEAN ユーザー向け表記NG
+ *
+ * 学術根拠:
+ * - Hewitt & Flett (1991) 多次元完璧主義尺度
+ * - Frost RO, et al. (1990) 多次元完璧主義尺度（Frost版）
+ * - Stoeber J, Otto K (2006) 適応的/不適応的完璧主義
+ * - Spence JT, Robbins AS (1992) Workaholism: Definition, measurement, and preliminary results
+ *
+ * 確認日: 2026-05-21
+ */
+
+import BaseLayout from '../../../../layouts/BaseLayout.astro';
+import Container from '../../../../components/Container.astro';
+import TldrBlock from '../../../../components/TldrBlock.astro';
+import ReferenceList from '../../../../components/ReferenceList.astro';
+import ScienceNote from '../../../../components/ScienceNote.astro';
+
+const SITE_URL = 'https://shindan-navi.jp';
+const PAGE_URL = `${SITE_URL}/diagnosis/perfectionism/work/`;
+const UPDATED_AT = '2026-05-21';
+
+const title = '完璧主義×仕事の活かし方｜4タイプ別・上司部下対応｜診断ナビ';
+const description =
+  '完璧主義が仕事で強みになる場面・足を引っ張る場面を解説。4タイプ（徹底型・こだわり型・先延ばし型・期待型）別の仕事スタイルと、上司・部下・同僚との付き合い方をHewitt & Flett（1991）等の学術根拠をもとに紹介。2026-05-21時点の情報。';
+
+// JSON-LD: Article
+const jsonLdArticle = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  '@id': `${PAGE_URL}#article`,
+  headline: '完璧主義×仕事｜強みと注意点・上司・部下・同僚との付き合い方',
+  description,
+  url: PAGE_URL,
+  datePublished: UPDATED_AT,
+  dateModified: UPDATED_AT,
+  inLanguage: 'ja',
+  author: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+    name: '診断ナビ',
+    url: SITE_URL,
+  },
+  publisher: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+    name: '診断ナビ',
+    url: SITE_URL,
+  },
+  about: {
+    '@type': 'Thing',
+    name: '完璧主義 仕事',
+  },
+  citation: [
+    {
+      '@type': 'ScholarlyArticle',
+      name: 'Perfectionism in the self and social contexts',
+      author: 'Hewitt PL, Flett GL',
+      datePublished: '1991',
+      url: 'https://doi.org/10.1037/0022-3514.60.3.456',
+    },
+    {
+      '@type': 'ScholarlyArticle',
+      name: 'The dimensions of perfectionism',
+      author: 'Frost RO, Marten P, Lahart C, Rosenblate R',
+      datePublished: '1990',
+      url: 'https://doi.org/10.1007/BF01172967',
+    },
+    {
+      '@type': 'ScholarlyArticle',
+      name: 'Positive conceptions of perfectionism: Approaches, evidence, challenges',
+      author: 'Stoeber J, Otto K',
+      datePublished: '2006',
+      url: 'https://doi.org/10.1207/s15327957pspr1004_2',
+    },
+    {
+      '@type': 'ScholarlyArticle',
+      name: 'Workaholism: Definition, measurement, and preliminary results',
+      author: 'Spence JT, Robbins AS',
+      datePublished: '1992',
+      url: 'https://doi.org/10.1177/0022022192231003',
+    },
+  ],
+};
+
+// JSON-LD: HowTo（4タイプ別仕事活用5ステップ）
+const jsonLdHowTo = {
+  '@context': 'https://schema.org',
+  '@type': 'HowTo',
+  '@id': `${PAGE_URL}#howto`,
+  name: '完璧主義を仕事で活かす5ステップ',
+  description:
+    '完璧主義の傾向を職場で強みとして活かすための5ステップ。タイプを知る・強み場面を選ぶ・消耗を防ぐ・チームと連携する・継続する流れで解説。',
+  totalTime: 'PT4W',
+  step: [
+    {
+      '@type': 'HowToStep',
+      position: 1,
+      name: '自分の完璧主義タイプを把握する',
+      text: '徹底型・こだわり型・先延ばし型・期待型のどのタイプかを診断で確認する。タイプによって強みになる場面・消耗する場面が異なるため、まず自己理解が起点になる。',
+    },
+    {
+      '@type': 'HowToStep',
+      position: 2,
+      name: '強みが活きる業務・ポジションを選ぶ',
+      text: '品質保証・QA・経理・医療・法務・研究開発など「精度が求められる」領域では完璧主義は大きな強みになる。業務の性質と自分の傾向を照合する。',
+    },
+    {
+      '@type': 'HowToStep',
+      position: 3,
+      name: '消耗場面を先に特定しておく',
+      text: '締切重視のプロジェクト・スピード優先の意思決定・不確実性の高い仕事で消耗しやすいパターンを事前に把握する。対策（優先度分類・80点完了ルール）を決めておく。',
+    },
+    {
+      '@type': 'HowToStep',
+      position: 4,
+      name: '上司・部下・同僚への対応スタイルを整える',
+      text: '上司が完璧主義なら期待値の言語化を求める。部下が完璧主義なら過剰品質の抑制と委譲を練習させる。同僚が完璧主義なら役割分担でカバーし合う関係を構築する。',
+    },
+    {
+      '@type': 'HowToStep',
+      position: 5,
+      name: '疲弊を防ぐペース管理を習慣化する',
+      text: 'Spence & Robbins（1992）は完璧主義と過剰就労の関係を研究している。週単位で「100点を求めるタスク」と「80点でよいタスク」を分類し、エネルギーの配分を管理する。',
+    },
+  ],
+};
+
+// FAQ 10問
+const faqs = [
+  {
+    question: '完璧主義は仕事で評価されますか？',
+    answer:
+      '場面によります。Stoeber & Otto（2006）の研究では、高い基準を持ちながら自分への評価も柔軟な「適応的完璧主義」の人は、長期的にパフォーマンスが高い傾向があります。一方、自己批判が強い「不適応的完璧主義」は消耗と評価低下につながりやすいとされています。品質保証・研究・法務など精度を問われる職種では評価されやすく、スピードや量が優先される場面では調整が必要です（参照: Stoeber & Otto 2006, https://doi.org/10.1207/s15327957pspr1004_2）。',
+  },
+  {
+    question: '完璧主義に向いている職種はどれですか？',
+    answer:
+      '精度・正確性・品質が重視される職種に向いています。具体的には品質保証（QA）・経理・税務・医療・法務・研究開発・編集・データ管理・製造業の工程管理などが挙げられます。「ミスが命取り」になる領域で完璧主義の慎重さは大きな強みになります。反対に、毎日変化するスタートアップやスピード重視の営業職は消耗しやすい傾向があります。',
+  },
+  {
+    question: '完璧主義の人は出世しやすいですか？',
+    answer:
+      '高い品質基準と信頼性が評価される初期〜中堅段階では出世しやすい傾向があります。ただしマネジメント職では「他者の仕事を80点で受け入れる」スキルが求められるため、自己基準を部下に強要するタイプは人間関係でつまずくことがあります。Hewitt & Flett（1991）の「社会規定型」（他者の目を気にするタイプ）は承認欲求がモチベーション源になりやすく、評価がある間は高パフォーマンスを発揮します。',
+  },
+  {
+    question: 'リモートワークで完璧主義は強みになりますか？',
+    answer:
+      'なりやすいです。自己管理・品質へのこだわり・細部の配慮がリモート環境で評価されやすいためです。ただし「進捗を見せるタイミング」が遅くなりがちな点に注意が必要です。80点の段階で共有する習慣をつけることで、リモートでもチームとの連携がスムーズになります。',
+  },
+  {
+    question: '完璧主義が仕事で疲弊してしまう場合の対策は？',
+    answer:
+      'Spence & Robbins（1992）は完璧主義傾向と過剰就労の関連を研究しています。対策として有効なのは「優先度の高いタスクに完璧さを集中させ、他は80点で完了する」配分法です。週単位でタスクを「100点タスク」と「80点タスク」に分類し、消耗を分散させることが重要です。疲弊が続く場合は業務配分の見直しや、信頼できる人への相談も選択肢のひとつです。',
+  },
+  {
+    question: '完璧主義の部下にはどう接すればいいですか？',
+    answer:
+      '3点が有効です。第一に「期待値の言語化」で、何が80点で十分かを明示します。第二に「過剰品質の範囲を指定」して、細部にかける時間の上限を決めます。第三に「委譲の練習」で、完璧でない成果でも受け入れてもらえる体験を積ませます。頭ごなしに「手を抜け」と言うのは逆効果です。なぜその基準で十分かを説明すると納得しやすくなります。',
+  },
+  {
+    question: '完璧主義の上司にはどう対応すればいいですか？',
+    answer:
+      '上司が期待する品質基準を「言語化して確認する」ことが最も効果的です。「どのレベルの仕上がりを期待していますか」と聞くことで、暗黙の基準が明らかになります。また進捗共有を早め・細かくすることで、上司が「自分の基準が守られているか」を確認できる機会を作ると安心感が生まれます。フィードバックをもらう頻度を増やすことも有効です。',
+  },
+  {
+    question: '完璧主義の同僚と協業するコツはありますか？',
+    answer:
+      '役割分担が鍵です。完璧主義の同僚が得意な「精度・確認・品質管理」の工程を担当してもらい、スピードや広範囲の作業は他のメンバーで担当する分担が機能しやすいです。また、細部への指摘が多い場合は「指摘してくれてありがとう、このタスクは今日中完了が優先です」と優先度を共有することで、関係を保ちながら進めやすくなります。',
+  },
+  {
+    question: '完璧主義で評価や成果物の提出が遅れがちです。どうすればいいですか？',
+    answer:
+      '「完了ラインを事前に決める」方法が効果的です。具体的には「今日中に出す」「X時までに提出」と先に期限を決め、その時点の成果を提出することをルールにします。また「70点の成果を出して確認をもらう」行動実験を繰り返すことで、早期提出でも問題がないという現実の証拠が積み重なります。Stoeber & Otto（2006）の研究では、柔軟な自己評価を持つ人の方が長期パフォーマンスが高い傾向があります。',
+  },
+  {
+    question: '完璧主義を保ちながら仕事のスピードを上げる方法はありますか？',
+    answer:
+      '「完璧さを集中させる場所を絞る」ことがポイントです。すべてのタスクに100点を求めるのではなく、成果物の中で最も重要な部分（クライアントが見る箇所・判断に影響する数値など）に精度を集中し、他は80点で完了する配分法が有効です。チェックリストを活用してどこまで確認すれば「完了」かを事前に決めておくと、完了判断の迷いが減ってスピードが上がります。',
+  },
+];
+
+const jsonLdFAQ = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  '@id': `${PAGE_URL}#faq`,
+  mainEntity: faqs.map(({ question, answer }) => ({
+    '@type': 'Question',
+    name: question,
+    acceptedAnswer: { '@type': 'Answer', text: answer },
+  })),
+};
+
+const jsonLdBreadcrumb = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'ホーム', item: SITE_URL },
+    { '@type': 'ListItem', position: 2, name: '診断一覧', item: `${SITE_URL}/diagnosis/` },
+    {
+      '@type': 'ListItem',
+      position: 3,
+      name: '完璧主義診断',
+      item: `${SITE_URL}/diagnosis/perfectionism/`,
+    },
+    { '@type': 'ListItem', position: 4, name: '完璧主義×仕事', item: PAGE_URL },
+  ],
+};
+
+const jsonLdAll = [jsonLdArticle, jsonLdHowTo, jsonLdFAQ, jsonLdBreadcrumb];
+
+// 参考文献
+const references = [
+  {
+    title:
+      'Perfectionism in the self and social contexts: Conceptualization, assessment, and association with psychopathology',
+    author: 'Hewitt PL, Flett GL',
+    year: 1991,
+    journal: 'Journal of Personality and Social Psychology',
+    volume: '60(3)',
+    pages: '456-470',
+    url: 'https://doi.org/10.1037/0022-3514.60.3.456',
+  },
+  {
+    title: 'The dimensions of perfectionism',
+    author: 'Frost RO, Marten P, Lahart C, Rosenblate R',
+    year: 1990,
+    journal: 'Cognitive Therapy and Research',
+    volume: '14(5)',
+    pages: '449-468',
+    url: 'https://doi.org/10.1007/BF01172967',
+  },
+  {
+    title: 'Positive conceptions of perfectionism: Approaches, evidence, challenges',
+    author: 'Stoeber J, Otto K',
+    year: 2006,
+    journal: 'Personality and Social Psychology Review',
+    volume: '10(4)',
+    pages: '295-319',
+    url: 'https://doi.org/10.1207/s15327957pspr1004_2',
+  },
+  {
+    title: 'Workaholism: Definition, measurement, and preliminary results',
+    author: 'Spence JT, Robbins AS',
+    year: 1992,
+    journal: 'Journal of Personality Assessment',
+    volume: '58(1)',
+    pages: '160-178',
+    url: 'https://doi.org/10.1207/s15327752jpa5801_15',
+  },
+  {
+    title: 'Perfectionism and occupational burnout: A meta-analysis',
+    author: 'Harari D, Swider BW, Steed LB, Breidenthal AP',
+    year: 2018,
+    journal: 'Journal of Occupational Health Psychology',
+    volume: '23(2)',
+    pages: '269-285',
+    url: 'https://doi.org/10.1037/ocp0000060',
+  },
+];
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  canonical={PAGE_URL}
+  jsonLd={jsonLdAll}
+  ogType="article"
+  publishDate={UPDATED_AT}
+  lastUpdated={UPDATED_AT}
+  breadcrumbs={[
+    { name: '診断一覧', url: '/diagnosis/' },
+    { name: '完璧主義診断', url: '/diagnosis/perfectionism/' },
+    { name: '完璧主義×仕事', url: '/diagnosis/perfectionism/work/' },
+  ]}
+>
+  <section class="wk-hero" aria-labelledby="wk-h1">
+    <Container>
+      <nav class="wk-breadcrumb" aria-label="パンくずリスト">
+        <ol class="wk-breadcrumb-list">
+          <li><a href="/">ホーム</a></li>
+          <li><a href="/diagnosis/">診断一覧</a></li>
+          <li><a href="/diagnosis/perfectionism/">完璧主義診断</a></li>
+          <li aria-current="page">仕事</li>
+        </ol>
+      </nav>
+      <div class="wk-hero-inner">
+        <div class="wk-hero-badge">仕事 × 完璧主義</div>
+        <h1 id="wk-h1" class="wk-h1">
+          完璧主義×仕事｜強みと注意点・
+          <span class="wk-h1-sub">上司・部下・同僚との付き合い方</span>
+        </h1>
+        <p class="wk-hero-meta">
+          <time datetime={UPDATED_AT}>{UPDATED_AT}</time> 時点の情報
+        </p>
+      </div>
+    </Container>
+  </section>
+
+  <Container>
+    <TldrBlock
+      title="このページでわかること"
+      points={[
+        '完璧主義が仕事で強みになる5場面（品質保証・経理・医療・研究・マネジメント）と、足を引っ張る5場面を解説します',
+        '4タイプ（徹底型・こだわり型・先延ばし型・期待型）別の仕事スタイルと職種マッチングを紹介します',
+        '完璧主義の上司・部下・同僚との具体的な付き合い方と、天職診断・メイン診断への導線があります',
+      ]}
+      updatedAt={UPDATED_AT}
+      sourceLabel="Stoeber & Otto (2006) Personality and Social Psychology Review"
+      sourceUrl="https://doi.org/10.1207/s15327957pspr1004_2"
+    />
+
+    {/* ========== 定義パラグラフ ========== */}
+    <section class="wk-section" aria-labelledby="wk-def-h2">
+      <h2 id="wk-def-h2" class="wk-h2">完璧主義が仕事で「強み」と「消耗」の両面を持つ理由</h2>
+      <p class="wk-body">
+        完璧主義は職場で「強みになる場面」と「足を引っ張る場面」の両方があります。
+        Stoeber & Otto（2006）は、完璧主義を「適応的（adaptive）」と「不適応的（maladaptive）」に分類しています。
+        高い基準 + 柔軟な自己評価の組み合わせは長期的なパフォーマンスを高める一方、
+        高い基準 + 自己批判の組み合わせは消耗と疲弊につながりやすいとされています
+        （<a href="https://doi.org/10.1207/s15327957pspr1004_2" target="_blank" rel="noopener noreferrer">Stoeber & Otto, 2006</a>、2026-05-21確認）。
+      </p>
+      <p class="wk-body">
+        自分の完璧主義がどのタイプかを把握したうえで、
+        強みが活きる場面を選び、消耗しやすい場面には対策を用意することが、
+        仕事での完璧主義との向き合い方の核心です。
+      </p>
+    </section>
+
+    {/* ========== 強みになる場面 ========== */}
+    <section class="wk-section" aria-labelledby="wk-strength-h2">
+      <h2 id="wk-strength-h2" class="wk-h2">完璧主義が仕事で強みになる5つの場面</h2>
+      <p class="wk-body">
+        以下の5場面では、完璧主義の傾向が組織・顧客・チームへの貢献として直接評価されます。
+      </p>
+
+      <div class="wk-strength-grid">
+        <div class="wk-strength-card">
+          <div class="wk-strength-header">
+            <span class="wk-strength-icon" aria-hidden="true">✅</span>
+            <h3 class="wk-strength-title">品質保証・QA</h3>
+          </div>
+          <p class="wk-strength-body">
+            ソフトウェア・製造・食品など、品質が安全や信頼に直結する領域。
+            細部を見逃さない目と、基準への徹底した遵守が最大の武器になります。
+            「抜け・漏れ・ズレ」を事前につぶす能力が高く評価されます。
+          </p>
+        </div>
+
+        <div class="wk-strength-card">
+          <div class="wk-strength-header">
+            <span class="wk-strength-icon" aria-hidden="true">📊</span>
+            <h3 class="wk-strength-title">経理・税務</h3>
+          </div>
+          <p class="wk-strength-body">
+            1円のズレも許されない数字の正確性が求められる仕事。
+            こだわり型・徹底型の完璧主義は、この「精度の絶対要求」と高い親和性があります。
+            ルール遵守への強い意識が、ミスゼロの成果につながります。
+          </p>
+        </div>
+
+        <div class="wk-strength-card">
+          <div class="wk-strength-header">
+            <span class="wk-strength-icon" aria-hidden="true">⚕️</span>
+            <h3 class="wk-strength-title">医療・法務</h3>
+          </div>
+          <p class="wk-strength-body">
+            医療過誤・法的リスクを防ぐために「確認・記録・手順の遵守」が命の仕事。
+            完璧主義の慎重さと細部への配慮が、患者・クライアントを守る力になります。
+            先延ばし型の「失敗への恐れ」が逆に「ミスを防ぐ慎重さ」として機能します。
+          </p>
+        </div>
+
+        <div class="wk-strength-card">
+          <div class="wk-strength-header">
+            <span class="wk-strength-icon" aria-hidden="true">🔬</span>
+            <h3 class="wk-strength-title">研究開発</h3>
+          </div>
+          <p class="wk-strength-body">
+            実験の再現性・データの精度・論文の正確性が求められる環境。
+            「まだ確認が足りない」という感覚が高品質な研究成果を生みます。
+            同じ実験を何度も繰り返す忍耐力は、完璧主義の特性と深く合致します。
+          </p>
+        </div>
+
+        <div class="wk-strength-card">
+          <div class="wk-strength-header">
+            <span class="wk-strength-icon" aria-hidden="true">📋</span>
+            <h3 class="wk-strength-title">マネジメント（品質面）</h3>
+          </div>
+          <p class="wk-strength-body">
+            チームの成果物の品質を管理し、基準を維持するマネジメント役割。
+            「この品質で出せない」という感覚が、チーム全体の仕事の質を底上げします。
+            ただし「部下に同じ基準を強要しすぎない」調整が長期的な成功に必要です。
+          </p>
+        </div>
+      </div>
+    </section>
+
+    {/* ========== 足を引っ張る場面 ========== */}
+    <section class="wk-section" aria-labelledby="wk-caution-h2">
+      <h2 id="wk-caution-h2" class="wk-h2">完璧主義が仕事で足を引っ張る5つの場面</h2>
+      <p class="wk-body">
+        完璧主義の傾向が、環境や状況によって消耗・遅延・チームへの摩擦を生む場面があります。
+        事前に把握しておくことで、対策をとりやすくなります。
+      </p>
+
+      <div class="wk-caution-list">
+        <div class="wk-caution-item">
+          <div class="wk-caution-label wk-caution-label--red">場面 1</div>
+          <div class="wk-caution-body">
+            <strong class="wk-caution-title">締切が絶対のプロジェクト</strong>
+            <p class="wk-caution-desc">
+              品質追求が提出の遅れに直結します。
+              「80点で期限内に出す」vs「100点で期限を過ぎる」の判断を事前にルール化しておくことが有効です。
+            </p>
+          </div>
+        </div>
+
+        <div class="wk-caution-item">
+          <div class="wk-caution-label wk-caution-label--orange">場面 2</div>
+          <div class="wk-caution-body">
+            <strong class="wk-caution-title">スピードが命のスタートアップ</strong>
+            <p class="wk-caution-desc">
+              「まずリリースして改善する」プロトタイプ思考の文化では、
+              完璧主義の慎重さが「リリースの遅さ」として評価されにくい傾向があります。
+            </p>
+          </div>
+        </div>
+
+        <div class="wk-caution-item">
+          <div class="wk-caution-label wk-caution-label--yellow">場面 3</div>
+          <div class="wk-caution-body">
+            <strong class="wk-caution-title">不確実性が高い領域</strong>
+            <p class="wk-caution-desc">
+              「正解が決まっていない」新規事業・クリエイティブ開発では、
+              完璧主義の「基準を満たすまで出せない」感覚が行動を止めることがあります。
+            </p>
+          </div>
+        </div>
+
+        <div class="wk-caution-item">
+          <div class="wk-caution-label wk-caution-label--blue">場面 4</div>
+          <div class="wk-caution-body">
+            <strong class="wk-caution-title">チームの分業プロセス</strong>
+            <p class="wk-caution-desc">
+              自分の基準を他者に求めすぎると、チームメンバーのモチベーション低下や関係悪化につながります。
+              「自分の基準と相手の基準は別」という認識が、チーム連携の起点になります。
+            </p>
+          </div>
+        </div>
+
+        <div class="wk-caution-item">
+          <div class="wk-caution-label wk-caution-label--purple">場面 5</div>
+          <div class="wk-caution-body">
+            <strong class="wk-caution-title">長期的な消耗・疲弊</strong>
+            <p class="wk-caution-desc">
+              Harari et al.（2018）のメタ分析では、完璧主義は職業的疲弊との関連が示されています。
+              休息・成功の振り返り・80点ルールを組み合わせることで、
+              長期的なパフォーマンスを維持しやすくなります
+              （<a href="https://doi.org/10.1037/ocp0000060" target="_blank" rel="noopener noreferrer">Harari et al., 2018</a>、2026-05-21確認）。
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    {/* ========== 4タイプ別仕事スタイル ========== */}
+    <section class="wk-section" aria-labelledby="wk-types-h2">
+      <h2 id="wk-types-h2" class="wk-h2">4タイプ別の仕事スタイルと活かし方</h2>
+      <p class="wk-body">
+        完璧主義の傾向はタイプによって職場での行動パターンが異なります。
+        Hewitt & Flett（1991）の自己志向型・社会規定型と、Frost et al.（1990）の組織化・失敗懸念の軸をもとに、
+        4タイプの仕事スタイルを整理します。
+      </p>
+
+      <div class="wk-type-grid">
+        <div class="wk-type-card wk-type-card--thorough">
+          <div class="wk-type-header">
+            <span class="wk-type-icon" aria-hidden="true">🔱</span>
+            <h3 class="wk-type-title">徹底型（自己志向型）</h3>
+          </div>
+          <p class="wk-type-subtitle">「やるなら100%。自分への基準が誰よりも高い」</p>
+          <div class="wk-type-body">
+            <p class="wk-type-label">仕事スタイル</p>
+            <p class="wk-type-desc">
+              自分に課す基準が極めて高く、成果物に満足できないことが多いタイプ。
+              品質への徹底した意識が「信頼できる人」としての評価につながります。
+              一方で、時間がかかりすぎる・達成感が得られにくいという消耗が出やすいです。
+            </p>
+            <p class="wk-type-label">向いている業務</p>
+            <ul class="wk-type-list">
+              <li>品質管理・編集・校正・研究</li>
+              <li>長期プロジェクトの品質維持</li>
+              <li>高精度が求められる専門職</li>
+            </ul>
+            <p class="wk-type-label">活かすポイント</p>
+            <p class="wk-type-desc">
+              「今日の期限内の最善」を正解と定義し、完了ラインをあらかじめ決めておく。
+              期限内の提出を「成功」とカウントする自己評価軸を作る。
+            </p>
+          </div>
+        </div>
+
+        <div class="wk-type-card wk-type-card--particular">
+          <div class="wk-type-header">
+            <span class="wk-type-icon" aria-hidden="true">⚙️</span>
+            <h3 class="wk-type-title">こだわり型（組織化志向型）</h3>
+          </div>
+          <p class="wk-type-subtitle">「細部にこそ本質が宿る。秩序と精度を愛する」</p>
+          <div class="wk-type-body">
+            <p class="wk-type-label">仕事スタイル</p>
+            <p class="wk-type-desc">
+              順序・精度・整理への強いこだわりを持つタイプ。
+              チェックリスト管理・ファイル整理・手順の標準化が自然にできます。
+              環境の乱れや急な変更にストレスを感じやすい面があります。
+            </p>
+            <p class="wk-type-label">向いている業務</p>
+            <ul class="wk-type-list">
+              <li>経理・法務・データ管理</li>
+              <li>工程管理・プロジェクト管理</li>
+              <li>マニュアル作成・品質標準化</li>
+            </ul>
+            <p class="wk-type-label">活かすポイント</p>
+            <p class="wk-type-desc">
+              「100点タスク」と「80点タスク」を週初めに分類する。
+              他者の手順が違っても「結果が同じなら正解」と意識的に許容する。
+            </p>
+          </div>
+        </div>
+
+        <div class="wk-type-card wk-type-card--procrastinating">
+          <div class="wk-type-header">
+            <span class="wk-type-icon" aria-hidden="true">⏳</span>
+            <h3 class="wk-type-title">先延ばし型（失敗回避型）</h3>
+          </div>
+          <p class="wk-type-subtitle">「完璧にできないなら始められない」</p>
+          <div class="wk-type-body">
+            <p class="wk-type-label">仕事スタイル</p>
+            <p class="wk-type-desc">
+              失敗への恐れが行動の開始を遅らせるタイプ。
+              準備・チェック・リスク確認が丁寧なため、品質保証の役割で力を発揮します。
+              締切直前に集中するパターンが定着しやすいです。
+            </p>
+            <p class="wk-type-label">向いている業務</p>
+            <ul class="wk-type-list">
+              <li>品質保証・リスク管理・コンプライアンス</li>
+              <li>事前準備・確認が重要な医療・安全管理</li>
+              <li>詳細なドキュメント作成</li>
+            </ul>
+            <p class="wk-type-label">活かすポイント</p>
+            <p class="wk-type-desc">
+              「完璧でなくていいから5分だけ始める」ルールを設ける。
+              着手した事実を成功とカウントし、進捗を可視化する。
+            </p>
+          </div>
+        </div>
+
+        <div class="wk-type-card wk-type-card--expecting">
+          <div class="wk-type-header">
+            <span class="wk-type-icon" aria-hidden="true">🌟</span>
+            <h3 class="wk-type-title">期待型（社会規定型）</h3>
+          </div>
+          <p class="wk-type-subtitle">「誰かの期待が、私のプレッシャー」</p>
+          <div class="wk-type-body">
+            <p class="wk-type-label">仕事スタイル</p>
+            <p class="wk-type-desc">
+              他者の期待に応えることがモチベーション源になるタイプ。
+              顧客対応・チームサポート・プレゼンなどで共感力と配慮が発揮されます。
+              評価が見えない環境でモチベーションが下がりやすい傾向があります。
+            </p>
+            <p class="wk-type-label">向いている業務</p>
+            <ul class="wk-type-list">
+              <li>顧客対応・サービス業・営業</li>
+              <li>チームのサポート・調整役</li>
+              <li>プレゼン・提案・交渉</li>
+            </ul>
+            <p class="wk-type-label">活かすポイント</p>
+            <p class="wk-type-desc">
+              「自分基準の達成軸」を1つ設けて外部評価に依存しすぎない仕組みを作る。
+              定期的に「今日、自分がやりたかったことをできたか」を確認する。
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="wk-cta-box">
+        <p class="wk-cta-text">自分のタイプがわからない場合は、まず診断から始めましょう。</p>
+        <a href="/diagnosis/perfectionism/" class="wk-cta-btn">
+          あなたの完璧主義タイプを診断する（無料・3分）
+          <span aria-hidden="true">→</span>
+        </a>
+      </div>
+    </section>
+
+    {/* ========== 職種マッチング ========== */}
+    <section class="wk-section" aria-labelledby="wk-match-h2">
+      <h2 id="wk-match-h2" class="wk-h2">完璧主義 × 職種マッチング早見表</h2>
+      <p class="wk-body">
+        タイプと職種の組み合わせで、消耗しにくい仕事環境を選ぶ参考にしてください。
+      </p>
+      <div class="wk-table-wrap">
+        <table class="wk-table">
+          <caption class="wk-table-caption">完璧主義タイプ別・向いている職種と注意が必要な職種</caption>
+          <thead>
+            <tr>
+              <th scope="col">タイプ</th>
+              <th scope="col">向いている職種・環境</th>
+              <th scope="col">消耗しやすい職種・環境</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>徹底型</strong></td>
+              <td>研究・編集・品質管理・専門職</td>
+              <td>即興対応が多い営業・スタートアップ</td>
+            </tr>
+            <tr>
+              <td><strong>こだわり型</strong></td>
+              <td>経理・法務・データ管理・工程管理</td>
+              <td>ルールが曖昧・変更が多い職場</td>
+            </tr>
+            <tr>
+              <td><strong>先延ばし型</strong></td>
+              <td>品質保証・安全管理・医療・コンプライアンス</td>
+              <td>締切が厳しい・意思決定が速い職場</td>
+            </tr>
+            <tr>
+              <td><strong>期待型</strong></td>
+              <td>顧客対応・サービス業・サポート役・営業</td>
+              <td>フィードバックが少ない・評価が見えない環境</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="wk-body wk-body--note">
+        より詳しい天職・キャリア傾向を知りたい場合は、
+        <a href="/diagnosis/disc/">DiSC診断</a>と組み合わせると、
+        行動スタイルの軸から仕事の向き・不向きをさらに具体的に確認できます。
+      </p>
+    </section>
+
+    {/* ========== 上司・部下・同僚 ========== */}
+    <section class="wk-section" aria-labelledby="wk-people-h2">
+      <h2 id="wk-people-h2" class="wk-h2">完璧主義の上司・部下・同僚との付き合い方</h2>
+      <p class="wk-body">
+        完璧主義の傾向は、職場の人間関係にも影響を与えます。
+        自分が完璧主義の場合だけでなく、周囲が完璧主義の場合の対応も整理します。
+      </p>
+
+      <div class="wk-people-grid">
+        {/* 上司が完璧主義 */}
+        <div class="wk-people-card">
+          <div class="wk-people-header wk-people-header--boss">
+            <span class="wk-people-icon" aria-hidden="true">👔</span>
+            <h3 class="wk-people-title">上司が完璧主義の場合</h3>
+          </div>
+          <div class="wk-people-body">
+            <p class="wk-people-subtitle">期待値を言語化してもらう</p>
+            <ul class="wk-people-list">
+              <li>「どのレベルの仕上がりを期待していますか」と直接確認する</li>
+              <li>暗黙の基準を明示してもらうことで、過剰品質を防げる</li>
+              <li>進捗共有を早め・細かくして「見えている」状態を作る</li>
+              <li>フィードバックをもらう頻度を増やすと上司の安心感につながる</li>
+              <li>「この段階では何点が合格ですか」と確認する習慣をつける</li>
+            </ul>
+          </div>
+        </div>
+
+        {/* 部下が完璧主義 */}
+        <div class="wk-people-card">
+          <div class="wk-people-header wk-people-header--member">
+            <span class="wk-people-icon" aria-hidden="true">👤</span>
+            <h3 class="wk-people-title">部下・後輩が完璧主義の場合</h3>
+          </div>
+          <div class="wk-people-body">
+            <p class="wk-people-subtitle">過剰品質を抑える指示と委譲の練習</p>
+            <ul class="wk-people-list">
+              <li>「このタスクは80点で完了してください」と完了ラインを明示する</li>
+              <li>なぜその基準で十分かを説明すると納得を得やすい</li>
+              <li>「70点の段階でまず見せて」と早期提出を習慣化させる</li>
+              <li>結果の品質より「プロセスと期限の遵守」を評価する</li>
+              <li>他者に任せる体験を積み重ねる委譲訓練を設計する</li>
+            </ul>
+          </div>
+        </div>
+
+        {/* 同僚が完璧主義 */}
+        <div class="wk-people-card">
+          <div class="wk-people-header wk-people-header--peer">
+            <span class="wk-people-icon" aria-hidden="true">🤝</span>
+            <h3 class="wk-people-title">同僚が完璧主義の場合</h3>
+          </div>
+          <div class="wk-people-body">
+            <p class="wk-people-subtitle">役割分担とコミュニケーションの明確化</p>
+            <ul class="wk-people-list">
+              <li>細部確認・品質チェック工程を同僚に担当してもらう役割設計をする</li>
+              <li>「このタスクは今日中完了が優先です」と優先度を共有する</li>
+              <li>指摘への感謝を伝えつつ「今回は期限優先で進めます」と伝える</li>
+              <li>完璧主義同士の場合は、どちらが品質担当か事前に決めておく</li>
+              <li>互いの基準の違いを「役割の違い」として明文化すると摩擦が減る</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    {/* ========== キャリアCTA ========== */}
+    <section class="wk-section" aria-labelledby="wk-career-h2">
+      <h2 id="wk-career-h2" class="wk-h2">完璧主義を活かしたキャリアをさらに深掘りする</h2>
+      <div class="wk-career-grid">
+        <div class="wk-career-card">
+          <span class="wk-career-icon" aria-hidden="true">💼</span>
+          <div class="wk-career-body">
+            <p class="wk-career-title">タイプ別の天職を確認する</p>
+            <p class="wk-career-desc">
+              DiSC診断では職場での行動スタイル（主導型・影響型・着実型・慎重型）を分析できます。
+              完璧主義タイプとの組み合わせで、より具体的な向き・不向きが見えてきます。
+            </p>
+            <a href="/diagnosis/disc/" class="wk-career-btn">DiSC診断を受ける（無料）</a>
+          </div>
+        </div>
+        <div class="wk-career-card">
+          <span class="wk-career-icon" aria-hidden="true">🔍</span>
+          <div class="wk-career-body">
+            <p class="wk-career-title">完璧主義タイプを再確認する</p>
+            <p class="wk-career-desc">
+              4タイプ（徹底型・こだわり型・先延ばし型・期待型）の詳細な傾向を把握することで、
+              仕事での強み・消耗パターンの理解が深まります。
+            </p>
+            <a href="/diagnosis/perfectionism/" class="wk-career-btn">完璧主義診断（無料・3分）</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    {/* ========== ScienceNote ========== */}
+    <ScienceNote
+      basisText="本ページの仕事との関連情報は Hewitt & Flett（1991）の多次元完璧主義尺度、Stoeber & Otto（2006）の適応的/不適応的完璧主義の分類、Spence & Robbins（1992）の過剰就労研究、Harari et al.（2018）の職業的疲弊メタ分析に基づいています。タイプ別の仕事スタイルは傾向の整理であり、個人差があります。"
+      basisUrl="https://doi.org/10.1207/s15327957pspr1004_2"
+      basisLabel="Stoeber & Otto (2006) Personality and Social Psychology Review"
+      notMedical={true}
+      updatedAt={UPDATED_AT}
+      additionalNote="職場での消耗が継続して日常生活に支障をきたしている場合は、産業カウンセラー・EAP・医師への相談を検討してください。本ページは自己理解・傾向把握のための情報提供を目的としており、医療・キャリア支援の代替ではありません。"
+    />
+
+    {/* ========== FAQ ========== */}
+    <section class="wk-section" aria-labelledby="wk-faq-h2">
+      <h2 id="wk-faq-h2" class="wk-h2">よくある質問</h2>
+      <dl class="wk-faq-list">
+        {faqs.map(({ question, answer }) => (
+          <div class="wk-faq-item">
+            <dt class="wk-faq-q">{question}</dt>
+            <dd class="wk-faq-a">{answer}</dd>
+          </div>
+        ))}
+      </dl>
+    </section>
+
+    {/* ========== 関連ページ ========== */}
+    <section class="wk-section" aria-labelledby="wk-related-h2">
+      <h2 id="wk-related-h2" class="wk-h2">合わせて読む</h2>
+      <ul class="wk-related-list">
+        <li class="wk-related-item">
+          <a href="/diagnosis/perfectionism/" class="wk-related-link">
+            <span class="wk-related-icon" aria-hidden="true">📋</span>
+            <span class="wk-related-body">
+              <span class="wk-related-title">完璧主義診断（メイン）</span>
+              <span class="wk-related-desc">28問・約3分でタイプを判定。仕事・恋愛・CBTTipsを確認</span>
+            </span>
+          </a>
+        </li>
+        <li class="wk-related-item">
+          <a href="/diagnosis/perfectionism/yametai/" class="wk-related-link">
+            <span class="wk-related-icon" aria-hidden="true">🧩</span>
+            <span class="wk-related-body">
+              <span class="wk-related-title">完璧主義をやめたい</span>
+              <span class="wk-related-desc">CBT（認知行動療法）で向き合う5ステップと4タイプ別対処法</span>
+            </span>
+          </a>
+        </li>
+        <li class="wk-related-item">
+          <a href="/diagnosis/perfectionism/naoshikata/" class="wk-related-link">
+            <span class="wk-related-icon" aria-hidden="true">🔬</span>
+            <span class="wk-related-body">
+              <span class="wk-related-title">完璧主義の向き合い方ガイド</span>
+              <span class="wk-related-desc">CBT・ACT・マインドフルネス・セルフコンパッションを科学的に整理</span>
+            </span>
+          </a>
+        </li>
+        <li class="wk-related-item">
+          <a href="/profile/" class="wk-related-link">
+            <span class="wk-related-icon" aria-hidden="true">🗂️</span>
+            <span class="wk-related-body">
+              <span class="wk-related-title">統合プロフィール</span>
+              <span class="wk-related-desc">複数の診断結果をまとめて自己理解を深める</span>
+            </span>
+          </a>
+        </li>
+      </ul>
+    </section>
+
+    {/* ========== 参考文献 ========== */}
+    <ReferenceList references={references} confirmedAt={UPDATED_AT} />
+  </Container>
+</BaseLayout>
+
+<style>
+/* ========== ヒーロー ========== */
+.wk-hero {
+  background: linear-gradient(135deg, #0f766e 0%, #0d9488 100%);
+  color: #fff;
+  padding-block: 2.5rem 3rem;
+}
+.wk-breadcrumb {
+  margin-bottom: 1.5rem;
+}
+.wk-breadcrumb-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  opacity: 0.8;
+}
+.wk-breadcrumb-list li::after {
+  content: '›';
+  margin-left: 0.5rem;
+}
+.wk-breadcrumb-list li:last-child::after {
+  content: '';
+}
+.wk-breadcrumb-list a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.wk-hero-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.wk-hero-badge {
+  display: inline-block;
+  background: rgba(255 255 255 / 0.2);
+  border: 1px solid rgba(255 255 255 / 0.4);
+  border-radius: 2rem;
+  padding: 0.2rem 0.85rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  align-self: flex-start;
+}
+.wk-h1 {
+  font-size: clamp(1.5rem, 4vw, 2.2rem);
+  font-family: var(--sn-font-rounded, sans-serif);
+  font-weight: 700;
+  line-height: 1.4;
+  margin: 0;
+}
+.wk-h1-sub {
+  display: block;
+  font-size: clamp(1rem, 2.5vw, 1.4rem);
+  opacity: 0.88;
+  font-weight: 600;
+  margin-top: 0.25rem;
+}
+.wk-hero-meta {
+  font-size: 0.78rem;
+  opacity: 0.7;
+  margin: 0;
+}
+
+/* ========== セクション共通 ========== */
+.wk-section {
+  margin-block: 3rem;
+}
+.wk-h2 {
+  font-size: clamp(1.2rem, 3.5vw, 1.6rem);
+  font-family: var(--sn-font-rounded, sans-serif);
+  font-weight: 700;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #0f766e;
+}
+.wk-body {
+  font-size: 0.95rem;
+  line-height: 1.8;
+  color: #374151;
+  margin-bottom: 0.75rem;
+}
+.wk-body--note {
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin-top: 0.75rem;
+}
+
+/* ========== 強みグリッド ========== */
+.wk-strength-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+.wk-strength-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  background: #f9fafb;
+}
+.wk-strength-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+.wk-strength-icon {
+  font-size: 1.4rem;
+  flex-shrink: 0;
+}
+.wk-strength-title {
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 0;
+  color: #1f2937;
+}
+.wk-strength-body {
+  font-size: 0.875rem;
+  line-height: 1.7;
+  color: #374151;
+  margin: 0;
+}
+
+/* ========== 注意点リスト ========== */
+.wk-caution-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+.wk-caution-item {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  padding: 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+}
+.wk-caution-label {
+  flex-shrink: 0;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.3rem 0.6rem;
+  border-radius: 0.25rem;
+  color: #fff;
+  white-space: nowrap;
+}
+.wk-caution-label--red { background: #dc2626; }
+.wk-caution-label--orange { background: #ea580c; }
+.wk-caution-label--yellow { background: #d97706; }
+.wk-caution-label--blue { background: #2563eb; }
+.wk-caution-label--purple { background: #7c3aed; }
+.wk-caution-body {
+  flex: 1;
+}
+.wk-caution-title {
+  display: block;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 0.35rem;
+}
+.wk-caution-desc {
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: #4b5563;
+  margin: 0;
+}
+.wk-caution-desc a {
+  color: #0f766e;
+  text-underline-offset: 2px;
+}
+
+/* ========== タイプグリッド ========== */
+.wk-type-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+  margin-block: 1.5rem;
+}
+.wk-type-card {
+  border: 2px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+}
+.wk-type-card--thorough { border-top-color: #6366f1; }
+.wk-type-card--particular { border-top-color: #059669; }
+.wk-type-card--procrastinating { border-top-color: #d97706; }
+.wk-type-card--expecting { border-top-color: #db2777; }
+.wk-type-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.35rem;
+}
+.wk-type-icon {
+  font-size: 1.5rem;
+}
+.wk-type-title {
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 0;
+  color: #1f2937;
+}
+.wk-type-subtitle {
+  font-size: 0.8rem;
+  color: #6b7280;
+  margin: 0 0 0.75rem;
+  font-style: italic;
+}
+.wk-type-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.wk-type-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #0f766e;
+  margin: 0.25rem 0 0.2rem;
+}
+.wk-type-desc {
+  font-size: 0.85rem;
+  line-height: 1.6;
+  color: #374151;
+  margin: 0;
+}
+.wk-type-list {
+  padding-left: 1.25rem;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+.wk-type-list li {
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: #374151;
+}
+
+/* ========== CTA ========== */
+.wk-cta-box {
+  margin-top: 2rem;
+  background: linear-gradient(135deg, #f0fdfa, #ccfbf1);
+  border: 1px solid #99f6e4;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  text-align: center;
+}
+.wk-cta-text {
+  font-size: 0.9rem;
+  color: #374151;
+  margin: 0 0 1rem;
+}
+.wk-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #0f766e;
+  color: #fff;
+  font-weight: 700;
+  font-size: 1rem;
+  padding: 0.75rem 2rem;
+  border-radius: 2.5rem;
+  text-decoration: none;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.wk-cta-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(15 118 110 / 0.3);
+}
+
+/* ========== テーブル ========== */
+.wk-table-wrap {
+  overflow-x: auto;
+}
+.wk-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+.wk-table th,
+.wk-table td {
+  padding: 0.6rem 0.85rem;
+  border: 1px solid #e5e7eb;
+  text-align: left;
+  line-height: 1.5;
+}
+.wk-table thead th {
+  background: #f3f4f6;
+  font-weight: 700;
+}
+.wk-table tbody tr:nth-child(even) {
+  background: #f9fafb;
+}
+.wk-table-caption {
+  font-size: 0.78rem;
+  color: #6b7280;
+  text-align: left;
+  padding: 0.25rem 0 0.5rem;
+}
+
+/* ========== 人間関係グリッド ========== */
+.wk-people-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+.wk-people-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+.wk-people-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1.25rem;
+  color: #fff;
+}
+.wk-people-header--boss { background: #1d4ed8; }
+.wk-people-header--member { background: #059669; }
+.wk-people-header--peer { background: #7c3aed; }
+.wk-people-icon {
+  font-size: 1.4rem;
+  flex-shrink: 0;
+}
+.wk-people-title {
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 0;
+}
+.wk-people-body {
+  padding: 1rem 1.25rem;
+}
+.wk-people-subtitle {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #374151;
+  margin: 0 0 0.5rem;
+}
+.wk-people-list {
+  padding-left: 1.25rem;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+.wk-people-list li {
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: #4b5563;
+}
+
+/* ========== キャリアCTA ========== */
+.wk-career-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+.wk-career-card {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  padding: 1.25rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  background: #f9fafb;
+}
+.wk-career-icon {
+  font-size: 2rem;
+  flex-shrink: 0;
+}
+.wk-career-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.wk-career-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0;
+}
+.wk-career-desc {
+  font-size: 0.85rem;
+  line-height: 1.6;
+  color: #4b5563;
+  margin: 0;
+}
+.wk-career-btn {
+  display: inline-block;
+  background: #0f766e;
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 0.5rem 1rem;
+  border-radius: 1.5rem;
+  text-decoration: none;
+  transition: background 0.15s;
+  align-self: flex-start;
+}
+.wk-career-btn:hover {
+  background: #0d9488;
+}
+
+/* ========== FAQ ========== */
+.wk-faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+.wk-faq-item {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+.wk-faq-q {
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 1rem 1.25rem;
+  background: #f9fafb;
+  margin: 0;
+  display: block;
+}
+.wk-faq-q::before {
+  content: 'Q. ';
+  color: #0f766e;
+}
+.wk-faq-a {
+  font-size: 0.9rem;
+  line-height: 1.7;
+  padding: 1rem 1.25rem;
+  margin: 0;
+  color: #4b5563;
+}
+.wk-faq-a::before {
+  content: 'A. ';
+  font-weight: 700;
+  color: #16a34a;
+}
+
+/* ========== 関連リンク ========== */
+.wk-related-list {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.wk-related-link {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.wk-related-link:hover {
+  border-color: #0f766e;
+  box-shadow: 0 2px 8px rgba(15 118 110 / 0.1);
+}
+.wk-related-icon {
+  font-size: 1.75rem;
+  flex-shrink: 0;
+}
+.wk-related-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+.wk-related-title {
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+.wk-related-desc {
+  font-size: 0.8rem;
+  color: var(--sn-muted, #6b7280);
+}
+
+/* ========== レスポンシブ ========== */
+@media (max-width: 640px) {
+  .wk-strength-grid,
+  .wk-type-grid,
+  .wk-people-grid,
+  .wk-career-grid {
+    grid-template-columns: 1fr;
+  }
+  .wk-caution-item {
+    flex-direction: column;
+  }
+}
+</style>
