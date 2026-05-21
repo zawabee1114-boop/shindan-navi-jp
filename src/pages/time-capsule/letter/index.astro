@@ -1,0 +1,1474 @@
+---
+/**
+ * /time-capsule/letter/ - 過去のあなたへの手紙｜書き方・テンプレート
+ *
+ * KW: 過去の自分 手紙 / 自分への手紙 書き方 / セルフ・コンパッション 手紙
+ * 確認日: 2026-05-21
+ *
+ * 学術根拠:
+ *   - Neff KD (2003) "Self-compassion: An alternative conceptualization of a healthy attitude toward oneself"
+ *     Self and Identity, 2(2), 85-101
+ *   - Pennebaker JW (1997) "Writing about emotional experiences as a therapeutic process"
+ *     Psychological Science, 8(3), 162-166
+ *   - Markus H, Nurius P (1986) "Possible selves"
+ *     American Psychologist, 41(9), 954-969
+ *   - Wilson TD, Ross M (2003) "The identity function of autobiographical memory"
+ *     Memory, 11(2), 137-150
+ *
+ * SEO/AIO対応:
+ * - JSON-LD: WebPage + Article + FAQPage + BreadcrumbList + HowTo
+ * - @id連結: エンティティグラフ形成
+ * - PRO誘導CTA（タイムカプセル機能・¥590/月）
+ * - TldrBlock / ScienceNote / ReferenceList
+ * - FAQ 8問
+ * - YMYL回避: 医療診断・治療表記ゼロ
+ */
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Container from '../../../components/Container.astro';
+import TldrBlock from '../../../components/TldrBlock.astro';
+import ReferenceList from '../../../components/ReferenceList.astro';
+import ScienceNote from '../../../components/ScienceNote.astro';
+
+const SITE_URL = 'https://shindan-navi.jp';
+const PAGE_URL = `${SITE_URL}/time-capsule/letter/`;
+const CONFIRMED_AT = '2026-05-21';
+
+const references = [
+  {
+    title: 'Self-compassion: An alternative conceptualization of a healthy attitude toward oneself',
+    author: 'Neff KD',
+    year: 2003,
+    journal: 'Self and Identity',
+    volume: '2(2), 85-101',
+    url: 'https://doi.org/10.1080/15298860309032',
+  },
+  {
+    title: 'Writing about emotional experiences as a therapeutic process',
+    author: 'Pennebaker JW',
+    year: 1997,
+    journal: 'Psychological Science',
+    volume: '8(3), 162-166',
+    url: 'https://doi.org/10.1111/j.1467-9280.1997.tb00403.x',
+  },
+  {
+    title: 'Possible selves',
+    author: 'Markus H, Nurius P',
+    year: 1986,
+    journal: 'American Psychologist',
+    volume: '41(9), 954-969',
+    url: 'https://doi.org/10.1037/0003-066X.41.9.954',
+  },
+  {
+    title: 'The identity function of autobiographical memory: Time is on our side',
+    author: 'Wilson TD, Ross M',
+    year: 2003,
+    journal: 'Memory',
+    volume: '11(2), 137-150',
+    url: 'https://doi.org/10.1080/741938210',
+  },
+];
+
+const faqs = [
+  {
+    question: '自分への手紙を書く意味は何ですか？',
+    answer:
+      'Pennebaker（1997）の研究では、感情体験を文章で書き出すことが自己洞察・ストレス解消・心理的回復に寄与することが示されています。自分への手紙を書くことで、現在の感情を客観視する「外在化」が起きます。また過去の自分に向けて書くことで、自己批判を和らげるセルフ・コンパッション（Neff 2003）の実践にもなります。',
+  },
+  {
+    question: '何を書けばいいかわかりません。',
+    answer:
+      '「今、自分が感じていること」を正直に書くことから始めましょう。うまく書こうとしなくて大丈夫です。「最近つらいこと」「怖いこと」「変えたいこと」「ありがとうと言いたいこと」など、一つのテーマから書き始めると書きやすくなります。このページのテンプレートも活用してください。',
+  },
+  {
+    question: '書くタイミングはいつがいいですか？',
+    answer:
+      '人生の節目（転職・結婚・出産・引っ越しなど）に書くと後から読み返したときの価値が高まります。また「調子が悪いとき」「大きな決断をしたとき」「何かを達成したとき」なども書くのに適した時期です。決まったタイミングがないなら、今すぐ始めるのが最善です。',
+  },
+  {
+    question: 'つらい時期の自分への手紙はどう書けばいいですか？',
+    answer:
+      'Neff（2003）のセルフ・コンパッション理論では、自分を批判するのではなく「苦しんでいる自分を友人のように扱う」ことが心理的健康につながるとされています。つらい時期に書く手紙では、自分を責めず「よく頑張っている」「これは苦しくて当然」という視点で書くことを意識しましょう。心身の不調が続く場合は専門家にご相談ください。',
+  },
+  {
+    question: '未来の自分への手紙と過去の自分への手紙は何が違いますか？',
+    answer:
+      '未来の自分への手紙は「今の気持ちを未来に届ける」もの。過去の自分への手紙は「過去の自分を今の視点で振り返る」ものです。どちらも自己理解を深める効果がありますが、性質が異なります。診断ナビのタイムカプセルでは「未来の自分へ今を届ける」機能を提供しています。',
+  },
+  {
+    question: '紙とデジタル、どちらで書くのがいいですか？',
+    answer:
+      '紙は書く行為そのものに集中でき、後から物理的に手に取れる体験があります。デジタルは保存・検索・通知機能と組み合わせやすく、診断スコアとセットで管理できます。目的に応じて使い分けてください。診断スコアと一緒に記録したい場合はタイムカプセル機能（デジタル）が最適です。',
+  },
+  {
+    question: '手紙を読み返したときに泣いてしまいました。これは正常ですか？',
+    answer:
+      '正常な反応です。過去の自分の気持ちに触れることは感情的な体験であり、涙が出ることは珍しくありません。Pennebaker（1997）の研究でも、感情的な文章を書いたり読んだりすることが心理的処理と回復に関わることが示されています。ただし、読み返すたびに強い苦痛が生じる場合は、専門家（カウンセラー等）のサポートを受けることを検討してください。',
+  },
+  {
+    question: '書いた手紙を捨ててもいいですか？',
+    answer:
+      'はい、捨てることで気持ちを整理できることもあります。ただし「書く」こと自体に心理的な効果があるため、書いた後は何度か読み返してから判断するのをおすすめします。デジタルで保存している場合は削除前に内容を確認してください。タイムカプセルに保存した手紙はいつでも設定画面から削除できます。',
+  },
+];
+
+const jsonLdWebPage = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  '@id': `${PAGE_URL}#webpage`,
+  url: PAGE_URL,
+  name: '過去の自分への手紙｜書き方・5つのテンプレ｜診断ナビ',
+  description:
+    'セルフ・コンパッション（Neff 2003）とExpressive Writing（Pennebaker 1997）に基づく自分への手紙の書き方。5つのテンプレート・7つのコツ・タイムカプセル機能との連携を解説。',
+  inLanguage: 'ja',
+  isPartOf: { '@id': `${SITE_URL}/#website` },
+  breadcrumb: { '@id': `${PAGE_URL}#breadcrumb` },
+  datePublished: '2026-05-21',
+  dateModified: CONFIRMED_AT,
+};
+
+const jsonLdArticle = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  '@id': `${PAGE_URL}#article`,
+  mainEntityOfPage: { '@type': 'WebPage', '@id': PAGE_URL },
+  headline: '過去のあなたへの手紙｜自分への手紙の書き方・テンプレ',
+  description:
+    'Neff（2003）セルフ・コンパッション・Pennebaker（1997）Expressive Writing・Markus & Nurius（1986）可能自己理論をもとに、自分への手紙の書き方・5つのテンプレート・タイムカプセルとの連携を解説。',
+  url: PAGE_URL,
+  datePublished: '2026-05-21',
+  dateModified: CONFIRMED_AT,
+  inLanguage: 'ja',
+  author: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+    name: '診断ナビ',
+  },
+  publisher: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+    name: '診断ナビ',
+  },
+  citation: references.map((ref) => ({
+    '@type': 'ScholarlyArticle',
+    name: ref.title,
+    author: ref.author,
+    datePublished: String(ref.year),
+    url: ref.url,
+  })),
+};
+
+const jsonLdFAQ = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  '@id': `${PAGE_URL}#faq`,
+  mainEntity: faqs.map(({ question, answer }) => ({
+    '@type': 'Question',
+    name: question,
+    acceptedAnswer: { '@type': 'Answer', text: answer },
+  })),
+};
+
+const jsonLdHowTo = {
+  '@context': 'https://schema.org',
+  '@type': 'HowTo',
+  '@id': `${PAGE_URL}#howto`,
+  name: '自分への手紙の書き方 5ステップ',
+  description: '過去・未来の自分に向けた手紙を書く5つのステップ。セルフ・コンパッション原則に基づく実践ガイド。',
+  step: [
+    {
+      '@type': 'HowToStep',
+      name: '書く相手・テーマを決める',
+      text: '「過去の自分へ」「未来の自分へ」「つらかったあの時期の自分へ」など、誰に何を伝えるかを決める',
+      position: 1,
+    },
+    {
+      '@type': 'HowToStep',
+      name: '時間と場所を確保する',
+      text: '集中できる静かな環境で、最低15分を確保する。中断が入ると感情の流れが止まりやすい',
+      position: 2,
+    },
+    {
+      '@type': 'HowToStep',
+      name: 'うまく書こうとしない',
+      text: '文体・語彙・論理性を気にしない。感じたこと・気になったことを正直に書く。Pennebaker（1997）の研究では「感情の正直な表出」が効果の源泉とされている',
+      position: 3,
+    },
+    {
+      '@type': 'HowToStep',
+      name: '自分を批判しない',
+      text: 'Neff（2003）のセルフ・コンパッションでは「自分を友人のように扱う」ことが鍵。「なぜあのとき〜できなかったのか」という批判より「それは難しかった、よく頑張った」という視点で書く',
+      position: 4,
+    },
+    {
+      '@type': 'HowToStep',
+      name: '書いた後に読み返して、タイムカプセルに保存する',
+      text: '書いた後に一度読み返し、修正したい部分を直す。診断ナビのタイムカプセル機能に保存すると、数ヶ月後の自分に自動で届けられる',
+      position: 5,
+    },
+  ],
+};
+
+const jsonLdBreadcrumb = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  '@id': `${PAGE_URL}#breadcrumb`,
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'ホーム', item: SITE_URL },
+    { '@type': 'ListItem', position: 2, name: 'タイムカプセル', item: `${SITE_URL}/time-capsule/` },
+    { '@type': 'ListItem', position: 3, name: '過去のあなたへの手紙', item: PAGE_URL },
+  ],
+};
+
+const jsonLdAll = [jsonLdWebPage, jsonLdArticle, jsonLdFAQ, jsonLdHowTo, jsonLdBreadcrumb];
+
+const templates = [
+  {
+    id: 'gratitude',
+    icon: '💛',
+    title: '過去の頑張った自分へ「ありがとう」',
+    desc: '結果だけでなく「頑張ったこと自体」に感謝を伝える。自己批判が強い人に特におすすめ。',
+    tags: ['過去の自分へ', 'セルフ・コンパッション'],
+    sample: `〇〇歳の自分へ
+
+あのとき、本当に頑張っていたね。
+結果がどうだったかに関係なく、あなたが動き続けていたことを、今の私はちゃんと知っています。
+
+あのとき感じていた不安や焦りは、全部本物だった。
+それでも前に進もうとしていたこと、私は忘れていません。
+
+ありがとう。あなたが頑張ったから、今の私がいます。`,
+    note: 'セルフ・コンパッション（Neff 2003）の「自己への親切さ」原則に基づくテンプレートです。',
+  },
+  {
+    id: 'forgiveness',
+    icon: '🌿',
+    title: '失敗した自分へ「許しと学び」',
+    desc: '後悔している出来事に向き合い、自己批判を手放すための手紙。',
+    tags: ['過去の自分へ', '失敗の振り返り'],
+    sample: `あのときの自分へ
+
+あの失敗、ずっと引きずっていたね。
+今になってわかることがある。あのとき、あなたは持っている全てを使って対応していた。
+
+「もっとうまくやれた」と思う気持ちはわかる。
+でも、あのときの情報量・経験量・体力で、あれ以上を求めるのは難しかった。
+
+あの経験から、私は〔学んだこと〕を学んだ。
+それだけで十分だったと、今の私は思っています。`,
+    note: 'Pennebaker（1997）のExpressive Writingでは、失敗体験を書き出すことで認知の再評価が促されることが示されています。',
+  },
+  {
+    id: 'promise',
+    icon: '🎯',
+    title: '未来の自分へ「3ヶ月後の約束」',
+    desc: '今の目標・決意を未来の自分に届ける。タイムカプセル機能と組み合わせると最大効果。',
+    tags: ['未来の自分へ', '目標設定'],
+    sample: `3ヶ月後の自分へ
+
+今日、〔決めたこと・始めたこと〕を始めました。
+正直、続くかどうか少し不安です。
+
+でも、これをあなたに届けることで、今の決意を本物にしたい。
+
+3ヶ月後に読んでいるあなたへ。
+〔達成できていてほしいこと〕ができていますか？
+できていなくても、挑戦したこと自体をまず評価してください。
+
+今日の自分より`,
+    note: 'Markus & Nurius（1986）の可能自己理論では、未来の自分を具体的にイメージし言語化することが動機づけを高めるとされています。',
+  },
+  {
+    id: 'past-ok',
+    icon: '🕰️',
+    title: '10年前の自分へ「今は大丈夫」',
+    desc: '昔の自分が心配していたことが、今どうなったかを伝える。長い時間軸で書く手紙。',
+    tags: ['過去の自分へ', '長期的な振り返り'],
+    sample: `10年前の自分へ
+
+あのとき、〔心配していたこと〕を心配していたね。
+今教えてあげられる。あれは、ちゃんとなんとかなったよ。
+
+もちろん、全てが思い通りになったわけじゃない。
+でも、あなたが恐れていた「最悪の事態」は起きなかった。
+
+あのとき必死で悩んでいたことが、今では懐かしく思える。
+10年後、また違う視点からこの時期を見られるよ。`,
+    note: 'Wilson & Ross（2003）は、過去の自己を振り返ることが現在の自己の連続性認識と安定に寄与することを示しています。',
+  },
+  {
+    id: 'compassion',
+    icon: '🫂',
+    title: '苦しい時の自分へ「セルフ・コンパッション」',
+    desc: '今まさに苦しいときに書く手紙。自分を責めずに受け止めるための言葉を探す。',
+    tags: ['今の自分へ', 'セルフケア'],
+    sample: `今の自分へ
+
+今、すごく苦しいね。
+その苦しさは本物で、あなたが弱いせいじゃない。
+
+人はみんな、こういう時期を経験する。
+あなたは今、それを経験しているだけ。
+
+友達がこんな状況だったら、何て声をかける？
+その言葉を、自分にもかけてあげて。
+
+「よく頑張っている」「この苦しさは一時的なもの」
+それが今の正直な事実です。
+
+心身の不調が続く場合は、医師や専門家に相談してください。`,
+    note: 'Neff（2003）のセルフ・コンパッション三要素（自己への親切さ・共通の人間性・マインドフルネス）を手紙の形で実践するテンプレートです。',
+  },
+];
+
+const writingTips = [
+  {
+    num: 1,
+    title: 'うまく書こうとしない',
+    body: '手紙に文才は必要ありません。語彙・文体・論理性を気にせず、感じたことをそのまま書きましょう。Pennebaker（1997）の研究でも「正直な感情表出」が効果の核心と示されています。',
+  },
+  {
+    num: 2,
+    title: '「あなた」に語りかける形で書く',
+    body: '「私は〜した」ではなく「あなたは〜していたね」という二人称で書くと、距離を持って自分を見やすくなります。自己批判が和らぎ、客観的に振り返りやすくなります。',
+  },
+  {
+    num: 3,
+    title: '批判的な言葉を使わない',
+    body: '「なんであんなことをしたんだ」「もっとできたのに」という自己批判は手紙には不要です。Neff（2003）のセルフ・コンパッションでは「自分を友人のように扱う」ことが鍵です。',
+  },
+  {
+    num: 4,
+    title: '15〜30分を目安に書く',
+    body: '長すぎると感情的な消耗が大きくなります。短すぎると表面的な内容にとどまります。Pennebaker の研究では「15〜30分の連続した記述」が標準的な設定とされています。',
+  },
+  {
+    num: 5,
+    title: '書いた後は少し休む',
+    body: '手紙を書いた直後は感情が動いた状態です。すぐ読み返さず、30分〜数時間後に改めて読むと、より客観的に内容を確認できます。',
+  },
+  {
+    num: 6,
+    title: '特定のライフイベントに結びつけて書く',
+    body: '「〇〇の前」「〇〇が起きた後」のように、具体的な出来事と結びつけて書くと、後から読み返したときに当時の状況が鮮明によみがえります。',
+  },
+  {
+    num: 7,
+    title: '診断スコアとセットで記録する',
+    body: '手紙だけでなく、その時点の診断スコアも合わせて記録しておくと、「感情の記録」と「特性の記録」を並べて振り返れます。診断ナビのタイムカプセル機能はこの組み合わせを自動で行います。',
+  },
+];
+---
+
+<BaseLayout
+  title="過去の自分への手紙｜書き方・5つのテンプレ｜診断ナビ"
+  description="セルフ・コンパッション（Neff 2003）とExpressive Writing（Pennebaker 1997）に基づく自分への手紙の書き方。5テンプレート・書くコツ7つ・タイムカプセル機能との連携を解説。"
+  canonical={PAGE_URL}
+  jsonLd={jsonLdAll}
+  ogType="article"
+  publishDate="2026-05-21"
+  lastUpdated={CONFIRMED_AT}
+  breadcrumbs={[
+    { name: 'タイムカプセル', url: '/time-capsule/' },
+    { name: '過去のあなたへの手紙', url: '/time-capsule/letter/' },
+  ]}
+>
+  <link rel="canonical" href={PAGE_URL} slot="head" />
+
+  {/* ========== ヒーロー ========== */}
+  <section class="lt-hero" aria-labelledby="lt-hero-h1">
+    <div class="lt-hero-inner">
+      <div class="lt-hero-badge">Neff（2003）セルフ・コンパッション × Pennebaker（1997）Expressive Writing</div>
+      <h1 id="lt-hero-h1" class="lt-hero-h1">
+        過去のあなたへの手紙<br />
+        <span class="lt-hero-sub">自分への手紙の書き方・5つのテンプレート</span>
+      </h1>
+      <p class="lt-hero-catch">
+        あなたは過去の自分に、何を伝えたいですか。<br />
+        自分への手紙には、心理学的な根拠がある効果があります。
+      </p>
+      <div class="lt-hero-meta">
+        <time datetime={CONFIRMED_AT}>{CONFIRMED_AT}</time> 時点の情報
+      </div>
+    </div>
+  </section>
+
+  <Container>
+    {/* ========== このページでわかること ========== */}
+    <div class="lt-aio-block" role="note" aria-label="このページでわかること">
+      <p class="lt-aio-title">このページでわかること</p>
+      <ul class="lt-aio-list">
+        <li>自分への手紙の心理学的効果（Neff 2003・Pennebaker 1997・Markus & Nurius 1986）</li>
+        <li>5つのテンプレート（感謝・許し・約束・長期振り返り・セルフ・コンパッション）と記入例</li>
+        <li>手紙を書くコツ 7つ（うまく書こうとしない・自己批判しない・時間の確保ほか）</li>
+        <li>書いた手紙をタイムカプセルで未来の自分に届ける方法（PRO機能との連携）</li>
+        <li>FAQ 8問（書く意味・書き方・読み返した時の感情ほか）</li>
+      </ul>
+    </div>
+
+    {/* ========== TL;DR ========== */}
+    <TldrBlock
+      title="自分への手紙のポイントまとめ"
+      points={[
+        'Pennebaker（1997）のExpressive Writing研究では、感情体験を書き出すことが自己洞察・ストレス解消・免疫機能の向上に寄与することが示されている（Psychological Science 8(3)）',
+        'Neff（2003）のセルフ・コンパッション理論では、自分を友人のように扱うこと（自己への親切さ）が心理的健康の基盤とされている',
+        'Markus & Nurius（1986）の可能自己理論では、未来の自分のイメージを具体化・言語化することが動機づけを高める',
+        '手紙を書く際の核心は「うまく書こうとしない」「自己批判しない」「感じたことを正直に書く」の3点',
+        '書いた手紙をタイムカプセルに保存すると、数ヶ月後に診断スコアの変化と一緒に読み返せる',
+      ]}
+      updatedAt={CONFIRMED_AT}
+      sourceLabel="Pennebaker（1997）Psychological Science"
+      sourceUrl="https://doi.org/10.1111/j.1467-9280.1997.tb00403.x"
+    />
+
+    {/* ========== H2-1: 自分への手紙とは ========== */}
+    <section class="lt-section" aria-labelledby="lt-what-h2">
+      <h2 id="lt-what-h2" class="lt-h2">自分への手紙とは</h2>
+      <p class="lt-lead">
+        「自分への手紙」とは、過去・現在・未来の自分に向けて書く文章です。<br />
+        日記とは異なり、特定の「自分」に語りかける形をとります。
+      </p>
+      <p>
+        書く対象は大きく2種類あります。
+      </p>
+      <div class="lt-type-grid">
+        <div class="lt-type-card">
+          <div class="lt-type-icon" aria-hidden="true">🕰️</div>
+          <h3 class="lt-type-title">過去の自分への手紙</h3>
+          <p class="lt-type-desc">
+            昔の自分・つらかった時期の自分・頑張っていた自分に向けて書く。<br />
+            感謝・許し・励ましを伝えることが多い。<br />
+            自己批判を手放し、過去を受け入れる効果がある。
+          </p>
+        </div>
+        <div class="lt-type-card">
+          <div class="lt-type-icon" aria-hidden="true">🔭</div>
+          <h3 class="lt-type-title">未来の自分への手紙</h3>
+          <p class="lt-type-desc">
+            数ヶ月後・数年後の自分に「今の気持ち・決意・願い」を届ける。<br />
+            目標の明確化・動機づけ・自己成長の記録になる。<br />
+            タイムカプセル機能と組み合わせると自動で届けられる。
+          </p>
+        </div>
+      </div>
+    </section>
+
+    {/* ========== H2-2: 心理学的効果 ========== */}
+    <section class="lt-section" aria-labelledby="lt-effect-h2">
+      <h2 id="lt-effect-h2" class="lt-h2">自分への手紙の心理学的効果</h2>
+      <p class="lt-lead">
+        自分への手紙には、心理学的な根拠のある3つの効果があります。<br />
+        気分転換や気晴らしではなく、自己理解・成長のための実践です。
+      </p>
+
+      {/* 効果1 */}
+      <div class="lt-effect-block">
+        <div class="lt-effect-header">
+          <div class="lt-effect-num" aria-hidden="true">効果 1</div>
+          <h3 class="lt-effect-title">感情体験の外在化と自己洞察</h3>
+        </div>
+        <p class="lt-effect-author">Pennebaker JW（1997）Expressive Writing 研究</p>
+        <p>
+          Pennebaker（1997）は、感情体験を文章で書き出す行為（Expressive Writing）が<br />
+          自己洞察・ストレス解消・免疫機能の改善に寄与することを実験で示しました。
+        </p>
+        <p>
+          頭の中でぐるぐる考え続けている感情は、言語化することで「外在化」されます。<br />
+          自分の外に出した感情は、より客観的に眺めることができるようになります。<br />
+          これが自己洞察の深化につながります。
+        </p>
+        <div class="lt-research-note">
+          <p class="lt-research-note-text">
+            Pennebaker の実験では、感情的な体験について15〜30分書いた参加者が、
+            そうでない参加者に比べて健康上の指標（通院頻度・免疫マーカー）で有意な改善を示した。
+            ただし「つらいことを書くと一時的に苦しくなることがある」とも報告されており、
+            書いた後は少し休むことを推奨している。
+          </p>
+          <p class="lt-research-source">
+            出典: Pennebaker JW（1997）<a href="https://doi.org/10.1111/j.1467-9280.1997.tb00403.x" target="_blank" rel="noopener noreferrer">Psychological Science, 8(3), 162-166</a>
+          </p>
+        </div>
+      </div>
+
+      {/* 効果2 */}
+      <div class="lt-effect-block">
+        <div class="lt-effect-header">
+          <div class="lt-effect-num" aria-hidden="true">効果 2</div>
+          <h3 class="lt-effect-title">セルフ・コンパッションの実践</h3>
+        </div>
+        <p class="lt-effect-author">Neff KD（2003）Self-Compassion 研究</p>
+        <p>
+          Neff（2003）はセルフ・コンパッションを「自分自身を友人と同じ親切さで扱うこと」と定義しました。<br />
+          三要素は「自己への親切さ（自己批判ではなく）」「共通の人間性（苦しみは人間共通）」「マインドフルネス（感情に飲み込まれない）」です。
+        </p>
+        <p>
+          自分への手紙は、このセルフ・コンパッションの実践ツールになります。<br />
+          「あのときの自分、よく頑張っていたね」という言葉を書くことで、<br />
+          自己批判の習慣を「自己への親切さ」に置き換えていきます。
+        </p>
+        <div class="lt-sc-grid">
+          <div class="lt-sc-item">
+            <span class="lt-sc-icon" aria-hidden="true">💛</span>
+            <div>
+              <strong>自己への親切さ</strong>
+              <p>批判ではなく、理解と温かさで自分に接する</p>
+            </div>
+          </div>
+          <div class="lt-sc-item">
+            <span class="lt-sc-icon" aria-hidden="true">🤝</span>
+            <div>
+              <strong>共通の人間性</strong>
+              <p>苦しむことは人間共通の体験。自分だけが失敗しているのではない</p>
+            </div>
+          </div>
+          <div class="lt-sc-item">
+            <span class="lt-sc-icon" aria-hidden="true">🧘</span>
+            <div>
+              <strong>マインドフルネス</strong>
+              <p>感情を否定も増幅もせず、ただあることを認める</p>
+            </div>
+          </div>
+        </div>
+        <p class="lt-source-note">
+          出典: Neff KD（2003）<a href="https://doi.org/10.1080/15298860309032" target="_blank" rel="noopener noreferrer">Self and Identity, 2(2), 85-101</a>
+        </p>
+      </div>
+
+      {/* 効果3 */}
+      <div class="lt-effect-block">
+        <div class="lt-effect-header">
+          <div class="lt-effect-num" aria-hidden="true">効果 3</div>
+          <h3 class="lt-effect-title">可能自己の言語化による動機づけ</h3>
+        </div>
+        <p class="lt-effect-author">Markus H, Nurius P（1986）Possible Selves 理論</p>
+        <p>
+          Markus & Nurius（1986）は「可能自己」理論を提唱しました。<br />
+          人は「なりたい未来の自分」「避けたい未来の自分」のイメージを持ち、<br />
+          それが現在の行動動機に影響することを示しました。
+        </p>
+        <p>
+          未来の自分に向けた手紙は、「なりたい自分のイメージ」を言語化する行為です。<br />
+          漠然としたイメージを言葉にすることで、目標が具体的になり行動につながりやすくなります。
+        </p>
+        <p class="lt-source-note">
+          出典: Markus H, Nurius P（1986）<a href="https://doi.org/10.1037/0003-066X.41.9.954" target="_blank" rel="noopener noreferrer">American Psychologist, 41(9), 954-969</a>
+        </p>
+      </div>
+    </section>
+
+    {/* ========== H2-3: テンプレート5パターン ========== */}
+    <section class="lt-section" aria-labelledby="lt-template-h2">
+      <h2 id="lt-template-h2" class="lt-h2">手紙テンプレート 5パターン</h2>
+      <p class="lt-lead">
+        書きやすいテンプレートを選んで使ってください。<br />
+        〔〕の部分を自分の言葉で埋めてから、タイムカプセルに保存しましょう。
+      </p>
+
+      <div class="lt-template-list">
+        {templates.map((tmpl) => (
+          <div class="lt-template-card" id={`template-${tmpl.id}`}>
+            <div class="lt-template-header">
+              <span class="lt-template-icon" aria-hidden="true">{tmpl.icon}</span>
+              <div class="lt-template-meta">
+                <h3 class="lt-template-title">{tmpl.title}</h3>
+                <p class="lt-template-desc">{tmpl.desc}</p>
+                <div class="lt-template-tags" role="list">
+                  {tmpl.tags.map((tag) => (
+                    <span class="lt-template-tag" role="listitem">{tag}</span>
+                  ))}
+                </div>
+              </div>
+            </div>
+            <div class="lt-template-body">
+              <p class="lt-template-body-label">記入例（〔〕を自分の言葉で置き換えてください）</p>
+              <pre class="lt-template-pre" role="document" aria-label={`${tmpl.title} の記入例`}>{tmpl.sample}</pre>
+            </div>
+            <p class="lt-template-note">{tmpl.note}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    {/* ========== H2-4: 手紙を書くコツ7つ ========== */}
+    <section class="lt-section" aria-labelledby="lt-tips-h2">
+      <h2 id="lt-tips-h2" class="lt-h2">手紙を書くコツ 7つ</h2>
+      <p class="lt-lead">
+        より深い自己理解につながる手紙を書くためのポイントです。<br />
+        全部守ろうとせず、まず1〜2つを意識するだけで変わります。
+      </p>
+
+      <ol class="lt-tips-list" role="list">
+        {writingTips.map((tip) => (
+          <li class="lt-tip-item">
+            <div class="lt-tip-num" aria-label={`コツ${tip.num}`}>{tip.num}</div>
+            <div class="lt-tip-body">
+              <h3 class="lt-tip-title">{tip.title}</h3>
+              <p class="lt-tip-desc">{tip.body}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </section>
+
+    {/* ========== H2-5: タイムカプセル誘導（結論） ========== */}
+    <section class="lt-section lt-pro-section" aria-labelledby="lt-pro-h2">
+      <h2 id="lt-pro-h2" class="lt-pro-h2">書いた手紙をタイムカプセルで未来の自分に届ける</h2>
+      <p class="lt-pro-intro">
+        手紙を書いたら、次のステップはタイムカプセルへの保存です。<br />
+        書いた手紙と診断スコアをセットで封印することで、<br />
+        数ヶ月後に「感情の変化」と「特性の変化」を同時に振り返れます。
+      </p>
+
+      <div class="lt-pro-flow">
+        <div class="lt-pro-flow-step">
+          <div class="lt-pro-flow-num" aria-hidden="true">1</div>
+          <p class="lt-pro-flow-text">このページのテンプレートで手紙を書く</p>
+        </div>
+        <div class="lt-pro-flow-arrow" aria-hidden="true">→</div>
+        <div class="lt-pro-flow-step">
+          <div class="lt-pro-flow-num" aria-hidden="true">2</div>
+          <p class="lt-pro-flow-text">診断ナビで8つの診断を受けてスコアを確認</p>
+        </div>
+        <div class="lt-pro-flow-arrow" aria-hidden="true">→</div>
+        <div class="lt-pro-flow-step">
+          <div class="lt-pro-flow-num" aria-hidden="true">3</div>
+          <p class="lt-pro-flow-text">PRO タイムカプセルに手紙＋スコアを封印</p>
+        </div>
+        <div class="lt-pro-flow-arrow" aria-hidden="true">→</div>
+        <div class="lt-pro-flow-step">
+          <div class="lt-pro-flow-num" aria-hidden="true">4</div>
+          <p class="lt-pro-flow-text">3・6・12ヶ月後に通知 → 開封 → 変化を確認</p>
+        </div>
+      </div>
+
+      <div class="lt-pro-card">
+        <div class="lt-pro-card-header">
+          <span class="lt-pro-badge">PRO限定</span>
+          <h3 class="lt-pro-card-title">タイムカプセル機能</h3>
+        </div>
+        <div class="lt-pro-card-body">
+          <ul class="lt-pro-card-list">
+            <li>手紙と診断スコアをセットで封印</li>
+            <li>3ヶ月・6ヶ月・12ヶ月後に自動で通知</li>
+            <li>開封時に当時のスコアと現在のスコアをグラフ比較</li>
+            <li>複数のカプセルを作成可能（転職前・結婚前 など節目ごとに）</li>
+          </ul>
+          <div class="lt-pro-price-row">
+            <span class="lt-pro-price">¥590<span class="lt-pro-price-unit">/月</span></span>
+            <span class="lt-pro-price-note">税込・いつでも解約可</span>
+          </div>
+          <a href="/pro/" class="lt-pro-cta-btn" aria-label="PRO会員の詳細・タイムカプセル機能のページへ">
+            PRO でタイムカプセルを始める
+            <span aria-hidden="true">→</span>
+          </a>
+          <p class="lt-pro-cta-note">現在はプレビュー中。Stripe決済連携後に申込可能になります。</p>
+        </div>
+      </div>
+    </section>
+
+    {/* ========== Science Note ========== */}
+    <ScienceNote
+      basisText="Neff KD（2003）セルフ・コンパッション理論・Pennebaker JW（1997）Expressive Writing 研究・Markus H & Nurius P（1986）可能自己理論"
+      basisUrl="https://doi.org/10.1080/15298860309032"
+      basisLabel="Neff（2003）Self and Identity"
+      notMedical={true}
+      updatedAt={CONFIRMED_AT}
+      additionalNote="本ページで紹介する手紙の書き方は自己理解・セルフケアのためのガイドです。心理療法・カウンセリング・精神科治療の代替ではありません。強い苦痛・気分の落ち込みが続く場合は医師・臨床心理士にご相談ください。"
+    />
+
+    {/* ========== ReferenceList ========== */}
+    <ReferenceList references={references} confirmedAt={CONFIRMED_AT} />
+
+    {/* ========== 関連ページ ========== */}
+    <section class="lt-section" aria-labelledby="lt-related-h2">
+      <h2 id="lt-related-h2" class="lt-h2">関連ページ</h2>
+      <ul class="lt-related-list">
+        <li class="lt-related-item">
+          <a href="/time-capsule/" class="lt-related-link">
+            <span class="lt-related-icon" aria-hidden="true">⏳</span>
+            <span class="lt-related-body">
+              <span class="lt-related-title">タイムカプセル機能 紹介ページ</span>
+              <span class="lt-related-desc">過去の診断スコアと今を比較する仕組みと活用シーン5パターン</span>
+            </span>
+          </a>
+        </li>
+        <li class="lt-related-item">
+          <a href="/pro/" class="lt-related-link">
+            <span class="lt-related-icon" aria-hidden="true">⭐</span>
+            <span class="lt-related-body">
+              <span class="lt-related-title">PRO会員 ¥590/月</span>
+              <span class="lt-related-desc">タイムカプセル・AIプロンプトカード・広告非表示ほか全機能の詳細</span>
+            </span>
+          </a>
+        </li>
+        <li class="lt-related-item">
+          <a href="/profile/" class="lt-related-link">
+            <span class="lt-related-icon" aria-hidden="true">📊</span>
+            <span class="lt-related-body">
+              <span class="lt-related-title">統合プロファイル</span>
+              <span class="lt-related-desc">8診断を統合した今の自己理解レポート。タイムカプセルに記録する起点に</span>
+            </span>
+          </a>
+        </li>
+        <li class="lt-related-item">
+          <a href="/diagnosis/change/seikaku-kawaru/" class="lt-related-link">
+            <span class="lt-related-icon" aria-hidden="true">🔄</span>
+            <span class="lt-related-body">
+              <span class="lt-related-title">性格は変わるのか？科学的根拠</span>
+              <span class="lt-related-desc">縦断研究（50,207人）で示された特性変化の実態</span>
+            </span>
+          </a>
+        </li>
+      </ul>
+    </section>
+
+    {/* ========== FAQ ========== */}
+    <section class="lt-section" aria-labelledby="lt-faq-h2">
+      <h2 id="lt-faq-h2" class="lt-h2">よくある質問</h2>
+      <dl class="lt-faq-list">
+        {faqs.map(({ question, answer }) => (
+          <div class="lt-faq-item">
+            <dt class="lt-faq-q">{question}</dt>
+            <dd class="lt-faq-a">{answer}</dd>
+          </div>
+        ))}
+      </dl>
+    </section>
+
+    {/* ========== 末尾CTA ========== */}
+    <div class="lt-bottom-cta">
+      <p class="lt-bottom-cta-text">書いた手紙を、数ヶ月後の自分に届けてみませんか。</p>
+      <a href="/time-capsule/" class="lt-bottom-cta-link" aria-label="タイムカプセル機能の詳細を見る">
+        タイムカプセル機能を確認する →
+      </a>
+      <a href="/pro/" class="lt-bottom-cta-btn" aria-label="PRO会員の詳細を見る">
+        PRO でタイムカプセルを始める →
+      </a>
+      <p class="lt-bottom-cta-note">¥590/月・いつでも解約可</p>
+    </div>
+  </Container>
+</BaseLayout>
+
+<style>
+/* ========== ヒーロー ========== */
+.lt-hero {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  color: #fff;
+  padding-block: 4rem 4.5rem;
+  text-align: center;
+}
+.lt-hero-inner {
+  max-width: 640px;
+  margin-inline: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+  padding-inline: 1rem;
+}
+.lt-hero-badge {
+  display: inline-block;
+  background: rgba(255 255 255 / 0.12);
+  border: 1px solid rgba(255 255 255 / 0.3);
+  border-radius: 2rem;
+  padding: 0.25rem 1rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+}
+.lt-hero-h1 {
+  font-size: clamp(1.9rem, 5.5vw, 2.6rem);
+  font-family: var(--sn-font-rounded, sans-serif);
+  font-weight: 900;
+  line-height: 1.25;
+  margin: 0;
+}
+.lt-hero-sub {
+  display: block;
+  font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+  opacity: 0.85;
+  margin-top: 0.4rem;
+  font-weight: 500;
+  line-height: 1.5;
+}
+.lt-hero-catch {
+  font-size: 0.95rem;
+  opacity: 0.82;
+  line-height: 1.9;
+  margin: 0;
+}
+.lt-hero-meta {
+  font-size: 0.73rem;
+  opacity: 0.6;
+}
+
+/* ========== AIOブロック ========== */
+.lt-aio-block {
+  background: #f0f4ff;
+  border-left: 4px solid #3b82f6;
+  border-radius: 0 0.5rem 0.5rem 0;
+  padding: 1.25rem 1.5rem;
+  margin-block: 2rem;
+}
+.lt-aio-title {
+  font-weight: 700;
+  margin: 0 0 0.5rem;
+  font-size: 0.875rem;
+  color: #1d4ed8;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.lt-aio-list {
+  margin: 0;
+  padding-left: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.lt-aio-list li {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: #1e3a5f;
+}
+
+/* ========== セクション共通 ========== */
+.lt-section {
+  margin-block: 3.5rem;
+}
+.lt-h2 {
+  font-size: clamp(1.3rem, 4vw, 1.7rem);
+  font-family: var(--sn-font-rounded, sans-serif);
+  font-weight: 900;
+  margin: 0 0 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 3px solid #3b82f6;
+  color: #1e3a5f;
+}
+.lt-h3 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin: 1.5rem 0 0.6rem;
+  color: #1d4ed8;
+}
+.lt-lead {
+  font-size: 1rem;
+  line-height: 1.85;
+  color: #374151;
+  margin-bottom: 1.5rem;
+}
+p {
+  font-size: 0.95rem;
+  line-height: 1.85;
+  color: #374151;
+  margin-block: 0.75rem;
+}
+.lt-source-note {
+  font-size: 0.78rem;
+  color: #6b7280;
+  margin-top: 0.5rem;
+}
+.lt-source-note a {
+  color: #3b82f6;
+}
+
+/* ========== 手紙タイプグリッド ========== */
+.lt-type-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1.25rem;
+  margin-top: 1.25rem;
+}
+.lt-type-card {
+  border: 1px solid #dbeafe;
+  border-radius: 0.875rem;
+  padding: 1.25rem;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.lt-type-icon {
+  font-size: 2rem;
+}
+.lt-type-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1e3a5f;
+  margin: 0;
+}
+.lt-type-desc {
+  font-size: 0.875rem;
+  line-height: 1.7;
+  color: #4b5563;
+  margin: 0;
+}
+
+/* ========== 効果ブロック ========== */
+.lt-effect-block {
+  border: 1px solid #e0e7ff;
+  border-radius: 0.875rem;
+  padding: 1.5rem;
+  margin-block: 1.5rem;
+  background: #fff;
+}
+.lt-effect-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+.lt-effect-num {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #3b82f6;
+  background: #eff6ff;
+  padding: 0.15rem 0.6rem;
+  border-radius: 0.25rem;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.lt-effect-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #1e3a5f;
+  margin: 0;
+}
+.lt-effect-author {
+  font-size: 0.78rem;
+  color: #6b7280;
+  font-style: italic;
+  margin: 0 0 0.75rem;
+}
+.lt-research-note {
+  background: #eff6ff;
+  border-left: 3px solid #3b82f6;
+  border-radius: 0 0.5rem 0.5rem 0;
+  padding: 1rem 1.25rem;
+  margin-top: 1rem;
+}
+.lt-research-note-text {
+  font-size: 0.875rem;
+  line-height: 1.75;
+  color: #1e3a5f;
+  margin: 0 0 0.5rem;
+  font-style: italic;
+}
+.lt-research-source {
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin: 0;
+}
+.lt-research-source a {
+  color: #3b82f6;
+}
+
+/* ========== セルフコンパッショングリッド ========== */
+.lt-sc-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-block: 1rem;
+}
+.lt-sc-item {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+  padding: 0.875rem;
+  background: #f0fdf4;
+  border-radius: 0.625rem;
+  border: 1px solid #bbf7d0;
+}
+.lt-sc-icon {
+  font-size: 1.4rem;
+  flex-shrink: 0;
+}
+.lt-sc-item strong {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #065f46;
+  margin-bottom: 0.15rem;
+}
+.lt-sc-item p {
+  font-size: 0.8rem;
+  color: #047857;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* ========== テンプレートリスト ========== */
+.lt-template-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+  margin-top: 1.5rem;
+}
+.lt-template-card {
+  border: 1px solid #e0e7ff;
+  border-radius: 1rem;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(59 130 246 / 0.07);
+}
+.lt-template-header {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  padding: 1.25rem 1.5rem;
+  background: #eff6ff;
+  border-bottom: 1px solid #dbeafe;
+}
+.lt-template-icon {
+  font-size: 2rem;
+  flex-shrink: 0;
+}
+.lt-template-meta {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+.lt-template-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1e3a5f;
+  margin: 0;
+}
+.lt-template-desc {
+  font-size: 0.85rem;
+  color: #4b5563;
+  line-height: 1.6;
+  margin: 0;
+}
+.lt-template-tags {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  margin-top: 0.25rem;
+}
+.lt-template-tag {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #1d4ed8;
+  background: #dbeafe;
+  padding: 0.1rem 0.5rem;
+  border-radius: 1rem;
+}
+.lt-template-body {
+  padding: 1.25rem 1.5rem;
+  background: #fafcff;
+  border-bottom: 1px solid #e0e7ff;
+}
+.lt-template-body-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin: 0 0 0.75rem;
+}
+.lt-template-pre {
+  font-family: var(--sn-font-body, sans-serif);
+  font-size: 0.875rem;
+  line-height: 1.9;
+  color: #1f2937;
+  background: #fff;
+  border: 1px solid #e0e7ff;
+  border-radius: 0.5rem;
+  padding: 1rem 1.25rem;
+  white-space: pre-wrap;
+  word-break: break-word;
+  margin: 0;
+}
+.lt-template-note {
+  font-size: 0.78rem;
+  color: #6b7280;
+  line-height: 1.6;
+  padding: 0.875rem 1.5rem;
+  margin: 0;
+  background: #f9fafb;
+  border-left: 3px solid #93c5fd;
+}
+
+/* ========== コツリスト ========== */
+.lt-tips-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  margin-top: 1.5rem;
+  padding: 0;
+  list-style: none;
+}
+.lt-tip-item {
+  display: flex;
+  gap: 1.1rem;
+  align-items: flex-start;
+  padding: 1.1rem 1.25rem;
+  border: 1px solid #dbeafe;
+  border-radius: 0.75rem;
+  background: #fff;
+}
+.lt-tip-num {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  min-width: 2.25rem;
+  background: #3b82f6;
+  color: #fff;
+  border-radius: 50%;
+  font-weight: 900;
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+.lt-tip-body {
+  flex: 1;
+}
+.lt-tip-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #1e3a5f;
+  margin: 0 0 0.35rem;
+}
+.lt-tip-desc {
+  font-size: 0.875rem;
+  line-height: 1.7;
+  color: #4b5563;
+  margin: 0;
+}
+
+/* ========== PRO誘導 ========== */
+.lt-pro-section {
+  background: linear-gradient(135deg, #eff6ff 0%, #f0f4ff 100%);
+  border-radius: 1.25rem;
+  padding: 2.5rem 1.5rem;
+  border: 1px solid #bfdbfe;
+}
+.lt-pro-h2 {
+  font-size: clamp(1.2rem, 3.5vw, 1.55rem);
+  font-family: var(--sn-font-rounded, sans-serif);
+  font-weight: 900;
+  margin: 0 0 0.75rem;
+  color: #1e3a5f;
+  text-align: center;
+}
+.lt-pro-intro {
+  text-align: center;
+  font-size: 0.95rem;
+  color: #4b5563;
+  line-height: 1.8;
+  margin-bottom: 1.75rem;
+}
+.lt-pro-flow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: 1.75rem;
+  padding: 1rem;
+  background: #fff;
+  border-radius: 0.75rem;
+  border: 1px solid #dbeafe;
+}
+.lt-pro-flow-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  min-width: 120px;
+  text-align: center;
+}
+.lt-pro-flow-num {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  background: #3b82f6;
+  color: #fff;
+  border-radius: 50%;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+.lt-pro-flow-text {
+  font-size: 0.78rem;
+  color: #374151;
+  line-height: 1.4;
+  margin: 0;
+}
+.lt-pro-flow-arrow {
+  color: #93c5fd;
+  font-size: 1.25rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.lt-pro-card {
+  background: #fff;
+  border: 2px solid #3b82f6;
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(59 130 246 / 0.15);
+}
+.lt-pro-card-header {
+  background: linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 50%, #3b82f6 100%);
+  padding: 1.1rem 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.lt-pro-badge {
+  background: rgba(255 255 255 / 0.2);
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.2rem 0.65rem;
+  border-radius: 2rem;
+  border: 1px solid rgba(255 255 255 / 0.4);
+}
+.lt-pro-card-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #fff;
+  margin: 0;
+}
+.lt-pro-card-body {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+.lt-pro-card-list {
+  padding-left: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin: 0;
+}
+.lt-pro-card-list li {
+  font-size: 0.9rem;
+  line-height: 1.65;
+  color: #374151;
+}
+.lt-pro-price-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+.lt-pro-price {
+  font-family: var(--sn-font-rounded, sans-serif);
+  font-size: 1.75rem;
+  font-weight: 900;
+  color: #1e3a8a;
+}
+.lt-pro-price-unit {
+  font-size: 1rem;
+  font-weight: 500;
+}
+.lt-pro-price-note {
+  font-size: 0.78rem;
+  color: #6b7280;
+  margin: 0;
+}
+.lt-pro-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.9rem 2.25rem;
+  background: linear-gradient(135deg, #1d4ed8, #3b82f6);
+  color: #fff;
+  border-radius: 3rem;
+  font-family: var(--sn-font-rounded, sans-serif);
+  font-size: 1rem;
+  font-weight: 900;
+  text-decoration: none;
+  min-height: 44px;
+  align-self: flex-start;
+  box-shadow: 0 6px 18px rgba(59 130 246 / 0.3);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.lt-pro-cta-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(59 130 246 / 0.4);
+  text-decoration: none;
+}
+.lt-pro-cta-btn:focus-visible {
+  outline: 3px solid #1d4ed8;
+  outline-offset: 3px;
+}
+.lt-pro-cta-note {
+  font-size: 0.78rem;
+  color: #6b7280;
+  margin: 0;
+}
+
+/* ========== 関連リンク ========== */
+.lt-related-list {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.lt-related-item {
+  display: block;
+}
+.lt-related-link {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.lt-related-link:hover {
+  border-color: #3b82f6;
+  box-shadow: 0 2px 8px rgba(59 130 246 / 0.1);
+}
+.lt-related-icon {
+  font-size: 1.75rem;
+  flex-shrink: 0;
+}
+.lt-related-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+.lt-related-title {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #1e3a5f;
+}
+.lt-related-desc {
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+/* ========== FAQ ========== */
+.lt-faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+.lt-faq-item {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+.lt-faq-q {
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 1rem 1.25rem;
+  background: #f0f9ff;
+  margin: 0;
+  display: block;
+  color: #1e3a5f;
+}
+.lt-faq-q::before {
+  content: 'Q. ';
+  color: #3b82f6;
+}
+.lt-faq-a {
+  font-size: 0.9rem;
+  line-height: 1.75;
+  padding: 1rem 1.25rem;
+  margin: 0;
+  color: #4b5563;
+}
+.lt-faq-a::before {
+  content: 'A. ';
+  font-weight: 700;
+  color: #059669;
+}
+
+/* ========== 末尾CTA ========== */
+.lt-bottom-cta {
+  text-align: center;
+  padding: 2.5rem 1.5rem;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  border-radius: 1.25rem;
+  margin-block: 3rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.875rem;
+}
+.lt-bottom-cta-text {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #fff;
+  margin: 0;
+  line-height: 1.6;
+}
+.lt-bottom-cta-link {
+  color: #93c5fd;
+  font-size: 0.9rem;
+  text-decoration: underline;
+}
+.lt-bottom-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.9rem 2.25rem;
+  background: #3b82f6;
+  color: #fff;
+  border-radius: 3rem;
+  font-family: var(--sn-font-rounded, sans-serif);
+  font-size: 1rem;
+  font-weight: 900;
+  text-decoration: none;
+  min-height: 44px;
+  box-shadow: 0 6px 18px rgba(59 130 246 / 0.4);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.lt-bottom-cta-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(59 130 246 / 0.5);
+  text-decoration: none;
+}
+.lt-bottom-cta-note {
+  font-size: 0.75rem;
+  color: rgba(255 255 255 / 0.55);
+  margin: 0;
+}
+
+/* ========== レスポンシブ ========== */
+@media (max-width: 768px) {
+  .lt-type-grid,
+  .lt-sc-grid {
+    grid-template-columns: 1fr;
+  }
+  .lt-pro-flow {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  .lt-pro-flow-arrow {
+    transform: rotate(90deg);
+  }
+  .lt-pro-cta-btn {
+    width: 100%;
+    justify-content: center;
+  }
+  .lt-bottom-cta-btn {
+    width: 100%;
+    justify-content: center;
+  }
+  .lt-tip-item {
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+  .lt-template-header {
+    flex-direction: column;
+  }
+}
+@media (max-width: 480px) {
+  .lt-effect-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+</style>
