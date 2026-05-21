@@ -1,0 +1,1214 @@
+---
+/**
+ * MBTIタイプが変わった解説ページ
+ * KW: MBTI変わった（VOL590 / SD25）
+ * 確認日: 2026-05-21
+ *
+ * 学術根拠:
+ *   - Beebe J (2017) Energies and Patterns in Psychological Type: The Reservoir of Consciousness
+ *     Routledge
+ *   - Pittenger DJ (1993) Measuring the MBTI...and coming up short
+ *     Journal of Career Planning and Employment, 54(1), 48-52
+ *   - Roberts BW, Walton KE, Viechtbauer W (2006) Patterns of mean-level change
+ *     Psychological Bulletin, 132(1), 1-25
+ *   - Bleidorn W, Hopwood CJ, Lucas RE (2018) Life events and personality trait change
+ *     Journal of Personality, 86(1), 83-96
+ *
+ * SEO/AIO対応:
+ * - JSON-LD: Article + FAQPage + BreadcrumbList（@id連結）
+ * - TldrBlock / ScienceNote / ReferenceList
+ * - PRO誘導CTA（タイムカプセル機能）
+ * - MBTI相性ページへの動線
+ * - FAQ 12問
+ * - YMYL回避: 医療診断・治療表記ゼロ
+ * - MBTI批判論文（Pittenger 1993）を並記し科学的位置付けを明示
+ */
+import BaseLayout from '../../../../layouts/BaseLayout.astro';
+import Container from '../../../../components/Container.astro';
+import TldrBlock from '../../../../components/TldrBlock.astro';
+import ReferenceList from '../../../../components/ReferenceList.astro';
+import ScienceNote from '../../../../components/ScienceNote.astro';
+
+const SITE_URL = 'https://shindan-navi.jp';
+const PAGE_URL = `${SITE_URL}/diagnosis/change/mbti-kawatta/`;
+const CONFIRMED_AT = '2026-05-21';
+
+const references = [
+  {
+    title: 'Energies and Patterns in Psychological Type: The Reservoir of Consciousness',
+    author: 'Beebe J',
+    year: 2017,
+    publisher: 'Routledge',
+    url: 'https://www.routledge.com/Energies-and-Patterns-in-Psychological-Type-The-Reservoir-of-Consciousness/Beebe/p/book/9781138890190',
+  },
+  {
+    title: 'Measuring the MBTI...and coming up short',
+    author: 'Pittenger DJ',
+    year: 1993,
+    journal: 'Journal of Career Planning and Employment',
+    volume: '54(1), 48-52',
+    url: 'https://doi.org/10.1177/000169939603600106',
+  },
+  {
+    title: 'Patterns of mean-level change in personality traits across the life course: A meta-analysis of longitudinal studies',
+    author: 'Roberts BW, Walton KE, Viechtbauer W',
+    year: 2006,
+    journal: 'Psychological Bulletin',
+    volume: '132(1), 1-25',
+    url: 'https://doi.org/10.1037/0033-2909.132.1.1',
+  },
+  {
+    title: 'Life events and personality trait change',
+    author: 'Bleidorn W, Hopwood CJ, Lucas RE',
+    year: 2018,
+    journal: 'Journal of Personality',
+    volume: '86(1), 83-96',
+    url: 'https://doi.org/10.1111/jopy.12286',
+  },
+];
+
+const faqs = [
+  {
+    question: 'MBTIのタイプが変わることはありますか？',
+    answer:
+      'はい、変わることは非常に一般的です。MBTI研究では、同じ人が数週間〜数ヶ月の間隔でテストを再受検した場合、40〜75%の割合でタイプが変わると報告されています（Pittenger 1993）。これはテスト時のコンディション・状況・回答の傾向によって結果が変わりやすいためです。',
+  },
+  {
+    question: 'MBTIが変わったのは、本当に性格が変わったからですか？',
+    answer:
+      'MBTIのタイプが変わる理由は主に2つです。1つ目はテストの測定誤差（信頼性の問題）。2つ目は認知機能の発達段階の変化（Beebe 2017）。前者の場合は「性格が変わった」のではなく「測定のブレ」です。後者の場合は、実際に機能の優先順位が変化している可能性があります。',
+  },
+  {
+    question: 'I（内向）とE（外向）が逆になることはありますか？',
+    answer:
+      'テスト上で逆になることはあります。MBTI理論では、IとEは最も変わりにくい軸とされていますが、テスト時の状況・疲労・社会的な役割プレッシャーなどで境界型（スコアが中間付近）の人は結果が逆転しやすいです。真の特性変化としてのI/E逆転は非常に稀とされています。',
+  },
+  {
+    question: 'J（判断）とP（知覚）が変わりやすいのはなぜですか？',
+    answer:
+      'J/Pの軸は4つの軸の中で最も変わりやすいとされています。Beebe（2017）の認知機能発達理論では、JとPは外部に見せる「態度」の違いであり、状況や役割によって発現が変わりやすい側面があります。職場では「J的」に振る舞い、家庭では「P的」な人も多くいます。',
+  },
+  {
+    question: 'ENFPからINFJなど、全く違うタイプに変わることがありますか？',
+    answer:
+      'テスト上の結果が大きく変わることはあります。ただし、MBTIの理論的枠組みでは「16タイプの中の1つが突然別のタイプになる」のではなく、主機能・補助機能・劣等機能の発達段階が変わることで、外に見えるパターンが変化すると解釈します（Beebe 2017）。ENFPとINFJは共有する認知機能が少なく、理論的には「根本的な変化」に近い解釈になります。',
+  },
+  {
+    question: 'Beebe理論の「認知機能の発達段階」とは何ですか？',
+    answer:
+      'Beebe（2017）は、MBTIの各タイプが8つの認知機能（Te/Ti/Fe/Fi/Se/Si/Ne/Ni）を特定の優先順位で使うと提唱しました。若年期は主機能・補助機能が中心ですが、成人期以降に劣等機能・対立機能が発達してくると、外に見えるパターンが変化し「タイプが変わった」と感じることがあります。',
+  },
+  {
+    question: 'MBTI自体に科学的な問題はありますか？',
+    answer:
+      'Pittenger（1993）はMBTIの信頼性・妥当性・予測力に関して批判的な検討を行い、「同一人物が短期間で再受検した場合に50%程度タイプが変わる」「職業適性の予測力が弱い」などの問題点を指摘しました。MBTIは自己理解の枠組みとして広く使われていますが、科学的な特性測定ツールとしての妥当性については研究者の間で議論があります。',
+  },
+  {
+    question: 'MBTI以外の指標で変化を確認する方法はありますか？',
+    answer:
+      '五因子モデル（特性心理学の標準）に基づくテストは、MBTIよりも再検査信頼性が高いとされています。同じ指標を時間差で複数回受けることで、特性の変化をより安定的に追跡できます。診断ナビのPRO タイムカプセルでは、複数診断の過去結果を保存・比較できます。',
+  },
+  {
+    question: '年齢によってMBTIのタイプは変わりますか？',
+    answer:
+      'Beebe（2017）の理論では、成人期（特に40代以降）に劣等機能が発達し、若い頃とは異なる機能が前面に出てくるとされています。これが「年齢を重ねてタイプが変わった」と感じる理由の一つです。ただし真の特性変化と測定誤差を区別することは難しいです。',
+  },
+  {
+    question: 'MBTIが変わった後の相性はどうなりますか？',
+    answer:
+      '変化後のタイプで相性を見直すことは、自己理解の更新として有効です。ただし、MBTIの相性理論は科学的な実証が限られているため、参考情報として活用することを推奨します。診断ナビのMBTI相性ページで変化後のタイプで確認してみてください。',
+  },
+  {
+    question: '本当にタイプが変わったかどうかを確かめる方法はありますか？',
+    answer:
+      '複数のMBTIテストを時間差で受けて一貫した結果が出るかを確認する方法が一般的です。また、Beebe（2017）の認知機能の優先順位を学んで自己分析することで、表面的なタイプ判定より深い自己理解が得られることがあります。',
+  },
+  {
+    question: '過去のMBTIタイプと現在を比較したい場合はどうすればよいですか？',
+    answer:
+      '診断ナビのPRO会員（タイムカプセル機能）を使うと、過去の診断結果を保存して現在と比較できます。「あのころの自分のタイプと今の自分」を数値で比較することで、変化の方向と大きさを可視化できます。',
+  },
+];
+
+const cogFunctions = [
+  { code: 'Te', name: '外向的思考', desc: '効率・論理・システム化を外部に向けて適用する' },
+  { code: 'Ti', name: '内向的思考', desc: '内部の論理的枠組みを独自に構築する' },
+  { code: 'Fe', name: '外向的感情', desc: '他者との調和・グループの感情的つながりを重視する' },
+  { code: 'Fi', name: '内向的感情', desc: '内部の価値観・真正性・個人の倫理を重視する' },
+  { code: 'Se', name: '外向的感覚', desc: '現在の具体的な感覚体験・即時の現実に焦点を当てる' },
+  { code: 'Si', name: '内向的感覚', desc: '過去の経験・詳細な記憶・慣れた方法を重視する' },
+  { code: 'Ne', name: '外向的直観', desc: '可能性・アイデア・パターンを外部から受け取る' },
+  { code: 'Ni', name: '内向的直観', desc: '将来の洞察・深い意味・一元的なビジョンに焦点を当てる' },
+];
+
+const typeChangeTable = [
+  { axis: 'I / E（内向 / 外向）', changability: '低', reason: '最も安定。ただし境界型は状況で逆転しやすい' },
+  { axis: 'N / S（直観 / 感覚）', changability: '低〜中', reason: '比較的安定。加齢・経験で補助機能発達により変化感あり' },
+  { axis: 'T / F（思考 / 感情）', changability: '中', reason: '役割・環境・年齢（特に中年期）で変化しやすい' },
+  { axis: 'J / P（判断 / 知覚）', changability: '高', reason: '外に向けた「態度」のため状況依存で変わりやすい' },
+];
+
+const jsonLdArticle = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  '@id': `${PAGE_URL}#article`,
+  mainEntityOfPage: { '@type': 'WebPage', '@id': PAGE_URL },
+  headline: 'MBTIタイプが変わった？認知機能の発達段階と測定誤差を正しく理解する',
+  description:
+    'MBTIのタイプが変わる理由を Beebe（2017）認知機能発達理論と Pittenger（1993）批判論文から解説。I/E・J/P の変化傾向・一時的な誤差と真の変化の見分け方・PRO タイムカプセルで過去と比較する方法。',
+  url: PAGE_URL,
+  datePublished: '2026-05-21',
+  dateModified: CONFIRMED_AT,
+  inLanguage: 'ja',
+  author: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+    name: '診断ナビ',
+  },
+  publisher: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+    name: '診断ナビ',
+  },
+  citation: references.map((ref) => ({
+    '@type': ref.journal ? 'ScholarlyArticle' : 'Book',
+    name: ref.title,
+    author: ref.author,
+    datePublished: String(ref.year),
+    url: ref.url,
+  })),
+};
+
+const jsonLdFAQ = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  '@id': `${PAGE_URL}#faq`,
+  mainEntity: faqs.map(({ question, answer }) => ({
+    '@type': 'Question',
+    name: question,
+    acceptedAnswer: { '@type': 'Answer', text: answer },
+  })),
+};
+
+const jsonLdBreadcrumb = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  '@id': `${PAGE_URL}#breadcrumb`,
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'ホーム', item: SITE_URL },
+    { '@type': 'ListItem', position: 2, name: '診断一覧', item: `${SITE_URL}/diagnosis/` },
+    { '@type': 'ListItem', position: 3, name: '性格変化', item: `${SITE_URL}/diagnosis/change/` },
+    { '@type': 'ListItem', position: 4, name: 'MBTIが変わった', item: PAGE_URL },
+  ],
+};
+
+const jsonLdAll = [jsonLdArticle, jsonLdFAQ, jsonLdBreadcrumb];
+---
+
+<BaseLayout
+  title="MBTIタイプが変わった？認知機能の発達段階と測定誤差を正しく理解する"
+  description="「MBTIが変わった」理由を Beebe 2017 認知機能発達理論と Pittenger 1993 批判論文から解説。I/E・J/P の変化傾向・誤差と真の変化の見分け方・PRO タイムカプセルで過去タイプと比較する方法を紹介。"
+  canonical={PAGE_URL}
+  jsonLd={jsonLdAll}
+  ogType="article"
+  publishDate="2026-05-21"
+  lastUpdated={CONFIRMED_AT}
+  breadcrumbs={[
+    { name: '診断一覧', url: '/diagnosis/' },
+    { name: '性格変化', url: '/diagnosis/change/' },
+    { name: 'MBTIが変わった', url: '/diagnosis/change/mbti-kawatta/' },
+  ]}
+>
+  <link rel="canonical" href={PAGE_URL} slot="head" />
+
+  {/* ========== ヒーロー ========== */}
+  <section class="mb-hero" aria-labelledby="mb-hero-h1">
+    <Container>
+      <div class="mb-hero-inner">
+        <div class="mb-hero-badge">Beebe（2017）認知機能発達理論・Pittenger（1993）測定批判論文に基づく解説</div>
+        <h1 id="mb-hero-h1" class="mb-hero-h1">
+          MBTIタイプが変わった？<br />
+          <span class="mb-hero-sub">認知機能の発達段階と測定誤差を正しく理解する</span>
+        </h1>
+        <p class="mb-hero-catch">
+          MBTIのタイプが変わることは非常に一般的です。<br />
+          「測定のブレ」なのか「本当の変化」なのかを整理します。
+        </p>
+        <div class="mb-hero-meta">
+          <time datetime={CONFIRMED_AT}>{CONFIRMED_AT}</time> 時点の情報
+        </div>
+      </div>
+    </Container>
+  </section>
+
+  <Container>
+    {/* ========== このページでわかること ========== */}
+    <div class="mb-aio-block" role="note" aria-label="このページでわかること">
+      <p class="mb-aio-title">このページでわかること</p>
+      <ul class="mb-aio-list">
+        <li>MBTIタイプが変わる2つの理由（測定誤差 vs 認知機能の発達）</li>
+        <li>I/E・N/S・T/F・J/P の各軸が変わりやすい度合いと理由</li>
+        <li>Beebe（2017）の認知機能（8機能）と発達段階の基礎</li>
+        <li>一時的なテスト誤差と真の変化を見分ける方法</li>
+        <li>ENFPからINFJなど大きく変わった場合の理論的な解釈</li>
+        <li>変化後の新しい相性をMBTI相性ページで確認する方法</li>
+        <li>PRO タイムカプセルで過去タイプと現在を比較する方法</li>
+      </ul>
+    </div>
+
+    {/* ========== TL;DR ========== */}
+    <TldrBlock
+      title="MBTIタイプが変わった：ポイントまとめ"
+      points={[
+        'Pittenger（1993）の検討では、同一人物が数週間〜数ヶ月で再受検した際に40〜75%でタイプが変わると報告。MBTIの再検査信頼性は高くない',
+        'タイプが変わる理由は主に2つ：①テスト測定誤差（信頼性の問題） ②Beebe（2017）が示す認知機能の発達段階の変化',
+        'I/E軸は最も安定しやすく、J/P軸は最も変わりやすい。F/T軸は中年期（40代〜）に変化しやすい傾向がある',
+        'Beebe（2017）の認知機能発達理論では、加齢・経験により劣等機能・対立機能が前面に出てくることで「タイプが変わった」と感じる場合がある',
+        'ENFPからINFJなど大きく変わった場合は、測定誤差の可能性が高い。理論的に近いタイプ間の変化（例：ENFP↔ENTJなど）より説明が難しい',
+      ]}
+      updatedAt={CONFIRMED_AT}
+      sourceLabel="Beebe（2017）Routledge"
+      sourceUrl="https://www.routledge.com/Energies-and-Patterns-in-Psychological-Type-The-Reservoir-of-Consciousness/Beebe/p/book/9781138890190"
+    />
+
+    {/* ========== H2-1: MBTIの科学的位置付け ========== */}
+    <section class="mb-section" aria-labelledby="mb-science-h2">
+      <h2 id="mb-science-h2" class="mb-h2">MBTIの科学的位置付けを理解する</h2>
+      <p class="mb-lead">
+        MBTIタイプが変わった理由を考える前に、<br />
+        MBTIそのものの科学的な性質を整理することが重要です。
+      </p>
+
+      <div class="mb-warning-box">
+        <div class="mb-warning-icon" aria-hidden="true">📋</div>
+        <div>
+          <p class="mb-warning-title">MBTIの科学的位置付け（重要）</p>
+          <ul class="mb-warning-list">
+            <li>Pittenger（1993）は、MBTIの再検査信頼性が低く、同一人物が40〜75%の割合でタイプが変わることを指摘</li>
+            <li>MBTIは自己理解・コミュニケーションの枠組みとして広く使われているが、科学的な特性測定ツールとしての妥当性は研究者の間で議論がある</li>
+            <li>心理学の主流的な特性測定（五因子モデル等）とは異なる枠組みであることを認識して使うことが重要</li>
+            <li>本ページはMBTIを否定するものではなく、正確な位置付けを伝えることを目的としています</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    {/* ========== H2-2: タイプが変わる2つの理由 ========== */}
+    <section class="mb-section" aria-labelledby="mb-reason-h2">
+      <h2 id="mb-reason-h2" class="mb-h2">MBTIタイプが変わる2つの理由</h2>
+      <p class="mb-lead">
+        MBTIのタイプが変わったと気づいたとき、その理由は2つに分類されます。
+      </p>
+
+      <div class="mb-reason-grid">
+        <div class="mb-reason-card mb-reason-card--a">
+          <div class="mb-reason-header">
+            <span class="mb-reason-icon" aria-hidden="true">📊</span>
+            <h3 class="mb-reason-title">理由A: 測定誤差（信頼性の問題）</h3>
+          </div>
+          <p class="mb-reason-desc">
+            テスト時の気分・疲労度・社会的文脈・質問の解釈などによって、<br />
+            同じ人でも回答が変わりやすいことがあります。<br />
+            特に境界型（各軸のスコアが中間付近）の人は結果が変わりやすいです。
+          </p>
+          <div class="mb-reason-signs">
+            <p class="mb-reason-signs-label">見分けるサイン</p>
+            <ul>
+              <li>元のタイプと新しいタイプのスコア差が小さい</li>
+              <li>受検時の状態が通常と異なった（多忙・疲労・不安など）</li>
+              <li>複数回受けて毎回異なるタイプが出る</li>
+            </ul>
+          </div>
+        </div>
+        <div class="mb-reason-card mb-reason-card--b">
+          <div class="mb-reason-header">
+            <span class="mb-reason-icon" aria-hidden="true">🌱</span>
+            <h3 class="mb-reason-title">理由B: 認知機能の発達段階の変化</h3>
+          </div>
+          <p class="mb-reason-desc">
+            Beebe（2017）の理論では、年齢・経験・ライフイベントによって<br />
+            各認知機能の発達が進み、外に見えるパターンが変化します。<br />
+            「タイプが変わった」ではなく「機能の発達が進んだ」と解釈します。
+          </p>
+          <div class="mb-reason-signs">
+            <p class="mb-reason-signs-label">見分けるサイン</p>
+            <ul>
+              <li>変化が複数回の受検で一貫している</li>
+              <li>大きなライフイベント・年齢節目の後に変わった</li>
+              <li>変化後のタイプが元のタイプと「関連する機能を共有」している</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    {/* ========== H2-3: 各軸の変わりやすさ ========== */}
+    <section class="mb-section" aria-labelledby="mb-axes-h2">
+      <h2 id="mb-axes-h2" class="mb-h2">I/E・N/S・T/F・J/P の変わりやすさ</h2>
+      <p class="mb-lead">
+        MBTIの4軸は、変わりやすさに違いがあります。<br />
+        自分の変化した軸がどれかを確認してみてください。
+      </p>
+
+      <div class="mb-table-wrap">
+        <table class="mb-table">
+          <caption class="mb-table-caption">MBTI 4軸の変わりやすさ（Beebe 2017 / Pittenger 1993 をもとに整理）</caption>
+          <thead>
+            <tr>
+              <th scope="col">軸</th>
+              <th scope="col">変わりやすさ</th>
+              <th scope="col">変化の主な理由</th>
+            </tr>
+          </thead>
+          <tbody>
+            {typeChangeTable.map((row) => (
+              <tr>
+                <td><strong>{row.axis}</strong></td>
+                <td>
+                  <span class:list={[
+                    'mb-changability',
+                    row.changability === '低' && 'mb-changability--low',
+                    row.changability === '低〜中' && 'mb-changability--low-mid',
+                    row.changability === '中' && 'mb-changability--mid',
+                    row.changability === '高' && 'mb-changability--high',
+                  ]}>
+                    {row.changability}
+                  </span>
+                </td>
+                <td>{row.reason}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p class="mb-source-note">
+        参照: Beebe J（2017）Energies and Patterns in Psychological Type / Pittenger DJ（1993）
+        <a href="https://doi.org/10.1177/000169939603600106" target="_blank" rel="noopener noreferrer">
+          Journal of Career Planning and Employment 54(1)
+        </a>
+      </p>
+    </section>
+
+    {/* ========== H2-4: 認知機能（8機能）の基礎 ========== */}
+    <section class="mb-section" aria-labelledby="mb-cogfn-h2">
+      <h2 id="mb-cogfn-h2" class="mb-h2">Beebe理論：8つの認知機能とは</h2>
+      <p class="mb-lead">
+        Beebe（2017）は、すべての人が8つの認知機能を特定の優先順位で使うと提唱しました。<br />
+        MBTIタイプが変わったように感じる背景には、この機能の発達が関わっています。
+      </p>
+
+      <div class="mb-cogfn-grid">
+        {cogFunctions.map((fn) => (
+          <div class="mb-cogfn-card">
+            <span class="mb-cogfn-code">{fn.code}</span>
+            <div>
+              <strong class="mb-cogfn-name">{fn.name}</strong>
+              <p class="mb-cogfn-desc">{fn.desc}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div class="mb-cogfn-note">
+        <h3 class="mb-h3">発達段階のポイント</h3>
+        <ul class="mb-bullet-list">
+          <li>若年期: 主機能（第1位）と補助機能（第2位）が中心に発達する</li>
+          <li>成人期（30〜40代）: 第三機能（永遠の子ども的機能）と劣等機能（第4位）が意識に上りやすくなる</li>
+          <li>中年期以降: 対立機能・対照機能など、通常あまり使わない機能が発達してくることがある</li>
+          <li>この発達により「以前と違う自分」を感じ、タイプが変わったと誤解されることがある</li>
+        </ul>
+        <p class="mb-source-note">
+          出典: Beebe J（2017）
+          <a href="https://www.routledge.com/Energies-and-Patterns-in-Psychological-Type-The-Reservoir-of-Consciousness/Beebe/p/book/9781138890190" target="_blank" rel="noopener noreferrer">
+            Energies and Patterns in Psychological Type, Routledge
+          </a>
+        </p>
+      </div>
+    </section>
+
+    {/* ========== H2-5: 大きく変わった場合の解釈 ========== */}
+    <section class="mb-section" aria-labelledby="mb-bigchange-h2">
+      <h2 id="mb-bigchange-h2" class="mb-h2">ENFPからINFJなど大きく変わった場合の解釈</h2>
+      <p class="mb-lead">
+        全ての軸が逆転するような大きな変化は、<br />
+        測定誤差の可能性が最も高いとされています。
+      </p>
+
+      <div class="mb-bigchange-table-wrap">
+        <table class="mb-table">
+          <caption class="mb-table-caption">変化の大きさによる解釈の目安</caption>
+          <thead>
+            <tr>
+              <th scope="col">変化のパターン</th>
+              <th scope="col">解釈の目安</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1軸のみ変化（例: ENFP→ENTP）</td>
+              <td>測定誤差・認知機能発達の両方が考えられる。J/P軸なら誤差の可能性が高い</td>
+            </tr>
+            <tr>
+              <td>2軸変化（例: ENFP→INTJ）</td>
+              <td>測定誤差の可能性が高い。受検時の状態・長期的な一貫性を確認することを推奨</td>
+            </tr>
+            <tr>
+              <td>3〜4軸変化（例: ENFP→ISTJ）</td>
+              <td>測定誤差の可能性が非常に高い。複数回受けて一貫した変化かどうかを確認することを強く推奨</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="mb-note-box">
+        <p>
+          大きな変化が見られた場合は、すぐに「タイプが変わった」と判断するより、<br />
+          異なる日・異なる状況で複数回受けてみることを推奨します。<br />
+          一貫した変化であれば、発達段階の変化として考察する価値があります。
+        </p>
+      </div>
+    </section>
+
+    {/* ========== PRO誘導CTA ========== */}
+    <section class="mb-section mb-pro-section" aria-labelledby="mb-pro-h2">
+      <h2 id="mb-pro-h2" class="mb-h2">過去のタイプと現在を比較したい</h2>
+      <p class="mb-lead">
+        「以前のMBTIタイプと今のタイプはどう違うのか」を継続的に追跡するには、<br />
+        PRO タイムカプセル機能が役立ちます。
+      </p>
+
+      <div class="mb-pro-card">
+        <div class="mb-pro-card-header">
+          <span class="mb-pro-badge">PRO 限定</span>
+          <h3 class="mb-pro-card-title">タイムカプセル機能｜過去のあなたへの手紙を残す</h3>
+        </div>
+        <div class="mb-pro-card-body">
+          <p class="mb-pro-desc">
+            今日の診断結果を「封印」して、3ヶ月後・1年後の自分と比較できます。<br />
+            「あのころのタイプ」を保存しておくと、後で変化の経緯を振り返れます。
+          </p>
+          <div class="mb-pro-features">
+            <div class="mb-pro-feature">
+              <span class="mb-pro-feature-icon" aria-hidden="true">⏳</span>
+              <div>
+                <strong>今の診断結果を封印・保存</strong>
+                <p>複数診断のスコアをタイムスタンプ付きで保存。</p>
+              </div>
+            </div>
+            <div class="mb-pro-feature">
+              <span class="mb-pro-feature-icon" aria-hidden="true">📈</span>
+              <div>
+                <strong>時系列で変化グラフを確認</strong>
+                <p>過去の自分と現在を並べて変化の方向と大きさを一目で確認。</p>
+              </div>
+            </div>
+            <div class="mb-pro-feature">
+              <span class="mb-pro-feature-icon" aria-hidden="true">✉️</span>
+              <div>
+                <strong>過去の自分へのメッセージ</strong>
+                <p>今の気持ち・目標・悩みを記録して未来の自分が読む。</p>
+              </div>
+            </div>
+          </div>
+          <a href="/pro/" class="mb-pro-cta-btn" aria-label="PRO会員の詳細を見る（タイムカプセル機能）">
+            PRO でタイムカプセルを始める →
+          </a>
+          <p class="mb-pro-cta-note">¥590/月・いつでも解約可</p>
+        </div>
+      </div>
+    </section>
+
+    {/* ========== MBTI相性への動線 ========== */}
+    <section class="mb-section" aria-labelledby="mb-compat-h2">
+      <h2 id="mb-compat-h2" class="mb-h2">変化後の新しい相性をチェックする</h2>
+      <p class="mb-lead">
+        MBTIタイプが変わったなら、相性の見方も更新してみましょう。<br />
+        MBTIの相性は参考情報として活用することを推奨します。
+      </p>
+      <div class="mb-compat-card">
+        <a href="/diagnosis/mbti-compat/" class="mb-compat-link">
+          <span class="mb-compat-icon" aria-hidden="true">🎭</span>
+          <div>
+            <strong class="mb-compat-title">MBTI相性チェック</strong>
+            <p class="mb-compat-desc">変化後の新しいタイプで、相性を確認してみてください。</p>
+          </div>
+          <span class="mb-compat-arrow" aria-hidden="true">→</span>
+        </a>
+      </div>
+    </section>
+
+    {/* ========== Science Note ========== */}
+    <ScienceNote
+      basisText="Beebe J（2017）認知機能発達理論・Pittenger DJ（1993）MBTI測定批判論文・Roberts BW ら（2006）縦断メタ分析・Bleidorn W ら（2018）ライフイベントと特性変化研究"
+      basisUrl="https://www.routledge.com/Energies-and-Patterns-in-Psychological-Type-The-Reservoir-of-Consciousness/Beebe/p/book/9781138890190"
+      basisLabel="Beebe（2017）Routledge"
+      notMedical={true}
+      updatedAt={CONFIRMED_AT}
+      additionalNote="MBTIは自己理解の枠組みとして広く使われていますが、Pittenger（1993）をはじめ、測定信頼性・妥当性について批判的な研究が複数存在します。科学的な特性測定と並行して活用することを推奨します。"
+    />
+
+    {/* ========== ReferenceList ========== */}
+    <ReferenceList references={references} confirmedAt={CONFIRMED_AT} />
+
+    {/* ========== 関連ページ ========== */}
+    <section class="mb-section" aria-labelledby="mb-related-h2">
+      <h2 id="mb-related-h2" class="mb-h2">関連ページ</h2>
+      <ul class="mb-related-list">
+        <li class="mb-related-item">
+          <a href="/diagnosis/change/seikaku-kawaru/" class="mb-related-link">
+            <span class="mb-related-icon" aria-hidden="true">🔬</span>
+            <span class="mb-related-body">
+              <span class="mb-related-title">性格は変わるのか？科学的検証</span>
+              <span class="mb-related-desc">縦断研究50,207人のデータで「変わる」を証明</span>
+            </span>
+          </a>
+        </li>
+        <li class="mb-related-item">
+          <a href="/diagnosis/change/seikaku-kawatta/" class="mb-related-link">
+            <span class="mb-related-icon" aria-hidden="true">🔄</span>
+            <span class="mb-related-body">
+              <span class="mb-related-title">性格が変わった気がする人へ</span>
+              <span class="mb-related-desc">変化を実感するサインと過去の自分との比較法</span>
+            </span>
+          </a>
+        </li>
+        <li class="mb-related-item">
+          <a href="/diagnosis/change/kawaru-kikkake/" class="mb-related-link">
+            <span class="mb-related-icon" aria-hidden="true">✨</span>
+            <span class="mb-related-body">
+              <span class="mb-related-title">性格が変わるきっかけ10選</span>
+              <span class="mb-related-desc">結婚・転職・出産など変化を生む典型的な局面</span>
+            </span>
+          </a>
+        </li>
+        <li class="mb-related-item">
+          <a href="/diagnosis/mbti-compat/" class="mb-related-link">
+            <span class="mb-related-icon" aria-hidden="true">💞</span>
+            <span class="mb-related-body">
+              <span class="mb-related-title">MBTI相性チェック</span>
+              <span class="mb-related-desc">変化後の新しいタイプで相性を確認</span>
+            </span>
+          </a>
+        </li>
+        <li class="mb-related-item">
+          <a href="/pro/" class="mb-related-link">
+            <span class="mb-related-icon" aria-hidden="true">⏳</span>
+            <span class="mb-related-body">
+              <span class="mb-related-title">PRO タイムカプセル</span>
+              <span class="mb-related-desc">過去の診断と現在を比較して変化を可視化</span>
+            </span>
+          </a>
+        </li>
+      </ul>
+    </section>
+
+    {/* ========== FAQ ========== */}
+    <section class="mb-section" aria-labelledby="mb-faq-h2">
+      <h2 id="mb-faq-h2" class="mb-h2">よくある質問（12問）</h2>
+      <dl class="mb-faq-list">
+        {faqs.map(({ question, answer }) => (
+          <div class="mb-faq-item">
+            <dt class="mb-faq-q">{question}</dt>
+            <dd class="mb-faq-a">{answer}</dd>
+          </div>
+        ))}
+      </dl>
+    </section>
+  </Container>
+</BaseLayout>
+
+<style>
+/* ========== ヒーロー ========== */
+.mb-hero {
+  background: linear-gradient(135deg, #7c3aed 0%, #db2777 100%);
+  color: #fff;
+  padding-block: 3.5rem 4rem;
+  text-align: center;
+}
+.mb-hero-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+.mb-hero-badge {
+  display: inline-block;
+  background: rgba(255 255 255 / 0.18);
+  border: 1px solid rgba(255 255 255 / 0.4);
+  border-radius: 2rem;
+  padding: 0.25rem 1rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+}
+.mb-hero-h1 {
+  font-size: clamp(1.75rem, 5vw, 2.5rem);
+  font-family: var(--sn-font-rounded, sans-serif);
+  font-weight: 700;
+  line-height: 1.3;
+  margin: 0;
+}
+.mb-hero-sub {
+  display: block;
+  font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+  opacity: 0.9;
+  margin-top: 0.25rem;
+}
+.mb-hero-catch {
+  font-size: clamp(0.9rem, 2vw, 1rem);
+  opacity: 0.9;
+  line-height: 1.8;
+  margin: 0;
+}
+.mb-hero-meta {
+  font-size: 0.78rem;
+  opacity: 0.65;
+}
+
+/* ========== AIOブロック ========== */
+.mb-aio-block {
+  background: #fdf4ff;
+  border-left: 4px solid #7c3aed;
+  border-radius: 0 0.5rem 0.5rem 0;
+  padding: 1.25rem 1.5rem;
+  margin-block: 2rem;
+}
+.mb-aio-title {
+  font-weight: 700;
+  margin: 0 0 0.5rem;
+  font-size: 0.875rem;
+  color: #6b21a8;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.mb-aio-list {
+  margin: 0;
+  padding-left: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.mb-aio-list li {
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+/* ========== セクション共通 ========== */
+.mb-section {
+  margin-block: 3rem;
+}
+.mb-h2 {
+  font-size: clamp(1.25rem, 4vw, 1.65rem);
+  font-family: var(--sn-font-rounded, sans-serif);
+  font-weight: 700;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #7c3aed;
+}
+.mb-h3 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin: 1.25rem 0 0.5rem;
+  color: #6b21a8;
+}
+.mb-lead {
+  font-size: 1rem;
+  line-height: 1.8;
+  margin-bottom: 1.25rem;
+  color: #374151;
+}
+p {
+  font-size: 0.95rem;
+  line-height: 1.8;
+  color: #374151;
+  margin-block: 0.75rem;
+}
+.mb-source-note {
+  font-size: 0.78rem;
+  color: #6b7280;
+  margin-top: 0.75rem;
+}
+.mb-source-note a {
+  color: #7c3aed;
+}
+.mb-bullet-list {
+  padding-left: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-block: 0.75rem;
+}
+.mb-bullet-list li {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: #374151;
+}
+
+/* ========== 警告ボックス（MBTIの科学的位置付け）========== */
+.mb-warning-box {
+  background: #fefce8;
+  border: 1px solid #fde047;
+  border-left: 4px solid #ca8a04;
+  border-radius: 0 0.5rem 0.5rem 0;
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  margin-block: 1.25rem;
+}
+.mb-warning-icon {
+  font-size: 1.4rem;
+  flex-shrink: 0;
+}
+.mb-warning-title {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #713f12;
+  margin: 0 0 0.5rem;
+}
+.mb-warning-list {
+  padding-left: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin: 0;
+}
+.mb-warning-list li {
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: #713f12;
+}
+
+/* ========== 理由グリッド ========== */
+.mb-reason-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.25rem;
+  margin-block: 1.5rem;
+}
+.mb-reason-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.875rem;
+  padding: 1.375rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+}
+.mb-reason-card--a {
+  border-top: 4px solid #d97706;
+}
+.mb-reason-card--b {
+  border-top: 4px solid #7c3aed;
+}
+.mb-reason-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.mb-reason-icon {
+  font-size: 1.75rem;
+  flex-shrink: 0;
+}
+.mb-reason-title {
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 0;
+  color: #1f2937;
+}
+.mb-reason-desc {
+  font-size: 0.875rem;
+  line-height: 1.7;
+  color: #4b5563;
+  margin: 0;
+}
+.mb-reason-signs {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  padding: 0.875rem;
+}
+.mb-reason-signs-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #6b7280;
+  margin: 0 0 0.5rem;
+}
+.mb-reason-signs ul {
+  padding-left: 1.125rem;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+.mb-reason-signs li {
+  font-size: 0.85rem;
+  line-height: 1.6;
+  color: #374151;
+}
+
+/* ========== テーブル ========== */
+.mb-table-wrap,
+.mb-bigchange-table-wrap {
+  overflow-x: auto;
+  margin-block: 1.25rem;
+}
+.mb-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  min-width: 400px;
+}
+.mb-table-caption {
+  font-size: 0.78rem;
+  color: #6b7280;
+  text-align: left;
+  padding: 0.25rem 0 0.5rem;
+}
+.mb-table th {
+  background: #7c3aed;
+  color: #fff;
+  padding: 0.6rem 0.8rem;
+  text-align: left;
+  font-weight: 600;
+}
+.mb-table td {
+  padding: 0.7rem 0.8rem;
+  border: 1px solid #e5e7eb;
+  color: #374151;
+  line-height: 1.6;
+}
+.mb-table tr:nth-child(even) td {
+  background: #fafafa;
+}
+
+/* 変わりやすさバッジ */
+.mb-changability {
+  display: inline-block;
+  padding: 0.15rem 0.6rem;
+  border-radius: 2rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+.mb-changability--low {
+  background: #dcfce7;
+  color: #166534;
+}
+.mb-changability--low-mid {
+  background: #d1fae5;
+  color: #065f46;
+}
+.mb-changability--mid {
+  background: #fef3c7;
+  color: #92400e;
+}
+.mb-changability--high {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+/* ========== 認知機能グリッド ========== */
+.mb-cogfn-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 0.875rem;
+  margin-block: 1.25rem;
+}
+.mb-cogfn-card {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.625rem;
+  padding: 0.875rem 1rem;
+}
+.mb-cogfn-code {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2.25rem;
+  height: 2.25rem;
+  background: #7c3aed;
+  color: #fff;
+  border-radius: 0.375rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.mb-cogfn-name {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 0.15rem;
+}
+.mb-cogfn-desc {
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: #4b5563;
+  margin: 0;
+}
+.mb-cogfn-note {
+  background: #f5f3ff;
+  border: 1px solid #ddd6fe;
+  border-radius: 0.75rem;
+  padding: 1.25rem 1.5rem;
+  margin-top: 1rem;
+}
+
+/* ========== ノートボックス ========== */
+.mb-note-box {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  padding: 1rem 1.25rem;
+  margin-top: 1rem;
+}
+.mb-note-box p {
+  font-size: 0.875rem;
+  line-height: 1.7;
+  margin: 0;
+  color: #4b5563;
+}
+
+/* ========== PRO誘導 ========== */
+.mb-pro-section {
+  background: #f5f3ff;
+  border-radius: 1rem;
+  padding: 2rem 1.5rem;
+}
+.mb-pro-section .mb-h2 {
+  border-bottom-color: #6d28d9;
+}
+.mb-pro-card {
+  background: #fff;
+  border: 2px solid #7c3aed;
+  border-radius: 1rem;
+  overflow: hidden;
+  margin-top: 1.5rem;
+  box-shadow: 0 4px 16px rgba(109 40 217 / 0.12);
+}
+.mb-pro-card-header {
+  background: linear-gradient(135deg, #7c3aed 0%, #db2777 100%);
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.mb-pro-badge {
+  background: rgba(255 255 255 / 0.25);
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.2rem 0.6rem;
+  border-radius: 2rem;
+  border: 1px solid rgba(255 255 255 / 0.4);
+  white-space: nowrap;
+}
+.mb-pro-card-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #fff;
+  margin: 0;
+}
+.mb-pro-card-body {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+.mb-pro-desc {
+  font-size: 0.9rem;
+  line-height: 1.7;
+  color: #374151;
+  margin: 0;
+}
+.mb-pro-features {
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+}
+.mb-pro-feature {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+}
+.mb-pro-feature-icon {
+  font-size: 1.4rem;
+  flex-shrink: 0;
+}
+.mb-pro-feature strong {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 0.15rem;
+}
+.mb-pro-feature p {
+  font-size: 0.85rem;
+  color: #4b5563;
+  margin: 0;
+  line-height: 1.6;
+}
+.mb-pro-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.9rem 2rem;
+  background: linear-gradient(135deg, #7c3aed, #db2777);
+  color: #fff;
+  border-radius: 3rem;
+  font-weight: 700;
+  font-size: 1rem;
+  text-decoration: none;
+  min-height: 44px;
+  align-self: flex-start;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.mb-pro-cta-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(124 58 237 / 0.3);
+}
+.mb-pro-cta-note {
+  font-size: 0.78rem;
+  color: #6b7280;
+  margin: 0;
+}
+
+/* ========== MBTI相性カード ========== */
+.mb-compat-card {
+  margin-top: 1rem;
+}
+.mb-compat-link {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 1.25rem 1.5rem;
+  border: 2px solid #7c3aed;
+  border-radius: 0.875rem;
+  text-decoration: none;
+  color: inherit;
+  background: #fdf4ff;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.mb-compat-link:hover {
+  border-color: #db2777;
+  box-shadow: 0 4px 12px rgba(124 58 237 / 0.15);
+}
+.mb-compat-icon {
+  font-size: 2rem;
+  flex-shrink: 0;
+}
+.mb-compat-title {
+  display: block;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 0.2rem;
+}
+.mb-compat-desc {
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin: 0;
+  line-height: 1.5;
+}
+.mb-compat-arrow {
+  margin-left: auto;
+  font-size: 1.25rem;
+  color: #7c3aed;
+  flex-shrink: 0;
+}
+
+/* ========== 関連リンク ========== */
+.mb-related-list {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.mb-related-link {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.mb-related-link:hover {
+  border-color: #7c3aed;
+  box-shadow: 0 2px 8px rgba(124 58 237 / 0.1);
+}
+.mb-related-icon {
+  font-size: 1.75rem;
+  flex-shrink: 0;
+}
+.mb-related-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+.mb-related-title {
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+.mb-related-desc {
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+/* ========== FAQ ========== */
+.mb-faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+.mb-faq-item {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+.mb-faq-q {
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 1rem 1.25rem;
+  background: #f9fafb;
+  margin: 0;
+  display: block;
+}
+.mb-faq-q::before {
+  content: 'Q. ';
+  color: #7c3aed;
+}
+.mb-faq-a {
+  font-size: 0.9rem;
+  line-height: 1.7;
+  padding: 1rem 1.25rem;
+  margin: 0;
+  color: #4b5563;
+}
+.mb-faq-a::before {
+  content: 'A. ';
+  font-weight: 700;
+  color: #16a34a;
+}
+
+/* ========== レスポンシブ ========== */
+@media (max-width: 768px) {
+  .mb-reason-grid,
+  .mb-cogfn-grid {
+    grid-template-columns: 1fr;
+  }
+  .mb-pro-cta-btn {
+    width: 100%;
+    justify-content: center;
+  }
+  .mb-warning-box {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+}
+</style>
