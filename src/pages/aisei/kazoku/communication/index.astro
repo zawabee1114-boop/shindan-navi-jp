@@ -1,0 +1,894 @@
+---
+/**
+ * /aisei/kazoku/communication/ - 家族コミュニケーションページ（新規）
+ *
+ * ターゲットKW: 家族 コミュニケーション
+ * 家族軸 = 性格相性のみ（YMYL回避・絶対厳守）
+ * 育児論・介護・医療言及は絶対NG
+ *
+ * 確認日: 2026-05-21
+ * 根拠:
+ *  - Satir V (1988) The New Peoplemaking
+ *    https://www.avanta.net/virginia-satir/
+ *  - Marston WM (1928) Emotions of Normal People (DiSC理論の原著)
+ *    https://www.discprofile.com/what-is-disc/disc-theory
+ *  - Myers IB & Myers PB (1980) Gifts Differing
+ *    https://www.myersbriggs.org/
+ *  - Gottman JM (1994) Why Marriages Succeed or Fail
+ *    https://www.gottman.com/about/research/
+ */
+import BaseLayout from '../../../../layouts/BaseLayout.astro';
+import Container from '../../../../components/Container.astro';
+import TldrBlock from '../../../../components/TldrBlock.astro';
+import ScienceNote from '../../../../components/ScienceNote.astro';
+import ReferenceList from '../../../../components/ReferenceList.astro';
+
+const siteUrl = 'https://shindan-navi.jp';
+const pageUrl = `${siteUrl}/aisei/kazoku/communication/`;
+
+const references = [
+  {
+    title: 'The New Peoplemaking',
+    author: 'Satir, V.',
+    year: 1988,
+    publisher: 'Science and Behavior Books',
+    url: 'https://www.avanta.net/virginia-satir/',
+  },
+  {
+    title: 'Emotions of Normal People',
+    author: 'Marston, W.M.',
+    year: 1928,
+    publisher: 'Kegan Paul, Trench, Trubner & Company',
+    url: 'https://www.discprofile.com/what-is-disc/disc-theory',
+  },
+  {
+    title: 'Gifts Differing: Understanding the Myers-Briggs Type Indicator',
+    author: 'Myers, I.B. & Myers, P.B.',
+    year: 1980,
+    publisher: 'Consulting Psychologists Press',
+    url: 'https://www.myersbriggs.org/',
+  },
+  {
+    title: 'Why Marriages Succeed or Fail: And How You Can Make Yours Last',
+    author: 'Gottman, J.M.',
+    year: 1994,
+    publisher: 'Simon & Schuster',
+    url: 'https://www.gottman.com/about/research/',
+  },
+];
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    '@id': `${pageUrl}#article`,
+    url: pageUrl,
+    headline: '家族のコミュニケーション完全ガイド｜タイプ別の会話パターンと橋渡し方法',
+    description: 'DiSC・MBTI・Satir（1988）のコミュニケーションモデルを用いた家族の会話パターン解説。夫婦・親子・きょうだい別の「噛み合わない理由」と橋渡し方法・FAQ10問を収録。',
+    dateModified: '2026-05-21',
+    datePublished: '2026-05-21',
+    author: { '@type': 'Organization', name: '診断ナビ編集部', url: siteUrl },
+    publisher: { '@type': 'Organization', name: '診断ナビ', url: siteUrl },
+    isPartOf: { '@type': 'WebSite', '@id': `${siteUrl}/#website`, url: siteUrl },
+    about: [
+      { '@type': 'Thing', name: 'コミュニケーション', sameAs: 'https://ja.wikipedia.org/wiki/%E3%82%B3%E3%83%9F%E3%83%A5%E3%83%8B%E3%82%B1%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3' },
+      { '@type': 'Thing', name: 'DiSCモデル', sameAs: 'https://www.discprofile.com/what-is-disc/disc-theory' },
+    ],
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    url: `${pageUrl}#faq`,
+    mainEntity: [
+      {
+        '@type': 'Question',
+        name: '家族間で会話が噛み合わない主な原因は何ですか？',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: '家族間のコミュニケーション不全の主な原因として、(1) コミュニケーションスタイルの違い（直接的 vs 間接的）、(2) 感情処理の速度の違い（すぐ言葉にする vs 内省してから話す）、(3) 期待値の不一致（解決策が欲しい vs 共感が欲しい）の3つが挙げられます。Satir（1988）は、家族内のコミュニケーションパターンは幼少期の家庭環境によって形成されると述べています。',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: 'DiSCモデルは家族コミュニケーションに使えますか？',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'DiSCモデル（Marston 1928）は4つの行動スタイル（D: 主導型・i: 感化型・S: 安定型・C: 慎重型）で構成されます。家族内で異なるスタイルが混在する場合、各スタイルの「ニーズ」（D: 結果・i: 承認・S: 安定・C: 正確さ）を把握することで、会話の入り口を合わせやすくなります。ただしDiSCは自己申告ツールであり、科学的診断ではありません。',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: 'MBTIで家族コミュニケーションの改善はできますか？',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'MBTIは「外向/内向」「感覚/直感」「思考/感情」「判断/知覚」の4軸でコミュニケーションの傾向を示します。特に「思考型（T）vs 感情型（F）」の違いは、意見の伝え方・受け取り方に大きな差が出る軸です。家族内でこの軸の違いを認識するだけで、「なぜ伝わらないのか」の原因が見えやすくなります。',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: '家族で「感情」の話をするのが苦手な場合はどうすればいいですか？',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: '思考型（T）の傾向が強い家族は、感情を言語化することを「不効率」と感じる場合があります。このような場合、感情の話を「情報の共有」として枠組み直すことが有効です。「どう感じた？」より「何が起きたか・どう対応したいか」という実務的な対話から始め、感情表現を強要しない関係を作ることが推奨されます。',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: '外向型と内向型が同居する家族の対話術は？',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: '外向型は話しながら考えを整理する傾向があり、内向型は考えてから話す傾向があります。重要な話し合いの場では、内向型に「事前にテーマを伝えておく」だけで参加しやすくなります。外向型の「すぐ話したい」衝動と、内向型の「準備が必要」というニーズを事前合意できると、ミーティング型の家族会議が機能しやすくなります。',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: 'きょうだい間でいつもぶつかる理由は性格と関係がありますか？',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'きょうだい間の摩擦は、年齢差・生育環境・競争意識など複数の要因が絡みます。性格タイプの観点では、「判断型（J）と知覚型（P）」のきょうだいが同じ空間を共有する場合、生活スタイルの違いが摩擦の元になりやすいです。「共有ルールを最低限にする」「各自の領域を確保する」ことが実用的な対処法です。',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: '家族との会話が長続きしない原因は何ですか？',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: '会話が短命に終わる原因として、(1) 関心の方向が違う（具体的な事実 vs 抽象的な可能性）、(2) 返答のリズムが合わない（外向型の速い応答 vs 内向型のゆっくりした応答）、(3) 結論への到達期待が異なる（解決を求める vs プロセスを楽しむ）の3つがよく見られます。',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: '家族の話し合いでよく起きる「石壁（Stonewalling）」はどう対処しますか？',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Gottman（1994）によると、石壁（感情的にシャットアウトして対話を拒絶する状態）は相手が感情的に圧倒されているサインです。この状態での説得や追い打ちは逆効果です。「今日はここまで。もう少し時間をおいてから話そう」と対話を一時停止し、双方が落ち着いてから再開することが推奨されます。',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: '性格診断を使った家族コミュニケーションの改善は効果がありますか？',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: '性格診断は「相手を変えるツール」ではなく「自分のスタイルを客観視し、相手のスタイルを理解するきっかけ」として使うと効果的です。「私は直接的な伝え方をする傾向がある」という自己認識が、相手への伝え方を意識的に調整する出発点になります。',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: '診断ナビの家族コミュニケーション情報は専門家監修ですか？',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: '本サイトはSatir・Gottman・Myers-Briggs・DiSCなどの学術研究・理論を参考に編集部が作成した情報提供サービスです。家族カウンセリング・心理療法の代替にはなりません。関係に深刻な困難がある場合は、公認心理師や家族療法専門家へのご相談をお勧めします。',
+        },
+      },
+    ],
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'ホーム', item: siteUrl },
+      { '@type': 'ListItem', position: 2, name: '相性診断', item: `${siteUrl}/aisei/` },
+      { '@type': 'ListItem', position: 3, name: '家族相性', item: `${siteUrl}/aisei/kazoku/` },
+      { '@type': 'ListItem', position: 4, name: '家族のコミュニケーション', item: pageUrl },
+    ],
+  },
+];
+
+// DiSC 4スタイル × 家族コミュニケーション
+const discStyles = [
+  {
+    type: 'D（主導型）',
+    need: '結果・直接的な答え',
+    strength: '決断力・問題解決の迅速さ',
+    pitfall: '相手の感情への配慮が薄くなりやすい',
+    tip: '「どう感じる？」を先に聞く1秒を意識する',
+  },
+  {
+    type: 'i（感化型）',
+    need: '承認・楽しさ・共感',
+    strength: '場の雰囲気を和らげる・会話を弾ませる',
+    pitfall: '詳細・事実確認が疎かになる傾向がある',
+    tip: '重要な話し合いでは「記録に残す」を習慣にする',
+  },
+  {
+    type: 'S（安定型）',
+    need: '安定・調和・ペースを乱されない環境',
+    strength: '家族の感情を受け止める包容力',
+    pitfall: '自分の意見を抑えて我慢しすぎる',
+    tip: '「今の話に私はこう感じた」という一言を加える練習をする',
+  },
+  {
+    type: 'C（慎重型）',
+    need: '正確さ・計画・根拠のある情報',
+    strength: '重要な決断での緻密な分析力',
+    pitfall: '「完璧な準備が整うまで話せない」になりやすい',
+    tip: '60%の準備で共有する練習が対話を増やす',
+  },
+];
+
+// 家族の関係別コミュニケーションパターン
+const relationPatterns = [
+  {
+    rel: '夫婦・パートナー',
+    icon: '👫',
+    patterns: [
+      'コミュニケーションスタイルの差（直接的 vs 間接的）が蓄積して摩擦になりやすい',
+      'Gottman（1994）の「批判・防衛・軽蔑・石壁」の4パターンが関係満足度と相関',
+      '思考型（T）パートナーには「解決策より先に共感」を意識する',
+    ],
+    link: '/aisei/kazoku/fufu/',
+    linkLabel: '夫婦・パートナー相性の詳細へ',
+  },
+  {
+    rel: '親子',
+    icon: '👪',
+    patterns: [
+      '外向型の親と内向型の子は「充電スタイルの違い」として捉えると対話が改善する',
+      '子供の「わかった」は理解の確認ではなく対話終了の合図になりやすい（確認ではなく聞き返しを求める）',
+      '感覚型（S）の子供には「大きなビジョン」より「今日の具体的な話」が届きやすい',
+    ],
+    link: '/aisei/kazoku/oyako/',
+    linkLabel: '親子相性の詳細へ',
+  },
+  {
+    rel: 'きょうだい',
+    icon: '👭',
+    patterns: [
+      'きょうだい間のJ（計画型）vs P（知覚型）の違いは生活スタイルの摩擦になりやすい',
+      '共有ルールは「最低限の約束」に絞り、各自のスペースを確保すると摩擦が減る',
+      '年齢差よりもコミュニケーションスタイルの違いが会話の噛み合わなさに影響する場合がある',
+    ],
+    link: '/aisei/kazoku/',
+    linkLabel: '家族相性ハブへ',
+  },
+];
+---
+
+<BaseLayout
+  title="家族のコミュニケーション｜タイプ別の会話パターンと橋渡し方法 - 診断ナビ"
+  description="DiSC・MBTI・Satir（1988）のコミュニケーションモデルを用いた家族の会話パターン解説。夫婦・親子・きょうだい別の「噛み合わない理由」と橋渡し方法・FAQ10問を収録。"
+  canonical={pageUrl}
+  jsonLd={jsonLd}
+  publishDate="2026-05-21"
+  lastUpdated="2026-05-21"
+  breadcrumbs={[
+    { name: '相性診断', url: '/aisei/' },
+    { name: '家族相性', url: '/aisei/kazoku/' },
+    { name: '家族のコミュニケーション', url: '/aisei/kazoku/communication/' },
+  ]}
+>
+  <!-- ページヘッダー -->
+  <section class="axis-header axis-header--family">
+    <Container>
+      <div class="axis-header-inner">
+        <div class="axis-icon" aria-hidden="true">💬</div>
+        <div>
+          <p class="axis-eyebrow">2026-05-21 確認済み情報</p>
+          <h1 class="axis-title">家族のコミュニケーション</h1>
+          <p class="axis-lead">
+            DiSC・MBTI・Satir（1988）のコミュニケーションモデルを用いた家族の会話パターン解説です。<br>
+            夫婦・親子・きょうだいの「噛み合わない理由」と橋渡し方法をまとめています。
+          </p>
+          <div class="axis-ymyl-note" role="note" aria-label="ご注意">
+            <span aria-hidden="true">ℹ️</span>
+            このページは性格傾向の参考情報です。家族カウンセリング・心理療法の専門的なアドバイスは含まれません。
+          </div>
+        </div>
+      </div>
+    </Container>
+  </section>
+
+  <!-- TldrBlock -->
+  <Container>
+    <TldrBlock
+      title="このページでわかること"
+      points={[
+        "家族間で会話が噛み合わない3大原因: スタイルの違い・処理速度の差・期待値の不一致",
+        "DiSC4スタイル（D/i/S/C）別の家族コミュニケーション傾向と強み・落とし穴・改善ヒント",
+        "MBTI軸（T/F・E/I・J/P）別の会話パターンと橋渡し方法",
+        "夫婦・親子・きょうだいの関係別コミュニケーションパターンの違い",
+        "FAQ10問: DiSCの活用法・Gottman理論・石壁の対処法など",
+      ]}
+      updatedAt="2026-05-21"
+      sourceLabel="Gottman Institute Research"
+      sourceUrl="https://www.gottman.com/about/research/"
+    />
+  </Container>
+
+  <!-- 家族コミュニケーションの科学的根拠 -->
+  <section class="content-section">
+    <Container>
+      <h2 class="section-title">家族コミュニケーションの科学的根拠</h2>
+
+      <p class="body-text">
+        家族内のコミュニケーション研究の先駆者 Virginia Satir（1988）は、
+        家族の機能不全の多くが「コミュニケーションのパターン」に起因すると述べています。
+        問題の原因は個人の性格ではなく、
+        互いのスタイルの違いへの理解不足にある場合が多いという見解です。
+        （出典: <a href="https://www.avanta.net/virginia-satir/" target="_blank" rel="noopener noreferrer">Satir V 1988 / AVANTA公式</a>）
+      </p>
+
+      <div class="research-box">
+        <h3 class="research-box__title">Gottman の「4つの騎士」— 家族関係を壊すコミュニケーションパターン</h3>
+        <ul class="research-box__list">
+          <li><strong>批判（Criticism）</strong>: 行動ではなく相手の人格を標的にした言い方</li>
+          <li><strong>防衛（Defensiveness）</strong>: 批判への言い訳・カウンター攻撃</li>
+          <li><strong>軽蔑（Contempt）</strong>: 皮肉・優越感・嘲笑（最も関係に有害とされる）</li>
+          <li><strong>石壁（Stonewalling）</strong>: 感情的にシャットアウトして対話を拒絶する</li>
+        </ul>
+        <p class="research-box__note">
+          出典: Gottman JM（1994）Why Marriages Succeed or Fail.
+          <a href="https://www.gottman.com/about/research/" target="_blank" rel="noopener noreferrer">Gottman Institute 公式</a>
+        </p>
+      </div>
+
+      <p class="body-text">
+        DiSCモデル（Marston 1928）は職場のコミュニケーション研究に端を発しますが、
+        家族内の「行動スタイルの違い」を可視化するツールとして応用されています。
+        4スタイルのニーズを把握することで、
+        「なぜいつも同じ場所でぶつかるのか」の原因が見えやすくなります。
+        （出典: <a href="https://www.discprofile.com/what-is-disc/disc-theory" target="_blank" rel="noopener noreferrer">Everything DiSC 公式</a>）
+      </p>
+    </Container>
+  </section>
+
+  <!-- DiSC 4スタイル -->
+  <section class="content-section content-section--alt">
+    <Container>
+      <h2 class="section-title">DiSC 4スタイル × 家族コミュニケーション</h2>
+      <p class="section-lead">
+        DiSCは自己申告ツールであり、医療診断ではありません。
+        下記は「傾向の参考情報」として、家族内の対話のきっかけとして活用してください。
+      </p>
+
+      <div class="disc-grid">
+        {discStyles.map((style) => (
+          <div class="disc-card">
+            <div class="disc-card__type">{style.type}</div>
+            <dl class="disc-card__body">
+              <dt class="disc-card__label">求めるもの</dt>
+              <dd class="disc-card__val">{style.need}</dd>
+              <dt class="disc-card__label">強み</dt>
+              <dd class="disc-card__val">{style.strength}</dd>
+              <dt class="disc-card__label">落とし穴</dt>
+              <dd class="disc-card__val disc-card__val--warn">{style.pitfall}</dd>
+              <dt class="disc-card__label">ヒント</dt>
+              <dd class="disc-card__val disc-card__val--tip">{style.tip}</dd>
+            </dl>
+          </div>
+        ))}
+      </div>
+    </Container>
+  </section>
+
+  <!-- MBTI軸別 会話の橋渡し -->
+  <section class="content-section">
+    <Container>
+      <h2 class="section-title">MBTI 軸別 会話が噛み合わない理由と橋渡し方法</h2>
+
+      <div class="bridge-list">
+        <div class="bridge-item">
+          <h3 class="bridge-item__title">思考型（T）× 感情型（F）— 最頻出の摩擦軸</h3>
+          <div class="bridge-item__body">
+            <div class="bridge-item__col bridge-item__col--prob">
+              <span class="bridge-item__col-label">噛み合わない理由</span>
+              T型は「解決策・論理・効率」を優先し、F型は「共感・関係性・価値観」を優先します。
+              T型が良かれと思って提案した解決策を、F型が「気持ちを無視された」と受け取るパターンが多いです。
+            </div>
+            <div class="bridge-item__col bridge-item__col--sol">
+              <span class="bridge-item__col-label">橋渡しのポイント</span>
+              T型は「まず共感」を先行させてから解決策を提案する。F型は「相談か、解決策が欲しいか」を最初に伝えると、T型が対応しやすくなります。
+            </div>
+          </div>
+        </div>
+
+        <div class="bridge-item">
+          <h3 class="bridge-item__title">外向型（E）× 内向型（I）— 速度と深さの違い</h3>
+          <div class="bridge-item__body">
+            <div class="bridge-item__col bridge-item__col--prob">
+              <span class="bridge-item__col-label">噛み合わない理由</span>
+              E型は話しながら考えを整理します。I型は考えてから話します。
+              E型の「今すぐ話したい」と I型の「準備時間が必要」のテンポが衝突しやすいです。
+            </div>
+            <div class="bridge-item__col bridge-item__col--sol">
+              <span class="bridge-item__col-label">橋渡しのポイント</span>
+              重要な話し合いの前にテーマを事前共有する。I型に「すぐ答えなくていい」と伝えるだけで参加しやすくなります。
+            </div>
+          </div>
+        </div>
+
+        <div class="bridge-item">
+          <h3 class="bridge-item__title">判断型（J）× 知覚型（P）— ルールと自由の対立</h3>
+          <div class="bridge-item__body">
+            <div class="bridge-item__col bridge-item__col--prob">
+              <span class="bridge-item__col-label">噛み合わない理由</span>
+              J型は「先に決める→安心」、P型は「流れに任せる→快適」という生活スタイルです。
+              家族内で同居する場合、家事・予定・生活リズムで摩擦が起きやすいです。
+            </div>
+            <div class="bridge-item__col bridge-item__col--sol">
+              <span class="bridge-item__col-label">橋渡しのポイント</span>
+              「絶対守るルール」を最小限にし、残りは各自に委ねる。P型の「後でやる」を批判せず期限を合意することで解決しやすくなります。
+            </div>
+          </div>
+        </div>
+
+        <div class="bridge-item">
+          <h3 class="bridge-item__title">直感型（N）× 感覚型（S）— 抽象と具体の違い</h3>
+          <div class="bridge-item__body">
+            <div class="bridge-item__col bridge-item__col--prob">
+              <span class="bridge-item__col-label">噛み合わない理由</span>
+              N型は「可能性・将来・なぜ？」に関心が向き、S型は「今・事実・どうやって？」を重視します。
+              「将来の話ばかりで現実的じゃない」vs「なぜ今のことしか見えないの？」という対立が生まれやすいです。
+            </div>
+            <div class="bridge-item__col bridge-item__col--sol">
+              <span class="bridge-item__col-label">橋渡しのポイント</span>
+              N型は大きなビジョンを話すときに「具体的には明日〜する」を追加する。S型はアイデアを聞くとき「否定より確認質問」を先行させると対話が続きやすいです。
+            </div>
+          </div>
+        </div>
+      </div>
+    </Container>
+  </section>
+
+  <!-- 関係別コミュニケーションパターン -->
+  <section class="content-section content-section--alt">
+    <Container>
+      <h2 class="section-title">夫婦・親子・きょうだい 関係別コミュニケーションパターン</h2>
+      <p class="section-lead">
+        家族の関係性によって、コミュニケーションの摩擦が起きやすいポイントが異なります。
+        詳細は各ページで確認できます。
+      </p>
+
+      <div class="rel-list">
+        {relationPatterns.map((rel) => (
+          <div class="rel-item">
+            <div class="rel-item__header">
+              <span class="rel-item__icon" aria-hidden="true">{rel.icon}</span>
+              <h3 class="rel-item__title">{rel.rel}</h3>
+            </div>
+            <ul class="rel-item__list">
+              {rel.patterns.map((p) => (
+                <li>{p}</li>
+              ))}
+            </ul>
+            <a href={rel.link} class="rel-item__link">{rel.linkLabel} →</a>
+          </div>
+        ))}
+      </div>
+    </Container>
+  </section>
+
+  <!-- ScienceNote -->
+  <Container>
+    <ScienceNote
+      basisText="Satir V（1988）The New Peoplemaking（Science and Behavior Books）・Marston WM（1928）Emotions of Normal People（DiSC理論原著）・Gottman JM（1994）Why Marriages Succeed or Fail・Myers IB & Myers PB（1980）Gifts Differing を参考に編集部が作成。"
+      basisUrl="https://www.gottman.com/about/research/"
+      basisLabel="Gottman Institute Research"
+      notMedical={true}
+      updatedAt="2026-05-21"
+      additionalNote="家族軸は性格相性の参考情報のみを提供します。家族カウンセリング・心理療法・法律相談の専門的なアドバイスは含まれません。関係に深刻な困難がある場合は公認心理師・家族療法専門家にご相談ください。"
+    />
+  </Container>
+
+  <!-- FAQ -->
+  <section class="faq-section" id="faq">
+    <Container>
+      <h2 class="section-title">よくある質問（FAQ）</h2>
+      <dl class="faq-list">
+        {[
+          { q: '家族間で会話が噛み合わない主な原因は何ですか？', a: '主な原因として、(1) コミュニケーションスタイルの違い（直接的 vs 間接的）、(2) 感情処理の速度の違い（すぐ言葉にする vs 内省してから話す）、(3) 期待値の不一致（解決策が欲しい vs 共感が欲しい）の3つが挙げられます。Satir（1988）は、家族内のコミュニケーションパターンは幼少期の家庭環境によって形成されると述べています。' },
+          { q: 'DiSCモデルは家族コミュニケーションに使えますか？', a: 'DiSCモデル（Marston 1928）は4つの行動スタイル（D: 主導型・i: 感化型・S: 安定型・C: 慎重型）で構成されます。各スタイルの「ニーズ」を把握することで会話の入り口を合わせやすくなります。ただしDiSCは自己申告ツールであり、科学的診断ではありません。' },
+          { q: 'MBTIで家族コミュニケーションの改善はできますか？', a: 'MBTIは「外向/内向」「感覚/直感」「思考/感情」「判断/知覚」の4軸でコミュニケーションの傾向を示します。特に「思考型（T）vs 感情型（F）」の違いは、家族内の会話の噛み合わなさに大きく影響する軸です。' },
+          { q: '家族で「感情」の話をするのが苦手な場合はどうすればいいですか？', a: '思考型（T）の傾向が強い家族は、感情を言語化することを「不効率」と感じる場合があります。「どう感じた？」より「何が起きたか・どう対応したいか」という実務的な対話から始め、感情表現を強要しない関係を作ることが推奨されます。' },
+          { q: '外向型と内向型が同居する家族の対話術は？', a: '重要な話し合いの場では、内向型に「事前にテーマを伝えておく」だけで参加しやすくなります。外向型の「すぐ話したい」衝動と内向型の「準備が必要」というニーズを事前合意できると、家族会議が機能しやすくなります。' },
+          { q: 'きょうだい間でいつもぶつかる理由は性格と関係がありますか？', a: 'きょうだい間では「判断型（J）と知覚型（P）」の違いが生活スタイルの摩擦になりやすいです。「共有ルールを最低限にする」「各自の領域を確保する」ことが実用的な対処法です。' },
+          { q: '家族との会話が長続きしない原因は何ですか？', a: '会話が短命に終わる原因として、(1) 関心の方向が違う（具体的な事実 vs 抽象的な可能性）、(2) 返答のリズムが合わない（外向型の速い応答 vs 内向型のゆっくりした応答）、(3) 結論への到達期待が異なる（解決を求める vs プロセスを楽しむ）の3つがよく見られます。' },
+          { q: '家族の話し合いでよく起きる「石壁」はどう対処しますか？', a: 'Gottman（1994）によると、石壁は相手が感情的に圧倒されているサインです。この状態での説得は逆効果です。「今日はここまで。もう少し時間をおいてから話そう」と対話を一時停止し、双方が落ち着いてから再開することが推奨されます。' },
+          { q: '性格診断を使った家族コミュニケーションの改善は効果がありますか？', a: '性格診断は「相手を変えるツール」ではなく「自分のスタイルを客観視し、相手のスタイルを理解するきっかけ」として使うと効果的です。「私は直接的な伝え方をする傾向がある」という自己認識が、相手への伝え方を意識的に調整する出発点になります。' },
+          { q: '診断ナビの家族コミュニケーション情報は専門家監修ですか？', a: '本サイトはSatir・Gottman・Myers-Briggs・DiSCなどの学術研究・理論を参考に編集部が作成した情報提供サービスです。家族カウンセリング・心理療法の代替にはなりません。関係に深刻な困難がある場合は公認心理師・家族療法専門家へのご相談をお勧めします。' },
+        ].map((item) => (
+          <div class="faq-item">
+            <dt class="faq-q">{item.q}</dt>
+            <dd class="faq-a">{item.a}</dd>
+          </div>
+        ))}
+      </dl>
+    </Container>
+  </section>
+
+  <!-- 関連診断 -->
+  <section class="axis-related">
+    <Container>
+      <h2 class="section-title">関連する診断・ページ</h2>
+      <div class="related-grid">
+        <a href="/aisei/kazoku/fufu/" class="related-card">
+          <span aria-hidden="true">👫</span>
+          <div>
+            <strong>夫婦・パートナー相性</strong>
+            <span>Gottman理論×MBTI×血液型</span>
+          </div>
+        </a>
+        <a href="/aisei/kazoku/oyako/" class="related-card">
+          <span aria-hidden="true">👪</span>
+          <div>
+            <strong>親子相性</strong>
+            <span>MBTI×多重知能で親子の傾向を理解</span>
+          </div>
+        </a>
+        <a href="/aisei/kazoku/" class="related-card">
+          <span aria-hidden="true">🏠</span>
+          <div>
+            <strong>家族相性ハブ</strong>
+            <span>家族軸の全ページをまとめて確認</span>
+          </div>
+        </a>
+        <a href="/diagnosis/mbti-compat/" class="related-card">
+          <span aria-hidden="true">🔮</span>
+          <div>
+            <strong>MBTI相性診断</strong>
+            <span>16タイプ×16タイプの相性マトリクス</span>
+          </div>
+        </a>
+        <a href="/profile/" class="related-card">
+          <span aria-hidden="true">🎯</span>
+          <div>
+            <strong>統合プロファイル</strong>
+            <span>8診断統合で全シーン軸を確認</span>
+          </div>
+        </a>
+        <a href="/aisei/renai/" class="related-card">
+          <span aria-hidden="true">💕</span>
+          <div>
+            <strong>恋愛相性</strong>
+            <span>恋愛スタイル×MBTI×血液型の恋愛軸</span>
+          </div>
+        </a>
+      </div>
+    </Container>
+  </section>
+
+  <!-- 参考文献 -->
+  <Container>
+    <ReferenceList references={references} confirmedAt="2026-05-21" />
+  </Container>
+</BaseLayout>
+
+<style>
+  /* ヘッダー */
+  .axis-header {
+    padding-block: var(--sn-space-8, 2rem);
+    border-bottom: 1px solid var(--sn-border, #e5e7eb);
+  }
+  .axis-header--family {
+    background: linear-gradient(135deg, #fffbeb 0%, var(--sn-bg-soft, #f9fafb) 100%);
+  }
+  .axis-header-inner {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--sn-space-4, 1rem);
+  }
+  .axis-icon {
+    font-size: 2.5rem;
+    flex-shrink: 0;
+    line-height: 1;
+  }
+  .axis-eyebrow {
+    font-size: 0.75rem;
+    color: var(--sn-muted, #6b7280);
+    margin: 0 0 0.25rem;
+  }
+  .axis-title {
+    font-family: var(--sn-font-rounded, sans-serif);
+    font-size: clamp(1.25rem, 4vw, 1.75rem);
+    font-weight: 900;
+    color: var(--sn-text, #111827);
+    margin: 0 0 var(--sn-space-2, 0.5rem);
+  }
+  .axis-lead {
+    font-size: var(--sn-text-sm, 0.875rem);
+    color: var(--sn-text-soft, #6b7280);
+    line-height: 1.7;
+    margin: 0 0 var(--sn-space-3, 0.75rem);
+  }
+  .axis-ymyl-note {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.375rem;
+    padding: 0.625rem 0.875rem;
+    background: #f0f9ff;
+    border-radius: 8px;
+    border: 1px solid #bae6fd;
+    font-size: 0.75rem;
+    color: #0c4a6e;
+    line-height: 1.6;
+  }
+
+  /* セクション */
+  .content-section {
+    padding-block: var(--sn-space-10, 2.5rem);
+  }
+  .content-section--alt {
+    background: var(--sn-bg-soft, #f9fafb);
+  }
+  .section-title {
+    font-family: var(--sn-font-rounded, sans-serif);
+    font-size: clamp(1.125rem, 3vw, 1.5rem);
+    font-weight: 900;
+    color: var(--sn-text, #111827);
+    margin: 0 0 var(--sn-space-3, 0.75rem);
+  }
+  .section-lead {
+    font-size: 0.9rem;
+    color: var(--sn-text-soft, #6b7280);
+    line-height: 1.7;
+    margin: 0 0 var(--sn-space-6, 1.5rem);
+  }
+  .body-text {
+    font-size: 0.95rem;
+    line-height: 1.8;
+    color: var(--sn-text, #111827);
+    margin: 0 0 var(--sn-space-4, 1rem);
+  }
+  .body-text a {
+    color: var(--sn-primary, #7c3aed);
+    text-decoration: underline;
+  }
+
+  /* リサーチボックス */
+  .research-box {
+    background: #fef3c7;
+    border-left: 4px solid #d97706;
+    border-radius: 0 0.5rem 0.5rem 0;
+    padding: 1.25rem 1.5rem;
+    margin-block: 1.5rem;
+  }
+  .research-box__title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #92400e;
+    margin: 0 0 0.75rem;
+  }
+  .research-box__list {
+    margin: 0 0 0.75rem;
+    padding-left: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+  .research-box__list li {
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: #1f2937;
+  }
+  .research-box__note {
+    font-size: 0.75rem;
+    color: #78350f;
+    margin: 0;
+  }
+  .research-box__note a {
+    color: #78350f;
+  }
+
+  /* DiSCグリッド */
+  .disc-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: var(--sn-space-3, 0.75rem);
+  }
+  .disc-card {
+    background: var(--sn-bg-white, #fff);
+    border: 1px solid var(--sn-border, #e5e7eb);
+    border-radius: var(--sn-radius-md, 12px);
+    padding: 1.25rem;
+  }
+  .disc-card__type {
+    font-size: 1rem;
+    font-weight: 900;
+    color: var(--sn-primary, #7c3aed);
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--sn-primary, #7c3aed);
+  }
+  .disc-card__body {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .disc-card__label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--sn-muted, #6b7280);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .disc-card__val {
+    font-size: 0.85rem;
+    line-height: 1.6;
+    color: #374151;
+    margin: 0 0 0.25rem;
+  }
+  .disc-card__val--warn {
+    color: #b45309;
+  }
+  .disc-card__val--tip {
+    color: #065f46;
+    font-weight: 500;
+  }
+
+  /* 橋渡しリスト */
+  .bridge-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  .bridge-item {
+    background: var(--sn-bg-white, #fff);
+    border: 1px solid var(--sn-border, #e5e7eb);
+    border-radius: var(--sn-radius-md, 12px);
+    padding: 1.25rem 1.5rem;
+  }
+  .bridge-item__title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--sn-text, #111827);
+    margin: 0 0 1rem;
+  }
+  .bridge-item__body {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+  @media (max-width: 600px) {
+    .bridge-item__body {
+      grid-template-columns: 1fr;
+    }
+  }
+  .bridge-item__col {
+    font-size: 0.875rem;
+    line-height: 1.7;
+    color: #374151;
+    padding: 0.875rem;
+    border-radius: 0.5rem;
+  }
+  .bridge-item__col--prob {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+  }
+  .bridge-item__col--sol {
+    background: #f0fdf4;
+    border: 1px solid #a7f3d0;
+  }
+  .bridge-item__col-label {
+    display: block;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.4rem;
+  }
+  .bridge-item__col--prob .bridge-item__col-label {
+    color: #b91c1c;
+  }
+  .bridge-item__col--sol .bridge-item__col-label {
+    color: #065f46;
+  }
+
+  /* 関係別リスト */
+  .rel-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+  .rel-item {
+    background: var(--sn-bg-white, #fff);
+    border: 1px solid var(--sn-border, #e5e7eb);
+    border-radius: var(--sn-radius-md, 12px);
+    padding: 1.25rem 1.5rem;
+  }
+  .rel-item__header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+  }
+  .rel-item__icon {
+    font-size: 1.5rem;
+  }
+  .rel-item__title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--sn-text, #111827);
+    margin: 0;
+  }
+  .rel-item__list {
+    margin: 0 0 0.75rem;
+    padding-left: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+  .rel-item__list li {
+    font-size: 0.875rem;
+    line-height: 1.6;
+    color: #374151;
+  }
+  .rel-item__link {
+    font-size: 0.85rem;
+    color: var(--sn-primary, #7c3aed);
+    text-decoration: underline;
+    font-weight: 600;
+  }
+
+  /* FAQ */
+  .faq-section {
+    padding-block: var(--sn-space-10, 2.5rem);
+    background: var(--sn-bg-soft, #f9fafb);
+  }
+  .faq-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .faq-item {
+    background: var(--sn-bg-white, #fff);
+    border: 1px solid var(--sn-border, #e5e7eb);
+    border-radius: var(--sn-radius-md, 12px);
+    padding: 1.25rem 1.5rem;
+  }
+  .faq-q {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--sn-text, #111827);
+    margin: 0 0 0.625rem;
+  }
+  .faq-q::before {
+    content: 'Q. ';
+    color: var(--sn-primary, #7c3aed);
+  }
+  .faq-a {
+    font-size: 0.875rem;
+    line-height: 1.75;
+    color: #374151;
+    margin: 0;
+  }
+
+  /* 関連診断 */
+  .axis-related {
+    padding-block: var(--sn-space-8, 2rem);
+    border-top: 1px solid var(--sn-border, #e5e7eb);
+  }
+  .related-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: var(--sn-space-2, 0.5rem);
+  }
+  .related-card {
+    display: flex;
+    align-items: center;
+    gap: var(--sn-space-3, 0.75rem);
+    padding: var(--sn-space-4, 1rem);
+    background: var(--sn-bg-white, #fff);
+    border-radius: var(--sn-radius-md, 12px);
+    border: 1px solid var(--sn-border, #e5e7eb);
+    text-decoration: none;
+    transition: border-color 0.15s ease;
+  }
+  .related-card:hover {
+    border-color: #f59e0b;
+  }
+  .related-card > span:first-child {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+  }
+  .related-card strong {
+    display: block;
+    font-size: var(--sn-text-sm, 0.875rem);
+    font-weight: 700;
+    color: var(--sn-text, #111827);
+  }
+  .related-card span:last-child {
+    font-size: var(--sn-text-xs, 0.75rem);
+    color: var(--sn-muted, #9ca3af);
+  }
+</style>

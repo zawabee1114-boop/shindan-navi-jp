@@ -1,0 +1,1358 @@
+---
+/**
+ * /aisei/kazoku/ - 家族の性格相性 完全ガイド（家族軸ハブ）
+ *
+ * ターゲットKW: 家族 性格相性 / 家族 タイプ
+ * 家族軸 = 性格相性のみ（YMYL回避・絶対厳守）
+ * 育児論・介護・医療・教育論・躾論 絶対NG
+ *
+ * 確認日: 2026-05-21
+ * 根拠:
+ *  - Bowlby J (1969) Attachment and Loss
+ *    https://www.guilford.com/books/Attachment-and-Loss/John-Bowlby/9780465005437
+ *  - Olson DH (2000) Circumplex Model of Marital and Family Systems
+ *    https://doi.org/10.1177/0192513X00021002001
+ *  - Schutz WC (1958) FIRO-B: A Three-Dimensional Theory of Interpersonal Behavior
+ *    https://doi.org/10.1002/9780470561553.ch3
+ *  - Gardner H (1983) Frames of Mind: The Theory of Multiple Intelligences
+ *    https://www.pz.harvard.edu/projects/multiple-intelligences
+ */
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Container from '../../../components/Container.astro';
+import IntegratedProfileViewer from '../../../components/IntegratedProfileViewer';
+import TldrBlock from '../../../components/TldrBlock.astro';
+import ScienceNote from '../../../components/ScienceNote.astro';
+import ReferenceList from '../../../components/ReferenceList.astro';
+
+const siteUrl = 'https://shindan-navi.jp';
+const pageUrl = `${siteUrl}/aisei/kazoku/`;
+
+const references = [
+  {
+    title: 'Attachment and Loss, Vol. 1: Attachment',
+    author: 'Bowlby, J.',
+    year: 1969,
+    publisher: 'Basic Books',
+    url: 'https://www.guilford.com/books/Attachment-and-Loss/John-Bowlby/9780465005437',
+  },
+  {
+    title: 'Circumplex Model of Marital and Family Systems',
+    author: 'Olson, D.H.',
+    year: 2000,
+    journal: 'Journal of Family Therapy',
+    volume: '22(2), 144-167',
+    url: 'https://doi.org/10.1177/0192513X00021002001',
+  },
+  {
+    title: 'FIRO: A Three-Dimensional Theory of Interpersonal Behavior',
+    author: 'Schutz, W.C.',
+    year: 1958,
+    publisher: 'Rinehart',
+    url: 'https://doi.org/10.1002/9780470561553.ch3',
+  },
+  {
+    title: 'Frames of Mind: The Theory of Multiple Intelligences',
+    author: 'Gardner, H.',
+    year: 1983,
+    publisher: 'Basic Books',
+    url: 'https://www.pz.harvard.edu/projects/multiple-intelligences',
+  },
+];
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    '@id': `${pageUrl}#article`,
+    url: pageUrl,
+    headline: '家族の性格相性 完全ガイド｜夫婦・親子・きょうだいの理解',
+    description: 'Bowlby（1969）・Olson（2000）の研究に基づく家族の性格相性の科学的考え方。夫婦・親子・家族コミュニケーションの3サブページへの導線。MBTI・血液型・多重知能・DiSC それぞれの家族関係への活用方法を解説。',
+    dateModified: '2026-05-21',
+    datePublished: '2026-05-21',
+    author: { '@type': 'Organization', name: '診断ナビ編集部', url: siteUrl },
+    publisher: { '@type': 'Organization', name: '診断ナビ', url: siteUrl },
+    isPartOf: { '@type': 'WebSite', '@id': `${siteUrl}/#website`, url: siteUrl },
+    about: [
+      { '@type': 'Thing', name: '家族の性格相性', sameAs: 'https://ja.wikipedia.org/wiki/%E7%9B%B8%E6%80%A7' },
+      { '@type': 'Thing', name: 'MBTI', sameAs: 'https://www.myersbriggs.org/' },
+      { '@type': 'Thing', name: '多重知能理論', sameAs: 'https://www.pz.harvard.edu/projects/multiple-intelligences' },
+    ],
+    mentions: [
+      { '@type': 'Thing', name: 'Bowlby 愛着理論', sameAs: 'https://www.guilford.com/books/Attachment-and-Loss/John-Bowlby/9780465005437' },
+      { '@type': 'Thing', name: 'Circumplex Model', sameAs: 'https://doi.org/10.1177/0192513X00021002001' },
+      { '@type': 'Thing', name: 'FIRO-B 対人行動理論', sameAs: 'https://doi.org/10.1002/9780470561553.ch3' },
+    ],
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    '@id': `${pageUrl}#faq`,
+    url: `${pageUrl}#faq`,
+    mainEntity: [
+      {
+        '@type': 'Question',
+        name: '家族の性格相性とは何ですか？',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: '家族の性格相性とは、家族構成員それぞれの性格・コミュニケーションスタイル・価値観の傾向を理解し、日常的な対話や関係をスムーズにするための参考情報です。医学的な診断や治療ではなく、Olson（2000）のCircumplex Modelのような心理学の知見を参考に「互いの傾向を知る」ことが目的です。',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: '性格相性が合わない家族はどうすればいいですか？',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: '「相性が悪い」という判断ではなく、「スタイルの違いを理解する」という視点が重要です。Olson（2000）の研究では、柔軟性とコミュニケーションの質が家族関係の満足度に大きく影響することが示されています。相性を変えようとするより、互いの傾向を知ることで対話のきっかけが生まれます。',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: '家族の性格タイプを知るとどんなメリットがありますか？',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: '家族のコミュニケーションスタイルの傾向を知ることで、「なぜすれ違うのか」「なぜ反応が違うのか」を感情論ではなく傾向として理解できます。これにより、対話の方法を工夫したり、互いの得意・苦手を補い合ったりするきっかけが生まれます。',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: 'MBTIと血液型、家族では使い分けるべきですか？',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'MBTIは認知・判断・エネルギーの方向性を4軸16タイプで表す自己申告ツールです。血液型は日本の文化的文脈での会話のきっかけとして機能しますが、科学的相関は限定的です（Sakamoto & Yamazaki 2004）。家族でのコミュニケーション改善を目的にするならMBTIや多重知能理論が理論的根拠のある参考情報として活用しやすいです。',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: '夫婦相性・親子相性・きょうだい相性は何が違いますか？',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: '夫婦相性は長期的なパートナーシップにおけるコミュニケーション・価値観の傾向を扱います。親子相性は成長段階に応じた性格・多重知能のスタイルの違いを扱います。きょうだい相性は家族コミュニケーションページで扱う兄弟・姉妹間の傾向の違いです。いずれも「性格傾向の参考情報」であり、医療・専門的アドバイスではありません。',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: '家族構成員全員のタイプをまとめて確認できますか？',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'はい。本ページの「統合プロファイル（家族軸）」機能を使うと、あなたが受けた8つの診断結果を家族軸でまとめて確認できます。招待モードを使えば家族がそれぞれ診断を受け、プロファイルを比較することも可能です。',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: '家族に診断を受けてもらうにはどうすればいいですか？',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: '招待リンク機能を使うと、家族がそれぞれ自分のペースで診断を受けられます。強制せず「ゲーム感覚で試してみて」という形で共有するのが自然です。「こっそりモード」では相手のタイプを手動入力して相性傾向だけを確認することもできます。',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: '家族の性格がまったく違う場合はどうすればいいですか？',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Schutz（1958）のFIRO理論では、対人関係において「包含・コントロール・親密さ」への欲求が人によって異なることが示されています。家族の傾向が大きく異なることは珍しくなく、「違いを問題視する」より「互いのニーズを知る」ことが関係改善の出発点です。',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: '義理の家族やパートナーの家族の理解にも使えますか？',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'はい。性格傾向の参考情報として活用できます。「なぜあの人はあのような反応をするのか」という疑問を、感情論ではなく傾向として理解するきっかけになります。ただし断定的なレッテル貼りにならないよう「傾向の参考情報」として活用してください。',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: '育児や介護の参考にもなりますか？',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: '本サイトは性格傾向の参考情報の提供を目的としており、育児・介護に関する専門的なアドバイスは含まれません。育児・介護に深刻な困難がある場合は、小児科医・臨床心理士・介護支援専門員など専門家にご相談ください。',
+        },
+      },
+    ],
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    '@id': `${pageUrl}#breadcrumb`,
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'ホーム', item: siteUrl },
+      { '@type': 'ListItem', position: 2, name: '相性診断', item: `${siteUrl}/aisei/` },
+      { '@type': 'ListItem', position: 3, name: '家族の性格相性', item: pageUrl },
+    ],
+  },
+];
+
+// 3サブページのナビゲーションカード
+const subPages = [
+  {
+    href: '/aisei/kazoku/fufu/',
+    icon: '👫',
+    title: '夫婦・パートナー相性',
+    kw: 'VOL320 / SD14',
+    desc: 'Gottman（1994）・Olson（2000）の研究に基づく夫婦のコミュニケーションスタイル傾向。MBTI16タイプ×16の相性傾向・血液型4×4相性・マネースクリプト別の対話術を収録。',
+    tags: ['MBTI相性', '血液型相性', 'マネースクリプト', 'コミュニケーション術'],
+  },
+  {
+    href: '/aisei/kazoku/oyako/',
+    icon: '👨‍👧',
+    title: '親子相性',
+    kw: 'VOL260 / SD14',
+    desc: 'Gardner（1983）の多重知能理論・Keirsey（1998）の気質論に基づく親子のスタイルの違い。多重知能×タイプ別の理解・J/P軸の生活スタイル差・思考型/感情型の意思決定スタイル解説。',
+    tags: ['多重知能', 'MBTI親子', '気質論', 'スタイルの違い'],
+  },
+  {
+    href: '/aisei/kazoku/communication/',
+    icon: '💬',
+    title: '家族コミュニケーション',
+    kw: '家族 会話 / 家族 性格',
+    desc: 'Schutz（1958）のFIRO理論・Olson（2000）の凝集性×柔軟性モデルに基づく家族内の対話改善。きょうだい間の傾向差・DiSC4タイプ別のコミュニケーション傾向・家族ミーティング構成例。',
+    tags: ['FIRO理論', 'DiSC', 'きょうだい相性', '家族ミーティング'],
+  },
+];
+
+// 4フレームワーク × 家族関係への活用
+const frameworks = [
+  {
+    name: 'MBTI（16タイプ）',
+    family: '外向型/内向型の違いがエネルギー補充スタイルに現れる。J/P軸が日常の生活ペースに影響する。',
+    strength: 'コミュニケーションスタイルの違いを「傾向」として言語化しやすい',
+    limit: '自己申告ベースのため、回答時のコンディションや自己認識の差が出る',
+    page: '/aisei/',
+  },
+  {
+    name: '血液型（4タイプ）',
+    family: '日本の文化的文脈での会話のきっかけとして機能する。科学的相関は限定的（Sakamoto & Yamazaki 2004）。',
+    strength: '日本家庭では親しみやすく、対話のきっかけになりやすい',
+    limit: '国際的な科学的根拠が限定的。断定的な判断には不向き',
+    page: '/diagnosis/blood-compat/',
+  },
+  {
+    name: '多重知能（MI理論）',
+    family: '親子間で得意な知能領域が異なることを前向きに理解できる。「うちの子は勉強が苦手」ではなく「どの知能が強いか」という視点に変わる。',
+    strength: 'Gardner（1983）の学術研究に基づく。子どもの強みを多角的に把握しやすい',
+    limit: '全8種の知能は連続的で重複するため、単純なカテゴリ分けには限界がある',
+    page: '/diagnosis/multiple-intelligence/',
+  },
+  {
+    name: 'DiSC（4スタイル）',
+    family: '支配型(D)・影響型(I)・安定型(S)・慎重型(C)の4スタイルで家族の意思決定・対立解消スタイルが把握しやすい。',
+    strength: 'ビジネス心理学由来のため、具体的な行動レベルでの違いが見えやすい',
+    limit: '家族向けの検証研究は仕事・組織場面より少ない',
+    page: '/aisei/',
+  },
+];
+
+// 4人家族の性格タイプマッピング例（概念図）
+const familyMapExample = [
+  { role: '父', type: 'ISTJ', mi: '論理数学', disc: 'C（慎重型）', note: '計画を重視・細部へのこだわりが強い' },
+  { role: '母', type: 'ENFJ', mi: '言語', disc: 'I（影響型）', note: '人をつなぐ役割・感情表現が豊か' },
+  { role: '長子', type: 'ENTP', mi: '空間・論理数学', disc: 'D（支配型）', note: '新しいアイデアを好む・議論が得意' },
+  { role: '次子', type: 'ISFP', mi: '音楽・身体運動', disc: 'S（安定型）', note: '感覚重視・独自の世界観を大切にする' },
+];
+---
+
+<BaseLayout
+  title="家族の性格相性 完全ガイド｜夫婦・親子・きょうだい｜診断ナビ"
+  description="Bowlby（1969）・Olson（2000）の研究に基づく家族の性格相性ガイド。夫婦相性・親子相性・家族コミュニケーションの3テーマ。MBTI・血液型・多重知能・DiSC を家族関係に活かす方法を解説。性格傾向の参考情報です。"
+  canonical={pageUrl}
+  jsonLd={jsonLd}
+  publishDate="2026-05-21"
+  lastUpdated="2026-05-21"
+  breadcrumbs={[
+    { name: '相性診断', url: '/aisei/' },
+    { name: '家族の性格相性', url: '/aisei/kazoku/' },
+  ]}
+>
+  <!-- ページヘッダー -->
+  <section class="hub-header hub-header--family">
+    <Container>
+      <div class="hub-header-inner">
+        <div class="hub-icon" aria-hidden="true">👨‍👩‍👧‍👦</div>
+        <div>
+          <p class="hub-eyebrow">2026-05-21 確認済み情報</p>
+          <h1 class="hub-title">家族の性格相性 完全ガイド</h1>
+          <p class="hub-subtitle">夫婦・親子・きょうだいの理解</p>
+          <p class="hub-lead">
+            Bowlby（1969）・Olson（2000）の研究を参考に、<br>
+            家族構成員それぞれの性格傾向を「理解する」ための情報をまとめています。
+          </p>
+          <div class="hub-ymyl-note" role="note" aria-label="ご注意">
+            <span aria-hidden="true">ℹ️</span>
+            このページは性格傾向の参考情報です。医療・育児・介護・法律の専門的なアドバイスは含まれません。
+          </div>
+        </div>
+      </div>
+    </Container>
+  </section>
+
+  <!-- TldrBlock -->
+  <Container>
+    <TldrBlock
+      title="このページでわかること"
+      points={[
+        "家族の性格相性の科学的根拠: Bowlby（1969）の愛着理論・Olson（2000）のCircumplex Modelに基づく家族関係の解説",
+        "夫婦相性・親子相性・家族コミュニケーションの3サブページへの導線と各テーマの概要",
+        "MBTI・血液型・多重知能・DiSC それぞれを家族関係に活かす方法と特徴・限界の整理",
+        "4人家族の性格タイプマッピング例（概念図）で家族内の傾向差を視覚的に把握",
+        "家族構成員全員のタイプを統合プロファイルでまとめて確認する方法",
+      ]}
+      updatedAt="2026-05-21"
+      sourceLabel="Olson DH (2000) Circumplex Model"
+      sourceUrl="https://doi.org/10.1177/0192513X00021002001"
+    />
+  </Container>
+
+  <!-- 統合プロファイル（家族軸） -->
+  <section class="hub-main">
+    <Container>
+      <h2 class="section-title">あなたの家族軸プロファイルを確認する</h2>
+      <p class="section-lead">
+        8診断の結果を家族軸でまとめて確認できます。<br>
+        家族との対話のヒントとしてご活用ください。
+      </p>
+      <IntegratedProfileViewer client:load axis="family" singleAxisMode={true} />
+    </Container>
+  </section>
+
+  <!-- 3サブページ導線カード -->
+  <section class="subpage-nav">
+    <Container>
+      <h2 class="section-title">家族軸の3テーマを詳しく見る</h2>
+      <p class="section-lead">
+        家族の性格相性は「夫婦・パートナー」「親子」「家族コミュニケーション」の3テーマで詳しく解説しています。
+      </p>
+
+      <div class="subpage-grid">
+        {subPages.map((sp) => (
+          <a href={sp.href} class="subpage-card" aria-label={sp.title}>
+            <div class="subpage-card__icon" aria-hidden="true">{sp.icon}</div>
+            <div class="subpage-card__body">
+              <div class="subpage-card__kw">{sp.kw}</div>
+              <h3 class="subpage-card__title">{sp.title}</h3>
+              <p class="subpage-card__desc">{sp.desc}</p>
+              <div class="subpage-card__tags" aria-label="関連テーマ">
+                {sp.tags.map((tag) => (
+                  <span class="subpage-card__tag">{tag}</span>
+                ))}
+              </div>
+            </div>
+            <div class="subpage-card__arrow" aria-hidden="true">→</div>
+          </a>
+        ))}
+      </div>
+    </Container>
+  </section>
+
+  <!-- 家族の性格相性とは（定義パラ） -->
+  <section class="content-section">
+    <Container>
+      <h2 class="section-title">家族の性格相性とは</h2>
+
+      <p class="body-text">
+        家族の性格相性とは、家族構成員それぞれのコミュニケーションスタイル・価値観・判断の傾向を理解し、
+        日常的な対話や関係をスムーズにするための参考情報です。
+      </p>
+
+      <p class="body-text">
+        Olson（2000）のCircumplex Modelでは、家族関係の満足度に「凝集性（絆の強さ）」と「柔軟性（変化への適応力）」の2軸が関連することが示されています。
+        性格タイプの違いは、この2軸への好みの違いとして現れます。
+        （出典: <a href="https://doi.org/10.1177/0192513X00021002001" target="_blank" rel="noopener noreferrer">Journal of Family Therapy 22(2)</a>）
+      </p>
+
+      <div class="def-box">
+        <h3 class="def-box__title">Bowlby（1969）の愛着理論と家族の性格理解</h3>
+        <p class="def-box__text">
+          John Bowlby（1969）の愛着理論は、乳幼児期に形成される安心感のベースが
+          その後の対人関係スタイルに影響することを示した研究です。
+          家族内でのコミュニケーションスタイルの違いを理解する際の理論的背景の一つとして活用されています。
+        </p>
+        <p class="def-box__note">
+          出典: Bowlby J（1969）Attachment and Loss.
+          <a href="https://www.guilford.com/books/Attachment-and-Loss/John-Bowlby/9780465005437" target="_blank" rel="noopener noreferrer">Guilford Press</a>
+          ※本サイトは愛着理論の診断・治療を行うものではありません。
+        </p>
+      </div>
+
+      <p class="body-text">
+        「性格相性が合わない」という判断よりも、
+        「スタイルの違いを知る」ことが日常のすれ違いを減らすきっかけになります。
+        本サイトは性格傾向の参考情報として活用してください。
+      </p>
+    </Container>
+  </section>
+
+  <!-- 家族軸の5シーン軸内の位置づけ -->
+  <section class="content-section content-section--alt">
+    <Container>
+      <h2 class="section-title">家族軸は診断ナビ5シーン軸の1つ</h2>
+      <p class="section-lead">
+        診断ナビでは、あなたの性格傾向を「仕事・恋愛・友人・家族・学習」の5シーンで確認できます。
+        家族軸は「家族構成員との性格傾向の違い」を理解するためのシーンです。
+      </p>
+
+      <div class="scene-axis-list" role="list" aria-label="5シーン軸一覧">
+        <div class="scene-axis-item scene-axis-item--active" role="listitem">
+          <span class="scene-axis-item__icon" aria-hidden="true">👨‍👩‍👧‍👦</span>
+          <div>
+            <span class="scene-axis-item__label">家族軸（現在のページ）</span>
+            <p class="scene-axis-item__desc">夫婦・親子・きょうだいの性格相性</p>
+          </div>
+        </div>
+        <a href="/aisei/" class="scene-axis-item" role="listitem" aria-label="恋愛軸へ">
+          <span class="scene-axis-item__icon" aria-hidden="true">💕</span>
+          <div>
+            <span class="scene-axis-item__label">恋愛軸</span>
+            <p class="scene-axis-item__desc">恋愛スタイル・パートナー選びの傾向</p>
+          </div>
+          <span class="scene-axis-item__arrow" aria-hidden="true">→</span>
+        </a>
+        <a href="/aisei/" class="scene-axis-item" role="listitem" aria-label="仕事軸へ">
+          <span class="scene-axis-item__icon" aria-hidden="true">💼</span>
+          <div>
+            <span class="scene-axis-item__label">仕事軸</span>
+            <p class="scene-axis-item__desc">職場での強み・チームでの役割</p>
+          </div>
+          <span class="scene-axis-item__arrow" aria-hidden="true">→</span>
+        </a>
+        <a href="/aisei/" class="scene-axis-item" role="listitem" aria-label="友人軸へ">
+          <span class="scene-axis-item__icon" aria-hidden="true">👥</span>
+          <div>
+            <span class="scene-axis-item__label">友人軸</span>
+            <p class="scene-axis-item__desc">友人関係でのコミュニケーション傾向</p>
+          </div>
+          <span class="scene-axis-item__arrow" aria-hidden="true">→</span>
+        </a>
+        <a href="/aisei/" class="scene-axis-item" role="listitem" aria-label="学習軸へ">
+          <span class="scene-axis-item__icon" aria-hidden="true">📚</span>
+          <div>
+            <span class="scene-axis-item__label">学習軸</span>
+            <p class="scene-axis-item__desc">学習スタイル・得意な知能領域</p>
+          </div>
+          <span class="scene-axis-item__arrow" aria-hidden="true">→</span>
+        </a>
+      </div>
+    </Container>
+  </section>
+
+  <!-- 家族タイプマッピング概念図 -->
+  <section class="content-section">
+    <Container>
+      <h2 class="section-title">家族の性格タイプマッピング（4人家族の例）</h2>
+      <p class="section-lead">
+        4人家族を例に、MBTI・多重知能・DiSCの組み合わせで家族内の傾向差を示した概念図です。
+        「正解のモデル」ではなく、各人の傾向の違いを視覚的に把握するための参考です。
+      </p>
+
+      <div class="family-map" role="figure" aria-label="4人家族の性格タイプマッピング例">
+        <div class="family-map__header" aria-hidden="true">
+          <span>家族内の役割</span>
+          <span>MBTIタイプ</span>
+          <span>強い知能領域（MI）</span>
+          <span>DiSCスタイル</span>
+          <span>傾向のポイント</span>
+        </div>
+        {familyMapExample.map((member) => (
+          <div class="family-map__row">
+            <span class="family-map__role">{member.role}</span>
+            <span class="family-map__type">{member.type}</span>
+            <span class="family-map__mi">{member.mi}</span>
+            <span class="family-map__disc">{member.disc}</span>
+            <span class="family-map__note">{member.note}</span>
+          </div>
+        ))}
+      </div>
+
+      <p class="body-text mt-md">
+        この例では「計画重視の父（ISTJ/C型）」と「新しいことが好きな長子（ENTP/D型）」の間で
+        日常の決め方や整理整頓のスタイルに差が出やすい傾向があります。
+        「どちらが正しい」ではなく「スタイルの違い」として認識することが、
+        Olson（2000）が示す「柔軟性のある家族関係」への出発点です。
+      </p>
+
+      <p class="map-note">
+        ※上記は概念理解のための例示です。実際のタイプは診断ツールで確認してください。
+        「次子がこのタイプだから音楽の道に進むべき」等の断定的解釈はお避けください。
+      </p>
+    </Container>
+  </section>
+
+  <!-- 4フレームワーク × 家族関係 -->
+  <section class="content-section content-section--alt">
+    <Container>
+      <h2 class="section-title">4つの診断フレームワークと家族関係への活用</h2>
+      <p class="section-lead">
+        MBTI・血液型・多重知能・DiSC それぞれの特徴と、家族関係への活用ポイントを整理しました。
+        どのフレームワークにも強みと限界があります。
+      </p>
+
+      <div class="fw-grid">
+        {frameworks.map((fw) => (
+          <div class="fw-card">
+            <h3 class="fw-card__name">{fw.name}</h3>
+            <dl class="fw-card__dl">
+              <dt class="fw-card__dt">家族への活用</dt>
+              <dd class="fw-card__dd">{fw.family}</dd>
+              <dt class="fw-card__dt">強み</dt>
+              <dd class="fw-card__dd fw-card__dd--strength">{fw.strength}</dd>
+              <dt class="fw-card__dt">限界</dt>
+              <dd class="fw-card__dd fw-card__dd--limit">{fw.limit}</dd>
+            </dl>
+            <a href={fw.page} class="fw-card__link" aria-label={`${fw.name}の詳細を見る`}>詳しく見る →</a>
+          </div>
+        ))}
+      </div>
+
+      <div class="info-box mt-md">
+        <h3 class="info-box__title">複数フレームワークを組み合わせる利点</h3>
+        <ul class="info-box__list">
+          <li>1つの診断だけに依存せず、複数の視点を参照することで「断定」ではなく「傾向理解」になる</li>
+          <li>MBTIが「認知・判断スタイル」を、多重知能が「得意な思考の種類」を補完的に説明する</li>
+          <li>家族内で異なる診断の結果を比較する際は、決めつけではなく「対話のきっかけ」として使う</li>
+        </ul>
+      </div>
+    </Container>
+  </section>
+
+  <!-- 家族全員の統合プロファイル比較 -->
+  <section class="content-section">
+    <Container>
+      <h2 class="section-title">家族構成員全員のタイプを統合して確認する</h2>
+
+      <p class="body-text">
+        診断ナビの統合プロファイル機能では、8つの診断（MBTI・血液型・恋愛スタイル・多重知能・完璧主義・マネースクリプト等）の結果を
+        家族軸でまとめて確認できます。
+      </p>
+
+      <div class="howto-list">
+        <div class="howto-item">
+          <div class="howto-item__num" aria-hidden="true">01</div>
+          <div class="howto-item__body">
+            <h3 class="howto-item__title">まず自分の診断を受ける</h3>
+            <p class="howto-item__text">
+              本サイトの各診断（MBTI・多重知能・恋愛スタイル等）を受けると、
+              統合プロファイルに自動的に蓄積されます。
+            </p>
+          </div>
+        </div>
+        <div class="howto-item">
+          <div class="howto-item__num" aria-hidden="true">02</div>
+          <div class="howto-item__body">
+            <h3 class="howto-item__title">招待リンクを家族に送る</h3>
+            <p class="howto-item__text">
+              招待モードを使うと、家族それぞれが自分のペースで診断を受けられます。
+              強制せず「一緒に試してみる？」というスタンスが自然な入り口です。
+            </p>
+          </div>
+        </div>
+        <div class="howto-item">
+          <div class="howto-item__num" aria-hidden="true">03</div>
+          <div class="howto-item__body">
+            <h3 class="howto-item__title">家族軸プロファイルを比較する</h3>
+            <p class="howto-item__text">
+              家族が診断を完了すると、各人のプロファイルが家族軸で並べて表示されます。
+              「なぜすれ違うのか」の傾向を視覚的に確認できます。
+            </p>
+          </div>
+        </div>
+        <div class="howto-item">
+          <div class="howto-item__num" aria-hidden="true">04</div>
+          <div class="howto-item__body">
+            <h3 class="howto-item__title">対話のきっかけとして使う</h3>
+            <p class="howto-item__text">
+              「あなたはこのタイプだから〜」という決めつけではなく、
+              「私はこういう傾向みたいだけど、あなたはどう感じる？」という
+              対話のきっかけとして活用するのが最も効果的です。
+            </p>
+          </div>
+        </div>
+      </div>
+    </Container>
+  </section>
+
+  <!-- ScienceNote -->
+  <Container>
+    <ScienceNote
+      basisText="Bowlby J（1969）Attachment and Loss（Basic Books）・Olson DH（2000）Circumplex Model of Marital and Family Systems（Journal of Family Therapy 22(2)）・Schutz WC（1958）FIRO: A Three-Dimensional Theory of Interpersonal Behavior（Rinehart）・Gardner H（1983）Frames of Mind: The Theory of Multiple Intelligences（Basic Books）を参考に編集部が作成。"
+      basisUrl="https://doi.org/10.1177/0192513X00021002001"
+      basisLabel="Olson DH (2000) Circumplex Model"
+      notMedical={true}
+      updatedAt="2026-05-21"
+      additionalNote="本ページは「家族の性格相性」に関する参考情報の提供を目的としています。育児・介護・家族関係に深刻な困難がある場合は、臨床心理士・家庭支援専門員・医師等の専門家にご相談ください。"
+    />
+  </Container>
+
+  <!-- FAQ -->
+  <section class="faq-section" id="faq" aria-labelledby="faq-heading">
+    <Container>
+      <h2 id="faq-heading" class="section-title">よくある質問（FAQ）</h2>
+
+      <dl class="faq-list">
+        <div class="faq-item">
+          <dt class="faq-q">家族の性格相性とは何ですか？</dt>
+          <dd class="faq-a">
+            家族構成員それぞれのコミュニケーションスタイル・価値観・判断の傾向を理解し、
+            日常的な対話や関係をスムーズにするための参考情報です。
+            医学的診断や治療ではなく、心理学の知見を参考に「互いの傾向を知る」ことが目的です。
+          </dd>
+        </div>
+        <div class="faq-item">
+          <dt class="faq-q">性格相性が合わない家族はどうすればいいですか？</dt>
+          <dd class="faq-a">
+            「相性が悪い」という判断よりも、「スタイルの違いを理解する」という視点が重要です。
+            Olson（2000）の研究では、柔軟性とコミュニケーションの質が家族関係の満足度に大きく影響することが示されています。
+            相性を「変えよう」とするより、互いの傾向を知ることで対話のきっかけが生まれます。
+          </dd>
+        </div>
+        <div class="faq-item">
+          <dt class="faq-q">家族の性格タイプを知るとどんなメリットがありますか？</dt>
+          <dd class="faq-a">
+            「なぜすれ違うのか」「なぜ反応が違うのか」を感情論ではなく傾向として理解できます。
+            これにより、対話の方法を工夫したり、互いの得意・苦手を補い合ったりするきっかけが生まれます。
+          </dd>
+        </div>
+        <div class="faq-item">
+          <dt class="faq-q">MBTIと血液型、家族では使い分けるべきですか？</dt>
+          <dd class="faq-a">
+            MBTIは認知・判断・エネルギーの方向性を4軸16タイプで表す自己申告ツールです。
+            血液型は日本の文化的文脈での会話のきっかけとして機能しますが、
+            科学的相関は限定的です（Sakamoto & Yamazaki 2004）。
+            コミュニケーション改善を目的にするなら、MBTIや多重知能理論がより理論的根拠のある参考情報として活用しやすいです。
+          </dd>
+        </div>
+        <div class="faq-item">
+          <dt class="faq-q">夫婦相性・親子相性・きょうだい相性は何が違いますか？</dt>
+          <dd class="faq-a">
+            夫婦相性は長期的なパートナーシップにおけるコミュニケーション・価値観の傾向を扱います。
+            親子相性は成長段階に応じた性格・多重知能のスタイルの違いを扱います。
+            きょうだい相性は家族コミュニケーションページで扱う兄弟・姉妹間の傾向の違いです。
+            いずれも「性格傾向の参考情報」であり、医療・専門的アドバイスではありません。
+          </dd>
+        </div>
+        <div class="faq-item">
+          <dt class="faq-q">家族構成員全員のタイプをまとめて確認できますか？</dt>
+          <dd class="faq-a">
+            はい。本ページの「統合プロファイル（家族軸）」機能を使うと、
+            あなたが受けた8つの診断結果を家族軸でまとめて確認できます。
+            招待モードを使えば家族がそれぞれ診断を受け、プロファイルを比較することも可能です。
+          </dd>
+        </div>
+        <div class="faq-item">
+          <dt class="faq-q">家族に診断を受けてもらうにはどうすればいいですか？</dt>
+          <dd class="faq-a">
+            招待リンク機能を使うと、家族がそれぞれ自分のペースで診断を受けられます。
+            強制せず「ゲーム感覚で試してみて」という形で共有するのが自然です。
+            「こっそりモード」では相手のタイプを手動入力して相性傾向だけを確認することもできます。
+          </dd>
+        </div>
+        <div class="faq-item">
+          <dt class="faq-q">家族の性格がまったく違う場合はどうすればいいですか？</dt>
+          <dd class="faq-a">
+            Schutz（1958）のFIRO理論では、対人関係において「包含・コントロール・親密さ」への欲求が
+            人によって異なることが示されています。
+            家族の傾向が大きく異なることは珍しくなく、
+            「違いを問題視する」より「互いのニーズを知る」ことが関係改善の出発点です。
+          </dd>
+        </div>
+        <div class="faq-item">
+          <dt class="faq-q">義理の家族やパートナーの家族の理解にも使えますか？</dt>
+          <dd class="faq-a">
+            はい。性格傾向の参考情報として活用できます。
+            「なぜあの人はあのような反応をするのか」という疑問を、
+            感情論ではなく傾向として理解するきっかけになります。
+            ただし断定的なレッテル貼りにならないよう「傾向の参考情報」として活用してください。
+          </dd>
+        </div>
+        <div class="faq-item">
+          <dt class="faq-q">育児や介護の参考にもなりますか？</dt>
+          <dd class="faq-a">
+            本サイトは性格傾向の参考情報の提供を目的としており、
+            育児・介護に関する専門的なアドバイスは含まれません。
+            育児・介護に深刻な困難がある場合は、小児科医・臨床心理士・介護支援専門員など
+            専門家にご相談ください。
+          </dd>
+        </div>
+      </dl>
+    </Container>
+  </section>
+
+  <!-- 参考文献 -->
+  <Container>
+    <ReferenceList references={references} confirmedAt="2026-05-21" />
+  </Container>
+
+  <!-- 関連ページ -->
+  <section class="related-nav" aria-labelledby="related-heading">
+    <Container>
+      <h2 id="related-heading" class="section-title">関連する診断・相性ページ</h2>
+      <nav aria-label="関連ページナビゲーション">
+        <ul class="related-list">
+          <li><a href="/aisei/" class="related-link">相性診断トップ</a></li>
+          <li><a href="/aisei/kazoku/fufu/" class="related-link">夫婦・パートナー相性</a></li>
+          <li><a href="/aisei/kazoku/oyako/" class="related-link">親子相性</a></li>
+          <li><a href="/aisei/kazoku/communication/" class="related-link">家族コミュニケーション</a></li>
+          <li><a href="/diagnosis/mbti-compat/" class="related-link">MBTI相性診断</a></li>
+          <li><a href="/diagnosis/blood-compat/" class="related-link">血液型相性診断</a></li>
+          <li><a href="/diagnosis/multiple-intelligence/" class="related-link">多重知能診断</a></li>
+        </ul>
+      </nav>
+    </Container>
+  </section>
+</BaseLayout>
+
+<style>
+/* ========== ハブヘッダー ========== */
+.hub-header {
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 50%, #fcd34d 100%);
+  padding: 3rem 0 2.5rem;
+}
+
+.hub-header--family {
+  background: linear-gradient(135deg, #fef3c7 0%, #fed7aa 50%, #fcd34d 100%);
+}
+
+.hub-header-inner {
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-start;
+}
+
+.hub-icon {
+  font-size: 3rem;
+  flex-shrink: 0;
+  line-height: 1;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.15));
+}
+
+.hub-eyebrow {
+  font-size: 0.75rem;
+  color: #92400e;
+  margin: 0 0 0.25rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.hub-title {
+  font-size: clamp(1.5rem, 4vw, 2.25rem);
+  font-weight: 800;
+  color: #78350f;
+  margin: 0 0 0.1rem;
+  line-height: 1.2;
+}
+
+.hub-subtitle {
+  font-size: clamp(1rem, 2.5vw, 1.25rem);
+  color: #92400e;
+  margin: 0 0 0.75rem;
+  font-weight: 600;
+}
+
+.hub-lead {
+  font-size: 0.95rem;
+  color: #451a03;
+  line-height: 1.7;
+  margin: 0 0 1rem;
+}
+
+.hub-ymyl-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.4rem;
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 0.5rem;
+  padding: 0.6rem 0.875rem;
+  font-size: 0.8rem;
+  color: #78350f;
+  line-height: 1.5;
+  max-width: 600px;
+}
+
+/* ========== メインセクション ========== */
+.hub-main {
+  padding: 2.5rem 0;
+  background: #fffbeb;
+}
+
+/* ========== サブページ導線カード ========== */
+.subpage-nav {
+  padding: 3rem 0;
+}
+
+.subpage-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  margin-top: 1.5rem;
+}
+
+.subpage-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.25rem;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  text-decoration: none;
+  color: inherit;
+  transition: box-shadow 0.2s, border-color 0.2s, transform 0.15s;
+  cursor: pointer;
+}
+
+.subpage-card:hover,
+.subpage-card:focus-visible {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  border-color: var(--sn-primary, #4f46e5);
+  transform: translateY(-2px);
+  outline: none;
+}
+
+.subpage-card:focus-visible {
+  outline: 3px solid var(--sn-primary, #4f46e5);
+  outline-offset: 2px;
+}
+
+.subpage-card__icon {
+  font-size: 2.5rem;
+  line-height: 1;
+  flex-shrink: 0;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
+}
+
+.subpage-card__body {
+  flex: 1;
+  min-width: 0;
+}
+
+.subpage-card__kw {
+  font-size: 0.7rem;
+  color: var(--sn-muted, #6b7280);
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.25rem;
+}
+
+.subpage-card__title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--sn-primary, #4f46e5);
+  margin: 0 0 0.5rem;
+  line-height: 1.3;
+}
+
+.subpage-card__desc {
+  font-size: 0.85rem;
+  color: #374151;
+  line-height: 1.65;
+  margin: 0 0 0.75rem;
+}
+
+.subpage-card__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.subpage-card__tag {
+  background: #f3f4f6;
+  border-radius: 999px;
+  padding: 0.2rem 0.6rem;
+  font-size: 0.7rem;
+  color: #6b7280;
+  white-space: nowrap;
+}
+
+.subpage-card__arrow {
+  font-size: 1.2rem;
+  color: var(--sn-primary, #4f46e5);
+  flex-shrink: 0;
+  align-self: center;
+  transition: transform 0.15s;
+}
+
+.subpage-card:hover .subpage-card__arrow {
+  transform: translateX(3px);
+}
+
+/* ========== コンテンツセクション ========== */
+.content-section {
+  padding: 3rem 0;
+}
+
+.content-section--alt {
+  background: #f9fafb;
+}
+
+.section-title {
+  font-size: clamp(1.2rem, 3vw, 1.6rem);
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 0.75rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--sn-primary, #4f46e5);
+}
+
+.section-lead {
+  font-size: 0.9rem;
+  color: #6b7280;
+  margin: 0 0 1.5rem;
+  line-height: 1.65;
+}
+
+.body-text {
+  font-size: 0.95rem;
+  line-height: 1.8;
+  color: #374151;
+  margin: 0 0 1rem;
+}
+
+.body-text a {
+  color: var(--sn-primary, #4f46e5);
+  text-decoration: underline;
+}
+
+/* ========== 定義ボックス ========== */
+.def-box {
+  background: #eff6ff;
+  border-left: 4px solid #3b82f6;
+  border-radius: 0 0.5rem 0.5rem 0;
+  padding: 1.25rem 1.5rem;
+  margin: 1.5rem 0;
+}
+
+.def-box__title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #1e40af;
+  margin: 0 0 0.5rem;
+}
+
+.def-box__text {
+  font-size: 0.9rem;
+  line-height: 1.7;
+  color: #1f2937;
+  margin: 0 0 0.5rem;
+}
+
+.def-box__note {
+  font-size: 0.78rem;
+  color: #6b7280;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.def-box__note a {
+  color: #3b82f6;
+}
+
+/* ========== 5シーン軸リスト ========== */
+.scene-axis-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+.scene-axis-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 1rem 1.25rem;
+  text-decoration: none;
+  color: inherit;
+  transition: box-shadow 0.2s, border-color 0.2s;
+}
+
+.scene-axis-item--active {
+  border-color: var(--sn-primary, #4f46e5);
+  background: #eef2ff;
+}
+
+.scene-axis-item:not(.scene-axis-item--active):hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  border-color: var(--sn-primary, #4f46e5);
+}
+
+.scene-axis-item:focus-visible {
+  outline: 3px solid var(--sn-primary, #4f46e5);
+  outline-offset: 2px;
+}
+
+.scene-axis-item__icon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.scene-axis-item__label {
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: #111827;
+  display: block;
+  margin-bottom: 0.1rem;
+}
+
+.scene-axis-item--active .scene-axis-item__label {
+  color: var(--sn-primary, #4f46e5);
+}
+
+.scene-axis-item__desc {
+  font-size: 0.8rem;
+  color: #6b7280;
+  margin: 0;
+}
+
+.scene-axis-item__arrow {
+  margin-left: auto;
+  color: var(--sn-primary, #4f46e5);
+  font-size: 1rem;
+}
+
+/* ========== 家族タイプマッピング ========== */
+.family-map {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  margin: 1.5rem 0;
+  overflow-x: auto;
+}
+
+.family-map__header {
+  display: grid;
+  grid-template-columns: 4rem 7rem 10rem 10rem 1fr;
+  gap: 0;
+  background: var(--sn-primary, #4f46e5);
+  color: #ffffff;
+  padding: 0.75rem 1rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  gap: 0.75rem;
+  min-width: 600px;
+}
+
+.family-map__row {
+  display: grid;
+  grid-template-columns: 4rem 7rem 10rem 10rem 1fr;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  font-size: 0.85rem;
+  border-top: 1px solid #e5e7eb;
+  background: #ffffff;
+  min-width: 600px;
+  align-items: center;
+}
+
+.family-map__row:nth-child(even) {
+  background: #f9fafb;
+}
+
+.family-map__role {
+  font-weight: 700;
+  color: #111827;
+}
+
+.family-map__type {
+  font-family: monospace;
+  font-weight: 600;
+  color: var(--sn-primary, #4f46e5);
+  background: #eef2ff;
+  padding: 0.15rem 0.4rem;
+  border-radius: 0.25rem;
+  text-align: center;
+  font-size: 0.8rem;
+}
+
+.family-map__mi,
+.family-map__disc {
+  color: #374151;
+  font-size: 0.82rem;
+}
+
+.family-map__note {
+  font-size: 0.8rem;
+  color: #6b7280;
+  line-height: 1.5;
+}
+
+.map-note {
+  font-size: 0.78rem;
+  color: #9ca3af;
+  line-height: 1.5;
+  margin: 0.5rem 0 0;
+  padding: 0.5rem 0.75rem;
+  border-left: 3px solid #e5e7eb;
+}
+
+/* ========== フレームワークグリッド ========== */
+.fw-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.25rem;
+  margin-top: 1.5rem;
+}
+
+.fw-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+}
+
+.fw-card__name {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 0.75rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 2px solid var(--sn-primary, #4f46e5);
+}
+
+.fw-card__dl {
+  margin: 0 0 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.fw-card__dt {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-top: 0.4rem;
+}
+
+.fw-card__dd {
+  font-size: 0.83rem;
+  line-height: 1.6;
+  color: #374151;
+  margin: 0;
+}
+
+.fw-card__dd--strength {
+  color: #065f46;
+}
+
+.fw-card__dd--limit {
+  color: #92400e;
+}
+
+.fw-card__link {
+  font-size: 0.82rem;
+  color: var(--sn-primary, #4f46e5);
+  text-decoration: underline;
+  font-weight: 600;
+}
+
+/* ========== ハウツーリスト ========== */
+.howto-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.howto-item {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.howto-item__num {
+  background: var(--sn-primary, #4f46e5);
+  color: #ffffff;
+  font-weight: 800;
+  font-size: 0.8rem;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 0.1rem;
+}
+
+.howto-item__body {
+  flex: 1;
+}
+
+.howto-item__title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 0.25rem;
+}
+
+.howto-item__text {
+  font-size: 0.875rem;
+  color: #374151;
+  line-height: 1.7;
+  margin: 0;
+}
+
+/* ========== 情報ボックス ========== */
+.info-box {
+  background: #eff6ff;
+  border-radius: 0.75rem;
+  padding: 1.25rem 1.5rem;
+}
+
+.info-box__title {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #1e40af;
+  margin: 0 0 0.5rem;
+}
+
+.info-box__list {
+  margin: 0;
+  padding-left: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.info-box__list li {
+  font-size: 0.85rem;
+  color: #1e3a8a;
+  line-height: 1.65;
+}
+
+/* ========== FAQ ========== */
+.faq-section {
+  padding: 3rem 0;
+  background: #f9fafb;
+}
+
+.faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin-top: 1.5rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+
+.faq-item {
+  border-bottom: 1px solid #e5e7eb;
+  padding: 1.25rem 1.5rem;
+  background: #ffffff;
+}
+
+.faq-item:last-child {
+  border-bottom: none;
+}
+
+.faq-item:nth-child(even) {
+  background: #f9fafb;
+}
+
+.faq-q {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 0.5rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+.faq-q::before {
+  content: 'Q.';
+  color: var(--sn-primary, #4f46e5);
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+.faq-a {
+  font-size: 0.875rem;
+  line-height: 1.75;
+  color: #374151;
+  margin: 0;
+  padding-left: 1.5rem;
+}
+
+/* ========== 関連ナビ ========== */
+.related-nav {
+  padding: 2.5rem 0;
+  border-top: 1px solid #e5e7eb;
+}
+
+.related-list {
+  list-style: none;
+  margin: 1rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.related-link {
+  display: inline-block;
+  background: #f3f4f6;
+  border: 1px solid #e5e7eb;
+  border-radius: 999px;
+  padding: 0.4rem 1rem;
+  font-size: 0.85rem;
+  color: #374151;
+  text-decoration: none;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.related-link:hover {
+  background: var(--sn-primary, #4f46e5);
+  color: #ffffff;
+  border-color: var(--sn-primary, #4f46e5);
+}
+
+.related-link:focus-visible {
+  outline: 3px solid var(--sn-primary, #4f46e5);
+  outline-offset: 2px;
+}
+
+/* ========== ユーティリティ ========== */
+.mt-md {
+  margin-top: 1.5rem;
+}
+
+/* ========== レスポンシブ ========== */
+@media (max-width: 640px) {
+  .hub-header-inner {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .hub-icon {
+    font-size: 2.5rem;
+  }
+
+  .subpage-card {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .subpage-card__arrow {
+    align-self: flex-end;
+  }
+
+  .family-map__header,
+  .family-map__row {
+    grid-template-columns: 3rem 6rem 8rem 8rem 1fr;
+    font-size: 0.75rem;
+    gap: 0.5rem;
+  }
+
+  .fw-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .howto-item {
+    gap: 0.75rem;
+  }
+}
+</style>
