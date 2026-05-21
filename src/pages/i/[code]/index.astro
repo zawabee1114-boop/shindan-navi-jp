@@ -128,13 +128,13 @@ const config = modeConfigs[mode as keyof typeof modeConfigs] ?? modeConfigs.secr
       <div class="invite-content" id="invite-content" hidden>
 
         <!-- ヒーロー -->
-        <div class="invite-hero" data-mode={mode}>
+        <div class="page-hero page-hero--purple" data-mode={mode}>
           <div class="invite-mode-badge" id="invite-mode-badge" style={`background: ${config.badgeColor}`}>
             {config.badge}
           </div>
           <div class="invite-hero-icon" id="invite-hero-icon" aria-hidden="true">{config.icon}</div>
-          <h1 class="invite-hero-title" id="invite-hero-title">{config.title}</h1>
-          <p class="invite-hero-desc" id="invite-hero-desc">{config.desc}</p>
+          <h1 class="page-hero-h1" id="invite-hero-title">{config.title}</h1>
+          <p class="page-hero-sub" id="invite-hero-desc">{config.desc}</p>
         </div>
 
         <!-- 招待者情報カード（invite / one_way / full_share モードのみ表示） -->

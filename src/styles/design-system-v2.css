@@ -623,3 +623,252 @@
     font-weight: 600;
   }
 }
+
+/* ================================================================
+   フェーズ3: page-hero 共通システム
+   残126ページ横展開用ヒーローコンポーネント
+   2026-05-22
+   ================================================================ */
+
+/* ----------------------------------------------------------------
+   .page-hero: ベースクラス
+   使い方: <section class="page-hero page-hero--{color}">
+   ---------------------------------------------------------------- */
+.page-hero {
+  position: relative;
+  overflow: hidden;
+  padding: 48px 24px 56px;
+  color: #fff;
+}
+
+@media (min-width: 768px) {
+  .page-hero {
+    padding: 64px 48px 72px;
+  }
+}
+
+/* 光沢オーバーレイ */
+.page-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(60% 50% at 80% 20%, rgba(255,255,255,.18), transparent 60%),
+    radial-gradient(40% 30% at 10% 80%, rgba(255,255,255,.12), transparent 50%);
+  pointer-events: none;
+}
+
+/* コンテンツ */
+.page-hero .page-hero-inner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  max-width: var(--sn-max-w-content);
+}
+
+/* バッジ */
+.page-hero .page-hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255,255,255,.2);
+  border: 1px solid rgba(255,255,255,.35);
+  border-radius: var(--radius-pill);
+  padding: 5px 14px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  align-self: flex-start;
+}
+
+/* H1 */
+.page-hero h1,
+.page-hero .page-hero-h1 {
+  font-size: clamp(1.5rem, 4vw, 2.25rem);
+  font-weight: 700;
+  line-height: 1.35;
+  margin: 0;
+  font-family: var(--sn-font-family);
+}
+
+/* サブテキスト */
+.page-hero .page-hero-sub {
+  font-size: clamp(0.875rem, 2vw, 1rem);
+  line-height: 1.7;
+  opacity: 0.9;
+  margin: 0;
+}
+
+/* メタ（更新日など） */
+.page-hero .page-hero-meta {
+  font-size: 12px;
+  opacity: 0.75;
+  margin: 0;
+}
+
+/* パンくず（ヒーロー内） */
+.page-hero .page-hero-breadcrumb {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 0.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.5rem;
+  font-size: 12px;
+  opacity: 0.75;
+}
+.page-hero .page-hero-breadcrumb li::after {
+  content: '›';
+  margin-left: 0.5rem;
+}
+.page-hero .page-hero-breadcrumb li:last-child::after {
+  content: '';
+}
+.page-hero .page-hero-breadcrumb a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* スパークル装飾（ヒーロー内） */
+.page-hero .page-hero-sparkle {
+  position: absolute;
+  pointer-events: none;
+  opacity: 0.35;
+  animation: sparkle-pulse 3.5s ease-in-out infinite;
+}
+
+/* ----------------------------------------------------------------
+   カラーバリアント
+   ---------------------------------------------------------------- */
+
+/* パープル（brand・MBTI・音楽・変化・タイムカプセル・信頼・認証系） */
+.page-hero--purple {
+  background: linear-gradient(135deg, #7c3aed 0%, #6366f1 100%);
+}
+
+/* 黄（完璧主義） */
+.page-hero--yellow {
+  background: linear-gradient(135deg, #d97706 0%, #f59e0b 100%);
+}
+
+/* オレンジ（家族軸） */
+.page-hero--orange {
+  background: linear-gradient(135deg, #ea580c 0%, #f97316 100%);
+}
+
+/* ネイビー（学校軸） */
+.page-hero--navy {
+  background: linear-gradient(135deg, #1e3a6e 0%, #2d4fa0 100%);
+}
+
+/* 珊瑚（血液型） */
+.page-hero--coral {
+  background: linear-gradient(135deg, #e11d48 0%, #ff6f7a 100%);
+}
+
+/* ピンク（恋愛依存） */
+.page-hero--pink {
+  background: linear-gradient(135deg, #db2777 0%, #ff7ab3 100%);
+}
+
+/* ティール（DiSC） */
+.page-hero--teal {
+  background: linear-gradient(135deg, #0d9488 0%, #34c0a8 100%);
+}
+
+/* ブルー（星座・仕事軸） */
+.page-hero--blue {
+  background: linear-gradient(135deg, #2563eb 0%, #4ea4f0 100%);
+}
+
+/* グリーン（友人軸） */
+.page-hero--green {
+  background: linear-gradient(135deg, #16a34a 0%, #7ec79b 100%);
+}
+
+/* ----------------------------------------------------------------
+   page-hero 内の汎用コンテンツスタイル
+   ---------------------------------------------------------------- */
+
+/* 統計バッジ行 */
+.page-hero .page-hero-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  opacity: 0.9;
+}
+
+.page-hero .page-hero-stats strong {
+  font-size: 18px;
+  font-weight: 700;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+/* CTAボタン（ヒーロー内・白背景） */
+.page-hero .page-hero-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #fff;
+  color: var(--brand-600);
+  font-weight: 700;
+  font-size: 15px;
+  padding: 14px 28px;
+  border-radius: var(--radius-pill);
+  text-decoration: none;
+  box-shadow: 0 8px 20px rgba(0,0,0,.15);
+  transition: opacity var(--sn-dur-fast) var(--sn-ease), transform var(--sn-dur-fast) var(--sn-ease);
+  min-height: var(--sn-tap-min);
+  align-self: flex-start;
+}
+
+.page-hero .page-hero-cta:hover {
+  opacity: 0.92;
+  text-decoration: none;
+  transform: translateY(-1px);
+}
+
+.page-hero .page-hero-cta:active {
+  transform: scale(0.97);
+}
+
+.page-hero .page-hero-cta:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 3px;
+}
+
+/* カラーバリアントに合わせた CTA カラー上書き */
+.page-hero--yellow .page-hero-cta  { color: #92400e; }
+.page-hero--orange .page-hero-cta  { color: #7c2d12; }
+.page-hero--navy   .page-hero-cta  { color: var(--s-school); }
+.page-hero--coral  .page-hero-cta  { color: #9f1239; }
+.page-hero--pink   .page-hero-cta  { color: #9d174d; }
+.page-hero--teal   .page-hero-cta  { color: #115e59; }
+.page-hero--blue   .page-hero-cta  { color: #1d4ed8; }
+.page-hero--green  .page-hero-cta  { color: #14532d; }
+
+/* ----------------------------------------------------------------
+   モバイル最適化
+   ---------------------------------------------------------------- */
+@media (max-width: 767px) {
+  .page-hero {
+    padding: 36px 20px 44px;
+  }
+
+  .page-hero h1,
+  .page-hero .page-hero-h1 {
+    font-size: clamp(1.375rem, 6vw, 1.875rem);
+  }
+
+  .page-hero .page-hero-cta {
+    width: 100%;
+    justify-content: center;
+    font-size: 16px;
+    padding: 16px 24px;
+  }
+}

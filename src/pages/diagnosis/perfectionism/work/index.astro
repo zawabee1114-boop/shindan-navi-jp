@@ -283,23 +283,23 @@ const references = [
     { name: '完璧主義×仕事', url: '/diagnosis/perfectionism/work/' },
   ]}
 >
-  <section class="wk-hero" aria-labelledby="wk-h1">
+  <section class="page-hero page-hero--yellow" aria-labelledby="wk-h1">
+    <svg class="page-hero-sparkle" style="top:16%;right:8%;width:50px;height:50px;" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2l1.8 5.4L19 9l-5.2 3.8L15.6 19 12 15.6 8.4 19l1.8-6.2L5 9l5.2-1.6z" fill="#fff" opacity=".55"/></svg>
+    <svg class="page-hero-sparkle" style="bottom:18%;left:6%;width:32px;height:32px;animation-delay:1.6s;" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2l1.8 5.4L19 9l-5.2 3.8L15.6 19 12 15.6 8.4 19l1.8-6.2L5 9l5.2-1.6z" fill="#fff" opacity=".4"/></svg>
     <Container>
-      <nav class="wk-breadcrumb" aria-label="パンくずリスト">
-        <ol class="wk-breadcrumb-list">
+      <div class="page-hero-inner">
+        <ol class="page-hero-breadcrumb" aria-label="パンくずリスト">
           <li><a href="/">ホーム</a></li>
           <li><a href="/diagnosis/">診断一覧</a></li>
           <li><a href="/diagnosis/perfectionism/">完璧主義診断</a></li>
           <li aria-current="page">仕事</li>
         </ol>
-      </nav>
-      <div class="wk-hero-inner">
-        <div class="wk-hero-badge">仕事 × 完璧主義</div>
-        <h1 id="wk-h1" class="wk-h1">
-          完璧主義×仕事｜強みと注意点・
-          <span class="wk-h1-sub">上司・部下・同僚との付き合い方</span>
+        <div class="page-hero-badge">💼 仕事 × 完璧主義</div>
+        <h1 id="wk-h1" class="page-hero-h1">
+          完璧主義×仕事｜強みと注意点<br>
+          <span style="font-size:clamp(1rem,2.5vw,1.4rem);font-weight:600;opacity:.88;">上司・部下・同僚との付き合い方</span>
         </h1>
-        <p class="wk-hero-meta">
+        <p class="page-hero-meta">
           <time datetime={UPDATED_AT}>{UPDATED_AT}</time> 時点の情報
         </p>
       </div>
@@ -816,11 +816,7 @@ const references = [
 
 <style>
 /* ========== ヒーロー ========== */
-.wk-hero {
-  background: linear-gradient(135deg, #0f766e 0%, #0d9488 100%);
-  color: #fff;
-  padding-block: 2.5rem 3rem;
-}
+/* ヒーローは .page-hero--yellow（design-system-v2.css）に委譲 */
 .wk-breadcrumb {
   margin-bottom: 1.5rem;
 }

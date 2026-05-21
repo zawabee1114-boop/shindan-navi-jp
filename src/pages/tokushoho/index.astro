@@ -26,10 +26,16 @@ const LAST_UPDATED = '2026-05-21';
   description="診断ナビの特定商取引法に基づく表記。販売者情報・支払い方法・返品ポリシー・サービス概要を記載しています。"
   canonical={pageUrl}
 >
+  <section class="page-hero page-hero--purple" aria-labelledby="tsh-h1">
+    <Container>
+      <div class="page-hero-inner">
+        <h1 id="tsh-h1" class="page-hero-h1">特定商取引法に基づく表記</h1>
+        <p class="page-hero-meta">最終更新: {LAST_UPDATED}</p>
+      </div>
+    </Container>
+  </section>
   <Container>
     <div class="tsh-page">
-      <h1 class="tsh-h1">特定商取引法に基づく表記</h1>
-      <p class="tsh-updated">最終更新: {LAST_UPDATED}</p>
 
       <table class="tsh-table">
         <tbody>
