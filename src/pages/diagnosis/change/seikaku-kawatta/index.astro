@@ -1,0 +1,998 @@
+---
+/**
+ * 性格が変わった気がする人向けガイド
+ * KW: 性格変わった（VOL480 / SD24）
+ * 確認日: 2026-05-21
+ *
+ * 学術根拠:
+ *   - Roberts BW, Walton KE, Viechtbauer W (2006) Patterns of mean-level change
+ *     Psychological Bulletin, 132(1), 1-25
+ *   - Bleidorn W, Hopwood CJ, Lucas RE (2018) Life events and personality trait change
+ *     Journal of Personality, 86(1), 83-96
+ *   - Beebe J (2017) Energies and Patterns in Psychological Type
+ *
+ * SEO/AIO対応:
+ * - JSON-LD: Article + FAQPage + BreadcrumbList（@id連結）
+ * - TldrBlock / ScienceNote / ReferenceList
+ * - PRO誘導CTA（タイムカプセル機能・過去との比較）
+ * - FAQ 10問
+ * - YMYL回避: 医療診断・治療表記ゼロ
+ */
+import BaseLayout from '../../../../layouts/BaseLayout.astro';
+import Container from '../../../../components/Container.astro';
+import TldrBlock from '../../../../components/TldrBlock.astro';
+import ReferenceList from '../../../../components/ReferenceList.astro';
+import ScienceNote from '../../../../components/ScienceNote.astro';
+
+const SITE_URL = 'https://shindan-navi.jp';
+const PAGE_URL = `${SITE_URL}/diagnosis/change/seikaku-kawatta/`;
+const CONFIRMED_AT = '2026-05-21';
+
+const references = [
+  {
+    title: 'Patterns of mean-level change in personality traits across the life course: A meta-analysis of longitudinal studies',
+    author: 'Roberts BW, Walton KE, Viechtbauer W',
+    year: 2006,
+    journal: 'Psychological Bulletin',
+    volume: '132(1), 1-25',
+    url: 'https://doi.org/10.1037/0033-2909.132.1.1',
+  },
+  {
+    title: 'Life events and personality trait change',
+    author: 'Bleidorn W, Hopwood CJ, Lucas RE',
+    year: 2018,
+    journal: 'Journal of Personality',
+    volume: '86(1), 83-96',
+    url: 'https://doi.org/10.1111/jopy.12286',
+  },
+  {
+    title: 'Energies and Patterns in Psychological Type: The Reservoir of Consciousness',
+    author: 'Beebe J',
+    year: 2017,
+    publisher: 'Routledge',
+    url: 'https://www.routledge.com/Energies-and-Patterns-in-Psychological-Type-The-Reservoir-of-Consciousness/Beebe/p/book/9781138890190',
+  },
+];
+
+const faqs = [
+  {
+    question: '性格が変わった気がするのは気のせいですか？',
+    answer:
+      '気のせいではありません。Roberts ら（2006）の縦断メタ分析（92研究・50,207人）では、誠実性・協調性・神経症傾向は年齢とともに緩やかに変化することが示されています。また、ライフイベント後に変化を実感することは非常に一般的です。',
+  },
+  {
+    question: '性格が変わったことに気づくサインはありますか？',
+    answer:
+      '典型的なサインとして、以前は平気だったことが苦になる・逆に以前は苦手だったことが楽になる・人づきあいへの感覚が変わった・ものの見方・優先順位が変わった、などが挙げられます。行動パターンの変化が継続している場合、特性レベルでの変化が生じている可能性があります。',
+  },
+  {
+    question: '環境が変わると性格も変わりますか？',
+    answer:
+      '環境の変化は行動パターンに影響を与え、結果として特性の発現が変わることがあります。Bleidorn ら（2018）は、転職・移住・結婚などのライフイベント後に特性スコアが有意に変化するケースを報告しています。ただし変化の方向と大きさには個人差があります。',
+  },
+  {
+    question: 'ポジティブな変化とネガティブな変化の違いは何ですか？',
+    answer:
+      '心理学的には「良い変化・悪い変化」という価値判断はしません。誠実性・協調性の上昇は社会的適応という観点から適応的とされることが多い一方、外向性の低下が本人にとって心地よければ問題ありません。変化の評価は本人の状況・目標・価値観によって異なります。',
+  },
+  {
+    question: '「以前の自分に戻りたい」と思うのはなぜですか？',
+    answer:
+      '変化に対する不安や、過去の状況への郷愁から生じることが多い感覚です。特性は連続的に変化しており、「以前の状態」に完全に戻るというよりも、自分にとって心地よい行動パターンを見つけ直すことが現実的なアプローチといえます。',
+  },
+  {
+    question: '短期間で性格が大きく変わることはありますか？',
+    answer:
+      '特性レベルの変化は通常、数ヶ月〜数年単位の緩やかなプロセスです。ただし、強いライフイベント（喪失体験・大きな成功など）の直後に一時的な状態変化が起きることがあります。短期間の変化の多くは特性の変化ではなく「状態」の変化です。',
+  },
+  {
+    question: '年齢によって変わりやすい特性はありますか？',
+    answer:
+      'Roberts ら（2006）によれば、誠実性・協調性は成人期を通じて上昇傾向、神経症傾向は低下傾向が見られます。20〜30代は変化が最も大きく、高齢期になると安定する傾向があります。',
+  },
+  {
+    question: '「性格が変わった」と言われることで傷つくことがあります。どう受け取ればいいですか？',
+    answer:
+      '変化は成長・適応の証でもあります。他者の「変わった」という評価は、その人の以前のあなたへのイメージと現在の差を示しているに過ぎません。変化がポジティブなものである場合、ぜひ自己理解の材料として活用してください。',
+  },
+  {
+    question: '自分の変化を客観的に把握する方法はありますか？',
+    answer:
+      '同じ診断を一定期間をおいて複数回受けてスコアを比較する方法が有効です。診断ナビのPRO会員（タイムカプセル機能）では、過去の診断結果と現在を比較して変化を時系列で可視化できます。',
+  },
+  {
+    question: 'このページの内容は医療的アドバイスですか？',
+    answer:
+      'いいえ。本ページは心理学の学術研究を参照した自己理解のための情報提供です。医療診断・治療・臨床心理学的アセスメントの代替ではありません。心身の不調がある場合は医師・臨床心理士にご相談ください。',
+  },
+];
+
+const signs = [
+  { icon: '🔄', label: '優先順位が変わった', desc: '以前は重視していたことへの関心が薄れ、新しい価値観が生まれている。' },
+  { icon: '💬', label: '人づきあいへの感覚が変わった', desc: '大人数が平気だったのに疲れやすくなった、または逆に一人の時間が増えた。' },
+  { icon: '😤', label: '怒りのツボが変わった', desc: '以前は気にしなかったことが気になる、または以前は怒っていたことが気にならなくなった。' },
+  { icon: '⏰', label: '時間の使い方が変わった', desc: '何に時間を使いたいかの感覚が以前と明らかに違う。' },
+  { icon: '🎯', label: '目標感が変わった', desc: '以前は追いかけていた目標への情熱が薄れ、別のことに情熱を感じるようになった。' },
+  { icon: '🗣️', label: '話し方・表現の仕方が変わった', desc: '主張の強さ、言葉の選び方、感情表現のスタイルが変化している。' },
+  { icon: '🛡️', label: 'ストレス耐性が変わった', desc: '以前は平気だったプレッシャーがきつくなった、または逆に以前よりタフになった。' },
+  { icon: '📚', label: '興味・関心の分野が変わった', desc: '好奇心が向く対象や熱中できることが以前と異なってきた。' },
+  { icon: '🤝', label: '他者への共感の感じ方が変わった', desc: '他人の気持ちへの想像力・関わり方のスタイルが変化している。' },
+  { icon: '🔮', label: '未来への向き合い方が変わった', desc: '先を見通す感覚・リスクへの態度・長期視点の持ち方が変わった。' },
+];
+
+const jsonLdArticle = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  '@id': `${PAGE_URL}#article`,
+  mainEntityOfPage: { '@type': 'WebPage', '@id': PAGE_URL },
+  headline: '性格が変わった気がする人へ｜変化を実感する10のサインと過去の自分との比較法',
+  description:
+    '「最近、性格が変わった気がする」と感じたときに知っておきたい10のサイン。Roberts ら（2006）の縦断研究をもとに変化のポジティブ面・ネガティブ面を解説。PRO タイムカプセルで過去の診断と比較する方法も紹介。',
+  url: PAGE_URL,
+  datePublished: '2026-05-21',
+  dateModified: CONFIRMED_AT,
+  inLanguage: 'ja',
+  author: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+    name: '診断ナビ',
+  },
+  publisher: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+    name: '診断ナビ',
+  },
+  citation: references.map((ref) => ({
+    '@type': ref.journal ? 'ScholarlyArticle' : 'Book',
+    name: ref.title,
+    author: ref.author,
+    datePublished: String(ref.year),
+    url: ref.url,
+  })),
+};
+
+const jsonLdFAQ = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  '@id': `${PAGE_URL}#faq`,
+  mainEntity: faqs.map(({ question, answer }) => ({
+    '@type': 'Question',
+    name: question,
+    acceptedAnswer: { '@type': 'Answer', text: answer },
+  })),
+};
+
+const jsonLdBreadcrumb = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  '@id': `${PAGE_URL}#breadcrumb`,
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'ホーム', item: SITE_URL },
+    { '@type': 'ListItem', position: 2, name: '診断一覧', item: `${SITE_URL}/diagnosis/` },
+    { '@type': 'ListItem', position: 3, name: '性格変化', item: `${SITE_URL}/diagnosis/change/` },
+    { '@type': 'ListItem', position: 4, name: '性格が変わった気がする', item: PAGE_URL },
+  ],
+};
+
+const jsonLdAll = [jsonLdArticle, jsonLdFAQ, jsonLdBreadcrumb];
+---
+
+<BaseLayout
+  title="性格が変わった気がする人へ｜変化の10サインと比較法"
+  description="「性格が変わった気がする」と感じたら。変化を実感する10のサイン・ポジティブ面とネガティブ面・過去の自分との比較セルフチェックを解説。PRO タイムカプセルで変化を可視化。Roberts ら 2006 縦断研究に基づく。"
+  canonical={PAGE_URL}
+  jsonLd={jsonLdAll}
+  ogType="article"
+  publishDate="2026-05-21"
+  lastUpdated={CONFIRMED_AT}
+  breadcrumbs={[
+    { name: '診断一覧', url: '/diagnosis/' },
+    { name: '性格変化', url: '/diagnosis/change/' },
+    { name: '性格が変わった気がする', url: '/diagnosis/change/seikaku-kawatta/' },
+  ]}
+>
+  <link rel="canonical" href={PAGE_URL} slot="head" />
+
+  {/* ========== ヒーロー ========== */}
+  <section class="ck-hero" aria-labelledby="ck-hero-h1">
+    <Container>
+      <div class="ck-hero-inner">
+        <div class="ck-hero-badge">Roberts ら 2006 縦断メタ分析（50,207人）に基づく解説</div>
+        <h1 id="ck-hero-h1" class="ck-hero-h1">
+          性格が変わった気がする<br />
+          <span class="ck-hero-sub">変化を実感する10のサインと、過去の自分との比較法</span>
+        </h1>
+        <p class="ck-hero-catch">
+          「最近、自分が変わった気がする」は思い違いではありません。<br />
+          縦断研究は、性格が緩やかに変化し続けることを数値で示しています。
+        </p>
+        <div class="ck-hero-meta">
+          <time datetime={CONFIRMED_AT}>{CONFIRMED_AT}</time> 時点の情報
+        </div>
+      </div>
+    </Container>
+  </section>
+
+  <Container>
+    {/* ========== このページでわかること ========== */}
+    <div class="ck-aio-block" role="note" aria-label="このページでわかること">
+      <p class="ck-aio-title">このページでわかること</p>
+      <ul class="ck-aio-list">
+        <li>「性格が変わった気がする」と感じるときの典型的な10のサイン</li>
+        <li>変化のポジティブな側面とネガティブな側面の見方</li>
+        <li>以前の自分との違いをチェックするセルフリフレクション</li>
+        <li>PRO タイムカプセルで過去の診断結果と現在を比較する方法</li>
+        <li>多重知能診断で「今の自分」を測り直すステップ</li>
+      </ul>
+    </div>
+
+    {/* ========== TL;DR ========== */}
+    <TldrBlock
+      title="性格が変わった気がする：ポイントまとめ"
+      points={[
+        'Roberts ら（2006）の92研究・50,207人の縦断メタ分析では、誠実性・協調性は成人期に上昇、神経症傾向は低下する傾向が確認されている（Psychological Bulletin 132(1)）',
+        '「変わった気がする」感覚は、ライフイベント・環境変化・加齢による特性の緩やかな変化を反映していることが多い',
+        '変化を実感するサインは10パターンに整理できる：優先順位・人づきあい・ストレス耐性・興味関心など',
+        '変化にはポジティブ面（成長・適応）とネガティブ面（喪失感・戸惑い）の両面がある',
+        '過去と現在を比較するには、同じ診断を時間差で複数回受けることが有効（PRO タイムカプセル）',
+      ]}
+      updatedAt={CONFIRMED_AT}
+      sourceLabel="Roberts ら（2006）Psychological Bulletin"
+      sourceUrl="https://doi.org/10.1037/0033-2909.132.1.1"
+    />
+
+    {/* ========== H2-1: 変化のサイン10 ========== */}
+    <section class="ck-section" aria-labelledby="ck-signs-h2">
+      <h2 id="ck-signs-h2" class="ck-h2">性格が変わったと感じる10のサイン</h2>
+      <p class="ck-lead">
+        以下は「性格が変わった気がする」と感じるときの典型的なサインです。<br />
+        いくつ当てはまるか確認してみてください。
+      </p>
+      <div class="ck-signs-grid">
+        {signs.map((sign, i) => (
+          <div class="ck-sign-card">
+            <div class="ck-sign-header">
+              <span class="ck-sign-icon" aria-hidden="true">{sign.icon}</span>
+              <span class="ck-sign-num">#{i + 1}</span>
+              <h3 class="ck-sign-label">{sign.label}</h3>
+            </div>
+            <p class="ck-sign-desc">{sign.desc}</p>
+          </div>
+        ))}
+      </div>
+      <p class="ck-source-note">
+        参照: Roberts BW, Walton KE（2006）
+        <a href="https://doi.org/10.1037/0033-2909.132.1.1" target="_blank" rel="noopener noreferrer">
+          Psychological Bulletin, 132(1)
+        </a>
+        / Bleidorn W ら（2018）
+        <a href="https://doi.org/10.1111/jopy.12286" target="_blank" rel="noopener noreferrer">
+          Journal of Personality, 86(1)
+        </a>
+      </p>
+    </section>
+
+    {/* ========== H2-2: ポジティブ面・ネガティブ面 ========== */}
+    <section class="ck-section" aria-labelledby="ck-pos-neg-h2">
+      <h2 id="ck-pos-neg-h2" class="ck-h2">変化のポジティブ面・ネガティブ面</h2>
+      <p class="ck-lead">
+        性格の変化は「良い・悪い」ではなく、「どんな変化か」が重要です。<br />
+        同じ変化でも、視点によってポジティブにもネガティブにも映ります。
+      </p>
+
+      <div class="ck-two-col">
+        <div class="ck-two-col-card ck-two-col-card--pos">
+          <div class="ck-two-col-header">
+            <span aria-hidden="true">✅</span>
+            <h3 class="ck-two-col-title">変化のポジティブな側面</h3>
+          </div>
+          <ul class="ck-two-col-list">
+            <li>新しい強みや得意分野が育つ</li>
+            <li>ライフイベントへの適応力が高まる</li>
+            <li>誠実性・協調性の上昇は社会的関係を豊かにする傾向がある</li>
+            <li>神経症傾向の低下はストレス耐性の向上につながることが多い</li>
+            <li>成長・経験・内省の証として捉えられる</li>
+          </ul>
+        </div>
+        <div class="ck-two-col-card ck-two-col-card--neg">
+          <div class="ck-two-col-header">
+            <span aria-hidden="true">⚠️</span>
+            <h3 class="ck-two-col-title">変化で生じやすい戸惑い</h3>
+          </div>
+          <ul class="ck-two-col-list">
+            <li>「以前の自分」と現在のギャップへの違和感</li>
+            <li>昔の友人・仲間との価値観のずれを感じやすくなる</li>
+            <li>変化の原因がわからないことへの不安</li>
+            <li>他者から「変わった」と言われる戸惑い</li>
+            <li>変化が「後退」なのか「前進」なのかわからない感覚</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="ck-note-box">
+        <p>
+          心理学的には変化に「正しい方向」はありません。<br />
+          大切なのは変化を認識し、自分にとっての意味を探ることです。
+        </p>
+      </div>
+    </section>
+
+    {/* ========== H2-3: セルフリフレクション ========== */}
+    <section class="ck-section" aria-labelledby="ck-reflect-h2">
+      <h2 id="ck-reflect-h2" class="ck-h2">以前の自分との違いをチェックする</h2>
+      <p class="ck-lead">
+        以下の問いに「以前の自分」と「今の自分」で答えてみてください。<br />
+        答えが変わっている項目が多いほど、変化が大きい可能性があります。
+      </p>
+
+      <div class="ck-reflect-list">
+        <div class="ck-reflect-item">
+          <span class="ck-reflect-q">Q1.</span>
+          <p class="ck-reflect-text">人が多い場所は好きですか？それとも一人の時間が好きですか？</p>
+        </div>
+        <div class="ck-reflect-item">
+          <span class="ck-reflect-q">Q2.</span>
+          <p class="ck-reflect-text">新しいことへの挑戦を積極的に楽しめますか？</p>
+        </div>
+        <div class="ck-reflect-item">
+          <span class="ck-reflect-q">Q3.</span>
+          <p class="ck-reflect-text">締め切り・約束・ルールに対してどう感じますか？</p>
+        </div>
+        <div class="ck-reflect-item">
+          <span class="ck-reflect-q">Q4.</span>
+          <p class="ck-reflect-text">他の人の気持ちや状況を気にかける方ですか？</p>
+        </div>
+        <div class="ck-reflect-item">
+          <span class="ck-reflect-q">Q5.</span>
+          <p class="ck-reflect-text">不安やストレスをどのくらい感じやすい方だと思いますか？</p>
+        </div>
+      </div>
+
+      <p class="ck-reflect-note">
+        これら5つの問いは、心理学の五因子モデル（外向性・開放性・誠実性・協調性・神経症傾向）に対応しています。<br />
+        「以前と答えが変わった」と感じる項目があれば、その特性で変化が起きている可能性があります。
+      </p>
+    </section>
+
+    {/* ========== PRO誘導CTA ========== */}
+    <section class="ck-section ck-pro-section" aria-labelledby="ck-pro-h2">
+      <h2 id="ck-pro-h2" class="ck-h2">過去の診断結果と比較したい方へ</h2>
+      <p class="ck-lead">
+        「以前と今でどのくらい変わったか」を数値で確認するには、<br />
+        同じ診断を時間差で受けてスコアを比較する方法が最も有効です。
+      </p>
+
+      <div class="ck-pro-card">
+        <div class="ck-pro-card-header">
+          <span class="ck-pro-badge">PRO 限定</span>
+          <h3 class="ck-pro-card-title">タイムカプセル機能｜過去のあなたへの手紙を残す</h3>
+        </div>
+        <div class="ck-pro-card-body">
+          <p class="ck-pro-desc">
+            今日の診断結果を「封印」して、3ヶ月後・1年後の自分と比較できます。<br />
+            「あのとき悩んでいたこと」を記録しておくと、未来の自分が読んで驚くことも。
+          </p>
+          <div class="ck-pro-features">
+            <div class="ck-pro-feature">
+              <span class="ck-pro-feature-icon" aria-hidden="true">⏳</span>
+              <div>
+                <strong>今の診断結果を封印・保存</strong>
+                <p>8診断のスコアをタイムスタンプ付きで保存。</p>
+              </div>
+            </div>
+            <div class="ck-pro-feature">
+              <span class="ck-pro-feature-icon" aria-hidden="true">📈</span>
+              <div>
+                <strong>変化グラフで時系列比較</strong>
+                <p>過去と現在を並べて、変化の方向と大きさを一目で確認。</p>
+              </div>
+            </div>
+            <div class="ck-pro-feature">
+              <span class="ck-pro-feature-icon" aria-hidden="true">✉️</span>
+              <div>
+                <strong>過去の自分へのメッセージ</strong>
+                <p>今の悩み・気持ち・目標を記録。未来の自分が読む。</p>
+              </div>
+            </div>
+          </div>
+          <a href="/pro/" class="ck-pro-cta-btn" aria-label="PRO会員の詳細を見る（タイムカプセル機能）">
+            PRO でタイムカプセルを始める →
+          </a>
+          <p class="ck-pro-cta-note">¥590/月・いつでも解約可</p>
+        </div>
+      </div>
+    </section>
+
+    {/* ========== 今の自分を測り直すCTA ========== */}
+    <section class="ck-section" aria-labelledby="ck-retry-h2">
+      <h2 id="ck-retry-h2" class="ck-h2">今の自分を診断で測り直す</h2>
+      <p class="ck-lead">
+        「変わった気がする」を確かめるには、診断をもう一度受けてみることが有効です。<br />
+        以前の感覚と今の結果を比較してみてください。
+      </p>
+      <div class="ck-retry-grid">
+        <a href="/diagnosis/multi-int/" class="ck-retry-card">
+          <span class="ck-retry-icon" aria-hidden="true">🧠</span>
+          <div>
+            <strong class="ck-retry-title">多重知能テスト</strong>
+            <p class="ck-retry-desc">Gardner理論で8つの知能プロファイルを診断。</p>
+          </div>
+        </a>
+        <a href="/diagnosis/perfectionism/" class="ck-retry-card">
+          <span class="ck-retry-icon" aria-hidden="true">🎯</span>
+          <div>
+            <strong class="ck-retry-title">完璧主義傾向診断</strong>
+            <p class="ck-retry-desc">完璧主義の強さ・パターンを数値化。</p>
+          </div>
+        </a>
+        <a href="/diagnosis/love-style/" class="ck-retry-card">
+          <span class="ck-retry-icon" aria-hidden="true">💕</span>
+          <div>
+            <strong class="ck-retry-title">恋愛スタイル診断</strong>
+            <p class="ck-retry-desc">6つの愛着スタイルで恋愛傾向を把握。</p>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    {/* ========== Science Note ========== */}
+    <ScienceNote
+      basisText="Roberts BW, Walton KE（2006）縦断メタ分析（Psychological Bulletin 132(1)）・Bleidorn W ら（2018）ライフイベントと特性変化研究"
+      basisUrl="https://doi.org/10.1037/0033-2909.132.1.1"
+      basisLabel="Roberts ら（2006）Psychological Bulletin"
+      notMedical={true}
+      updatedAt={CONFIRMED_AT}
+      additionalNote="「性格が変わった気がする」という体験は非常に一般的です。変化の把握には同じ指標で繰り返し測定することが有効です。"
+    />
+
+    {/* ========== ReferenceList ========== */}
+    <ReferenceList references={references} confirmedAt={CONFIRMED_AT} />
+
+    {/* ========== 関連ページ ========== */}
+    <section class="ck-section" aria-labelledby="ck-related-h2">
+      <h2 id="ck-related-h2" class="ck-h2">関連ページ</h2>
+      <ul class="ck-related-list">
+        <li class="ck-related-item">
+          <a href="/diagnosis/change/seikaku-kawaru/" class="ck-related-link">
+            <span class="ck-related-icon" aria-hidden="true">🔬</span>
+            <span class="ck-related-body">
+              <span class="ck-related-title">性格は変わるのか？科学的検証</span>
+              <span class="ck-related-desc">縦断研究50,207人のデータで「変わる」を証明</span>
+            </span>
+          </a>
+        </li>
+        <li class="ck-related-item">
+          <a href="/diagnosis/change/kawaru-kikkake/" class="ck-related-link">
+            <span class="ck-related-icon" aria-hidden="true">✨</span>
+            <span class="ck-related-body">
+              <span class="ck-related-title">性格が変わるきっかけ10選</span>
+              <span class="ck-related-desc">結婚・転職・出産など変化を生む典型的な局面</span>
+            </span>
+          </a>
+        </li>
+        <li class="ck-related-item">
+          <a href="/diagnosis/change/mbti-kawatta/" class="ck-related-link">
+            <span class="ck-related-icon" aria-hidden="true">🎭</span>
+            <span class="ck-related-body">
+              <span class="ck-related-title">MBTIタイプが変わった？</span>
+              <span class="ck-related-desc">MBTI結果が変化する理由と認知機能発達段階</span>
+            </span>
+          </a>
+        </li>
+        <li class="ck-related-item">
+          <a href="/profile/" class="ck-related-link">
+            <span class="ck-related-icon" aria-hidden="true">📊</span>
+            <span class="ck-related-body">
+              <span class="ck-related-title">統合プロファイル</span>
+              <span class="ck-related-desc">全診断結果を統合した自己理解レポート</span>
+            </span>
+          </a>
+        </li>
+        <li class="ck-related-item">
+          <a href="/pro/" class="ck-related-link">
+            <span class="ck-related-icon" aria-hidden="true">⏳</span>
+            <span class="ck-related-body">
+              <span class="ck-related-title">PRO タイムカプセル</span>
+              <span class="ck-related-desc">過去の診断と現在を比較して変化を可視化</span>
+            </span>
+          </a>
+        </li>
+      </ul>
+    </section>
+
+    {/* ========== FAQ ========== */}
+    <section class="ck-section" aria-labelledby="ck-faq-h2">
+      <h2 id="ck-faq-h2" class="ck-h2">よくある質問</h2>
+      <dl class="ck-faq-list">
+        {faqs.map(({ question, answer }) => (
+          <div class="ck-faq-item">
+            <dt class="ck-faq-q">{question}</dt>
+            <dd class="ck-faq-a">{answer}</dd>
+          </div>
+        ))}
+      </dl>
+    </section>
+  </Container>
+</BaseLayout>
+
+<style>
+/* ========== ヒーロー ========== */
+.ck-hero {
+  background: linear-gradient(135deg, #0ea5e9 0%, #4f46e5 100%);
+  color: #fff;
+  padding-block: 3.5rem 4rem;
+  text-align: center;
+}
+.ck-hero-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+.ck-hero-badge {
+  display: inline-block;
+  background: rgba(255 255 255 / 0.18);
+  border: 1px solid rgba(255 255 255 / 0.4);
+  border-radius: 2rem;
+  padding: 0.25rem 1rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+}
+.ck-hero-h1 {
+  font-size: clamp(1.75rem, 5vw, 2.5rem);
+  font-family: var(--sn-font-rounded, sans-serif);
+  font-weight: 700;
+  line-height: 1.3;
+  margin: 0;
+}
+.ck-hero-sub {
+  display: block;
+  font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+  opacity: 0.9;
+  margin-top: 0.25rem;
+}
+.ck-hero-catch {
+  font-size: clamp(0.9rem, 2vw, 1rem);
+  opacity: 0.9;
+  line-height: 1.8;
+  margin: 0;
+}
+.ck-hero-meta {
+  font-size: 0.78rem;
+  opacity: 0.65;
+}
+
+/* ========== AIOブロック ========== */
+.ck-aio-block {
+  background: #eff6ff;
+  border-left: 4px solid #2563eb;
+  border-radius: 0 0.5rem 0.5rem 0;
+  padding: 1.25rem 1.5rem;
+  margin-block: 2rem;
+}
+.ck-aio-title {
+  font-weight: 700;
+  margin: 0 0 0.5rem;
+  font-size: 0.875rem;
+  color: #1d4ed8;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.ck-aio-list {
+  margin: 0;
+  padding-left: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.ck-aio-list li {
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+/* ========== セクション共通 ========== */
+.ck-section {
+  margin-block: 3rem;
+}
+.ck-h2 {
+  font-size: clamp(1.25rem, 4vw, 1.65rem);
+  font-family: var(--sn-font-rounded, sans-serif);
+  font-weight: 700;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #2563eb;
+}
+.ck-lead {
+  font-size: 1rem;
+  line-height: 1.8;
+  margin-bottom: 1.25rem;
+  color: #374151;
+}
+p {
+  font-size: 0.95rem;
+  line-height: 1.8;
+  color: #374151;
+  margin-block: 0.75rem;
+}
+.ck-source-note {
+  font-size: 0.78rem;
+  color: #6b7280;
+  margin-top: 0.75rem;
+}
+.ck-source-note a {
+  color: #2563eb;
+}
+
+/* ========== サイングリッド ========== */
+.ck-signs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+  margin-block: 1.5rem;
+}
+.ck-sign-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 1.125rem;
+}
+.ck-sign-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+.ck-sign-icon {
+  font-size: 1.4rem;
+  flex-shrink: 0;
+}
+.ck-sign-num {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #2563eb;
+  background: #eff6ff;
+  padding: 0.1rem 0.4rem;
+  border-radius: 0.25rem;
+  flex-shrink: 0;
+}
+.ck-sign-label {
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin: 0;
+  color: #1f2937;
+}
+.ck-sign-desc {
+  font-size: 0.85rem;
+  line-height: 1.6;
+  color: #4b5563;
+  margin: 0;
+}
+
+/* ========== ポジ/ネガ 2カラム ========== */
+.ck-two-col {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+  margin-block: 1.5rem;
+}
+.ck-two-col-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+}
+.ck-two-col-card--pos {
+  border-left: 4px solid #16a34a;
+}
+.ck-two-col-card--neg {
+  border-left: 4px solid #d97706;
+}
+.ck-two-col-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+  font-size: 1.2rem;
+}
+.ck-two-col-title {
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 0;
+  color: #1f2937;
+}
+.ck-two-col-list {
+  padding-left: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin: 0;
+}
+.ck-two-col-list li {
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: #4b5563;
+}
+.ck-note-box {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  padding: 1rem 1.25rem;
+  margin-top: 1rem;
+}
+.ck-note-box p {
+  font-size: 0.875rem;
+  line-height: 1.7;
+  margin: 0;
+  color: #4b5563;
+}
+
+/* ========== セルフリフレクション ========== */
+.ck-reflect-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-block: 1.25rem;
+}
+.ck-reflect-item {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  padding: 0.875rem 1rem;
+}
+.ck-reflect-q {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #2563eb;
+  flex-shrink: 0;
+  padding-top: 0.1rem;
+}
+.ck-reflect-text {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: #1f2937;
+  margin: 0;
+}
+.ck-reflect-note {
+  font-size: 0.82rem;
+  color: #6b7280;
+  line-height: 1.7;
+  margin-top: 0.75rem;
+}
+
+/* ========== PRO誘導 ========== */
+.ck-pro-section {
+  background: #f5f3ff;
+  border-radius: 1rem;
+  padding: 2rem 1.5rem;
+}
+.ck-pro-section .ck-h2 {
+  border-bottom-color: #6d28d9;
+}
+.ck-pro-card {
+  background: #fff;
+  border: 2px solid #7c3aed;
+  border-radius: 1rem;
+  overflow: hidden;
+  margin-top: 1.5rem;
+  box-shadow: 0 4px 16px rgba(109 40 217 / 0.12);
+}
+.ck-pro-card-header {
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.ck-pro-badge {
+  background: rgba(255 255 255 / 0.25);
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.2rem 0.6rem;
+  border-radius: 2rem;
+  border: 1px solid rgba(255 255 255 / 0.4);
+  white-space: nowrap;
+}
+.ck-pro-card-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #fff;
+  margin: 0;
+}
+.ck-pro-card-body {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+.ck-pro-desc {
+  font-size: 0.9rem;
+  line-height: 1.7;
+  color: #374151;
+  margin: 0;
+}
+.ck-pro-features {
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+}
+.ck-pro-feature {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+}
+.ck-pro-feature-icon {
+  font-size: 1.4rem;
+  flex-shrink: 0;
+}
+.ck-pro-feature strong {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 0.15rem;
+}
+.ck-pro-feature p {
+  font-size: 0.85rem;
+  color: #4b5563;
+  margin: 0;
+  line-height: 1.6;
+}
+.ck-pro-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.9rem 2rem;
+  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+  color: #fff;
+  border-radius: 3rem;
+  font-weight: 700;
+  font-size: 1rem;
+  text-decoration: none;
+  min-height: 44px;
+  align-self: flex-start;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.ck-pro-cta-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(109 40 217 / 0.3);
+}
+.ck-pro-cta-note {
+  font-size: 0.78rem;
+  color: #6b7280;
+  margin: 0;
+}
+
+/* ========== 再診断CTA ========== */
+.ck-retry-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+.ck-retry-card {
+  display: flex;
+  gap: 0.875rem;
+  align-items: flex-start;
+  padding: 1.125rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.ck-retry-card:hover {
+  border-color: #2563eb;
+  box-shadow: 0 2px 8px rgba(37 99 235 / 0.1);
+}
+.ck-retry-icon {
+  font-size: 1.75rem;
+  flex-shrink: 0;
+}
+.ck-retry-title {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 0.2rem;
+}
+.ck-retry-desc {
+  font-size: 0.8rem;
+  color: #6b7280;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* ========== 関連リンク ========== */
+.ck-related-list {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.ck-related-link {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.ck-related-link:hover {
+  border-color: #2563eb;
+  box-shadow: 0 2px 8px rgba(37 99 235 / 0.1);
+}
+.ck-related-icon {
+  font-size: 1.75rem;
+  flex-shrink: 0;
+}
+.ck-related-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+.ck-related-title {
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+.ck-related-desc {
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+/* ========== FAQ ========== */
+.ck-faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+.ck-faq-item {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+.ck-faq-q {
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 1rem 1.25rem;
+  background: #f9fafb;
+  margin: 0;
+  display: block;
+}
+.ck-faq-q::before {
+  content: 'Q. ';
+  color: #2563eb;
+}
+.ck-faq-a {
+  font-size: 0.9rem;
+  line-height: 1.7;
+  padding: 1rem 1.25rem;
+  margin: 0;
+  color: #4b5563;
+}
+.ck-faq-a::before {
+  content: 'A. ';
+  font-weight: 700;
+  color: #16a34a;
+}
+
+/* ========== レスポンシブ ========== */
+@media (max-width: 768px) {
+  .ck-signs-grid,
+  .ck-two-col,
+  .ck-retry-grid {
+    grid-template-columns: 1fr;
+  }
+  .ck-pro-cta-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+</style>

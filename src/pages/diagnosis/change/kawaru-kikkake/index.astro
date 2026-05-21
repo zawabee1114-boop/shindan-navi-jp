@@ -1,0 +1,974 @@
+---
+/**
+ * 性格が変わるきっかけガイド
+ * KW: 性格変わるきっかけ（VOL320 / SD11）
+ * 確認日: 2026-05-21
+ *
+ * 学術根拠:
+ *   - Bleidorn W, Hopwood CJ, Lucas RE (2018) Life events and personality trait change
+ *     Journal of Personality, 86(1), 83-96
+ *   - Roberts BW, Walton KE, Viechtbauer W (2006) Patterns of mean-level change
+ *     Psychological Bulletin, 132(1), 1-25
+ *   - Lüdtke O, Roberts BW, Trautwein U, Nagy G (2011) A random walk down university avenue
+ *     Journal of Personality and Social Psychology, 101(1), 213-235
+ *
+ * SEO/AIO対応:
+ * - JSON-LD: Article + FAQPage + BreadcrumbList（@id連結）
+ * - TldrBlock / ScienceNote / ReferenceList
+ * - FAQ 10問
+ * - YMYL回避: 医療診断・治療表記ゼロ
+ * - 心理的決定論NG（「必ず変わる」表現なし）
+ */
+import BaseLayout from '../../../../layouts/BaseLayout.astro';
+import Container from '../../../../components/Container.astro';
+import TldrBlock from '../../../../components/TldrBlock.astro';
+import ReferenceList from '../../../../components/ReferenceList.astro';
+import ScienceNote from '../../../../components/ScienceNote.astro';
+
+const SITE_URL = 'https://shindan-navi.jp';
+const PAGE_URL = `${SITE_URL}/diagnosis/change/kawaru-kikkake/`;
+const CONFIRMED_AT = '2026-05-21';
+
+const references = [
+  {
+    title: 'Life events and personality trait change',
+    author: 'Bleidorn W, Hopwood CJ, Lucas RE',
+    year: 2018,
+    journal: 'Journal of Personality',
+    volume: '86(1), 83-96',
+    url: 'https://doi.org/10.1111/jopy.12286',
+  },
+  {
+    title: 'Patterns of mean-level change in personality traits across the life course: A meta-analysis of longitudinal studies',
+    author: 'Roberts BW, Walton KE, Viechtbauer W',
+    year: 2006,
+    journal: 'Psychological Bulletin',
+    volume: '132(1), 1-25',
+    url: 'https://doi.org/10.1037/0033-2909.132.1.1',
+  },
+  {
+    title: 'A random walk down university avenue: Life paths, life events, and personality trait change at the transition to adulthood',
+    author: 'Lüdtke O, Roberts BW, Trautwein U, Nagy G',
+    year: 2011,
+    journal: 'Journal of Personality and Social Psychology',
+    volume: '101(1), 213-235',
+    url: 'https://doi.org/10.1037/a0023743',
+  },
+];
+
+const triggers = [
+  {
+    icon: '💍',
+    num: 1,
+    title: '結婚・パートナーシップの確立',
+    pattern: '誠実性・協調性の上昇傾向',
+    desc: '長期的なパートナーとの共同生活が、責任感・協力行動を日常的に強化します。Bleidorn ら（2018）は、結婚後1〜2年で誠実性スコアに有意な変化が生じるケースを報告しています。',
+    caution: 'パートナーシップが合わない場合は神経症傾向が上昇するケースもあります。',
+  },
+  {
+    icon: '👶',
+    num: 2,
+    title: '出産・育児の開始',
+    pattern: '誠実性の上昇・外向性の一時的な低下',
+    desc: '育児の責任がスケジュール管理・自己規律を高め、誠実性が上昇する傾向があります。一方、社交的な活動が減り、外向性スコアが一時的に下がるケースも見られます。',
+    caution: '育児環境・サポート体制によって変化の方向は個人差が大きいです。',
+  },
+  {
+    icon: '💼',
+    num: 3,
+    title: '転職・キャリアチェンジ',
+    pattern: '開放性・自律性の変化',
+    desc: '新しい職場環境・役割・人間関係は、行動レパートリーを広げます。Lüdtke ら（2011）は、職業的移行期（大学卒業後の就職など）に開放性・誠実性が変化することを報告しています。',
+    caution: '職場環境がミスマッチの場合、神経症傾向が一時的に高まることもあります。',
+  },
+  {
+    icon: '✈️',
+    num: 4,
+    title: '留学・長期の海外生活',
+    pattern: '開放性・外向性の上昇傾向',
+    desc: '異文化環境への適応が、新しい経験への開放性を高めるきっかけになります。異なる価値観に触れ、自分の行動パターンを意識的に見直す機会が増えます。',
+    caution: '短期旅行程度では特性レベルの変化は起きにくいとされています。',
+  },
+  {
+    icon: '💔',
+    num: 5,
+    title: '大切な人との別れ・死別',
+    pattern: '神経症傾向の一時的な上昇',
+    desc: '喪失体験は神経症傾向（不安・気分の波）を一時的に高めることがあります。Bleidorn ら（2018）によれば、多くのケースで時間の経過とともに元の傾向に近い状態に戻ります。',
+    caution: '長期的な影響が続く場合は専門家への相談をご検討ください。',
+  },
+  {
+    icon: '🏆',
+    num: 6,
+    title: '大きな成功体験・達成体験',
+    pattern: '外向性・誠実性・自己効力感の向上傾向',
+    desc: '大きな目標を達成した体験は「自分はできる」という感覚を強化し、行動パターンに積み重なっていきます。誠実性・外向性が上昇するケースが見られます。',
+    caution: '成功が外部環境によるものと判断される場合は影響が持続しにくいとされています。',
+  },
+  {
+    icon: '🏥',
+    num: 7,
+    title: '長期療養・病気の経験',
+    pattern: '開放性・協調性の変化',
+    desc: '大きな病気・療養経験が価値観・優先順位を見直すきっかけになることがあります。「何が大切か」の感覚が変わり、開放性や協調性に変化が生じるケースが報告されています。',
+    caution: '本ページは医療情報の提供ではありません。健康に関しては医師にご相談ください。',
+  },
+  {
+    icon: '🌱',
+    num: 8,
+    title: '新しい深い出会い・メンター',
+    pattern: '特定の特性に局所的な変化',
+    desc: 'モデルとなる人物との深い関わりが、行動パターンを変えるきっかけになることがあります。特に若年期（20〜30代）では、重要な他者の影響が特性に反映されやすいとされています。',
+    caution: '影響の方向・大きさは出会いの質と深さによって大きく異なります。',
+  },
+  {
+    icon: '📖',
+    num: 9,
+    title: '継続的な自己啓発・内省実践',
+    pattern: '意図的な特性変化（効果は個人差大）',
+    desc: 'Hudson ら（2019）の介入研究では、意図的な行動変化を16週間続けたグループで特性スコアの変化が確認されました（Journal of Experimental Psychology: General, 148(8)）。ただし「根本から変わる」ではなく「行動パターンを更新する」と捉えるのが現実的です。',
+    caution: '自己啓発の質・継続性・本人の目的意識によって効果は大きく異なります。',
+  },
+  {
+    icon: '🎂',
+    num: 10,
+    title: '加齢・年齢による自然な変化',
+    pattern: '誠実性・協調性の上昇・神経症傾向の低下',
+    desc: 'Roberts ら（2006）の縦断メタ分析（92研究・50,207人）では、誠実性・協調性は成人期を通じて緩やかに上昇し、神経症傾向は低下する傾向が示されています。「年を取ると丸くなる」には一定の根拠があります。',
+    caution: '加齢による変化は極めて緩やかで、年単位・数十年単位のプロセスです。',
+  },
+];
+
+const faqs = [
+  {
+    question: '性格が変わるきっかけで最も影響が大きいのはどれですか？',
+    answer:
+      'Bleidorn ら（2018）によれば、個人差が非常に大きく「どのきっかけが最も影響を与えるか」は一概に言えません。ただし、ライフイベントの規模・本人の関与度・継続期間が大きいほど影響しやすい傾向があります。',
+  },
+  {
+    question: '性格を意図的に変えることはできますか？',
+    answer:
+      'Hudson ら（2019）の介入研究では、意図的な行動変化を16週間継続したグループで特性スコアの変化が確認されました。ただし「性格を根本から作り変える」ではなく「行動パターンを変える」というアプローチが現実的です。',
+  },
+  {
+    question: 'きっかけがあれば必ず性格は変わりますか？',
+    answer:
+      'いいえ。同じライフイベントを経験しても、変化する人としない人がいます。Bleidorn ら（2018）も、変化の方向・大きさには個人差が非常に大きいことを強調しています。「必ず変わる」という保証はありません。',
+  },
+  {
+    question: '転職で性格が変わることはありますか？',
+    answer:
+      'Lüdtke ら（2011）は、職業的移行期に開放性・誠実性が変化することを報告しています。ただし変化の方向と大きさは新しい職場環境・役割・人間関係の質によって異なります。',
+  },
+  {
+    question: '失恋や別れで性格が変わることはありますか？',
+    answer:
+      'Bleidorn ら（2018）は、離別・死別などの喪失体験が神経症傾向を一時的に高めるケースを報告しています。ただし多くの場合、時間の経過とともに変化が和らぐとされています。',
+  },
+  {
+    question: '留学すると性格が変わりますか？',
+    answer:
+      '異文化環境への長期的な適応は、開放性・外向性に変化をもたらす可能性があります。ただし短期旅行程度では特性レベルの変化は起きにくいとされています。長期的・継続的な環境変化が重要です。',
+  },
+  {
+    question: '子どもが生まれると性格は変わりますか？',
+    answer:
+      '出産・育児開始後に誠実性の上昇と外向性の一時的な低下が見られるケースがあります。ただし、育児環境・サポートの有無・パートナーとの関係など、個人の状況によって変化の内容と大きさは異なります。',
+  },
+  {
+    question: '年を取ると性格は変わりますか？',
+    answer:
+      'Roberts ら（2006）の92研究・50,207人のメタ分析では、誠実性・協調性は成人期を通じて緩やかに上昇し、神経症傾向は低下する傾向が確認されています。「年を取ると丸くなる」という通説には一定の根拠があります。',
+  },
+  {
+    question: 'ネガティブな体験でも性格は変わりますか？',
+    answer:
+      'はい。喪失体験・挫折・病気なども特性変化のきっかけになることがあります。ただし変化の方向はポジティブとは限らず、神経症傾向が一時的に高まるケースも報告されています。',
+  },
+  {
+    question: '自分の特性変化を追跡する方法はありますか？',
+    answer:
+      '同じ診断を一定期間をおいて複数回受けてスコアを比較する方法が有効です。診断ナビのPRO会員（タイムカプセル機能）では、過去の診断結果と現在を比較して変化を時系列で可視化できます。',
+  },
+];
+
+const jsonLdArticle = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  '@id': `${PAGE_URL}#article`,
+  mainEntityOfPage: { '@type': 'WebPage', '@id': PAGE_URL },
+  headline: '性格が変わるきっかけ10選｜結婚・転職・出産など変化を生む典型パターン',
+  description:
+    '結婚・出産・転職・留学・成功・喪失など、性格変化を引き起こしやすい10のきっかけを Bleidorn ら（2018）の研究をもとに解説。各きっかけ別の変化パターンと注意点を整理。',
+  url: PAGE_URL,
+  datePublished: '2026-05-21',
+  dateModified: CONFIRMED_AT,
+  inLanguage: 'ja',
+  author: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+    name: '診断ナビ',
+  },
+  publisher: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+    name: '診断ナビ',
+  },
+  citation: references.map((ref) => ({
+    '@type': 'ScholarlyArticle',
+    name: ref.title,
+    author: ref.author,
+    datePublished: String(ref.year),
+    url: ref.url,
+  })),
+};
+
+const jsonLdFAQ = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  '@id': `${PAGE_URL}#faq`,
+  mainEntity: faqs.map(({ question, answer }) => ({
+    '@type': 'Question',
+    name: question,
+    acceptedAnswer: { '@type': 'Answer', text: answer },
+  })),
+};
+
+const jsonLdBreadcrumb = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  '@id': `${PAGE_URL}#breadcrumb`,
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'ホーム', item: SITE_URL },
+    { '@type': 'ListItem', position: 2, name: '診断一覧', item: `${SITE_URL}/diagnosis/` },
+    { '@type': 'ListItem', position: 3, name: '性格変化', item: `${SITE_URL}/diagnosis/change/` },
+    { '@type': 'ListItem', position: 4, name: '性格が変わるきっかけ', item: PAGE_URL },
+  ],
+};
+
+const jsonLdAll = [jsonLdArticle, jsonLdFAQ, jsonLdBreadcrumb];
+---
+
+<BaseLayout
+  title="性格が変わるきっかけ10選｜結婚・転職・出産など典型パターンを解説"
+  description="性格が変わるきっかけ10選を Bleidorn ら 2018 の縦断研究をもとに解説。結婚・出産・転職・留学・成功・喪失体験・加齢など各きっかけの変化パターンと注意点を整理。「必ず変わる」の根拠と限界も説明。"
+  canonical={PAGE_URL}
+  jsonLd={jsonLdAll}
+  ogType="article"
+  publishDate="2026-05-21"
+  lastUpdated={CONFIRMED_AT}
+  breadcrumbs={[
+    { name: '診断一覧', url: '/diagnosis/' },
+    { name: '性格変化', url: '/diagnosis/change/' },
+    { name: '性格が変わるきっかけ', url: '/diagnosis/change/kawaru-kikkake/' },
+  ]}
+>
+  <link rel="canonical" href={PAGE_URL} slot="head" />
+
+  {/* ========== ヒーロー ========== */}
+  <section class="kk-hero" aria-labelledby="kk-hero-h1">
+    <Container>
+      <div class="kk-hero-inner">
+        <div class="kk-hero-badge">Bleidorn ら 2018 ライフイベント縦断研究に基づく解説</div>
+        <h1 id="kk-hero-h1" class="kk-hero-h1">
+          性格が変わるきっかけ10選<br />
+          <span class="kk-hero-sub">結婚・転職・出産など変化を生む典型パターン</span>
+        </h1>
+        <p class="kk-hero-catch">
+          性格変化は偶然ではありません。<br />
+          ライフイベント研究は、変化を生みやすい「局面」を数値で示しています。
+        </p>
+        <div class="kk-hero-meta">
+          <time datetime={CONFIRMED_AT}>{CONFIRMED_AT}</time> 時点の情報
+        </div>
+      </div>
+    </Container>
+  </section>
+
+  <Container>
+    {/* ========== このページでわかること ========== */}
+    <div class="kk-aio-block" role="note" aria-label="このページでわかること">
+      <p class="kk-aio-title">このページでわかること</p>
+      <ul class="kk-aio-list">
+        <li>性格変化を引き起こしやすい10のきっかけ（研究根拠付き）</li>
+        <li>各きっかけで変化しやすい特性と、典型的な変化パターン</li>
+        <li>「きっかけがあれば必ず変わる」という誤解と、個人差の実態</li>
+        <li>自分の特性変化を継続的に追跡する方法（PRO タイムカプセル）</li>
+      </ul>
+    </div>
+
+    {/* ========== TL;DR ========== */}
+    <TldrBlock
+      title="性格が変わるきっかけ：ポイントまとめ"
+      points={[
+        'Bleidorn ら（2018）の縦断研究では、結婚・転職・出産・喪失などのライフイベント後1〜2年で特性スコアが有意に変化するケースを報告（Journal of Personality 86(1)）',
+        '変化の方向・大きさには個人差が非常に大きい。同じイベントを経験しても変化しない人も多い',
+        '変化を生みやすい10の局面：結婚・出産・転職・留学・成功・喪失・療養・新しい出会い・自己啓発・加齢',
+        '「このきっかけがあれば必ず変わる」という保証はない。変化の有無・方向は本人の関与度と継続期間による',
+        '特性変化の追跡には、同じ診断を時間差で複数回受けることが有効（PRO タイムカプセル）',
+      ]}
+      updatedAt={CONFIRMED_AT}
+      sourceLabel="Bleidorn ら（2018）Journal of Personality"
+      sourceUrl="https://doi.org/10.1111/jopy.12286"
+    />
+
+    {/* ========== H2-1: きっかけ10選 ========== */}
+    <section class="kk-section" aria-labelledby="kk-triggers-h2">
+      <h2 id="kk-triggers-h2" class="kk-h2">性格が変わるきっかけ10選</h2>
+      <p class="kk-lead">
+        ライフイベント研究が示す、変化を生みやすい10の局面を紹介します。<br />
+        各きっかけの変化パターンと注意点もあわせて確認してください。
+      </p>
+
+      <div class="kk-triggers-list">
+        {triggers.map((t) => (
+          <div class="kk-trigger-card">
+            <div class="kk-trigger-header">
+              <span class="kk-trigger-icon" aria-hidden="true">{t.icon}</span>
+              <div class="kk-trigger-meta">
+                <span class="kk-trigger-num">#{t.num}</span>
+                <h3 class="kk-trigger-title">{t.title}</h3>
+              </div>
+            </div>
+            <div class="kk-trigger-pattern">
+              <span class="kk-pattern-label">変化パターン</span>
+              <span class="kk-pattern-text">{t.pattern}</span>
+            </div>
+            <p class="kk-trigger-desc">{t.desc}</p>
+            <div class="kk-trigger-caution">
+              <span class="kk-caution-icon" aria-hidden="true">ℹ️</span>
+              <p class="kk-caution-text">{t.caution}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <p class="kk-source-note">
+        主な出典: Bleidorn W ら（2018）
+        <a href="https://doi.org/10.1111/jopy.12286" target="_blank" rel="noopener noreferrer">
+          Journal of Personality, 86(1), 83-96
+        </a>
+        / Roberts BW ら（2006）
+        <a href="https://doi.org/10.1037/0033-2909.132.1.1" target="_blank" rel="noopener noreferrer">
+          Psychological Bulletin, 132(1)
+        </a>
+      </p>
+    </section>
+
+    {/* ========== H2-2: 誤解の整理 ========== */}
+    <section class="kk-section" aria-labelledby="kk-myth-h2">
+      <h2 id="kk-myth-h2" class="kk-h2">「きっかけがあれば必ず変わる」は本当か</h2>
+      <p class="kk-lead">
+        ライフイベント研究が示すのは「変化が起きやすい局面」であり、<br />
+        「このきっかけがあれば必ず変わる」ということではありません。
+      </p>
+
+      <div class="kk-myth-table-wrap">
+        <table class="kk-myth-table">
+          <caption class="kk-myth-caption">よくある誤解と研究が示す実際</caption>
+          <thead>
+            <tr>
+              <th scope="col">よくある誤解</th>
+              <th scope="col">研究が示す実際</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>ライフイベントがあれば必ず変わる</td>
+              <td>同じイベントでも変化する人としない人がいる。個人差が非常に大きい</td>
+            </tr>
+            <tr>
+              <td>変化は短期間で起きる</td>
+              <td>特性レベルの変化は通常1〜数年単位の緩やかなプロセス</td>
+            </tr>
+            <tr>
+              <td>きっかけが多いほど大きく変わる</td>
+              <td>変化の規模はイベント数より、本人の関与度と継続期間に依存する</td>
+            </tr>
+            <tr>
+              <td>「正しいきっかけ」があれば性格を設計できる</td>
+              <td>変化の方向を完全にコントロールすることは現実的には難しい</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="kk-note-box">
+        <p>
+          きっかけは「変化が起きやすくなる環境」を作る要因です。<br />
+          変化するかどうか・どのように変化するかは、本人の経験の仕方によって変わります。
+        </p>
+      </div>
+    </section>
+
+    {/* ========== PRO誘導CTA ========== */}
+    <section class="kk-section kk-pro-section" aria-labelledby="kk-pro-h2">
+      <h2 id="kk-pro-h2" class="kk-h2">変化のタイミングを記録する</h2>
+      <p class="kk-lead">
+        「あのきっかけで自分は変わったのか」を後から確認するには、<br />
+        変化の前後に診断を受けてスコアを比較することが最も有効です。
+      </p>
+
+      <div class="kk-pro-card">
+        <div class="kk-pro-card-header">
+          <span class="kk-pro-badge">PRO 限定</span>
+          <h3 class="kk-pro-card-title">タイムカプセル機能｜変化前後を比較する</h3>
+        </div>
+        <div class="kk-pro-card-body">
+          <p class="kk-pro-desc">
+            転職・結婚・出産など、大きなライフイベントの直前に診断結果を保存しておくと、<br />
+            「あのイベントの前の自分」と「今の自分」を数値で比較できます。
+          </p>
+          <div class="kk-pro-features">
+            <div class="kk-pro-feature">
+              <span class="kk-pro-feature-icon" aria-hidden="true">⏳</span>
+              <div>
+                <strong>変化前の状態を封印・保存</strong>
+                <p>ライフイベント直前の診断結果をタイムスタンプ付きで保存。</p>
+              </div>
+            </div>
+            <div class="kk-pro-feature">
+              <span class="kk-pro-feature-icon" aria-hidden="true">📊</span>
+              <div>
+                <strong>変化前後を時系列グラフで比較</strong>
+                <p>「転職前の自分」「転職1年後の自分」を並べて変化を可視化。</p>
+              </div>
+            </div>
+            <div class="kk-pro-feature">
+              <span class="kk-pro-feature-icon" aria-hidden="true">✉️</span>
+              <div>
+                <strong>過去の自分へのメッセージ</strong>
+                <p>「今の不安・期待・目標」を記録して未来の自分に残す。</p>
+              </div>
+            </div>
+          </div>
+          <a href="/pro/" class="kk-pro-cta-btn" aria-label="PRO会員の詳細を見る（タイムカプセル機能）">
+            PRO でタイムカプセルを始める →
+          </a>
+          <p class="kk-pro-cta-note">¥590/月・いつでも解約可</p>
+        </div>
+      </div>
+    </section>
+
+    {/* ========== Science Note ========== */}
+    <ScienceNote
+      basisText="Bleidorn W ら（2018）Journal of Personality・Roberts BW ら（2006）縦断メタ分析（92研究・50,207人）・Lüdtke O ら（2011）職業的移行期の特性変化研究"
+      basisUrl="https://doi.org/10.1111/jopy.12286"
+      basisLabel="Bleidorn ら（2018）Journal of Personality"
+      notMedical={true}
+      updatedAt={CONFIRMED_AT}
+      additionalNote="きっかけごとの変化パターンは平均的な傾向を示したものです。個人差が非常に大きく、同じきっかけでも変化しない人もいます。「必ず変わる」保証はありません。"
+    />
+
+    {/* ========== ReferenceList ========== */}
+    <ReferenceList references={references} confirmedAt={CONFIRMED_AT} />
+
+    {/* ========== 関連ページ ========== */}
+    <section class="kk-section" aria-labelledby="kk-related-h2">
+      <h2 id="kk-related-h2" class="kk-h2">関連ページ</h2>
+      <ul class="kk-related-list">
+        <li class="kk-related-item">
+          <a href="/diagnosis/change/seikaku-kawaru/" class="kk-related-link">
+            <span class="kk-related-icon" aria-hidden="true">🔬</span>
+            <span class="kk-related-body">
+              <span class="kk-related-title">性格は変わるのか？科学的検証</span>
+              <span class="kk-related-desc">縦断研究50,207人のデータで「変わる」を証明</span>
+            </span>
+          </a>
+        </li>
+        <li class="kk-related-item">
+          <a href="/diagnosis/change/seikaku-kawatta/" class="kk-related-link">
+            <span class="kk-related-icon" aria-hidden="true">🔄</span>
+            <span class="kk-related-body">
+              <span class="kk-related-title">性格が変わった気がする人へ</span>
+              <span class="kk-related-desc">変化を実感するサインと、過去との比較方法</span>
+            </span>
+          </a>
+        </li>
+        <li class="kk-related-item">
+          <a href="/diagnosis/change/mbti-kawatta/" class="kk-related-link">
+            <span class="kk-related-icon" aria-hidden="true">🎭</span>
+            <span class="kk-related-body">
+              <span class="kk-related-title">MBTIタイプが変わった？</span>
+              <span class="kk-related-desc">MBTI結果が変化する理由と認知機能発達段階</span>
+            </span>
+          </a>
+        </li>
+        <li class="kk-related-item">
+          <a href="/diagnosis/multi-int/" class="kk-related-link">
+            <span class="kk-related-icon" aria-hidden="true">🧠</span>
+            <span class="kk-related-body">
+              <span class="kk-related-title">多重知能テスト</span>
+              <span class="kk-related-desc">Gardner理論で8つの知能プロファイルを発見</span>
+            </span>
+          </a>
+        </li>
+        <li class="kk-related-item">
+          <a href="/pro/" class="kk-related-link">
+            <span class="kk-related-icon" aria-hidden="true">⏳</span>
+            <span class="kk-related-body">
+              <span class="kk-related-title">PRO タイムカプセル</span>
+              <span class="kk-related-desc">変化前後の診断を比較して変化を可視化</span>
+            </span>
+          </a>
+        </li>
+      </ul>
+    </section>
+
+    {/* ========== FAQ ========== */}
+    <section class="kk-section" aria-labelledby="kk-faq-h2">
+      <h2 id="kk-faq-h2" class="kk-h2">よくある質問</h2>
+      <dl class="kk-faq-list">
+        {faqs.map(({ question, answer }) => (
+          <div class="kk-faq-item">
+            <dt class="kk-faq-q">{question}</dt>
+            <dd class="kk-faq-a">{answer}</dd>
+          </div>
+        ))}
+      </dl>
+    </section>
+  </Container>
+</BaseLayout>
+
+<style>
+/* ========== ヒーロー ========== */
+.kk-hero {
+  background: linear-gradient(135deg, #059669 0%, #0284c7 100%);
+  color: #fff;
+  padding-block: 3.5rem 4rem;
+  text-align: center;
+}
+.kk-hero-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+.kk-hero-badge {
+  display: inline-block;
+  background: rgba(255 255 255 / 0.18);
+  border: 1px solid rgba(255 255 255 / 0.4);
+  border-radius: 2rem;
+  padding: 0.25rem 1rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+}
+.kk-hero-h1 {
+  font-size: clamp(1.75rem, 5vw, 2.5rem);
+  font-family: var(--sn-font-rounded, sans-serif);
+  font-weight: 700;
+  line-height: 1.3;
+  margin: 0;
+}
+.kk-hero-sub {
+  display: block;
+  font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+  opacity: 0.9;
+  margin-top: 0.25rem;
+}
+.kk-hero-catch {
+  font-size: clamp(0.9rem, 2vw, 1rem);
+  opacity: 0.9;
+  line-height: 1.8;
+  margin: 0;
+}
+.kk-hero-meta {
+  font-size: 0.78rem;
+  opacity: 0.65;
+}
+
+/* ========== AIOブロック ========== */
+.kk-aio-block {
+  background: #ecfdf5;
+  border-left: 4px solid #059669;
+  border-radius: 0 0.5rem 0.5rem 0;
+  padding: 1.25rem 1.5rem;
+  margin-block: 2rem;
+}
+.kk-aio-title {
+  font-weight: 700;
+  margin: 0 0 0.5rem;
+  font-size: 0.875rem;
+  color: #065f46;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.kk-aio-list {
+  margin: 0;
+  padding-left: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.kk-aio-list li {
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+/* ========== セクション共通 ========== */
+.kk-section {
+  margin-block: 3rem;
+}
+.kk-h2 {
+  font-size: clamp(1.25rem, 4vw, 1.65rem);
+  font-family: var(--sn-font-rounded, sans-serif);
+  font-weight: 700;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #059669;
+}
+.kk-lead {
+  font-size: 1rem;
+  line-height: 1.8;
+  margin-bottom: 1.25rem;
+  color: #374151;
+}
+p {
+  font-size: 0.95rem;
+  line-height: 1.8;
+  color: #374151;
+  margin-block: 0.75rem;
+}
+.kk-source-note {
+  font-size: 0.78rem;
+  color: #6b7280;
+  margin-top: 0.75rem;
+}
+.kk-source-note a {
+  color: #059669;
+}
+
+/* ========== きっかけリスト ========== */
+.kk-triggers-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  margin-block: 1.5rem;
+}
+.kk-trigger-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.875rem;
+  padding: 1.375rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.kk-trigger-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.875rem;
+}
+.kk-trigger-icon {
+  font-size: 1.75rem;
+  flex-shrink: 0;
+  line-height: 1;
+}
+.kk-trigger-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+.kk-trigger-num {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #059669;
+  background: #ecfdf5;
+  padding: 0.1rem 0.4rem;
+  border-radius: 0.25rem;
+  flex-shrink: 0;
+}
+.kk-trigger-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin: 0;
+  color: #1f2937;
+}
+.kk-trigger-pattern {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+.kk-pattern-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #065f46;
+  background: #d1fae5;
+  padding: 0.15rem 0.5rem;
+  border-radius: 0.25rem;
+  white-space: nowrap;
+}
+.kk-pattern-text {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #065f46;
+}
+.kk-trigger-desc {
+  font-size: 0.9rem;
+  line-height: 1.7;
+  color: #374151;
+  margin: 0;
+}
+.kk-trigger-caution {
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-start;
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+  border-radius: 0.4rem;
+  padding: 0.625rem 0.875rem;
+}
+.kk-caution-icon {
+  font-size: 0.95rem;
+  flex-shrink: 0;
+  line-height: 1.5;
+}
+.kk-caution-text {
+  font-size: 0.82rem;
+  color: #92400e;
+  margin: 0;
+  line-height: 1.6;
+}
+
+/* ========== 誤解テーブル ========== */
+.kk-myth-table-wrap {
+  overflow-x: auto;
+  margin-block: 1.25rem;
+}
+.kk-myth-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  min-width: 400px;
+}
+.kk-myth-caption {
+  font-size: 0.78rem;
+  color: #6b7280;
+  text-align: left;
+  padding: 0.25rem 0 0.5rem;
+}
+.kk-myth-table th {
+  background: #059669;
+  color: #fff;
+  padding: 0.6rem 0.8rem;
+  text-align: left;
+  font-weight: 600;
+}
+.kk-myth-table td {
+  padding: 0.7rem 0.8rem;
+  border: 1px solid #e5e7eb;
+  color: #374151;
+  line-height: 1.6;
+}
+.kk-myth-table tr:nth-child(even) td {
+  background: #f9fafb;
+}
+.kk-note-box {
+  background: #f0fdf4;
+  border: 1px solid #a7f3d0;
+  border-radius: 0.5rem;
+  padding: 1rem 1.25rem;
+  margin-top: 1rem;
+}
+.kk-note-box p {
+  font-size: 0.875rem;
+  line-height: 1.7;
+  margin: 0;
+  color: #065f46;
+}
+
+/* ========== PRO誘導 ========== */
+.kk-pro-section {
+  background: #f5f3ff;
+  border-radius: 1rem;
+  padding: 2rem 1.5rem;
+}
+.kk-pro-section .kk-h2 {
+  border-bottom-color: #6d28d9;
+}
+.kk-pro-card {
+  background: #fff;
+  border: 2px solid #7c3aed;
+  border-radius: 1rem;
+  overflow: hidden;
+  margin-top: 1.5rem;
+  box-shadow: 0 4px 16px rgba(109 40 217 / 0.12);
+}
+.kk-pro-card-header {
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.kk-pro-badge {
+  background: rgba(255 255 255 / 0.25);
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.2rem 0.6rem;
+  border-radius: 2rem;
+  border: 1px solid rgba(255 255 255 / 0.4);
+  white-space: nowrap;
+}
+.kk-pro-card-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #fff;
+  margin: 0;
+}
+.kk-pro-card-body {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+.kk-pro-desc {
+  font-size: 0.9rem;
+  line-height: 1.7;
+  color: #374151;
+  margin: 0;
+}
+.kk-pro-features {
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+}
+.kk-pro-feature {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+}
+.kk-pro-feature-icon {
+  font-size: 1.4rem;
+  flex-shrink: 0;
+}
+.kk-pro-feature strong {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 0.15rem;
+}
+.kk-pro-feature p {
+  font-size: 0.85rem;
+  color: #4b5563;
+  margin: 0;
+  line-height: 1.6;
+}
+.kk-pro-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.9rem 2rem;
+  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+  color: #fff;
+  border-radius: 3rem;
+  font-weight: 700;
+  font-size: 1rem;
+  text-decoration: none;
+  min-height: 44px;
+  align-self: flex-start;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.kk-pro-cta-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(109 40 217 / 0.3);
+}
+.kk-pro-cta-note {
+  font-size: 0.78rem;
+  color: #6b7280;
+  margin: 0;
+}
+
+/* ========== 関連リンク ========== */
+.kk-related-list {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.kk-related-link {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.kk-related-link:hover {
+  border-color: #059669;
+  box-shadow: 0 2px 8px rgba(5 150 105 / 0.1);
+}
+.kk-related-icon {
+  font-size: 1.75rem;
+  flex-shrink: 0;
+}
+.kk-related-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+.kk-related-title {
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+.kk-related-desc {
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+/* ========== FAQ ========== */
+.kk-faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+.kk-faq-item {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+.kk-faq-q {
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 1rem 1.25rem;
+  background: #f9fafb;
+  margin: 0;
+  display: block;
+}
+.kk-faq-q::before {
+  content: 'Q. ';
+  color: #059669;
+}
+.kk-faq-a {
+  font-size: 0.9rem;
+  line-height: 1.7;
+  padding: 1rem 1.25rem;
+  margin: 0;
+  color: #4b5563;
+}
+.kk-faq-a::before {
+  content: 'A. ';
+  font-weight: 700;
+  color: #16a34a;
+}
+
+/* ========== レスポンシブ ========== */
+@media (max-width: 768px) {
+  .kk-myth-table {
+    font-size: 0.8rem;
+  }
+  .kk-pro-cta-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+</style>
