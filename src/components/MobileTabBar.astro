@@ -1,0 +1,210 @@
+---
+/**
+ * MobileTabBar.astro - モバイル専用ボトムタブバー v1.0
+ * デザインハンドオフ準拠: screens-mobile.jsx / styles.css .sn-tabbar
+ * 2026-05-22
+ *
+ * 表示: モバイル幅 < 768px のみ（PC は非表示）
+ * 固定: position fixed / bottom: 0 / iOS セーフエリア対応
+ * WCAG 2.1 AA: aria-label / aria-current / タッチターゲット 44px+
+ */
+
+interface Tab {
+  label: string;
+  href: string;
+  /** SVG path data（viewBox="0 0 24 24" 想定）*/
+  iconPath: string | string[];
+  /** 複数パスのときの fillRule */
+  fillRule?: 'nonzero' | 'evenodd';
+}
+
+// 現在のパスを取得してアクティブタブを判定
+const currentPath = Astro.url.pathname;
+
+// 各タブのパス一致判定（前方一致）
+function isActive(href: string): boolean {
+  if (href === '/') return currentPath === '/';
+  return currentPath.startsWith(href);
+}
+
+const tabs: Tab[] = [
+  {
+    label: 'ホーム',
+    href: '/',
+    iconPath: [
+      'M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z',
+    ],
+  },
+  {
+    label: '診断',
+    href: '/diagnosis/',
+    iconPath: [
+      'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z',
+    ],
+  },
+  {
+    label: '統合',
+    href: '/profile/',
+    iconPath: [
+      'M12 2a5 5 0 1 0 0 10A5 5 0 0 0 12 2zm0 12c-5.33 0-8 2.67-8 4v2h16v-2c0-1.33-2.67-4-8-4z',
+      'M20.5 8.5 C20.5 8.5 22 9.5 22 12 22 14.5 20.5 15.5 20.5 15.5',
+    ],
+  },
+  {
+    label: '招待',
+    href: '/me/invitations/',
+    iconPath: [
+      'M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z',
+    ],
+  },
+  {
+    label: 'マイ',
+    href: '/me/',
+    iconPath: [
+      'M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z',
+    ],
+  },
+];
+---
+
+<nav
+  class="mobile-tabbar"
+  aria-label="メインナビゲーション"
+  id="mobile-tabbar"
+>
+  {tabs.map((tab) => {
+    const active = isActive(tab.href);
+    const paths = Array.isArray(tab.iconPath) ? tab.iconPath : [tab.iconPath];
+    return (
+      <a
+        href={tab.href}
+        class:list={['mobile-tab', { 'is-active': active }]}
+        aria-label={tab.label}
+        aria-current={active ? 'page' : undefined}
+      >
+        <span class="tab-icon" aria-hidden="true">
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            {paths.map((d) => (
+              <path d={d} />
+            ))}
+          </svg>
+        </span>
+        <span class="tab-label">{tab.label}</span>
+      </a>
+    );
+  })}
+</nav>
+
+<style>
+  /* ---- モバイルタブバー本体 ---- */
+  .mobile-tabbar {
+    /* モバイルのみ表示（PCでは hidden） */
+    display: none;
+
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 200;
+
+    height: 76px;
+    background: rgba(255, 255, 255, 0.94);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-top: 1px solid var(--line);
+    box-shadow: 0 -4px 16px rgba(31, 34, 53, 0.06);
+
+    /* タブ均等配置 */
+    align-items: stretch;
+    justify-content: space-around;
+
+    /* iOS ホームインジケータ対応 */
+    padding-bottom: env(safe-area-inset-bottom, 16px);
+    padding-top: 6px;
+  }
+
+  @media (max-width: 767px) {
+    .mobile-tabbar {
+      display: flex;
+    }
+  }
+
+  /* ---- 個別タブ ---- */
+  .mobile-tab {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+
+    /* タッチターゲット 44px+ 確保 */
+    min-height: 44px;
+    padding: 4px 2px;
+
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--ink-400);
+    text-decoration: none;
+
+    /* トランジション */
+    transition:
+      color 0.15s ease,
+      transform 0.12s ease;
+
+    /* アクセシビリティ */
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .mobile-tab:hover {
+    color: var(--brand-400);
+    text-decoration: none;
+  }
+
+  .mobile-tab:active {
+    transform: scale(0.93);
+  }
+
+  .mobile-tab:focus-visible {
+    outline: 2px solid var(--brand-400);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+  }
+
+  /* アクティブ状態 */
+  .mobile-tab.is-active {
+    color: var(--brand-600);
+  }
+
+  .mobile-tab.is-active .tab-icon {
+    /* アクティブ時にアイコンを軽くスケールアップ */
+    transform: scale(1.05);
+  }
+
+  /* ---- アイコン ---- */
+  .tab-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    transition: transform 0.12s ease;
+  }
+
+  .tab-icon svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  /* ---- ラベル ---- */
+  .tab-label {
+    line-height: 1;
+    letter-spacing: 0.01em;
+  }
+</style>

@@ -2,6 +2,11 @@
 /**
  * BaseLayout.astro - 診断ナビ 共通レイアウト
  * SEO/AIO/LLMO 基盤設定完了（2026-05-21 更新）
+ * フェーズ4: モバイルUI実装（2026-05-22 更新）
+ *   - MobileHeader（グラスモーフィズム・モバイルのみ表示）追加
+ *   - MobileTabBar（ボトムタブ・モバイルのみ表示）追加
+ *   - PC/モバイル出し分けロジック実装
+ *   - body の padding-bottom は MobileTabBar CSS で制御
  * 準拠基準書: zawa-empire/docs/seo-aio/01-foundations.md / 02-structured-data.md
  *
  * テーマ変更ガイド:
@@ -18,6 +23,8 @@ import '../styles/global.css';
 import siteMeta from '../data/site-meta.json';
 import SiteHeader from '../components/SiteHeader.astro';
 import SiteFooter from '../components/SiteFooter.astro';
+import MobileHeader from '../components/MobileHeader.astro';
+import MobileTabBar from '../components/MobileTabBar.astro';
 
 interface Props {
   /** ページタイトル（<title> に使用・主要KWを先頭に・28〜42字推奨）*/
@@ -44,8 +51,22 @@ interface Props {
   hideHeader?: boolean;
   /** フッターを非表示にするか */
   hideFooter?: boolean;
-  /** ヘッダーを非表示にするか */
+  /** ボトムナビを非表示にするか */
   hideBottomNav?: boolean;
+  /**
+   * モバイルヘッダーの設定
+   * - showBack: 戻るボタン表示（診断フロー・結果ページ等）
+   * - backHref: 戻り先URL
+   * - rightIcon: 右アイコン種別
+   * - pageTitle: ロゴ代わりに表示するページタイトル
+   */
+  mobileHeader?: {
+    showBack?: boolean;
+    backHref?: string;
+    backLabel?: string;
+    rightIcon?: 'bell' | 'upload' | 'menu' | 'none';
+    pageTitle?: string;
+  };
   /**
    * パンくずリストデータ（BreadcrumbList JSON-LD 生成用）
    * ホームは自動付与されるため不要。2階層目以降を記述する。
@@ -68,6 +89,7 @@ const {
   hideHeader = false,
   hideFooter = false,
   hideBottomNav = false,
+  mobileHeader = {},
   breadcrumbs,
 } = Astro.props;
 
@@ -342,8 +364,29 @@ const GSC_VERIFICATION = '';
     ></script>
   )}
 </head>
-<body>
-  {!hideHeader && <SiteHeader />}
+<body class:list={[{ 'has-mobile-tabbar': !hideBottomNav }]}>
+
+  <!--
+    PC ヘッダー: 768px 以上のみ表示（SiteHeader.astro 内の CSS で制御）
+    モバイルヘッダー: 768px 未満のみ表示（MobileHeader.astro 内の CSS で制御）
+    両コンポーネントとも display:none ↔ display:flex をメディアクエリで切り替え
+  -->
+  {!hideHeader && (
+    <>
+      {/* PC ヘッダー */}
+      <div class="pc-header-wrapper">
+        <SiteHeader />
+      </div>
+      {/* モバイルヘッダー */}
+      <MobileHeader
+        showBack={mobileHeader.showBack}
+        backHref={mobileHeader.backHref}
+        backLabel={mobileHeader.backLabel}
+        rightIcon={mobileHeader.rightIcon ?? 'bell'}
+        pageTitle={mobileHeader.pageTitle}
+      />
+    </>
+  )}
 
   <main id="main-content" class={mainClass}>
     <slot />
@@ -351,7 +394,13 @@ const GSC_VERIFICATION = '';
 
   {!hideFooter && <SiteFooter />}
 
-  <!-- ヘッダスクロール浮き -->
+  <!--
+    モバイルタブバー: 768px 未満のみ表示
+    hideBottomNav=true の場合は非表示（hideHeader=true のページ等）
+  -->
+  {!hideBottomNav && <MobileTabBar />}
+
+  <!-- ヘッダースクロール浮き（PC ヘッダー用）-->
   <script is:inline>
     (function () {
       var header = document.querySelector('.site-header');
@@ -364,3 +413,41 @@ const GSC_VERIFICATION = '';
   </script>
 </body>
 </html>
+
+<style is:global>
+  /*
+   * PC/モバイル ヘッダー出し分け
+   * SiteHeader は PC（>=768px）のみ / MobileHeader は モバイル（<768px）のみ
+   */
+
+  /* PC ヘッダーラッパー: モバイルでは非表示 */
+  .pc-header-wrapper {
+    display: block;
+  }
+
+  @media (max-width: 767px) {
+    .pc-header-wrapper {
+      display: none;
+    }
+  }
+
+  /*
+   * タブバー高さ分の body padding-bottom（モバイルのみ）
+   * CLS 対策: タブバーの高さ（76px）+ iOS セーフエリア分を確保
+   * has-mobile-tabbar クラスで制御（hideBottomNav=true 時は付与されない）
+   */
+  @media (max-width: 767px) {
+    body.has-mobile-tabbar {
+      /* 76px（タブバー） + セーフエリア */
+      padding-bottom: calc(76px + env(safe-area-inset-bottom, 0px));
+    }
+  }
+
+  /* PC では body の padding-bottom をリセット（タブバーは非表示のため） */
+  @media (min-width: 768px) {
+    body.has-mobile-tabbar {
+      /* design-tokens.css の --sn-bottom-nav-h を継承（既存挙動維持）*/
+      padding-bottom: var(--sn-bottom-nav-h, 0px);
+    }
+  }
+</style>

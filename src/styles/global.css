@@ -31,8 +31,7 @@ body {
   background-color: var(--sn-bg);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  /* ボトムナビ分の余白 */
-  padding-bottom: var(--sn-bottom-nav-h);
+  /* ボトムナビ分の余白: BaseLayout has-mobile-tabbar クラスで制御（モバイルのみ）*/
 }
 
 /* ---- フォーカスリング（a11y） ---- */
