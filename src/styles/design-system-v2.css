@@ -369,3 +369,257 @@
   outline-offset: 3px;
   border-radius: var(--sn-radius-sm);
 }
+
+/* ================================================================
+   フェーズ4: モバイル最適化スタイル
+   2026-05-22
+   ================================================================ */
+
+/* ----------------------------------------------------------------
+   質問カードオプション（.q-opt / .q-opt.selected）
+   デザインハンドオフ: screens-mobile.jsx 診断画面 / styles.css .q-opt
+   ---------------------------------------------------------------- */
+.q-opt {
+  display: grid;
+  grid-template-columns: 68px 1fr 28px;
+  align-items: center;
+  gap: 14px;
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: 12px 16px 12px 12px;
+  background: var(--surface);
+  cursor: pointer;
+  transition:
+    border-color 0.15s ease,
+    background 0.15s ease,
+    box-shadow 0.15s ease,
+    transform 0.12s ease;
+  /* タッチターゲット確保 */
+  min-height: 44px;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.q-opt:active {
+  transform: scale(0.985);
+}
+
+.q-opt.selected {
+  border-color: var(--brand-500);
+  background: var(--brand-50);
+  box-shadow: 0 4px 14px rgba(124, 92, 255, 0.12);
+}
+
+.q-opt.alt.selected {
+  border-color: var(--d-disc);
+  background: #effaf7;
+  box-shadow: 0 4px 14px rgba(52, 192, 168, 0.12);
+}
+
+/* モバイルでグリッドをシンプルに */
+@media (max-width: 767px) {
+  .q-opt {
+    grid-template-columns: 56px 1fr 26px;
+    gap: 12px;
+    padding: 11px 14px 11px 11px;
+  }
+}
+
+/* ----------------------------------------------------------------
+   モバイル全体のヒーローセクション最適化
+   ---------------------------------------------------------------- */
+
+/* TOPページ ヒーロー（< 768px）*/
+@media (max-width: 767px) {
+  /* ヒーロー内のパディング縮小 */
+  .sn-hero-bg {
+    padding: 32px 20px 40px;
+  }
+
+  /* h1 フォントサイズ調整（モバイル26px） */
+  .sn-hero-bg h1,
+  .hero-h1-mobile {
+    font-size: clamp(1.5rem, 6.5vw, 2rem);
+    line-height: 1.45;
+  }
+
+  /* サブテキスト */
+  .hero-sub-mobile {
+    font-size: 13px;
+    line-height: 1.7;
+  }
+
+  /* CTA ボタン全幅化 */
+  .sn-cta-fullwidth-mobile {
+    width: 100%;
+    padding: 18px;
+    font-size: 16px;
+  }
+
+  /* 診断リング: PCリングUIをグリッドに切り替え */
+  .diagnosis-ring-pc {
+    display: none;
+  }
+  .diagnosis-grid-mobile {
+    display: grid !important;
+  }
+}
+
+@media (min-width: 768px) {
+  .diagnosis-grid-mobile {
+    display: none;
+  }
+  .diagnosis-ring-pc {
+    display: block;
+  }
+}
+
+/* ----------------------------------------------------------------
+   診断タイルグリッド: モバイル最適化
+   ---------------------------------------------------------------- */
+@media (max-width: 479px) {
+  .diag-tiles-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+  }
+
+  .diag-tile-item .tile-circle {
+    width: 52px;
+    height: 52px;
+  }
+
+  .diag-tile-item .tile-label {
+    font-size: 10px;
+  }
+}
+
+/* ----------------------------------------------------------------
+   診断ヒーロー: モバイルパディング縮小
+   ---------------------------------------------------------------- */
+@media (max-width: 767px) {
+  .diag-hero-bg {
+    padding: 32px 20px 40px;
+  }
+}
+
+/* ----------------------------------------------------------------
+   カード: モバイル角丸・パディング調整
+   ---------------------------------------------------------------- */
+@media (max-width: 767px) {
+  .sn-card {
+    border-radius: var(--radius-md);
+  }
+}
+
+/* ----------------------------------------------------------------
+   プログレスバー: モバイル最適化
+   ---------------------------------------------------------------- */
+.sn-progress {
+  height: 8px;
+  background: #ece9f6;
+  border-radius: 999px;
+  overflow: hidden;
+  position: relative;
+}
+
+.sn-progress > i {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, #8a6dff 0%, #6c47ff 100%);
+  border-radius: 999px;
+  transition: width 0.4s ease;
+}
+
+/* ----------------------------------------------------------------
+   backdrop-filter フォールバック（未対応ブラウザ用）
+   ---------------------------------------------------------------- */
+@supports not (backdrop-filter: blur(1px)) {
+  .mobile-tabbar,
+  .mobile-header {
+    background: rgba(255, 255, 255, 0.98) !important;
+  }
+}
+
+/* ----------------------------------------------------------------
+   モバイル: 画像・iframe 遅延読み込み
+   診断フロー中に表示されるアイコン以外は lazy
+   ---------------------------------------------------------------- */
+@media (max-width: 767px) {
+  /* モバイルで iframe を含むブロックにアスペクト比確保（CLS対策）*/
+  .iframe-wrapper {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    border-radius: var(--radius-md);
+  }
+
+  .iframe-wrapper iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+}
+
+/* ----------------------------------------------------------------
+   モバイル: タッチフレンドリーな間隔確保
+   ---------------------------------------------------------------- */
+@media (max-width: 767px) {
+  /* リンクの縦間隔を広く */
+  .mobile-spacing-links a,
+  .mobile-spacing-links button {
+    display: block;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+  }
+}
+
+/* ----------------------------------------------------------------
+   診断フロー専用: 質問番号ドット（モバイル）
+   ---------------------------------------------------------------- */
+.q-dots {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.q-dot {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  font-family: 'Inter', system-ui, sans-serif;
+  background: transparent;
+  color: var(--ink-400);
+  border: 1.5px solid var(--line-2);
+  transition: background 0.12s ease, color 0.12s ease;
+}
+
+.q-dot.is-current {
+  background: var(--brand-500);
+  color: #fff;
+  border-color: transparent;
+}
+
+.q-dot.is-done {
+  background: var(--brand-100);
+  color: var(--brand-600);
+  border-color: var(--brand-200);
+}
+
+/* ----------------------------------------------------------------
+   スコアリング: モバイルでの軸チャートテキスト調整
+   ---------------------------------------------------------------- */
+@media (max-width: 767px) {
+  .radar-label-mobile {
+    font-size: 10px;
+    font-weight: 600;
+  }
+}

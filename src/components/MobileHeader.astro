@@ -1,0 +1,268 @@
+---
+/**
+ * MobileHeader.astro - モバイル専用ヘッダー v1.0
+ * デザインハンドオフ準拠: screens-mobile.jsx / styles.css .sn-mhead
+ * 2026-05-22
+ *
+ * 表示: モバイル幅 < 768px のみ（PC は SiteHeader を使用）
+ * スタイル: グラスモーフィズム（rgba + backdrop-filter）
+ * WCAG 2.1 AA: aria-label / aria-expanded / フォーカスリング
+ *
+ * 戻るボタン: showBack=true のページで表示（診断フロー等）
+ * ベルアイコン: 将来の通知機能用スロット（現時点はリンクのみ）
+ */
+
+interface Props {
+  /** 戻るボタンを表示するか（診断フロー、結果ページ等）*/
+  showBack?: boolean;
+  /** 戻り先のURL（showBack=true 時）*/
+  backHref?: string;
+  /** 戻るボタンの aria-label */
+  backLabel?: string;
+  /** 右アイコンのバリアント: 'bell' | 'upload' | 'menu' | 'none' */
+  rightIcon?: 'bell' | 'upload' | 'menu' | 'none';
+  /** ページタイトルをロゴ代わりに表示（診断中画面用）*/
+  pageTitle?: string;
+}
+
+const {
+  showBack = false,
+  backHref = '/',
+  backLabel = '前のページに戻る',
+  rightIcon = 'bell',
+  pageTitle,
+} = Astro.props;
+---
+
+<header class="mobile-header" id="mobile-header">
+  <!-- 左: 戻るボタン or スペーサー -->
+  <div class="mhead-left">
+    {showBack ? (
+      <a
+        href={backHref}
+        class="mhead-icon-btn"
+        aria-label={backLabel}
+      >
+        <!-- Back chevron icon -->
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M15 18l-6-6 6-6"/>
+        </svg>
+      </a>
+    ) : (
+      <div class="mhead-left-space" aria-hidden="true"></div>
+    )}
+  </div>
+
+  <!-- 中央: ロゴ or ページタイトル -->
+  <div class="mhead-center">
+    {pageTitle ? (
+      <span class="mhead-page-title">{pageTitle}</span>
+    ) : (
+      <a href="/" class="mhead-brand" aria-label="診断ナビ - トップページ">
+        <span class="brand-icon" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <circle cx="14" cy="14" r="14" fill="url(#mhead-logo-grad)"/>
+            <defs>
+              <linearGradient id="mhead-logo-grad" x1="0" y1="0" x2="28" y2="28" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#9b85ff"/>
+                <stop offset="100%" stop-color="#6a47ff"/>
+              </linearGradient>
+            </defs>
+            <path d="M14 7l1.5 4.2L20 12.5l-4.2 1.8.7 4.3L14 16.4l-2.5 2.2.7-4.3-4.2-1.8 4.5-1.3L14 7z" fill="white"/>
+          </svg>
+        </span>
+        <span class="brand-text">shindan-navi.jp</span>
+      </a>
+    )}
+  </div>
+
+  <!-- 右: アイコン群 -->
+  <div class="mhead-right">
+    {rightIcon === 'bell' && (
+      <button
+        class="mhead-icon-btn"
+        aria-label="お知らせを確認する"
+        type="button"
+      >
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/>
+        </svg>
+      </button>
+    )}
+    {rightIcon === 'upload' && (
+      <button
+        class="mhead-icon-btn"
+        aria-label="共有する"
+        type="button"
+      >
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M16 5l-1.42 1.42-1.59-1.59V16h-1.98V4.83L9.42 6.42 8 5l4-4 4 4zm4 5v11c0 1.1-.9 2-2 2H6c-1.11 0-2-.9-2-2V10c0-1.11.89-2 2-2h3v2H6v11h12V10h-3V8h3c1.1 0 2 .89 2 2z"/>
+        </svg>
+      </button>
+    )}
+    {rightIcon === 'menu' && (
+      <button
+        class="mhead-icon-btn"
+        aria-label="メニューを開く"
+        aria-expanded="false"
+        aria-controls="mobile-menu"
+        type="button"
+        id="mobile-menu-btn"
+      >
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+        </svg>
+      </button>
+    )}
+    {rightIcon === 'none' && (
+      <div class="mhead-right-space" aria-hidden="true"></div>
+    )}
+  </div>
+</header>
+
+<style>
+  /* ---- モバイルヘッダー本体 ---- */
+  .mobile-header {
+    /* モバイルのみ表示 */
+    display: none;
+
+    position: sticky;
+    top: 0;
+    z-index: 150;
+
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 12px 18px 10px;
+    /* iOS ステータスバー対応 */
+    padding-top: max(12px, env(safe-area-inset-top, 12px));
+
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+    box-shadow: 0 1px 8px rgba(31, 34, 53, 0.04);
+
+    /* フォールバック（backdrop-filter 非対応ブラウザ）*/
+    @supports not (backdrop-filter: blur(10px)) {
+      background: rgba(255, 255, 255, 0.97);
+    }
+  }
+
+  @media (max-width: 767px) {
+    .mobile-header {
+      display: flex;
+    }
+  }
+
+  /* ---- 左エリア ---- */
+  .mhead-left {
+    width: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+  }
+
+  .mhead-left-space {
+    width: 44px;
+  }
+
+  /* ---- 中央エリア ---- */
+  .mhead-center {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* ---- ブランドロゴ ---- */
+  .mhead-brand {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    text-decoration: none;
+    color: var(--ink-900);
+  }
+
+  .mhead-brand:hover {
+    text-decoration: none;
+    color: var(--ink-900);
+  }
+
+  .brand-icon {
+    display: flex;
+    align-items: center;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+
+  .brand-text {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--ink-900);
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+  }
+
+  /* ---- ページタイトル（診断中等）---- */
+  .mhead-page-title {
+    font-family: 'Inter', 'Noto Sans JP', system-ui, sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--ink-900);
+    letter-spacing: -0.01em;
+  }
+
+  /* ---- 右エリア ---- */
+  .mhead-right {
+    width: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+  }
+
+  .mhead-right-space {
+    width: 44px;
+  }
+
+  /* ---- アイコンボタン共通 ---- */
+  .mhead-icon-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    /* タッチターゲット 44px */
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-md);
+
+    color: var(--ink-700);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+
+    transition:
+      background-color 0.15s ease,
+      color 0.15s ease;
+
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .mhead-icon-btn:hover {
+    background: var(--brand-50);
+    color: var(--brand-600);
+    text-decoration: none;
+  }
+
+  .mhead-icon-btn:active {
+    background: var(--brand-100);
+  }
+
+  .mhead-icon-btn:focus-visible {
+    outline: 2px solid var(--brand-400);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+  }
+</style>
