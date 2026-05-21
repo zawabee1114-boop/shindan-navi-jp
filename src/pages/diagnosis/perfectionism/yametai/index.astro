@@ -288,23 +288,23 @@ const references = [
     { name: '完璧主義をやめたい', url: '/diagnosis/perfectionism/yametai/' },
   ]}
 >
-  <section class="ym-hero" aria-labelledby="ym-h1">
+  <section class="page-hero page-hero--yellow" aria-labelledby="ym-h1">
+    <svg class="page-hero-sparkle" style="top:15%;right:8%;width:52px;height:52px;" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2l1.8 5.4L19 9l-5.2 3.8L15.6 19 12 15.6 8.4 19l1.8-6.2L5 9l5.2-1.6z" fill="#fff" opacity=".55"/></svg>
+    <svg class="page-hero-sparkle" style="bottom:18%;left:6%;width:34px;height:34px;animation-delay:1.2s;" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2l1.8 5.4L19 9l-5.2 3.8L15.6 19 12 15.6 8.4 19l1.8-6.2L5 9l5.2-1.6z" fill="#fff" opacity=".4"/></svg>
     <Container>
-      <nav class="ym-breadcrumb" aria-label="パンくずリスト">
-        <ol class="ym-breadcrumb-list">
+      <div class="page-hero-inner">
+        <ol class="page-hero-breadcrumb" aria-label="パンくずリスト">
           <li><a href="/">ホーム</a></li>
           <li><a href="/diagnosis/">診断一覧</a></li>
           <li><a href="/diagnosis/perfectionism/">完璧主義診断</a></li>
           <li aria-current="page">やめたい</li>
         </ol>
-      </nav>
-      <div class="ym-hero-inner">
-        <div class="ym-hero-badge">CBT（認知行動療法）視点</div>
-        <h1 id="ym-h1" class="ym-h1">
-          完璧主義を「やめたい」と思ったあなたへ
-          <span class="ym-h1-sub">CBT（認知行動療法）で向き合う5ステップ</span>
+        <div class="page-hero-badge">🧠 CBT（認知行動療法）視点</div>
+        <h1 id="ym-h1" class="page-hero-h1">
+          完璧主義を「やめたい」と思ったあなたへ<br>
+          <span style="font-size:clamp(1rem,2.5vw,1.4rem);font-weight:600;opacity:.88;">CBT（認知行動療法）で向き合う5ステップ</span>
         </h1>
-        <p class="ym-hero-meta">
+        <p class="page-hero-meta">
           <time datetime={UPDATED_AT}>{UPDATED_AT}</time> 時点の情報
         </p>
       </div>
@@ -740,70 +740,7 @@ const references = [
 
 <style>
 /* ========== ヒーロー ========== */
-.ym-hero {
-  background: linear-gradient(135deg, #7c3aed 0%, #6366f1 100%);
-  color: #fff;
-  padding-block: 2.5rem 3rem;
-}
-.ym-breadcrumb {
-  margin-bottom: 1.5rem;
-}
-.ym-breadcrumb-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.25rem 0.5rem;
-  font-size: 0.75rem;
-  opacity: 0.8;
-}
-.ym-breadcrumb-list li::after {
-  content: '›';
-  margin-left: 0.5rem;
-}
-.ym-breadcrumb-list li:last-child::after {
-  content: '';
-}
-.ym-breadcrumb-list a {
-  color: inherit;
-  text-decoration: underline;
-  text-underline-offset: 2px;
-}
-.ym-hero-inner {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-.ym-hero-badge {
-  display: inline-block;
-  background: rgba(255 255 255 / 0.2);
-  border: 1px solid rgba(255 255 255 / 0.4);
-  border-radius: 2rem;
-  padding: 0.2rem 0.85rem;
-  font-size: 0.75rem;
-  letter-spacing: 0.04em;
-  align-self: flex-start;
-}
-.ym-h1 {
-  font-size: clamp(1.5rem, 4vw, 2.2rem);
-  font-family: var(--sn-font-rounded, sans-serif);
-  font-weight: 700;
-  line-height: 1.4;
-  margin: 0;
-}
-.ym-h1-sub {
-  display: block;
-  font-size: clamp(1rem, 2.5vw, 1.4rem);
-  opacity: 0.88;
-  font-weight: 600;
-  margin-top: 0.25rem;
-}
-.ym-hero-meta {
-  font-size: 0.78rem;
-  opacity: 0.7;
-  margin: 0;
-}
+/* ヒーローは .page-hero--yellow（design-system-v2.css）に委譲 */
 
 /* ========== セクション共通 ========== */
 .ym-section {

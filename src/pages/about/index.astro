@@ -249,9 +249,9 @@ const faqItems = [
     .breadcrumb { font-size: var(--sn-text-sm); color: var(--sn-muted); padding: var(--sn-space-4) var(--sn-space-4); }
     .breadcrumb a { color: var(--sn-muted); text-decoration: none; }
     .breadcrumb a:hover { color: var(--sn-primary); }
-    .page-hero { background: linear-gradient(135deg, #eef2ff 0%, #f5f3ff 100%); padding: var(--sn-space-12) 0; text-align: center; margin-bottom: var(--sn-space-8); }
-    .page-hero h1 { font-family: var(--sn-font-rounded); font-size: var(--sn-text-3xl); font-weight: 700; margin-bottom: var(--sn-space-3); }
-    .page-hero p { color: var(--sn-muted); font-size: var(--sn-text-base); }
+    /* .page-hero: design-system-v2.css の page-hero--purple に委譲 */
+    
+    
     .about-lead { font-size: var(--sn-text-base); color: var(--sn-text-soft); line-height: var(--sn-leading-relaxed); margin-bottom: var(--sn-space-8); }
     /* TL;DR ブロック */
     .tldr-block { background: #f0f4ff; border-left: 4px solid var(--sn-primary); border-radius: 0 var(--sn-radius-sm) var(--sn-radius-sm) 0; padding: var(--sn-space-5) var(--sn-space-6); margin-bottom: var(--sn-space-8); }
@@ -358,12 +358,16 @@ const faqItems = [
     <a href="/">ホーム</a> &gt; 運営者情報
   </nav>
 
-  <div class="page-hero">
-    <div class="container">
-      <h1>🏢 運営者情報・編集方針</h1>
-      <p>診断ナビの運営体制・品質基準・科学的根拠をご説明します</p>
-    </div>
-  </div>
+  <section class="page-hero page-hero--purple" aria-labelledby="about-h1">
+    <svg class="page-hero-sparkle" style="top:14%;right:8%;width:52px;height:52px;" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2l1.8 5.4L19 9l-5.2 3.8L15.6 19 12 15.6 8.4 19l1.8-6.2L5 9l5.2-1.6z" fill="#fff" opacity=".45"/></svg>
+    <Container>
+      <div class="page-hero-inner">
+        <div class="page-hero-badge">🏢 運営者情報・編集方針</div>
+        <h1 id="about-h1" class="page-hero-h1">診断ナビについて</h1>
+        <p class="page-hero-sub">診断ナビの運営体制・品質基準・科学的根拠をご説明します</p>
+      </div>
+    </Container>
+  </section>
 
   <main>
     <div class="container">

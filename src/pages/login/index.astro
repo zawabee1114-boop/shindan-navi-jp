@@ -34,6 +34,15 @@ const authError = Astro.url.searchParams.get('auth_error');
   canonical={pageUrl}
   noindex={true}
 >
+  <section class="page-hero page-hero--purple" aria-labelledby="login-h1" style="padding:32px 24px 40px;">
+    <Container>
+      <div class="page-hero-inner">
+        <div class="page-hero-badge">🔐 診断ナビ</div>
+        <h1 id="login-h1" class="page-hero-h1" style="font-size:clamp(1.25rem,3vw,1.75rem);">ログイン</h1>
+        <p class="page-hero-sub" style="font-size:14px;">メールアドレスを入力するとログインリンクが届きます</p>
+      </div>
+    </Container>
+  </section>
   <Container>
     <div class="login-page">
       <div class="login-card">
