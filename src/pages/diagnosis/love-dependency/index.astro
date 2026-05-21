@@ -1,0 +1,1047 @@
+---
+/**
+ * 恋愛における依存的傾向 診断ハブページ
+ * KW: 恋愛依存（VOL想定・SD13）/ 恋愛 依存的傾向 / 愛着スタイル 恋愛
+ * 学術根拠:
+ *   - Bowlby J (1969) Attachment and Loss
+ *   - Ainsworth MDS (1978) Patterns of Attachment
+ *   - Hazan C, Shaver PR (1987) Romantic love conceptualized as an attachment process
+ *   - Mikulincer M, Shaver PR (2007) Attachment in Adulthood
+ *
+ * YMYL最重要:
+ *   - 「恋愛依存症」「依存性パーソナリティ障害」「PD」等の医学用語 絶対NG
+ *   - 「治療」「治す」NG → 「向き合う」「整える」「マネジメント」
+ *   - 「症」「病」「障害」を診断的に使わない
+ *   - 全ページに「公認心理師・臨床心理士相談推奨」を明示
+ *
+ * 確認日: 2026-05-21
+ */
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Container from '../../../components/Container.astro';
+import TldrBlock from '../../../components/TldrBlock.astro';
+import ScienceNote from '../../../components/ScienceNote.astro';
+import ReferenceList from '../../../components/ReferenceList.astro';
+
+const SITE_URL = 'https://shindan-navi.jp';
+const PAGE_URL = `${SITE_URL}/diagnosis/love-dependency/`;
+const UPDATED_AT = '2026-05-21';
+
+const references = [
+  {
+    title: 'Attachment and Loss, Vol.1: Attachment',
+    author: 'Bowlby J',
+    year: 1969,
+    publisher: 'Basic Books',
+    url: 'https://www.basicbooks.com/titles/john-bowlby/attachment-and-loss-vol-1/9780465005437/',
+  },
+  {
+    title: 'Patterns of Attachment: A Psychological Study of the Strange Situation',
+    author: 'Ainsworth MDS, Blehar MC, Waters E, Wall S',
+    year: 1978,
+    publisher: 'Lawrence Erlbaum Associates',
+    url: 'https://psycnet.apa.org/record/1979-22063-000',
+  },
+  {
+    title: 'Romantic love conceptualized as an attachment process',
+    author: 'Hazan C, Shaver PR',
+    year: 1987,
+    journal: 'Journal of Personality and Social Psychology',
+    volume: '52(3), 511-524',
+    url: 'https://doi.org/10.1037/0022-3514.52.3.511',
+  },
+  {
+    title: 'Attachment in Adulthood: Structure, Dynamics, and Change',
+    author: 'Mikulincer M, Shaver PR',
+    year: 2007,
+    publisher: 'Guilford Press',
+    url: 'https://www.guilford.com/books/Attachment-in-Adulthood/Mikulincer-Shaver/9781462543854',
+  },
+  {
+    title: '公認心理師・臨床心理士への相談窓口（日本臨床心理士会）',
+    author: '一般社団法人日本臨床心理士会',
+    year: 2024,
+    url: 'https://www.jsccp.jp/',
+  },
+  {
+    title: 'こころの健康相談統一ダイヤル（厚生労働省）',
+    author: '厚生労働省',
+    year: 2024,
+    url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/hukushi_kaigo/shougaishahukushi/kokoro/index.html',
+  },
+];
+
+// JSON-LD: WebApplication
+const jsonLdWebApp = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  '@id': `${PAGE_URL}#webapp`,
+  name: '恋愛における依存的傾向 愛着スタイル4タイプ【自己理解ガイド】',
+  url: PAGE_URL,
+  applicationCategory: 'EducationalApplication',
+  operatingSystem: 'Web',
+  description:
+    'Bowlby（1969）・Ainsworth（1978）・Hazan & Shaver（1987）の愛着理論に基づく自己理解ガイド。不安型・回避型・共依存的傾向・安定型の4タイプで恋愛における依存的傾向を把握します。医学的診断ではありません。',
+  offers: {
+    '@type': 'Offer',
+    price: '0',
+    priceCurrency: 'JPY',
+    availability: 'https://schema.org/InStock',
+  },
+  author: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+    name: '診断ナビ',
+    url: SITE_URL,
+  },
+};
+
+// JSON-LD: Quiz（将来実装スタブ）
+const jsonLdQuiz = {
+  '@context': 'https://schema.org',
+  '@type': 'Quiz',
+  '@id': `${PAGE_URL}#quiz`,
+  name: '愛着スタイル 自己理解チェック（20問・準備中）',
+  url: PAGE_URL,
+  about: {
+    '@type': 'Thing',
+    name: '成人愛着スタイル4分類（不安型 / 回避型 / 共依存的傾向 / 安定型）',
+    description: 'Hazan & Shaver（1987）が提唱した成人の愛着スタイル分類モデル',
+    sameAs: 'https://doi.org/10.1037/0022-3514.52.3.511',
+  },
+  educationalLevel: 'HighSchool',
+  numberOfQuestions: 20,
+  dateCreated: '2026-05-21',
+  dateModified: UPDATED_AT,
+  inLanguage: 'ja',
+};
+
+// FAQ 12問
+const faqs = [
+  {
+    question: '恋愛における依存的傾向とは何ですか？',
+    answer:
+      '恋愛における依存的傾向とは、パートナーとの関係において、安心・不安・距離感への反応が強く出る性格特性の傾向を指します。Hazan & Shaver（1987）はBowlby（1969）の愛着理論を成人の恋愛関係に応用し、不安型・回避型・安定型の分類を提唱しました。これは医学的な診断カテゴリではなく、恋愛における心理的傾向の自己理解ツールです。',
+  },
+  {
+    question: '愛着スタイルとは何ですか？',
+    answer:
+      '愛着スタイルとは、乳幼児期に形成される「養育者との絆の持ち方」が成人後の人間関係・恋愛パターンに影響するという心理学上の概念です。Ainsworth（1978）は安全型・不安・回避型の3分類を提唱し、Hazan & Shaver（1987）がこれを成人の恋愛関係に応用しました（参照: DOI: 10.1037/0022-3514.52.3.511）。',
+  },
+  {
+    question: 'このページの内容は医学的診断ですか？',
+    answer:
+      'いいえ、違います。このページは恋愛における依存的傾向を性格特性として自己理解するための参考情報です。医学的診断・精神科的評価・依存症の判定は行っていません。心身の不調や強い苦しさを感じている場合は、公認心理師・臨床心理士にご相談ください（日本臨床心理士会: https://www.jsccp.jp/）。',
+  },
+  {
+    question: '愛着スタイルは変えられますか？',
+    answer:
+      '愛着スタイルは固定したものではなく、経験・環境・自己理解によって変容することが研究で示されています。Mikulincer & Shaver（2007）は「安全ベース（secure base）」となる関係・経験を積むことで、愛着パターンが安定型に近づく可能性を示しています。ただし深い変化には時間と、場合によっては専門家のサポートが有効です。',
+  },
+  {
+    question: '不安型と共依存的傾向はどう違いますか？',
+    answer:
+      '不安型は「見捨てられるかもしれない」という不安に基づき、確認行動・過敏な反応が出やすい傾向です。共依存的傾向はさらに進み、パートナーのニーズを自分より常に優先し、自己犠牲と支配的な「助け」を繰り返す関係パターンが含まれます。どちらも「依存症」「障害」ではなく、自己理解で向き合える性格特性の傾向として扱います。',
+  },
+  {
+    question: '回避型はなぜ親密さを避けるのですか？',
+    answer:
+      '回避型の傾向は、幼少期に「感情を表現しても十分な応答が得られなかった」経験に起源があることが多いとされています（Ainsworth 1978）。自立を重視し感情共有を最小化することで、傷つきを防御しようとするパターンです。「冷たい」「無関心」ではなく、関係への接近方法の違いとして理解することが重要です。',
+  },
+  {
+    question: '安定型の愛着スタイルとはどういう状態ですか？',
+    answer:
+      '安定型はパートナーとの適切な距離感を保ちながら、感情を率直に共有できる傾向です。見捨てられ不安が少なく、親密さに過度の不快感も感じません。Hazan & Shaver（1987）の研究では安定型が最も多くの成人にみられ、約55〜60%が該当するとされています（DOI: 10.1037/0022-3514.52.3.511）。',
+  },
+  {
+    question: '愛着スタイルを知ることで何が変わりますか？',
+    answer:
+      '自分の傾向を知ることで、「なぜパートナーとのすれ違いが生まれるか」「なぜ不安が強くなるか」の理解が深まります。Mikulincer & Shaver（2007）は自己への気づきが関係の質改善と関連することを示しています。診断の目的は「分類すること」ではなく、自己理解と対話のきっかけを得ることです。',
+  },
+  {
+    question: '「恋愛依存症」や「依存性パーソナリティ」との違いは？',
+    answer:
+      'このページで扱う「恋愛における依存的傾向」は、医学用語である「恋愛依存症」や「依存性パーソナリティ障害（DPD）」とは異なります。後者は医師・臨床心理士による専門的評価が必要な医学的概念です。このページは恋愛傾向の自己理解を目的とした参考情報であり、診断・治療・判定は行いません。',
+  },
+  {
+    question: 'パートナーの愛着スタイルを変えることはできますか？',
+    answer:
+      'パートナーの愛着スタイルを「変える」ことを目標にすることは、多くの場合関係の摩擦を増やします。有効なアプローチは「自分の傾向を理解した上で、安全な関係の質を育てること」です。どちらかが安定型に近い傾向を持つと、もう一方も安定化しやすいことが研究で示されています。',
+  },
+  {
+    question: '苦しさが強い場合はどうすればいいですか？',
+    answer:
+      '恋愛関係での強い苦しさ・不安・自己嫌悪が続く場合は、公認心理師・臨床心理士への相談が選択肢の一つです。日本臨床心理士会（https://www.jsccp.jp/）や厚生労働省の「こころの健康相談統一ダイヤル（0570-064-556）」を参照してください。このページの内容は専門的サポートの代替にはなりません。',
+  },
+  {
+    question: '他の診断と組み合わせて活用できますか？',
+    answer:
+      '恋愛スタイル診断（J.A.Lee 1973）・MBTI恋愛相性診断・友達相性診断・多重知能テストと組み合わせることで、「恋愛での行動パターン」×「性格全般の傾向」の立体的な自己理解が得られます。各ページへのリンクはこのページ下部に掲載しています。',
+  },
+];
+
+const jsonLdFAQ = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  '@id': `${PAGE_URL}#faq`,
+  mainEntity: faqs.map(({ question, answer }) => ({
+    '@type': 'Question',
+    name: question,
+    acceptedAnswer: { '@type': 'Answer', text: answer },
+  })),
+};
+
+const jsonLdBreadcrumb = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'ホーム', item: SITE_URL },
+    { '@type': 'ListItem', position: 2, name: '診断一覧', item: `${SITE_URL}/diagnosis/` },
+    { '@type': 'ListItem', position: 3, name: '恋愛における依存的傾向', item: PAGE_URL },
+  ],
+};
+
+const jsonLdAll = [jsonLdWebApp, jsonLdQuiz, jsonLdFAQ, jsonLdBreadcrumb];
+
+// 4タイプカードデータ
+const typeCards = [
+  {
+    id: 'anxious',
+    name: '不安型',
+    nameEn: 'Anxious',
+    catchphrase: '相手の反応に敏感で、深くつながりたいと感じる傾向',
+    icon: '💭',
+    color: '#dc2626',
+    desc: '見捨てられる不安から確認行動が増えやすい。深い愛情と感受性の豊かさが強み。',
+  },
+  {
+    id: 'avoidant',
+    name: '回避型',
+    nameEn: 'Avoidant',
+    catchphrase: '自立を重視し、親密さに慎重になりやすい傾向',
+    icon: '🧭',
+    color: '#2563eb',
+    desc: '感情の距離を保つことで安心を得やすい。自律性と冷静さが強み。',
+  },
+  {
+    id: 'codependent',
+    name: '共依存的傾向',
+    nameEn: 'Codependent tendency',
+    catchphrase: 'パートナーのために自分を後回しにしやすい傾向',
+    icon: '🤝',
+    color: '#7c3aed',
+    desc: '相手を支えることに喜びを感じる。深い共感力と思いやりが強み。',
+  },
+  {
+    id: 'secure',
+    name: '安定型',
+    nameEn: 'Secure',
+    catchphrase: '適切な距離感で感情共有が自然にできる傾向',
+    icon: '⚓',
+    color: '#059669',
+    desc: '親密さと自立のバランスが取れている。良好な関係の基盤になりやすい。',
+  },
+];
+
+// 歴史タイムライン
+const historyTimeline = [
+  {
+    year: '1969',
+    person: 'John Bowlby',
+    text: '「Attachment and Loss」を発表。乳幼児と養育者の絆（愛着）が心理発達に与える影響を体系化。',
+  },
+  {
+    year: '1978',
+    person: 'Mary Ainsworth',
+    text: '「Strange Situation（見知らぬ状況法）」実験で安全型・不安・回避型・混乱型の愛着パターンを観察・分類。',
+  },
+  {
+    year: '1987',
+    person: 'Cindy Hazan & Philip Shaver',
+    text: '成人の恋愛関係に愛着理論を応用。「Romantic love conceptualized as an attachment process」を発表（DOI: 10.1037/0022-3514.52.3.511）。',
+  },
+  {
+    year: '2007',
+    person: 'Mario Mikulincer & Phillip Shaver',
+    text: '「Attachment in Adulthood」で成人の愛着スタイルの動態・変容・カップル関係への影響を包括的に論述。',
+  },
+];
+---
+
+<BaseLayout
+  title="恋愛における依存的傾向【愛着スタイル4タイプ自己理解ガイド】"
+  description="不安型・回避型・共依存的傾向・安定型の4タイプでパートナーとの関係傾向を自己理解。Bowlby/Ainsworth/Hazan&Shaverの愛着理論に基づく参考ガイド。医学的診断ではありません。"
+  canonical={PAGE_URL}
+  jsonLd={jsonLdAll}
+  ogType="website"
+  publishDate="2026-05-21"
+  lastUpdated={UPDATED_AT}
+  breadcrumbs={[
+    { name: '診断一覧', url: '/diagnosis/' },
+    { name: '恋愛における依存的傾向', url: '/diagnosis/love-dependency/' },
+  ]}
+>
+  {/* ========== ヒーロー ========== */}
+  <section class="ld-hero" aria-labelledby="ld-hero-h1">
+    <div class="ld-hero-inner">
+      <div class="ld-hero-badge">
+        Bowlby (1969) · Ainsworth (1978) · Hazan &amp; Shaver (1987) 愛着理論準拠
+      </div>
+      <h1 id="ld-hero-h1" class="ld-hero-h1">
+        恋愛における依存的傾向<br />
+        <span class="ld-hero-sub-title">愛着スタイル4タイプ 自己理解ガイド</span>
+      </h1>
+      <p class="ld-hero-catch">
+        なぜ不安になる？なぜ距離を置きたくなる？<br />
+        愛着スタイルで恋愛傾向を自己理解する
+      </p>
+      <div class="ld-hero-disclaimer" role="note">
+        <span class="ld-disclaimer-icon" aria-hidden="true">⚠️</span>
+        <span>
+          このページは<strong>医学的診断ではありません</strong>。
+          恋愛傾向の自己理解のための参考情報です。
+          強い苦しさを感じる場合は<a href="https://www.jsccp.jp/" target="_blank" rel="noopener noreferrer">公認心理師・臨床心理士</a>にご相談ください。
+        </span>
+      </div>
+      <div class="ld-hero-stats">
+        <span class="ld-stat"><strong>4</strong>タイプ</span>
+        <span class="ld-stat-sep">·</span>
+        <span class="ld-stat">学術根拠あり</span>
+        <span class="ld-stat-sep">·</span>
+        <span class="ld-stat">無料</span>
+      </div>
+    </div>
+  </section>
+
+  <Container>
+    {/* ========== TL;DRブロック ========== */}
+    <TldrBlock
+      title="このページでわかること"
+      points={[
+        "恋愛における依存的傾向を不安型・回避型・共依存的傾向・安定型の4タイプで把握できます（Bowlby 1969 / Ainsworth 1978 / Hazan & Shaver 1987 の愛着理論に基づく参考情報）",
+        "各タイプの特徴・強み・気をつけたい傾向・self-careを解説します。「どのタイプが良い・悪い」ではなく、自己理解が目的です",
+        "このページは医学的診断・依存症判定・パーソナリティ障害の評価ではありません。強い苦しさがある場合は公認心理師・臨床心理士への相談を推奨します"
+      ]}
+      updatedAt={UPDATED_AT}
+      sourceLabel="Hazan & Shaver (1987) DOI: 10.1037/0022-3514.52.3.511"
+      sourceUrl="https://doi.org/10.1037/0022-3514.52.3.511"
+    />
+
+    {/* ========== YMYL 重要免責 ========== */}
+    <div class="ld-important-disclaimer" role="alert" aria-label="重要なお知らせ">
+      <h2 class="ld-disclaimer-heading">
+        <span aria-hidden="true">⚠️</span> 重要：このページについて
+      </h2>
+      <ul class="ld-disclaimer-list">
+        <li>このページで扱う「恋愛における依存的傾向」は、<strong>性格特性・行動傾向の自己理解</strong>を目的とした参考情報です</li>
+        <li>医学的な「恋愛依存症」「依存性パーソナリティ障害（DPD）」の診断・評価・治療は行いません</li>
+        <li>「症」「病」「障害」「治療」「治す」等の医学的表現は使用せず、<strong>「傾向」「向き合い方」「マネジメント」</strong>として扱います</li>
+        <li>恋愛関係で強い苦しさ・抑うつ感・不安が続く場合は、<a href="https://www.jsccp.jp/" target="_blank" rel="noopener noreferrer">日本臨床心理士会</a>や<a href="https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/hukushi_kaigo/shougaishahukushi/kokoro/index.html" target="_blank" rel="noopener noreferrer">厚生労働省の相談窓口</a>をご利用ください</li>
+      </ul>
+    </div>
+
+    {/* ========== 愛着理論とは ========== */}
+    <section class="ld-section" aria-labelledby="ld-theory-h2">
+      <h2 id="ld-theory-h2" class="ld-h2">愛着理論とは：3人の研究者が築いた学術基盤</h2>
+      <p class="ld-lead">
+        「愛着（Attachment）理論」は、イギリスの精神科医 John Bowlby（1969）が提唱した、
+        人と人のつながりへの反応パターンを説明する心理学理論です。
+        その後 Mary Ainsworth（1978）・Cindy Hazan &amp; Philip Shaver（1987）らが発展させ、
+        成人の恋愛関係への応用が確立されました。
+      </p>
+      <div class="ld-timeline">
+        {historyTimeline.map((item) => (
+          <div class="ld-timeline-item">
+            <div class="ld-timeline-year">{item.year}</div>
+            <div class="ld-timeline-body">
+              <p class="ld-timeline-person">{item.person}</p>
+              <p class="ld-timeline-text">{item.text}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+      <p class="ld-body">
+        愛着スタイルは「固定した性格」ではなく、経験・環境・自己理解によって変容しうるものです。
+        自分の傾向を知ることは、変えるための出発点ではなく、<strong>「なぜ自分はこう感じるのか」を理解する</strong>きっかけになります
+        （Mikulincer &amp; Shaver 2007）。
+      </p>
+    </section>
+
+    {/* ========== 4タイプ概観 ========== */}
+    <section class="ld-section" aria-labelledby="ld-types-h2">
+      <h2 id="ld-types-h2" class="ld-h2">恋愛における依存的傾向 4タイプ</h2>
+      <p class="ld-lead">
+        Hazan &amp; Shaver（1987）の研究を発展させた成人愛着スタイルの4分類を参考に、
+        恋愛での依存的傾向を自己理解する枠組みを提供します。
+      </p>
+      <div class="ld-types-grid">
+        {typeCards.map((tc) => (
+          <article class="ld-type-card" style={`--type-color: ${tc.color}`}>
+            <div class="ld-type-icon" aria-hidden="true">{tc.icon}</div>
+            <h3 class="ld-type-name">{tc.name}</h3>
+            <p class="ld-type-name-en">{tc.nameEn}</p>
+            <p class="ld-type-catch">{tc.catchphrase}</p>
+            <p class="ld-type-desc">{tc.desc}</p>
+            <a href={`/diagnosis/love-dependency/${tc.id}/`} class="ld-type-link">
+              {tc.name}の詳細を読む
+              <span aria-hidden="true">→</span>
+            </a>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    {/* ========== 各タイプの概要比較テーブル ========== */}
+    <section class="ld-section" aria-labelledby="ld-compare-h2">
+      <h2 id="ld-compare-h2" class="ld-h2">4タイプ比較一覧</h2>
+      <div class="ld-table-wrap">
+        <table class="ld-compare-table">
+          <caption class="ld-table-caption">恋愛における依存的傾向 4タイプ比較（2026-05-21 時点）</caption>
+          <thead>
+            <tr>
+              <th scope="col">タイプ</th>
+              <th scope="col">主な傾向</th>
+              <th scope="col">強み</th>
+              <th scope="col">気をつけたい点</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>不安型</strong></td>
+              <td>相手の反応に敏感・確認行動・見捨てられ不安</td>
+              <td>深い感受性・誠実な愛情</td>
+              <td>感情が先行しすぎることがある</td>
+            </tr>
+            <tr>
+              <td><strong>回避型</strong></td>
+              <td>親密さへの慎重さ・距離感重視・自立優先</td>
+              <td>自律性・冷静な判断</td>
+              <td>感情共有が少なく相手が孤独に感じることがある</td>
+            </tr>
+            <tr>
+              <td><strong>共依存的傾向</strong></td>
+              <td>自己犠牲・相手のニーズ最優先・境界線の曖昧さ</td>
+              <td>深い共感力・思いやり</td>
+              <td>自分のニーズを後回しにして消耗しやすい</td>
+            </tr>
+            <tr>
+              <td><strong>安定型</strong></td>
+              <td>適切な距離感・率直な感情共有・相互尊重</td>
+              <td>バランスの取れた関係基盤</td>
+              <td>相手の強い感情への対応に戸惑うことがある</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    {/* ========== 簡易チェック（将来実装スタブ） ========== */}
+    <section class="ld-section ld-section--quiz-stub" aria-labelledby="ld-quiz-h2">
+      <h2 id="ld-quiz-h2" class="ld-h2">簡易チェック（20問・準備中）</h2>
+      <p class="ld-lead">
+        恋愛における依存的傾向を把握する20問チェックを準備中です。
+        現在は各タイプの詳細ページで特徴を確認してください。
+      </p>
+      <div class="ld-stub-box">
+        <p class="ld-stub-label">準備中</p>
+        <p class="ld-stub-text">
+          4タイプを詳しく読んで、自分の傾向に近いページをご覧ください。
+        </p>
+        <div class="ld-stub-links">
+          {typeCards.map((tc) => (
+            <a href={`/diagnosis/love-dependency/${tc.id}/`} class="ld-stub-link" style={`--type-color: ${tc.color}`}>
+              <span aria-hidden="true">{tc.icon}</span> {tc.name}を読む
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    {/* ========== 専門家相談推奨 ========== */}
+    <section class="ld-section ld-section--consult" aria-labelledby="ld-consult-h2">
+      <h2 id="ld-consult-h2" class="ld-h2">専門家への相談について</h2>
+      <p class="ld-lead">
+        このページは自己理解の参考情報です。
+        以下に当てはまる場合は、専門家への相談を検討してください。
+      </p>
+      <ul class="ld-consult-list">
+        <li>恋愛関係での強い苦しさ・不安が日常生活に影響している</li>
+        <li>自分や相手を傷つけてしまうような行動が繰り返される</li>
+        <li>関係を終わらせたいのに終わらせられない状態が続く</li>
+        <li>抑うつ感・不眠・食欲不振などが続いている</li>
+      </ul>
+      <div class="ld-consult-links">
+        <a href="https://www.jsccp.jp/" target="_blank" rel="noopener noreferrer" class="ld-consult-btn">
+          日本臨床心理士会（公認心理師・臨床心理士を探す）
+          <span aria-hidden="true">→</span>
+        </a>
+        <a
+          href="https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/hukushi_kaigo/shougaishahukushi/kokoro/index.html"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="ld-consult-btn ld-consult-btn--secondary"
+        >
+          厚労省 こころの健康相談窓口
+          <span aria-hidden="true">→</span>
+        </a>
+      </div>
+    </section>
+
+    {/* ========== 関連診断 ========== */}
+    <section class="ld-section" aria-labelledby="ld-related-h2">
+      <h2 id="ld-related-h2" class="ld-h2">関連する診断・ガイド</h2>
+      <ul class="ld-related-list">
+        <li class="ld-related-item">
+          <a href="/diagnosis/love-style/" class="ld-related-link">
+            <span class="ld-related-icon" aria-hidden="true">❤️</span>
+            <span class="ld-related-body">
+              <span class="ld-related-title">恋愛スタイル診断</span>
+              <span class="ld-related-desc">J.A.Lee（1973）の6タイプ理論で恋愛傾向を把握する</span>
+            </span>
+          </a>
+        </li>
+        <li class="ld-related-item">
+          <a href="/diagnosis/mbti-compat/love/" class="ld-related-link">
+            <span class="ld-related-icon" aria-hidden="true">💑</span>
+            <span class="ld-related-body">
+              <span class="ld-related-title">MBTI恋愛相性診断</span>
+              <span class="ld-related-desc">16タイプ × 恋愛スタイルで相性を詳しく分析</span>
+            </span>
+          </a>
+        </li>
+        <li class="ld-related-item">
+          <a href="/diagnosis/friend-compat/" class="ld-related-link">
+            <span class="ld-related-icon" aria-hidden="true">🤝</span>
+            <span class="ld-related-body">
+              <span class="ld-related-title">友達相性診断</span>
+              <span class="ld-related-desc">友情関係でのスタイルと相性を確認する</span>
+            </span>
+          </a>
+        </li>
+        <li class="ld-related-item">
+          <a href="/diagnosis/multi-int/" class="ld-related-link">
+            <span class="ld-related-icon" aria-hidden="true">🦉</span>
+            <span class="ld-related-body">
+              <span class="ld-related-title">多重知能テスト</span>
+              <span class="ld-related-desc">8つの知能から「強みのかたち」を64問で発見</span>
+            </span>
+          </a>
+        </li>
+      </ul>
+    </section>
+
+    {/* ========== Science Note ========== */}
+    <ScienceNote
+      basisText="Bowlby J（1969）Attachment and Loss / Ainsworth MDS（1978）Patterns of Attachment / Hazan C, Shaver PR（1987）Romantic love conceptualized as an attachment process（DOI: 10.1037/0022-3514.52.3.511）/ Mikulincer M, Shaver PR（2007）Attachment in Adulthood に基づく自己理解ツール。成人愛着スタイル4分類（不安型・回避型・共依存的傾向・安定型）を参考フレームワークとして使用。"
+      basisUrl="https://doi.org/10.1037/0022-3514.52.3.511"
+      basisLabel="Hazan & Shaver (1987) DOI確認済"
+      notMedical={true}
+      updatedAt={UPDATED_AT}
+      additionalNote="「恋愛依存症」「依存性パーソナリティ障害」等の医学的診断カテゴリとは異なります。このページは恋愛傾向の自己理解を目的とした参考情報であり、医学的評価・治療の代替にはなりません。"
+    />
+
+    {/* ========== FAQ ========== */}
+    <section class="ld-section" aria-labelledby="ld-faq-h2">
+      <h2 id="ld-faq-h2" class="ld-h2">よくある質問</h2>
+      <dl class="ld-faq-list">
+        {faqs.map(({ question, answer }) => (
+          <div class="ld-faq-item">
+            <dt class="ld-faq-q">{question}</dt>
+            <dd class="ld-faq-a">{answer}</dd>
+          </div>
+        ))}
+      </dl>
+    </section>
+
+    {/* ========== 学術注記 ========== */}
+    <p class="ld-academic-note">
+      本ページは Bowlby J（1969）Attachment and Loss / Ainsworth MDS（1978）Patterns of Attachment /
+      Hazan C, Shaver PR（1987）DOI: 10.1037/0022-3514.52.3.511 / Mikulincer M, Shaver PR（2007）
+      に基づく自己理解参考情報です。医学的・臨床的な診断ではありません。
+      確認日: {UPDATED_AT}。
+    </p>
+
+    <ReferenceList references={references} confirmedAt={UPDATED_AT} />
+  </Container>
+</BaseLayout>
+
+<style>
+/* ========== ヒーロー ========== */
+.ld-hero {
+  background: linear-gradient(135deg, #7c3aed 0%, #db2777 100%);
+  color: #fff;
+  padding-block: 3rem 3.5rem;
+  text-align: center;
+}
+.ld-hero-inner {
+  max-width: 720px;
+  margin: 0 auto;
+  padding-inline: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+.ld-hero-badge {
+  display: inline-block;
+  background: rgba(255 255 255 / 0.15);
+  border: 1px solid rgba(255 255 255 / 0.35);
+  border-radius: 2rem;
+  padding: 0.25rem 1rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.04em;
+}
+.ld-hero-h1 {
+  font-size: clamp(1.6rem, 5vw, 2.4rem);
+  font-family: var(--sn-font-rounded, sans-serif);
+  font-weight: 700;
+  line-height: 1.35;
+  margin: 0;
+}
+.ld-hero-sub-title {
+  display: block;
+  font-size: clamp(0.9rem, 2.5vw, 1.15rem);
+  opacity: 0.88;
+  margin-top: 0.25rem;
+}
+.ld-hero-catch {
+  font-size: clamp(0.88rem, 2.2vw, 1rem);
+  opacity: 0.9;
+  line-height: 1.7;
+  margin: 0;
+}
+.ld-hero-disclaimer {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  background: rgba(255 255 255 / 0.15);
+  border: 1px solid rgba(255 255 255 / 0.4);
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  text-align: left;
+  max-width: 560px;
+}
+.ld-hero-disclaimer a {
+  color: #fde68a;
+  font-weight: 700;
+}
+.ld-disclaimer-icon {
+  flex-shrink: 0;
+  font-size: 1rem;
+}
+.ld-hero-stats {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.88rem;
+  opacity: 0.8;
+}
+.ld-stat strong {
+  font-size: 1.3em;
+  font-weight: 700;
+}
+.ld-stat-sep {
+  color: rgba(255 255 255 / 0.5);
+}
+
+/* ========== 重要免責ボックス ========== */
+.ld-important-disclaimer {
+  background: #fff7ed;
+  border: 2px solid #f97316;
+  border-radius: 0.75rem;
+  padding: 1.25rem 1.5rem;
+  margin-block: 2rem;
+}
+.ld-disclaimer-heading {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #9a3412;
+  margin: 0 0 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.ld-disclaimer-list {
+  margin: 0;
+  padding-left: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.ld-disclaimer-list li {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: #7c2d12;
+}
+.ld-disclaimer-list a {
+  color: #9a3412;
+  font-weight: 700;
+  text-decoration: underline;
+}
+
+/* ========== セクション共通 ========== */
+.ld-section {
+  margin-block: 3rem;
+}
+.ld-h2 {
+  font-size: clamp(1.25rem, 3.5vw, 1.65rem);
+  font-family: var(--sn-font-rounded, sans-serif);
+  font-weight: 700;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #7c3aed;
+}
+.ld-lead {
+  font-size: 1rem;
+  line-height: 1.8;
+  margin-bottom: 1rem;
+  color: #374151;
+}
+.ld-body {
+  font-size: 0.95rem;
+  line-height: 1.8;
+  color: #374151;
+  margin-bottom: 1rem;
+}
+
+/* ========== タイムライン ========== */
+.ld-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin-block: 1.5rem;
+  border-left: 3px solid #7c3aed;
+  padding-left: 1.5rem;
+}
+.ld-timeline-item {
+  position: relative;
+  padding-bottom: 1.5rem;
+}
+.ld-timeline-item::before {
+  content: '';
+  position: absolute;
+  left: -1.85rem;
+  top: 0.35rem;
+  width: 0.75rem;
+  height: 0.75rem;
+  background: #7c3aed;
+  border-radius: 50%;
+  border: 2px solid #fff;
+}
+.ld-timeline-year {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #7c3aed;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.15rem;
+}
+.ld-timeline-person {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0 0 0.2rem;
+}
+.ld-timeline-text {
+  font-size: 0.85rem;
+  line-height: 1.65;
+  color: #4b5563;
+  margin: 0;
+}
+
+/* ========== 4タイプグリッド ========== */
+.ld-types-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1rem;
+  margin-block: 1.5rem;
+}
+.ld-type-card {
+  border: 2px solid #e5e7eb;
+  border-top: 4px solid var(--type-color, #7c3aed);
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  transition: box-shadow 0.15s, transform 0.15s;
+}
+.ld-type-card:hover {
+  box-shadow: 0 4px 16px rgba(0 0 0 / 0.1);
+  transform: translateY(-2px);
+}
+.ld-type-icon {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+.ld-type-name {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--type-color, #7c3aed);
+  margin: 0 0 0.15rem;
+}
+.ld-type-name-en {
+  font-size: 0.7rem;
+  color: var(--sn-muted, #6b7280);
+  margin: 0 0 0.4rem;
+}
+.ld-type-catch {
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: #4b5563;
+  font-style: italic;
+  margin: 0 0 0.4rem;
+}
+.ld-type-desc {
+  font-size: 0.82rem;
+  line-height: 1.6;
+  color: #4b5563;
+  margin: 0 0 0.75rem;
+}
+.ld-type-link {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--type-color, #7c3aed);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+.ld-type-link:hover {
+  text-decoration: underline;
+}
+
+/* ========== 比較テーブル ========== */
+.ld-table-wrap {
+  overflow-x: auto;
+  margin-top: 1.5rem;
+}
+.ld-compare-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+.ld-compare-table th,
+.ld-compare-table td {
+  padding: 0.65rem 0.9rem;
+  border: 1px solid #e5e7eb;
+  text-align: left;
+  line-height: 1.5;
+}
+.ld-compare-table th {
+  background: #f3f4f6;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.ld-table-caption {
+  font-size: 0.78rem;
+  color: var(--sn-muted, #6b7280);
+  text-align: left;
+  padding: 0.25rem 0 0.5rem;
+}
+
+/* ========== 簡易チェックスタブ ========== */
+.ld-section--quiz-stub {
+  background: #f9fafb;
+  border: 2px dashed #d1d5db;
+  border-radius: 0.75rem;
+  padding: 2rem 1.5rem;
+}
+.ld-stub-box {
+  text-align: center;
+}
+.ld-stub-label {
+  display: inline-block;
+  background: #e5e7eb;
+  color: #6b7280;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.2rem 0.75rem;
+  border-radius: 2rem;
+  margin-bottom: 0.5rem;
+}
+.ld-stub-text {
+  font-size: 0.9rem;
+  color: #6b7280;
+  margin-bottom: 1.25rem;
+}
+.ld-stub-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: center;
+}
+.ld-stub-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.5rem 1.25rem;
+  background: #fff;
+  border: 2px solid var(--type-color, #7c3aed);
+  border-radius: 2rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--type-color, #7c3aed);
+  text-decoration: none;
+  transition: background 0.15s;
+}
+.ld-stub-link:hover {
+  background: var(--type-color, #7c3aed);
+  color: #fff;
+}
+
+/* ========== 専門家相談 ========== */
+.ld-section--consult {
+  background: #f0fdf4;
+  border: 1px solid #a7f3d0;
+  border-radius: 0.75rem;
+  padding: 1.75rem 1.5rem;
+}
+.ld-consult-list {
+  padding-left: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-block: 1rem 1.25rem;
+}
+.ld-consult-list li {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: #065f46;
+}
+.ld-consult-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+.ld-consult-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: #059669;
+  color: #fff;
+  font-size: 0.88rem;
+  font-weight: 700;
+  padding: 0.65rem 1.25rem;
+  border-radius: 2rem;
+  text-decoration: none;
+  transition: background 0.15s;
+}
+.ld-consult-btn:hover {
+  background: #047857;
+}
+.ld-consult-btn--secondary {
+  background: #fff;
+  color: #059669;
+  border: 2px solid #059669;
+}
+.ld-consult-btn--secondary:hover {
+  background: #f0fdf4;
+}
+
+/* ========== 関連リンク ========== */
+.ld-related-list {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.ld-related-link {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.ld-related-link:hover {
+  border-color: #7c3aed;
+  box-shadow: 0 2px 8px rgba(124 58 237 / 0.1);
+}
+.ld-related-icon {
+  font-size: 1.75rem;
+  flex-shrink: 0;
+}
+.ld-related-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+.ld-related-title {
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+.ld-related-desc {
+  font-size: 0.8rem;
+  color: var(--sn-muted, #6b7280);
+}
+
+/* ========== FAQ ========== */
+.ld-faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+.ld-faq-item {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+.ld-faq-q {
+  font-weight: 700;
+  font-size: 0.93rem;
+  padding: 0.9rem 1.25rem;
+  background: #f9fafb;
+  margin: 0;
+  display: block;
+  line-height: 1.5;
+}
+.ld-faq-q::before {
+  content: 'Q. ';
+  color: #7c3aed;
+}
+.ld-faq-a {
+  font-size: 0.88rem;
+  line-height: 1.7;
+  padding: 0.9rem 1.25rem;
+  margin: 0;
+  color: #4b5563;
+}
+.ld-faq-a::before {
+  content: 'A. ';
+  font-weight: 700;
+  color: #059669;
+}
+
+/* ========== 学術注記 ========== */
+.ld-academic-note {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  border-top: 1px solid #e5e7eb;
+  padding-top: 1.5rem;
+  margin-top: 2rem;
+  line-height: 1.6;
+}
+
+/* ========== レスポンシブ ========== */
+@media (max-width: 640px) {
+  .ld-types-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .ld-stub-links {
+    flex-direction: column;
+    align-items: center;
+  }
+  .ld-consult-links {
+    flex-direction: column;
+  }
+}
+@media (max-width: 480px) {
+  .ld-types-grid {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
