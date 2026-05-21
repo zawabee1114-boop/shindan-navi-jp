@@ -1,0 +1,173 @@
+---
+/**
+ * ScienceNote.astro - 科学的位置付けノート（AIO/LLMO・E-E-A-T強化）
+ *
+ * 役割:
+ * - 各診断の「科学的位置付け」を標準フォーマットで明示
+ * - YMYL境界の明示（医療診断ではない旨）
+ * - AI検索エンジンへの正確な文脈提供
+ *
+ * 使い方:
+ * <ScienceNote
+ *   basisText="Howard Gardner（1983）のMultiple Intelligences理論"
+ *   basisUrl="https://www.pz.harvard.edu/projects/multiple-intelligences"
+ *   notMedical={true}
+ *   updatedAt="2026-05-21"
+ * />
+ *
+ * デザイントークン: --sn-* のみ使用
+ */
+
+interface Props {
+  /** 理論的根拠の説明テキスト */
+  basisText: string;
+  /** 根拠元URL */
+  basisUrl?: string;
+  /** 根拠元ラベル */
+  basisLabel?: string;
+  /** 医療診断ではない旨を表示するか */
+  notMedical?: boolean;
+  /** 最終確認日 YYYY-MM-DD */
+  updatedAt?: string;
+  /** 追加の注意事項（任意） */
+  additionalNote?: string;
+}
+
+const {
+  basisText,
+  basisUrl,
+  basisLabel,
+  notMedical = true,
+  updatedAt,
+  additionalNote,
+} = Astro.props;
+---
+
+<aside class="science-note" aria-label="科学的位置付け">
+  <div class="science-note__header">
+    <span class="science-note__icon" aria-hidden="true">🔬</span>
+    <h3 class="science-note__title">科学的位置付け（Science Note）</h3>
+  </div>
+  <dl class="science-note__body">
+    <div class="science-note__row">
+      <dt class="science-note__label">理論的根拠</dt>
+      <dd class="science-note__value">
+        {basisText}
+        {basisUrl && basisLabel && (
+          <>
+            {' '}（参照:{' '}
+            <a href={basisUrl} target="_blank" rel="noopener noreferrer">
+              {basisLabel}
+            </a>
+            ）
+          </>
+        )}
+      </dd>
+    </div>
+    {notMedical && (
+      <div class="science-note__row science-note__row--ymyl">
+        <dt class="science-note__label">位置づけ</dt>
+        <dd class="science-note__value">
+          本診断は<strong>自己理解・傾向把握のための参考ツール</strong>です。
+          医学的・臨床心理学的な診断・治療・能力評価の代替にはなりません。
+          心身の不調がある場合は医師・臨床心理士にご相談ください。
+        </dd>
+      </div>
+    )}
+    {additionalNote && (
+      <div class="science-note__row">
+        <dt class="science-note__label">補足</dt>
+        <dd class="science-note__value">{additionalNote}</dd>
+      </div>
+    )}
+    {updatedAt && (
+      <div class="science-note__row">
+        <dt class="science-note__label">最終確認</dt>
+        <dd class="science-note__value">
+          <time datetime={updatedAt}>{updatedAt}</time>
+        </dd>
+      </div>
+    )}
+  </dl>
+</aside>
+
+<style>
+.science-note {
+  border: 1px solid #d1d5db;
+  border-left: 4px solid #059669;
+  border-radius: 0 0.5rem 0.5rem 0;
+  padding: 1.25rem 1.5rem;
+  margin-block: 2rem;
+  background: #f0fdf4;
+}
+
+.science-note__header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.science-note__icon {
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.science-note__title {
+  font-size: 0.875rem;
+  font-weight: 700;
+  margin: 0;
+  color: #065f46;
+  letter-spacing: 0.02em;
+}
+
+.science-note__body {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.science-note__row {
+  display: grid;
+  grid-template-columns: 6rem 1fr;
+  gap: 0.5rem;
+  align-items: baseline;
+}
+
+.science-note__row--ymyl {
+  border-top: 1px solid #a7f3d0;
+  padding-top: 0.6rem;
+  margin-top: 0.2rem;
+}
+
+.science-note__label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #065f46;
+  white-space: nowrap;
+}
+
+.science-note__value {
+  font-size: 0.85rem;
+  line-height: 1.6;
+  color: #1f2937;
+  margin: 0;
+}
+
+.science-note__value a {
+  color: #047857;
+  text-decoration: underline;
+}
+
+.science-note__value strong {
+  color: #065f46;
+}
+
+@media (max-width: 480px) {
+  .science-note__row {
+    grid-template-columns: 1fr;
+    gap: 0.2rem;
+  }
+}
+</style>
