@@ -1,9 +1,14 @@
 ---
 /**
  * SiteHeader.astro - グローバルヘッダー
- * ロゴ + ナビゲーション + PRO/PASSボタン
+ * Phase 3.2: 認証状態表示 + ログアウト UI 追加
+ *
+ * AuthHeader.tsx を React Island として組み込み
+ * ログイン状態は client:only="react" でマウント後に取得
+ * CLS 対策: AuthHeader マウント前のプレースホルダー幅を固定
  */
 import siteMeta from '../data/site-meta.json';
+import AuthHeader from './auth/AuthHeader';
 
 const navItems = [
   { label: '診断一覧', href: '/diagnosis/' },
@@ -34,12 +39,13 @@ const navItems = [
         </ul>
       </nav>
 
-      <!-- CTA ボタン -->
-      <div class="header-cta">
-        <a href="/pro/" class="btn btn-pro btn-sm">
-          <span aria-hidden="true">✨</span>
-          PRO ¥590/月
-        </a>
+      <!-- 認証 UI（React Island）-->
+      <div class="header-auth" aria-label="認証メニュー">
+        <!--
+          client:only="react": SSR スキップ（LocalStorage / Supabase はブラウザ専用）
+          CLS 対策: --auth-placeholder-w でマウント前の幅を確保
+        -->
+        <AuthHeader client:only="react" />
       </div>
     </div>
   </div>
@@ -125,9 +131,22 @@ const navItems = [
     text-decoration: none;
   }
 
-  /* CTAボタン */
-  .header-cta {
+  /* 認証エリア */
+  .header-auth {
     margin-left: auto;
     flex-shrink: 0;
+    /* CLS 対策: マウント前のプレースホルダー幅を確保 */
+    min-width: 80px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+  }
+
+  /* PC幅ではメールアドレスを表示 */
+  @media (min-width: 900px) {
+    .header-auth :global(.auth-header-email) {
+      display: block !important;
+    }
   }
 </style>
