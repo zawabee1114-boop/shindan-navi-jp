@@ -47,17 +47,33 @@ const canonicalURL = "https://shindan-navi.jp/editorial-policy/";
     {JSON.stringify([
       {
         "@context": "https://schema.org",
-        "@type": "WebPage",
+        "@type": ["WebPage", "Article"],
         "@id": "https://shindan-navi.jp/editorial-policy/",
         "url": "https://shindan-navi.jp/editorial-policy/",
         "name": "編集ポリシー | 診断ナビ",
-        "description": "診断ナビのコンテンツ作成基準・AI支援透明化・YMYL対応方針",
-        "isPartOf": { "@type": "WebSite", "url": "https://shindan-navi.jp" },
+        "description": "診断ナビのコンテンツ作成基準・AI支援透明化・YMYL対応方針・訂正方針・更新ポリシー",
+        "datePublished": "2026-05-20",
+        "dateModified": "2026-05-21",
+        "isPartOf": {
+          "@type": "WebSite",
+          "@id": "https://shindan-navi.jp/#website",
+          "url": "https://shindan-navi.jp"
+        },
         "publisher": {
           "@type": "Organization",
+          "@id": "https://shindan-navi.jp/#organization",
           "name": "診断ナビ編集部",
           "url": "https://shindan-navi.jp",
           "email": "zawalab.info@gmail.com"
+        },
+        "author": {
+          "@type": "Person",
+          "@id": "https://shindan-navi.jp/about/#editor",
+          "name": "診断ナビ編集長"
+        },
+        "speakable": {
+          "@type": "SpeakableSpecification",
+          "cssSelector": [".policy-section .policy-box", ".meta-text"]
         }
       },
       {

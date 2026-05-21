@@ -1,9 +1,9 @@
 ---
 /**
  * /aisei/kazoku/fufu/ - 家族（夫婦・パートナー）相性ページ
- * Phase 1: 統合プロファイルの家族軸を表示
+ * 第3巡AIO/LLMO強化: TldrBlock + ScienceNote + JSON-LD mentions 追加
  *
- * 家族軸 = 性格相性のみ（YMYL回避）
+ * 家族軸 = 性格相性のみ（YMYL回避・絶対厳守）
  * 育児ストレス・介護・医療言及は絶対NG
  * 「パートナー」表記使用（LGBTQ+配慮）
  *
@@ -12,25 +12,43 @@
 import BaseLayout from '../../../../layouts/BaseLayout.astro';
 import Container from '../../../../components/Container.astro';
 import IntegratedProfileViewer from '../../../../components/IntegratedProfileViewer';
+import TldrBlock from '../../../../components/TldrBlock.astro';
+import ScienceNote from '../../../../components/ScienceNote.astro';
 
 const siteUrl = 'https://shindan-navi.jp';
 const pageUrl = `${siteUrl}/aisei/kazoku/fufu/`;
 
-const jsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'BreadcrumbList',
-  itemListElement: [
-    { '@type': 'ListItem', position: 1, name: 'ホーム', item: siteUrl },
-    { '@type': 'ListItem', position: 2, name: '相性診断', item: `${siteUrl}/aisei/` },
-    { '@type': 'ListItem', position: 3, name: '家族相性', item: `${siteUrl}/aisei/kazoku/` },
-    { '@type': 'ListItem', position: 4, name: 'パートナー相性', item: pageUrl },
-  ],
-};
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    '@id': pageUrl,
+    url: pageUrl,
+    name: '家族・パートナーとの特性 | 統合プロファイル - 診断ナビ',
+    description: '金銭感覚・完璧主義・恋愛スタイルを統合した家族軸プロファイル。パートナーとの性格相性・コミュニケーション傾向を参考情報として確認できます。',
+    dateModified: '2026-05-21',
+    isPartOf: { '@type': 'WebSite', '@id': `${siteUrl}/#website`, url: siteUrl },
+    mentions: [
+      { '@type': 'Thing', name: 'マネースクリプト理論', sameAs: 'https://doi.org/10.4148/jft.v2i1.451' },
+      { '@type': 'Thing', name: '恋愛スタイル理論（J.A.Lee）', sameAs: 'https://en.wikipedia.org/wiki/Color_wheel_theory_of_love' },
+    ],
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'ホーム', item: siteUrl },
+      { '@type': 'ListItem', position: 2, name: '相性診断', item: `${siteUrl}/aisei/` },
+      { '@type': 'ListItem', position: 3, name: '家族相性', item: `${siteUrl}/aisei/kazoku/` },
+      { '@type': 'ListItem', position: 4, name: 'パートナー相性', item: pageUrl },
+    ],
+  },
+];
 ---
 
 <BaseLayout
   title="家族・パートナーとの特性 | 統合プロファイル - 診断ナビ"
-  description="8診断を統合した家族軸プロファイル。パートナーとの調和・コミュニケーション傾向を性格相性の観点から確認できます。"
+  description="金銭感覚・完璧主義・恋愛スタイルを統合した家族軸プロファイル。パートナーとの性格相性・コミュニケーション傾向の参考情報として確認できます。医療・育児アドバイスは含みません。"
   canonical={pageUrl}
   jsonLd={jsonLd}
   noindex={true}
@@ -39,6 +57,7 @@ const jsonLd = {
     { name: '家族', url: '/aisei/kazoku/' },
     { name: 'パートナー', url: '/aisei/kazoku/fufu/' },
   ]}
+  lastUpdated="2026-05-21"
 >
   <!-- ヘッダー -->
   <section class="axis-header axis-header--family">
@@ -60,12 +79,40 @@ const jsonLd = {
     </Container>
   </section>
 
+  <!-- TldrBlock（AIO引用最適化）-->
+  <Container>
+    <TldrBlock
+      title="家族軸プロファイルとは"
+      points={[
+        "金銭感覚（マネースクリプト4タイプ）・完璧主義傾向・恋愛スタイルの3診断を統合した家族軸の性格相性表示",
+        "パートナーとのコミュニケーション傾向・価値観の一致点・摩擦が起きやすいポイントを参考情報として確認できる",
+        "医療・育児・介護・法律に関するアドバイスは一切含まない（YMYL非扱い）",
+        "LGBTQ+を含む全てのパートナーシップ・家族形態に対応（「パートナー」表記で統一）"
+      ]}
+      updatedAt="2026-05-21"
+      sourceLabel="Klontz et al.（2011）マネースクリプト研究"
+      sourceUrl="https://doi.org/10.4148/jft.v2i1.451"
+    />
+  </Container>
+
   <!-- 統合プロファイル（家族軸） -->
   <section class="axis-main">
     <Container>
       <IntegratedProfileViewer client:load axis="family" singleAxisMode={true} />
     </Container>
   </section>
+
+  <!-- ScienceNote -->
+  <Container>
+    <ScienceNote
+      basisText="金銭感覚（マネースクリプト）: Klontz et al.（2011）「Money beliefs and financial behaviors」Journal of Financial Therapy 2(1)。恋愛スタイル: J.A.Lee（1973年）・Hendrick & Hendrick（1986年）。完璧主義: Hewitt & Flett（1991年）多次元完璧主義尺度（MPS）。"
+      basisUrl="https://doi.org/10.4148/jft.v2i1.451"
+      basisLabel="Journal of Financial Therapy 2(1)"
+      notMedical={true}
+      updatedAt="2026-05-21"
+      additionalNote="家族軸は性格相性の参考情報のみを提供します。育児・介護・家計管理の専門的な判断は、必ず医師・FP（ファイナンシャルプランナー）・専門家にご相談ください。"
+    />
+  </Container>
 
   <!-- 関連診断 -->
   <section class="axis-related">
@@ -89,11 +136,18 @@ const jsonLd = {
             <span>家族との関わり方・期待傾向を知る</span>
           </div>
         </a>
-        <a href="/diagnosis/blood/" class="axis-diag-card">
+        <a href="/diagnosis/blood-compat/" class="axis-diag-card">
           <span aria-hidden="true">🩸</span>
           <div>
-            <strong>血液型性格診断</strong>
+            <strong>血液型相性診断</strong>
             <span>血液型ごとの家族関係傾向（文化的参考値）</span>
+          </div>
+        </a>
+        <a href="/profile/" class="axis-diag-card">
+          <span aria-hidden="true">🎯</span>
+          <div>
+            <strong>統合プロファイル</strong>
+            <span>8診断統合で全シーン軸を確認</span>
           </div>
         </a>
       </div>
@@ -102,95 +156,20 @@ const jsonLd = {
 </BaseLayout>
 
 <style>
-  .axis-header {
-    padding-block: var(--sn-space-8, 2rem);
-    border-bottom: 1px solid var(--sn-border, #e5e7eb);
-  }
-  .axis-header--family {
-    background: linear-gradient(135deg, #fffbeb 0%, var(--sn-bg-soft, #f9fafb) 100%);
-  }
-  .axis-header-inner {
-    display: flex;
-    align-items: flex-start;
-    gap: var(--sn-space-4, 1rem);
-  }
-  .axis-icon {
-    font-size: 2.5rem;
-    flex-shrink: 0;
-    line-height: 1;
-  }
-  .axis-title {
-    font-family: var(--sn-font-rounded, sans-serif);
-    font-size: clamp(1.25rem, 4vw, 1.75rem);
-    font-weight: 900;
-    color: var(--sn-text, #111827);
-    margin: 0 0 var(--sn-space-2, 0.5rem);
-  }
-  .axis-lead {
-    font-size: var(--sn-text-sm, 0.875rem);
-    color: var(--sn-text-soft, #6b7280);
-    line-height: 1.7;
-    margin: 0 0 var(--sn-space-3, 0.75rem);
-  }
-  .axis-ymyl-note {
-    display: flex;
-    align-items: flex-start;
-    gap: 0.375rem;
-    padding: 0.625rem 0.875rem;
-    background: #f0f9ff;
-    border-radius: 8px;
-    border: 1px solid #bae6fd;
-    font-size: 0.75rem;
-    color: #0c4a6e;
-    line-height: 1.6;
-  }
-  .axis-main {
-    padding-block: var(--sn-space-8, 2rem);
-  }
-  .axis-related {
-    padding-block: var(--sn-space-8, 2rem);
-    background: var(--sn-bg-soft, #f9fafb);
-    border-top: 1px solid var(--sn-border, #e5e7eb);
-  }
-  .axis-section-title {
-    display: flex;
-    align-items: center;
-    gap: var(--sn-space-2, 0.5rem);
-    font-family: var(--sn-font-rounded, sans-serif);
-    font-size: var(--sn-text-lg, 1.125rem);
-    font-weight: 900;
-    color: var(--sn-text, #111827);
-    margin: 0 0 var(--sn-space-4, 1rem);
-  }
-  .axis-diag-grid {
-    display: flex;
-    flex-direction: column;
-    gap: var(--sn-space-2, 0.5rem);
-  }
-  .axis-diag-card {
-    display: flex;
-    align-items: center;
-    gap: var(--sn-space-3, 0.75rem);
-    padding: var(--sn-space-4, 1rem);
-    background: var(--sn-bg-white, #fff);
-    border-radius: var(--sn-radius-md, 12px);
-    border: 1px solid var(--sn-border, #e5e7eb);
-    text-decoration: none;
-    transition: border-color 0.15s ease;
-  }
-  .axis-diag-card:hover {
-    border-color: #f59e0b;
-    text-decoration: none;
-  }
+  .axis-header { padding-block: var(--sn-space-8, 2rem); border-bottom: 1px solid var(--sn-border, #e5e7eb); }
+  .axis-header--family { background: linear-gradient(135deg, #fffbeb 0%, var(--sn-bg-soft, #f9fafb) 100%); }
+  .axis-header-inner { display: flex; align-items: flex-start; gap: var(--sn-space-4, 1rem); }
+  .axis-icon { font-size: 2.5rem; flex-shrink: 0; line-height: 1; }
+  .axis-title { font-family: var(--sn-font-rounded, sans-serif); font-size: clamp(1.25rem, 4vw, 1.75rem); font-weight: 900; color: var(--sn-text, #111827); margin: 0 0 var(--sn-space-2, 0.5rem); }
+  .axis-lead { font-size: var(--sn-text-sm, 0.875rem); color: var(--sn-text-soft, #6b7280); line-height: 1.7; margin: 0 0 var(--sn-space-3, 0.75rem); }
+  .axis-ymyl-note { display: flex; align-items: flex-start; gap: 0.375rem; padding: 0.625rem 0.875rem; background: #f0f9ff; border-radius: 8px; border: 1px solid #bae6fd; font-size: 0.75rem; color: #0c4a6e; line-height: 1.6; }
+  .axis-main { padding-block: var(--sn-space-8, 2rem); }
+  .axis-related { padding-block: var(--sn-space-8, 2rem); background: var(--sn-bg-soft, #f9fafb); border-top: 1px solid var(--sn-border, #e5e7eb); }
+  .axis-section-title { display: flex; align-items: center; gap: var(--sn-space-2, 0.5rem); font-family: var(--sn-font-rounded, sans-serif); font-size: var(--sn-text-lg, 1.125rem); font-weight: 900; color: var(--sn-text, #111827); margin: 0 0 var(--sn-space-4, 1rem); }
+  .axis-diag-grid { display: flex; flex-direction: column; gap: var(--sn-space-2, 0.5rem); }
+  .axis-diag-card { display: flex; align-items: center; gap: var(--sn-space-3, 0.75rem); padding: var(--sn-space-4, 1rem); background: var(--sn-bg-white, #fff); border-radius: var(--sn-radius-md, 12px); border: 1px solid var(--sn-border, #e5e7eb); text-decoration: none; transition: border-color 0.15s ease; }
+  .axis-diag-card:hover { border-color: #f59e0b; }
   .axis-diag-card > span:first-child { font-size: 1.5rem; flex-shrink: 0; }
-  .axis-diag-card strong {
-    display: block;
-    font-size: var(--sn-text-sm, 0.875rem);
-    font-weight: 700;
-    color: var(--sn-text, #111827);
-  }
-  .axis-diag-card span:last-child {
-    font-size: var(--sn-text-xs, 0.75rem);
-    color: var(--sn-muted, #9ca3af);
-  }
+  .axis-diag-card strong { display: block; font-size: var(--sn-text-sm, 0.875rem); font-weight: 700; color: var(--sn-text, #111827); }
+  .axis-diag-card span:last-child { font-size: var(--sn-text-xs, 0.75rem); color: var(--sn-muted, #9ca3af); }
 </style>

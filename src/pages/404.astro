@@ -1,14 +1,101 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Container from '../components/Container.astro';
+
+const popularDiagnoses = [
+  { name: "多重知能テスト", href: "/diagnosis/multi-int/", icon: "🧠", desc: "8知能で得意領域を発見（推奨）" },
+  { name: "MBTI診断", href: "/diagnosis/mbti/", icon: "🎭", desc: "16タイプで性格を解明" },
+  { name: "DiSC診断", href: "/diagnosis/disc/", icon: "💼", desc: "仕事スタイル・コミュニケーション傾向" },
+  { name: "恋愛スタイル診断", href: "/diagnosis/love-style/", icon: "💕", desc: "6スタイルで恋愛傾向を把握" },
+  { name: "MBTI相性表", href: "/diagnosis/mbti-compat/", icon: "🔗", desc: "16タイプ×ベスト3相性" },
+  { name: "血液型相性診断", href: "/diagnosis/blood-compat/", icon: "🩸", desc: "A/B/O/AB型の相性分析" },
+];
+
+const trustPages = [
+  { name: "統合プロファイル", href: "/profile/", icon: "🎯" },
+  { name: "よくある質問", href: "/faq/", icon: "❓" },
+  { name: "運営者情報", href: "/about/", icon: "🏢" },
+  { name: "お問い合わせ", href: "/contact/", icon: "📬" },
+];
 ---
-<BaseLayout title="ページが見つかりません - 診断ナビ" description="404エラー" noindex={true}>
-  <Container size="narrow">
-    <div style="padding-block:6rem; text-align:center;">
-      <p style="font-size:4rem; margin-bottom:1rem;">🔍</p>
-      <h1 style="font-family:var(--sn-font-rounded); font-size:2rem; font-weight:900; margin-bottom:1rem;">ページが見つかりません</h1>
-      <p style="color:var(--sn-muted); margin-bottom:2rem;">お探しのページは存在しないか、移動した可能性があります。</p>
-      <a href="/" class="btn btn-primary">トップページに戻る</a>
+
+<BaseLayout
+  title="ページが見つかりません（404） - 診断ナビ"
+  description="お探しのページは存在しないか、移動した可能性があります。診断ナビの人気診断ページへどうぞ。"
+  noindex={true}
+>
+  <Container size="content">
+    <div class="notfound-wrap">
+
+      <div class="notfound-hero">
+        <p class="notfound-emoji" aria-hidden="true">🔍</p>
+        <h1 class="notfound-title">ページが見つかりません</h1>
+        <p class="notfound-desc">
+          お探しのページは存在しないか、移動した可能性があります。<br>
+          以下の人気ページへどうぞ。
+        </p>
+      </div>
+
+      <!-- 人気診断への誘導 -->
+      <section class="notfound-section">
+        <h2 class="notfound-h2">人気の診断ページ</h2>
+        <div class="diag-grid">
+          {popularDiagnoses.map(diag => (
+            <a href={diag.href} class="diag-card">
+              <span class="diag-icon" aria-hidden="true">{diag.icon}</span>
+              <div class="diag-info">
+                <div class="diag-name">{diag.name}</div>
+                <div class="diag-desc">{diag.desc}</div>
+              </div>
+            </a>
+          ))}
+        </div>
+      </section>
+
+      <!-- 信頼ページへのリンク -->
+      <section class="notfound-section">
+        <h2 class="notfound-h2">その他のページ</h2>
+        <div class="trust-list">
+          {trustPages.map(page => (
+            <a href={page.href} class="trust-item">
+              <span aria-hidden="true">{page.icon}</span>
+              <span>{page.name}</span>
+            </a>
+          ))}
+        </div>
+      </section>
+
+      <!-- トップに戻る -->
+      <div class="notfound-back">
+        <a href="/" class="btn-home">🏠 トップページに戻る</a>
+      </div>
+
     </div>
   </Container>
 </BaseLayout>
+
+<style>
+.notfound-wrap { padding-block: 4rem; }
+.notfound-hero { text-align: center; margin-bottom: 3rem; }
+.notfound-emoji { font-size: 3.5rem; margin-bottom: 1rem; }
+.notfound-title { font-family: var(--sn-font-rounded); font-size: var(--sn-text-3xl); font-weight: 900; margin-bottom: 1rem; }
+.notfound-desc { color: var(--sn-muted); font-size: var(--sn-text-sm); line-height: 1.8; }
+
+.notfound-section { margin-bottom: 2.5rem; }
+.notfound-h2 { font-family: var(--sn-font-rounded); font-size: var(--sn-text-lg); font-weight: 700; margin-bottom: 1rem; color: var(--sn-text); }
+
+.diag-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem; }
+@media (max-width: 480px) { .diag-grid { grid-template-columns: 1fr; } }
+.diag-card { display: flex; align-items: center; gap: 0.75rem; background: var(--sn-bg-white); border: 1px solid var(--sn-border); border-radius: var(--sn-radius); padding: 0.875rem 1rem; text-decoration: none; color: var(--sn-text); transition: border-color 150ms; }
+.diag-card:hover { border-color: var(--sn-primary); }
+.diag-icon { font-size: 1.5rem; flex-shrink: 0; }
+.diag-name { font-weight: 700; font-size: var(--sn-text-sm); margin-bottom: 0.2rem; }
+.diag-desc { font-size: 0.75rem; color: var(--sn-muted); }
+
+.trust-list { display: flex; flex-wrap: wrap; gap: 0.75rem; }
+.trust-item { display: inline-flex; align-items: center; gap: 0.4rem; background: var(--sn-bg-white); border: 1px solid var(--sn-border); border-radius: var(--sn-radius-pill); padding: 0.5rem 1rem; text-decoration: none; color: var(--sn-text); font-size: var(--sn-text-sm); transition: border-color 150ms; }
+.trust-item:hover { border-color: var(--sn-primary); color: var(--sn-primary); }
+
+.notfound-back { text-align: center; margin-top: 2.5rem; }
+.btn-home { display: inline-flex; align-items: center; gap: 0.5rem; background: var(--sn-primary); color: #fff; font-weight: 700; padding: 0.75rem 2rem; border-radius: var(--sn-radius-pill); text-decoration: none; min-height: var(--sn-tap-min); }
+</style>

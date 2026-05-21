@@ -1,13 +1,266 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Container from '../../components/Container.astro';
+import TldrBlock from '../../components/TldrBlock.astro';
+import ScienceNote from '../../components/ScienceNote.astro';
+
+const pageUrl = 'https://shindan-navi.jp/strengths/';
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    '@id': pageUrl,
+    url: pageUrl,
+    name: '強み発見診断 | 診断ナビ',
+    description: 'Howard Gardnerの多重知能理論（8知能）に基づく強み発見診断。あなたの得意領域を8軸で可視化し、学習・仕事・趣味への活用方法をご提案します。',
+    dateModified: '2026-05-21',
+    isPartOf: {
+      '@type': 'WebSite',
+      '@id': 'https://shindan-navi.jp/#website',
+      url: 'https://shindan-navi.jp',
+    },
+    mentions: [
+      { '@type': 'Thing', name: '多重知能理論', sameAs: 'https://www.pz.harvard.edu/projects/multiple-intelligences' },
+      { '@type': 'Thing', name: 'Howard Gardner', sameAs: 'https://en.wikipedia.org/wiki/Howard_Gardner' },
+    ],
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    url: `${pageUrl}#faq`,
+    mainEntity: [
+      {
+        '@type': 'Question',
+        name: '強み発見診断はストレングスファインダーとどう違いますか？',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: '当サービスの「強み発見診断」はHoward Gardner（Harvard大）の多重知能理論（8知能）に基づく独自の診断です。Gallup®の「CliftonStrengths®（旧ストレングスファインダー）」とは異なる理論的基盤・測定項目を持ちます。両者は相互に補完的な観点を提供しますが、別々の独立したモデルです。',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: '多重知能理論とは何ですか？',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Howard Gardner（Harvard大学教育大学院・Project Zero）が1983年に提唱した知能モデルです。従来のIQテストが測る「言語・数理」の2軸に加え、空間的・音楽的・身体運動的・対人的・内省的・博物的の8軸で知能を定義します。参照: https://www.pz.harvard.edu/projects/multiple-intelligences',
+        },
+      },
+    ],
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'ホーム', item: 'https://shindan-navi.jp/' },
+      { '@type': 'ListItem', position: 2, name: '強み発見診断', item: pageUrl },
+    ],
+  },
+];
 ---
-<BaseLayout title="準備中 - 診断ナビ" description="準備中" noindex={true}>
-  <Container>
-    <div style="padding-block:4rem; text-align:center;">
-      <p style="font-size:3rem; margin-bottom:1rem;">🚧</p>
-      <h1 style="font-family:var(--sn-font-rounded); font-size:1.5rem;">準備中</h1>
-      <a href="/" style="display:inline-block; margin-top:2rem; color:var(--sn-primary);">← トップに戻る</a>
+
+<BaseLayout
+  title="強み発見診断 | 多重知能理論で得意領域を可視化 - 診断ナビ"
+  description="Howard Gardnerの多重知能理論（8知能）に基づく強み発見診断。あなたの得意領域を8軸で可視化し、学習・仕事・趣味への活用方法をご提案します。完全無料・登録不要。"
+  canonical={pageUrl}
+  jsonLd={jsonLd}
+  breadcrumbs={[{ name: '強み発見診断', url: '/strengths/' }]}
+  lastUpdated="2026-05-21"
+>
+  <Container size="content">
+    <div class="strengths-wrap">
+
+      <div class="strengths-hero">
+        <div class="strengths-badge">強み発見診断</div>
+        <h1 class="strengths-title">あなたの「強み」を8軸で発見する</h1>
+        <p class="strengths-lead">
+          Howard Gardnerの多重知能理論（8知能）に基づく強み発見診断。<br>
+          言語・論理・空間・音楽・身体・対人・内省・博物の8軸で、あなたの得意領域を可視化します。
+        </p>
+      </div>
+
+      <TldrBlock
+        title="このページのポイント"
+        points={[
+          "Howard Gardner（Harvard大・1983年）の多重知能理論（8知能）に基づく強み発見診断",
+          "従来のIQテスト（言語・数理2軸）では測れない8種類の知能特性を可視化する",
+          "Gallup®の「CliftonStrengths®（旧ストレングスファインダー）」とは別の独立したモデル",
+          "診断結果は医学的評価ではなく、自己理解・学習スタイル把握の参考情報",
+          "完全無料・登録不要・約5分（64問）で完了"
+        ]}
+        updatedAt="2026-05-21"
+        sourceLabel="Harvard University Project Zero"
+        sourceUrl="https://www.pz.harvard.edu/projects/multiple-intelligences"
+      />
+
+      <!-- 定義セクション -->
+      <section class="strengths-section">
+        <h2 class="strengths-h2">強み発見診断（多重知能派生）とは何ですか？</h2>
+        <p class="strengths-text">
+          強み発見診断（多重知能派生）とは、Howard Gardner（Harvard大学教育大学院）が1983年に提唱した多重知能理論（Multiple Intelligences）に基づいて、あなたの知能特性を8軸で可視化する診断ツールです。従来のIQテストが「言語的知能・論理数学的知能」の2軸のみを測るのに対し、多重知能理論では「空間的・音楽的・身体運動的・対人的・内省的・博物的」の6軸を加えた8軸で知能を定義します。
+        </p>
+        <div class="strengths-highlight">
+          <p>
+            <strong>重要な用語の区別：</strong> 当サービスの「強み発見診断」は、Gallup®が提供する「CliftonStrengths®（旧ストレングスファインダー）」とは無関係の独自サービスです。「ストレングスファインダー」という名称はGallup®の登録商標であり、当サービスでは使用しません。
+          </p>
+        </div>
+      </section>
+
+      <!-- 8知能の説明 -->
+      <section class="strengths-section">
+        <h2 class="strengths-h2">8つの知能タイプ（多重知能理論）とは？</h2>
+        <p class="strengths-text">
+          Howard Gardnerの多重知能理論（Harvard大・Project Zero）では、知能を以下の8種類に分類します（1983年初版「Frames of Mind」、Basic Books）。
+        </p>
+        <div class="intelligence-grid">
+          {[
+            { num: "01", name: "言語的知能", desc: "言語を巧みに使う能力。読み書き・語学・文章作成・弁護・詩作に強い。" },
+            { num: "02", name: "論理数学的知能", desc: "数・論理・パターンを分析する能力。数学・科学・プログラミング・推論に強い。" },
+            { num: "03", name: "空間的知能", desc: "空間を視覚的に把握する能力。デザイン・建築・地図・芸術・ナビゲーションに強い。" },
+            { num: "04", name: "音楽的知能", desc: "音・リズム・メロディーを把握する能力。作曲・演奏・音楽鑑賞・音感に強い。" },
+            { num: "05", name: "身体運動的知能", desc: "身体を巧みに使う能力。スポーツ・ダンス・職人技・外科手術・パフォーマンスに強い。" },
+            { num: "06", name: "対人的知能", desc: "他者を理解・動機づける能力。リーダーシップ・カウンセリング・セールス・教育に強い。" },
+            { num: "07", name: "内省的知能", desc: "自己を深く理解する能力。内省・感情認識・自己分析・哲学・心理学的思考に強い。" },
+            { num: "08", name: "博物的知能", desc: "自然・生物・パターンを分類する能力。生物学・植物学・料理・ファッション・マーケに強い。" },
+          ].map(intel => (
+            <div class="intelligence-card">
+              <div class="intelligence-num">{intel.num}</div>
+              <div class="intelligence-name">{intel.name}</div>
+              <div class="intelligence-desc">{intel.desc}</div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <!-- FAQ -->
+      <section class="strengths-section">
+        <h2 class="strengths-h2">よくある質問</h2>
+        <div class="faq-list">
+          {[
+            {
+              q: "強み発見診断はストレングスファインダーとどう違いますか？",
+              a: "当サービスの「強み発見診断」はHoward Gardner（Harvard大）の多重知能理論（8知能）に基づく独自の診断です。Gallup®の「CliftonStrengths®（旧ストレングスファインダー）」とは異なる理論的基盤・測定項目を持ちます。両者は相互に補完的な観点を提供しますが、別々の独立したモデルです。「ストレングスファインダー」の受診は Gallup® 公式サイト（gallup.com）でご確認ください。",
+            },
+            {
+              q: "多重知能理論は科学的に証明されていますか？",
+              a: "多重知能理論は教育・自己理解の枠組みとして広く活用されていますが、「8知能が完全に独立した神経基盤を持つ」という主張には心理学的な批判もあります（Waterhouse 2006等）。当サービスでは多重知能を「自己理解・学習スタイル把握のための参考フレームワーク」として提供しており、医学的・臨床心理学的な診断ではありません。",
+            },
+            {
+              q: "8診断統合プロファイルとどう連携しますか？",
+              a: "多重知能テスト（/diagnosis/multi-int/）の結果は、8診断統合プロファイル（/profile/）に自動連携されます。特に学習軸・仕事軸での特性表示に多重知能のスコアが活用されます。",
+            },
+          ].map(item => (
+            <details class="faq-item">
+              <summary>
+                <span class="faq-q">Q</span>
+                <span class="faq-q-text">{item.q}</span>
+                <span class="faq-toggle" aria-hidden="true">+</span>
+              </summary>
+              <div class="faq-answer">{item.a}</div>
+            </details>
+          ))}
+        </div>
+      </section>
+
+      <ScienceNote
+        basisText="Howard Gardner「Frames of Mind: The Theory of Multiple Intelligences」（1983年、Basic Books）。Harvard大学教育大学院 Project Zero 研究成果。"
+        basisUrl="https://www.pz.harvard.edu/projects/multiple-intelligences"
+        basisLabel="Harvard University Project Zero"
+        notMedical={true}
+        updatedAt="2026-05-21"
+        additionalNote="Gallup®の「CliftonStrengths®（旧ストレングスファインダー）」とは別の独立したモデルです。当サービスでは「ストレングスファインダー」の名称を使用しません。"
+      />
+
+      <!-- CTA -->
+      <div class="strengths-cta">
+        <h2 class="strengths-cta__title">多重知能テストで強みを発見する</h2>
+        <p class="strengths-cta__desc">
+          完全無料・登録不要・約5分（64問）で、あなたの8知能プロファイルが完成します。
+        </p>
+        <a href="/diagnosis/multi-int/" class="strengths-cta__btn">
+          🧠 多重知能テストを受ける（無料）
+        </a>
+      </div>
+
+      <!-- 関連診断 -->
+      <section class="strengths-section">
+        <h2 class="strengths-h2">関連する診断</h2>
+        <div class="related-list">
+          <a href="/diagnosis/multi-int/" class="related-item">
+            <span class="related-icon">🧠</span>
+            <div>
+              <div class="related-name">多重知能テスト（64問・推奨）</div>
+              <div class="related-desc">8知能の詳細スコア・強みプロファイルを把握</div>
+            </div>
+          </a>
+          <a href="/diagnosis/disc/" class="related-item">
+            <span class="related-icon">💼</span>
+            <div>
+              <div class="related-name">DiSC診断</div>
+              <div class="related-desc">仕事スタイル・コミュニケーション傾向を診断</div>
+            </div>
+          </a>
+          <a href="/diagnosis/mbti/" class="related-item">
+            <span class="related-icon">🎭</span>
+            <div>
+              <div class="related-name">MBTI診断</div>
+              <div class="related-desc">16タイプで性格・行動パターンを解明</div>
+            </div>
+          </a>
+          <a href="/profile/" class="related-item">
+            <span class="related-icon">🎯</span>
+            <div>
+              <div class="related-name">統合プロファイル</div>
+              <div class="related-desc">8診断統合で立体的な自己像を把握</div>
+            </div>
+          </a>
+        </div>
+      </section>
+
     </div>
   </Container>
 </BaseLayout>
+
+<style>
+.strengths-wrap { padding-block: 3rem; }
+.strengths-hero { text-align: center; margin-bottom: 2rem; }
+.strengths-badge { display: inline-block; background: var(--sn-primary-bg); color: var(--sn-primary); font-size: var(--sn-text-sm); font-weight: 700; padding: 0.25rem 0.75rem; border-radius: var(--sn-radius-pill); margin-bottom: 1rem; }
+.strengths-title { font-family: var(--sn-font-rounded); font-size: var(--sn-text-3xl); font-weight: 700; margin-bottom: 0.75rem; }
+.strengths-lead { color: var(--sn-muted); font-size: var(--sn-text-sm); line-height: 1.8; }
+
+.strengths-section { margin-bottom: 3rem; }
+.strengths-h2 { font-family: var(--sn-font-rounded); font-size: var(--sn-text-xl); font-weight: 700; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--sn-primary-bg); }
+.strengths-text { font-size: var(--sn-text-sm); color: var(--sn-text-soft); line-height: var(--sn-leading-relaxed); margin-bottom: 1rem; }
+
+.strengths-highlight { background: #fff7ed; border-left: 4px solid var(--sn-warning); border-radius: 0 0.5rem 0.5rem 0; padding: 1rem 1.25rem; margin-bottom: 1rem; }
+.strengths-highlight p { font-size: var(--sn-text-sm); color: #7c2d12; line-height: var(--sn-leading-relaxed); }
+
+.intelligence-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem; }
+@media (max-width: 600px) { .intelligence-grid { grid-template-columns: 1fr; } }
+.intelligence-card { background: var(--sn-bg-white); border: 1px solid var(--sn-border); border-radius: var(--sn-radius); padding: 1rem; box-shadow: var(--sn-shadow-xs); }
+.intelligence-num { font-family: var(--sn-font-rounded); font-size: 0.75rem; color: var(--sn-primary-light); font-weight: 700; margin-bottom: 0.25rem; }
+.intelligence-name { font-weight: 700; font-size: var(--sn-text-sm); margin-bottom: 0.25rem; }
+.intelligence-desc { font-size: 0.8rem; color: var(--sn-muted); line-height: 1.5; }
+
+.faq-list { display: flex; flex-direction: column; gap: 0.75rem; }
+details.faq-item { background: var(--sn-bg-white); border: 1px solid var(--sn-border); border-radius: var(--sn-radius); overflow: hidden; }
+details.faq-item summary { display: flex; align-items: flex-start; gap: 0.75rem; padding: 1rem 1.25rem; cursor: pointer; list-style: none; font-weight: 700; font-size: var(--sn-text-sm); }
+details.faq-item summary::-webkit-details-marker { display: none; }
+.faq-q { flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%; background: var(--sn-primary); color: #fff; font-size: 0.7rem; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+.faq-q-text { flex: 1; padding-top: 2px; }
+.faq-toggle { flex-shrink: 0; color: var(--sn-muted); }
+details.faq-item[open] .faq-toggle { transform: rotate(45deg); }
+.faq-answer { padding: 0 1.25rem 1rem; padding-left: calc(1.25rem + 22px + 0.75rem); font-size: var(--sn-text-sm); color: var(--sn-text-soft); line-height: var(--sn-leading-relaxed); }
+
+.strengths-cta { background: linear-gradient(135deg, var(--sn-primary) 0%, #8b5cf6 100%); color: #fff; border-radius: var(--sn-radius-xl); padding: 2.5rem 2rem; text-align: center; margin-block: 2.5rem; }
+.strengths-cta__title { font-family: var(--sn-font-rounded); font-size: var(--sn-text-2xl); font-weight: 700; margin-bottom: 0.75rem; }
+.strengths-cta__desc { font-size: var(--sn-text-sm); opacity: 0.9; margin-bottom: 1.5rem; }
+.strengths-cta__btn { display: inline-flex; align-items: center; gap: 0.5rem; background: #fff; color: var(--sn-primary); font-weight: 700; padding: 0.75rem 2rem; border-radius: var(--sn-radius-pill); text-decoration: none; min-height: var(--sn-tap-min); }
+
+.related-list { display: flex; flex-direction: column; gap: 0.75rem; }
+.related-item { display: flex; align-items: center; gap: 1rem; background: var(--sn-bg-white); border: 1px solid var(--sn-border); border-radius: var(--sn-radius); padding: 0.875rem 1.25rem; text-decoration: none; color: var(--sn-text); transition: border-color 150ms; }
+.related-item:hover { border-color: var(--sn-primary); }
+.related-icon { font-size: 1.5rem; flex-shrink: 0; }
+.related-name { font-weight: 700; font-size: var(--sn-text-sm); margin-bottom: 0.2rem; }
+.related-desc { font-size: 0.8rem; color: var(--sn-muted); }
+</style>

@@ -1,7 +1,7 @@
 ---
 /**
  * /aisei/renai/ - 恋愛相性ページ（恋愛軸統合プロファイル接続版）
- * Phase 1: 統合プロファイルの恋愛軸を表示
+ * 第3巡AIO/LLMO強化: TldrBlock + ScienceNote + FAQ + mentions JSON-LD 追加
  *
  * 恋愛軸: 恋愛スタイル + MBTI + 血液型 の組み合わせを統合表示
  * YMYL回避: 医療・精神的アドバイスは行わない
@@ -12,24 +12,65 @@
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Container from '../../../components/Container.astro';
 import IntegratedProfileViewer from '../../../components/IntegratedProfileViewer';
+import TldrBlock from '../../../components/TldrBlock.astro';
+import ScienceNote from '../../../components/ScienceNote.astro';
 
 const siteUrl = 'https://shindan-navi.jp';
 const pageUrl = `${siteUrl}/aisei/renai/`;
 
-const jsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'BreadcrumbList',
-  itemListElement: [
-    { '@type': 'ListItem', position: 1, name: 'ホーム', item: siteUrl },
-    { '@type': 'ListItem', position: 2, name: '相性診断', item: `${siteUrl}/aisei/` },
-    { '@type': 'ListItem', position: 3, name: '恋愛相性', item: pageUrl },
-  ],
-};
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    '@id': pageUrl,
+    url: pageUrl,
+    name: '恋愛・パートナーシップの特性 | 統合プロファイル - 診断ナビ',
+    description: '恋愛スタイル・MBTI・血液型を統合した恋愛軸プロファイル。愛情表現スタイル・コミットメント傾向・パートナーとのコミュニケーション特性を確認できます。',
+    dateModified: '2026-05-21',
+    isPartOf: { '@type': 'WebSite', '@id': `${siteUrl}/#website`, url: siteUrl },
+    mentions: [
+      { '@type': 'Thing', name: '恋愛スタイル理論（J.A.Lee）', sameAs: 'https://en.wikipedia.org/wiki/Color_wheel_theory_of_love' },
+      { '@type': 'Thing', name: 'Myers-Briggs Type Indicator', sameAs: 'https://www.myersbriggs.org/' },
+    ],
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    url: `${pageUrl}#faq`,
+    mainEntity: [
+      {
+        '@type': 'Question',
+        name: '恋愛での性格相性とは何ですか？',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: '恋愛での性格相性とは、J.A.Lee（1973）の恋愛スタイル（6タイプ）・MBTI（16タイプ）・血液型（文化的参考値）の組み合わせに基づいて、愛情表現スタイル・コミットメント傾向・パートナーとのコミュニケーションがどのように機能するかを分析した参考情報です。重要な人生の判断（結婚・別れ等）の唯一の根拠にすることは推奨しません。',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: '「こっそりモード」でパートナーの情報を入力しても大丈夫ですか？',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'はい。「こっそりモード」で入力したパートナーの情報は、あなたのブラウザ内でのみ処理されます。パートナーへの通知・サーバーへの送信は一切行われません。',
+        },
+      },
+    ],
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'ホーム', item: siteUrl },
+      { '@type': 'ListItem', position: 2, name: '相性診断', item: `${siteUrl}/aisei/` },
+      { '@type': 'ListItem', position: 3, name: '恋愛相性', item: pageUrl },
+    ],
+  },
+];
 ---
 
 <BaseLayout
   title="恋愛・パートナーシップの特性 | 統合プロファイル - 診断ナビ"
-  description="8診断を統合した恋愛軸プロファイル。愛情表現スタイル・コミットメント・コミュニケーション傾向を確認できます。"
+  description="恋愛スタイル・MBTI・血液型を統合した恋愛軸プロファイル。愛情表現スタイル・コミットメント・パートナーとのコミュニケーション傾向を確認できます。重要な人生判断の根拠としての使用は非推奨。"
   canonical={pageUrl}
   jsonLd={jsonLd}
   noindex={true}
@@ -37,6 +78,7 @@ const jsonLd = {
     { name: '相性診断', url: '/aisei/' },
     { name: '恋愛相性', url: '/aisei/renai/' },
   ]}
+  lastUpdated="2026-05-21"
 >
   <!-- ヘッダー -->
   <section class="axis-header axis-header--love">
@@ -54,12 +96,72 @@ const jsonLd = {
     </Container>
   </section>
 
+  <!-- TldrBlock（AIO引用最適化）-->
+  <Container>
+    <TldrBlock
+      title="恋愛軸プロファイルとは"
+      points={[
+        "恋愛スタイル（J.A.Lee・6タイプ）・MBTI（16タイプ）・血液型（文化的参考値）の3診断を統合した恋愛軸の特性表示",
+        "愛情表現スタイル・コミットメント傾向・パートナーとのコミュニケーション特性を参考情報として確認できる",
+        "結婚・別れ等の重要な人生判断の唯一の根拠にすることは推奨しない",
+        "「こっそりモード」で相手の情報を入力しても、相手への通知・サーバー送信はゼロ"
+      ]}
+      updatedAt="2026-05-21"
+      sourceLabel="J.A.Lee 恋愛類型（1973）"
+      sourceUrl="https://en.wikipedia.org/wiki/Color_wheel_theory_of_love"
+    />
+  </Container>
+
+  <!-- 定義パラグラフ -->
+  <Container>
+    <div class="axis-definition">
+      <h2 class="axis-def-title">恋愛での性格相性とは何ですか？</h2>
+      <p class="axis-def-text">
+        恋愛での性格相性とは、社会学者J.A.Lee（1973年）が提唱した6つの恋愛スタイル（Eros・Ludus・Storge・Pragma・Mania・Agape）・MBTI（Myers-Briggs理論・16タイプ）・血液型（日本独自の文化的参考値）の組み合わせに基づいて、愛情表現スタイル・コミットメント傾向・パートナーとのコミュニケーションがどのように機能するかを分析した参考情報です。Hendrick &amp; Hendrick（1992年）の研究では、Storge・Pragma型の恋愛スタイルが長期的な関係満足度と相関することが示されています。
+      </p>
+    </div>
+  </Container>
+
   <!-- 統合プロファイル（恋愛軸） -->
   <section class="axis-main">
     <Container>
       <IntegratedProfileViewer client:load axis="love" singleAxisMode={true} />
     </Container>
   </section>
+
+  <!-- FAQ -->
+  <Container>
+    <div class="axis-faq">
+      <h2 class="axis-faq-title">よくある質問</h2>
+      <div class="faq-list">
+        {[
+          { q: "恋愛相性の結果を結婚の判断に使ってもいいですか？", a: "参考情報としての活用は可能ですが、重要な人生の決断（結婚・別れ等）の唯一の根拠にすることは推奨しません。診断結果は「今のあなたの性格傾向」の参考情報です。重要な判断は、長期にわたる対話・信頼の積み重ねによって行ってください。" },
+          { q: "「こっそりモード」でパートナーの情報を入力しても大丈夫ですか？", a: "はい。「こっそりモード」で入力したパートナーの情報は、あなたのブラウザ内でのみ処理されます。パートナーへの通知・サーバーへの送信は一切行われません。" },
+          { q: "恋愛スタイル診断（6タイプ）とMBTI診断の違いは何ですか？", a: "恋愛スタイル診断はJ.A.Lee（1973）が提唱した6つの恋愛アプローチ（Eros=情熱型・Ludus=遊戯型等）を分類します。一方、MBTI診断はKatherine Briggs・Isabel Briggs Myersが発展させた16タイプの性格分類で、恋愛に限らず全体的な認知・判断パターンを測ります。両者は異なる側面を測定するため、組み合わせることでより立体的な恋愛傾向の把握が可能です。" },
+        ].map(item => (
+          <details class="faq-item">
+            <summary class="faq-summary">
+              <span class="faq-q">Q</span>
+              <span class="faq-q-text">{item.q}</span>
+            </summary>
+            <div class="faq-answer">{item.a}</div>
+          </details>
+        ))}
+      </div>
+    </div>
+  </Container>
+
+  <!-- ScienceNote -->
+  <Container>
+    <ScienceNote
+      basisText="恋愛スタイル: J.A.Lee「The Colors of Love」（1973年）・Hendrick & Hendrick「Love Attitudes Scale」（1986年）。MBTI: Katherine Briggs・Isabel Briggs Myers（Jung心理類型論ベース）。"
+      basisUrl="https://www.myersbriggs.org/"
+      basisLabel="The Myers & Briggs Foundation"
+      notMedical={true}
+      updatedAt="2026-05-21"
+      additionalNote="結婚・別れ・交際の判断の唯一の根拠として使用することは推奨しません。LGBTQ+を含む全てのパートナーシップに対応しています（「パートナー」表記で統一）。"
+    />
+  </Container>
 
   <!-- 関連診断 -->
   <section class="axis-related">
@@ -69,25 +171,32 @@ const jsonLd = {
         恋愛軸に関わる診断
       </h2>
       <div class="axis-diag-grid">
-        <a href="/diagnosis/love/" class="axis-diag-card">
+        <a href="/diagnosis/love-style/" class="axis-diag-card">
           <span aria-hidden="true">💕</span>
           <div>
             <strong>恋愛スタイル診断</strong>
             <span>Eros・Ludus・Storge等6タイプの恋愛傾向</span>
           </div>
         </a>
-        <a href="/diagnosis/multi-int/" class="axis-diag-card">
-          <span aria-hidden="true">🎓</span>
+        <a href="/diagnosis/mbti/" class="axis-diag-card">
+          <span aria-hidden="true">🎭</span>
           <div>
-            <strong>多重知能診断</strong>
-            <span>知能タイプ別の恋愛アプローチを知る</span>
+            <strong>MBTI診断</strong>
+            <span>16タイプ別の恋愛アプローチ・コミュニケーション</span>
           </div>
         </a>
-        <a href="/diagnosis/blood/" class="axis-diag-card">
+        <a href="/diagnosis/blood-compat/" class="axis-diag-card">
           <span aria-hidden="true">🩸</span>
           <div>
-            <strong>血液型性格診断</strong>
+            <strong>血液型相性診断</strong>
             <span>血液型ごとの恋愛傾向（文化的参考値）</span>
+          </div>
+        </a>
+        <a href="/profile/" class="axis-diag-card">
+          <span aria-hidden="true">🎯</span>
+          <div>
+            <strong>統合プロファイル</strong>
+            <span>8診断統合で全シーン軸を確認</span>
           </div>
         </a>
       </div>
@@ -96,83 +205,31 @@ const jsonLd = {
 </BaseLayout>
 
 <style>
-  .axis-header {
-    padding-block: var(--sn-space-8, 2rem);
-    border-bottom: 1px solid var(--sn-border, #e5e7eb);
-  }
-  .axis-header--love {
-    background: linear-gradient(135deg, #fdf2f8 0%, var(--sn-bg-soft, #f9fafb) 100%);
-  }
-  .axis-header-inner {
-    display: flex;
-    align-items: flex-start;
-    gap: var(--sn-space-4, 1rem);
-  }
-  .axis-icon {
-    font-size: 2.5rem;
-    flex-shrink: 0;
-    line-height: 1;
-  }
-  .axis-title {
-    font-family: var(--sn-font-rounded, sans-serif);
-    font-size: clamp(1.25rem, 4vw, 1.75rem);
-    font-weight: 900;
-    color: var(--sn-text, #111827);
-    margin: 0 0 var(--sn-space-2, 0.5rem);
-  }
-  .axis-lead {
-    font-size: var(--sn-text-sm, 0.875rem);
-    color: var(--sn-text-soft, #6b7280);
-    line-height: 1.7;
-    margin: 0;
-  }
-  .axis-main {
-    padding-block: var(--sn-space-8, 2rem);
-  }
-  .axis-related {
-    padding-block: var(--sn-space-8, 2rem);
-    background: var(--sn-bg-soft, #f9fafb);
-    border-top: 1px solid var(--sn-border, #e5e7eb);
-  }
-  .axis-section-title {
-    display: flex;
-    align-items: center;
-    gap: var(--sn-space-2, 0.5rem);
-    font-family: var(--sn-font-rounded, sans-serif);
-    font-size: var(--sn-text-lg, 1.125rem);
-    font-weight: 900;
-    color: var(--sn-text, #111827);
-    margin: 0 0 var(--sn-space-4, 1rem);
-  }
-  .axis-diag-grid {
-    display: flex;
-    flex-direction: column;
-    gap: var(--sn-space-2, 0.5rem);
-  }
-  .axis-diag-card {
-    display: flex;
-    align-items: center;
-    gap: var(--sn-space-3, 0.75rem);
-    padding: var(--sn-space-4, 1rem);
-    background: var(--sn-bg-white, #fff);
-    border-radius: var(--sn-radius-md, 12px);
-    border: 1px solid var(--sn-border, #e5e7eb);
-    text-decoration: none;
-    transition: border-color 0.15s ease;
-  }
-  .axis-diag-card:hover {
-    border-color: var(--sn-scene-love, #ec4899);
-    text-decoration: none;
-  }
+  .axis-header { padding-block: var(--sn-space-8, 2rem); border-bottom: 1px solid var(--sn-border, #e5e7eb); }
+  .axis-header--love { background: linear-gradient(135deg, #fdf2f8 0%, var(--sn-bg-soft, #f9fafb) 100%); }
+  .axis-header-inner { display: flex; align-items: flex-start; gap: var(--sn-space-4, 1rem); }
+  .axis-icon { font-size: 2.5rem; flex-shrink: 0; line-height: 1; }
+  .axis-title { font-family: var(--sn-font-rounded, sans-serif); font-size: clamp(1.25rem, 4vw, 1.75rem); font-weight: 900; color: var(--sn-text, #111827); margin: 0 0 var(--sn-space-2, 0.5rem); }
+  .axis-lead { font-size: var(--sn-text-sm, 0.875rem); color: var(--sn-text-soft, #6b7280); line-height: 1.7; margin: 0; }
+  .axis-definition { margin-block: 1.5rem; padding: 1.25rem 1.5rem; background: var(--sn-bg-white, #fff); border: 1px solid var(--sn-border, #e5e7eb); border-radius: var(--sn-radius, 0.75rem); }
+  .axis-def-title { font-family: var(--sn-font-rounded, sans-serif); font-size: var(--sn-text-lg, 1.125rem); font-weight: 700; margin-bottom: 0.75rem; }
+  .axis-def-text { font-size: var(--sn-text-sm, 0.875rem); color: var(--sn-text-soft, #6b7280); line-height: var(--sn-leading-relaxed, 1.8); }
+  .axis-main { padding-block: var(--sn-space-8, 2rem); }
+  .axis-faq { margin-block: 2rem; }
+  .axis-faq-title { font-family: var(--sn-font-rounded, sans-serif); font-size: var(--sn-text-lg, 1.125rem); font-weight: 700; margin-bottom: 1rem; }
+  .faq-list { display: flex; flex-direction: column; gap: 0.75rem; }
+  details.faq-item { background: var(--sn-bg-white, #fff); border: 1px solid var(--sn-border, #e5e7eb); border-radius: var(--sn-radius, 0.75rem); overflow: hidden; }
+  .faq-summary { display: flex; align-items: flex-start; gap: 0.75rem; padding: 1rem 1.25rem; cursor: pointer; list-style: none; font-weight: 700; font-size: var(--sn-text-sm, 0.875rem); }
+  .faq-summary::-webkit-details-marker { display: none; }
+  .faq-q { flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%; background: var(--sn-primary, #6366f1); color: #fff; font-size: 0.7rem; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+  .faq-q-text { flex: 1; padding-top: 2px; }
+  .faq-answer { padding: 0 1.25rem 1rem; padding-left: calc(1.25rem + 22px + 0.75rem); font-size: var(--sn-text-sm, 0.875rem); color: var(--sn-text-soft, #6b7280); line-height: var(--sn-leading-relaxed, 1.8); }
+  .axis-related { padding-block: var(--sn-space-8, 2rem); background: var(--sn-bg-soft, #f9fafb); border-top: 1px solid var(--sn-border, #e5e7eb); }
+  .axis-section-title { display: flex; align-items: center; gap: var(--sn-space-2, 0.5rem); font-family: var(--sn-font-rounded, sans-serif); font-size: var(--sn-text-lg, 1.125rem); font-weight: 900; color: var(--sn-text, #111827); margin: 0 0 var(--sn-space-4, 1rem); }
+  .axis-diag-grid { display: flex; flex-direction: column; gap: var(--sn-space-2, 0.5rem); }
+  .axis-diag-card { display: flex; align-items: center; gap: var(--sn-space-3, 0.75rem); padding: var(--sn-space-4, 1rem); background: var(--sn-bg-white, #fff); border-radius: var(--sn-radius-md, 12px); border: 1px solid var(--sn-border, #e5e7eb); text-decoration: none; transition: border-color 0.15s ease; }
+  .axis-diag-card:hover { border-color: var(--sn-scene-love, #ec4899); }
   .axis-diag-card > span:first-child { font-size: 1.5rem; flex-shrink: 0; }
-  .axis-diag-card strong {
-    display: block;
-    font-size: var(--sn-text-sm, 0.875rem);
-    font-weight: 700;
-    color: var(--sn-text, #111827);
-  }
-  .axis-diag-card span:last-child {
-    font-size: var(--sn-text-xs, 0.75rem);
-    color: var(--sn-muted, #9ca3af);
-  }
+  .axis-diag-card strong { display: block; font-size: var(--sn-text-sm, 0.875rem); font-weight: 700; color: var(--sn-text, #111827); }
+  .axis-diag-card span:last-child { font-size: var(--sn-text-xs, 0.75rem); color: var(--sn-muted, #9ca3af); }
 </style>

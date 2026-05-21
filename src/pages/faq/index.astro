@@ -1,110 +1,146 @@
 ---
-// 診断ナビ FAQ ページ（最低15問・AIO対応・構造化データ）
-// 2026-05-20 時点の情報・content-writer 執筆
+// 診断ナビ FAQ ページ（20問拡充・FAQPage JSON-LD・SpeakableSpecification・第3巡AIO最終強化）
+// 2026-05-21 時点の情報
 const title = "よくある質問（FAQ） | 診断ナビ";
-const description = "診断ナビに関するよくある質問をまとめました。8診断統合の仕組み、科学的根拠、料金プラン（¥390 PASS・¥590/月 PRO）、プライバシー、招待相性診断など15問以上に回答します。";
+const description = "診断ナビに関するよくある質問20問。8診断統合の仕組み、科学的根拠、料金プラン（¥390 PASS・¥590/月 PRO）、プライバシー、招待相性診断、LocalStorageの仕組みまで詳しく解説します。";
 const canonicalURL = "https://shindan-navi.jp/faq/";
 
 const faqs = [
   {
     category: "サービス概要",
+    icon: "🎯",
     questions: [
       {
+        q: "診断ナビは無料で全部使えますか？",
+        a: "はい、8診断の基本診断はすべて無料・登録不要で受けられます。有料機能は「詳細版レポート・5シーン軸完全版（¥390 PASS・買い切り）」と「AIプロンプトカード月次更新・タイムカプセル機能（¥590/月 PRO）」です。招待相性診断の招待・受診・基本スコア表示も無料です。",
+      },
+      {
+        q: "どの診断から始めればいいですか？",
+        a: "「多重知能テスト（/diagnosis/multi-int/）」から始めることを推奨します。64問・約5分で8種類の知能特性が明確に分かり、学習・仕事・趣味への活用度が高いためです。2つ目はMBTI診断（16タイプ・16問・約3分）、3つ目はDiSC診断（仕事スタイル・28問）がおすすめです。8診断すべて受けると「統合プロファイル」が完成します。",
+      },
+      {
         q: "8診断統合って何ですか？",
-        a: "MBTI・血液型・多重知能・完璧主義・DiSC・恋愛スタイル・星座・金銭感覚の8つの診断を組み合わせて、「統合プロファイル」を作る機能です。1つの診断では語りきれない「あなた」を、8つの視点から多角的に分析します。すべての個別診断結果はBig5（ビッグファイブ）スコアに内部換算され、統合スコアとして計算されます。",
+        a: "MBTI・血液型・多重知能・完璧主義・DiSC・恋愛スタイル・星座・金銭感覚の8つの診断を組み合わせて「統合プロファイル」を作る機能です。すべての個別診断結果は性格心理学の5因子（開放性・誠実性・外向性・協調性・情緒安定性）に内部換算され、統合スコアとして計算されます。1つの診断では語りきれない「あなた」を8つの視点から多角的に分析します。",
       },
       {
-        q: "なぜ8つも診断が必要なんですか？",
-        a: "性格には多くの側面があるからです。たとえば、MBTIは認知・判断パターンを分類しますが、仕事スタイル（DiSC）や多重知能タイプは別の診断が必要です。1つの診断だけでは「仕事は向いているけど恋愛の傾向はわからない」という状態になります。8診断を統合することで、5つのシーン（仕事・恋愛・友人・家族・学校）すべてでの行動指針が出せるようになります。",
+        q: "占いとはどう違いますか？",
+        a: "はい、占いとは全く異なります。診断ナビは、性格心理学（Myers-Briggs理論・Big Five）・Howard Gardnerの多重知能理論・行動経済学などの学術的フレームワークをベースにしています。未来予測・運勢・霊的解釈は一切扱いません。「今のあなたの性格傾向を分類する」参考ツールです。ただし、診断結果は医学的な診断でも資格認定でもありません。",
       },
       {
-        q: "占いとは違うんですか？",
-        a: "はい、占いとは全く異なります。診断ナビは、性格心理学（Myers-Briggs理論・Big5）・Howard Gardnerの多重知能理論・行動経済学などの学術的フレームワークをベースにしています。未来予測・運勢・霊的解釈は一切扱いません。「今のあなたの性格傾向を分類する」ツールです。ただし、診断結果は医学的な診断でも資格認定でもありません。",
-      },
-      {
-        q: "信頼性は？科学的根拠はありますか？",
-        a: "各診断は以下の学術理論を参照しています。\n・多重知能: Howard Gardner教授（Harvard大）の1983年提唱モデル\n・MBTI: Myers-Briggs理論（Jung心理類型論ベース）\n・DiSC: William Moulton Marstonの行動心理学\n・Big5（内部統合エンジン）: 現代心理学で最も広く採用される性格モデル\n・恋愛スタイル: J.A. Lee（1973）の6恋愛類型\n・金銭感覚: Daniel Kahneman（ノーベル経済学賞）の行動経済学\n\nただし、当サービスの診断は公式資格認定機関による正式診断とは異なります。参考情報としてご活用ください。",
+        q: "結果が他のサイトの診断と違う場合はどうすれば？",
+        a: "異なることは自然です。診断結果は「その時点のあなたの傾向」を測るものであり、質問数・設計が異なれば結果が変わります。当サービスは独自の実装であり、The Myers & Briggs Foundation等の公式機関によるアセスメントとは別物です。複数の診断を参考情報として組み合わせて自己理解に活用することをお勧めします。",
       },
     ],
   },
   {
     category: "診断結果・変化",
+    icon: "📊",
     questions: [
       {
-        q: "診断結果が以前と変わったら何が起きますか？",
-        a: "性格は変化するものです。変化した結果はプロフィールに反映されます。無料ユーザーは直近3ヶ月の変化グラフを確認できます。¥390 PASSは6ヶ月分、¥590/月 PROは全期間の変化グラフと、ライフイベント記録（転職・恋愛開始等）との連動も確認できます。PRO会員の「タイムカプセル機能」では、当時の自分の診断結果と現在の結果を並べて見ることができます。",
+        q: "結果は何回受けても同じですか？",
+        a: "必ずしも同じではありません。性格は変化するものです。ライフイベント（転職・恋愛・子育て等）や心理状態によって結果が変わることがあります。同一日に複数回受けた場合は誤差が出ることもあります。PRO会員の「タイムカプセル機能」では、過去の診断結果と現在の結果を並べて自己成長を確認できます。",
       },
       {
         q: "診断ツールは何回でも受けられますか？",
-        a: "はい、無制限で受けられます。登録不要・無料で何度でも診断を受けられます。ただし、アカウント未登録の場合、結果はブラウザのローカルストレージに保存されます。ブラウザデータをクリアすると結果が消えるため、継続的なトラッキングには会員登録（無料）をお勧めします。",
+        a: "はい、無制限で受けられます。登録不要・無料で何度でも診断を受けられます。ただし、アカウント未登録の場合、結果はブラウザのLocalStorageに保存されます。ブラウザデータをクリアすると結果が消えるため、継続的なトラッキングには会員登録（無料）をお勧めします。",
       },
     ],
   },
   {
     category: "プライバシー・データ",
+    icon: "🔒",
     questions: [
       {
-        q: "プライバシーは大丈夫ですか？入力した情報はどうなりますか？",
-        a: "プライバシーを最優先に設計しています。アカウント登録なしで診断を受けた場合、データはお使いのブラウザ内にのみ保存され、外部に送信されません。アカウント登録後は、診断結果をSecure（Supabase・暗号化済み）なデータベースに保存します。「こっそりモード」で相手の情報を入力する場合も、相手に通知・送信は一切行いません。詳細はプライバシーポリシーをご覧ください。",
+        q: "データはどこに保存されますか？（LocalStorage とは？）",
+        a: "アカウント登録なしで診断を受けた場合、データはお使いのブラウザの「LocalStorage」にのみ保存されます。LocalStorageとはブラウザ内のデータ保存領域で、サーバーに送信されません。アカウント登録後は、診断結果をSecure（Supabase・暗号化済み）なデータベースに保存します。「こっそりモード」で相手の情報を入力する場合も、相手への通知・サーバー送信は一切行いません。",
       },
       {
-        q: "データの保存期間はどのくらいですか？",
-        a: "保存期間はプランによって異なります。\n・無料: 相性診断履歴3ヶ月・Big5変化グラフ3ヶ月\n・¥390 PASS: 相性履歴1年・Big5変化6ヶ月\n・¥590/月 PRO: 相性履歴永久・Big5変化全期間\n\n退会・アカウント削除を行った場合、データは速やかに削除されます。データ削除のご要望は zawalab.info@gmail.com までご連絡ください。",
+        q: "プライバシーは大丈夫ですか？",
+        a: "はい、プライバシーを最優先に設計しています。アカウント登録なしの場合、データはブラウザ内のみで外部に送信されません。登録後のデータは暗号化済みのデータベースに保存されます。「こっそりモード」は相手への通知・送信を一切行いません。詳細は<a href='/privacy/'>プライバシーポリシー</a>をご確認ください。",
       },
       {
-        q: "結果のシェアは強制されますか？",
-        a: "いいえ、強制ではありません。診断結果のSNSシェアは任意です。シェアボタンを押した場合のみ、あなたが選んだ情報がシェアされます。シェアしない場合、結果が外部に公開されることは一切ありません。招待相性診断も、招待を送るかどうかはあなたの選択です。",
+        q: "結果を保存できますか？削除できますか？",
+        a: "保存方法: 無料ユーザーはLocalStorage（ブラウザ内）に自動保存。会員登録（無料）するとサーバーに永続保存されます。削除方法: アカウント登録ユーザーは /me/ の設定画面から退会・全データ削除できます（復元不可）。LocalStorageのみのユーザーはブラウザの「サイトデータを削除」で消去できます。データ削除のご要望は zawalab.info@gmail.com まで。",
+      },
+      {
+        q: "シェアして大丈夫ですか？プライバシーは？",
+        a: "はい、任意です。診断結果のSNSシェアは強制されません。シェアボタンを押した場合のみ、あなたが選んだ情報がシェアされます。シェアしない場合、結果が外部に公開されることは一切ありません。招待相性診断も、招待を送るかどうかはあなたの選択です。",
       },
     ],
   },
   {
     category: "料金・プラン",
+    icon: "💳",
     questions: [
       {
         q: "¥390 PASSと¥590/月 PROの違いは何ですか？",
-        a: "主な違いは「継続性」と「AI機能」です。\n\n¥390 PASS（買い切り・1年有効）:\n・詳細版レポート（全診断・全5シーン軸）\n・統合プロファイル完全版\n・相性詳細レポート\n・Big5キャラ完全版＋SNSシェア素材\n・AIプロンプトカード1回生成\n・広告控えめ（2枠・FVなし）\n\n¥590/月 PRO（継続課金）:\n・PASSの全内容＋以下\n・AIプロンプトカード月次自動更新（無制限）\n・タイムカプセル機能（過去の自分への手紙）\n・時系列変化グラフ（全期間）\n・ライフイベント記録\n・月1本の限定診断\n・自分史PDFエクスポート\n・広告完全非表示",
-      },
-      {
-        q: "¥390 PASSはいつまで使えますか？",
-        a: "購入日から1年間有効です（買い切り型）。1年経過後は、詳細版の閲覧ができなくなります（無料ユーザーと同等の機能に戻ります）。再購入でまた1年間ご利用いただけます。PRO会員への切り替えも可能です。",
+        a: "主な違いは「継続性」と「AI機能」です。\n¥390 PASS（買い切り・1年有効）: 詳細版レポート（全診断・全5シーン軸）・統合プロファイル完全版・相性詳細レポート・AIプロンプトカード1回生成・広告控えめ。\n¥590/月 PRO（継続課金）: PASSの全内容＋AIプロンプトカード月次自動更新（無制限）・タイムカプセル機能・時系列変化グラフ（全期間）・ライフイベント記録・月1本限定診断・自分史PDFエクスポート・広告完全非表示。",
       },
       {
         q: "¥590/月 PROはいつでも解約できますか？",
         a: "はい、いつでも解約できます。解約月の月末まで引き続きPRO機能をご利用いただけます（月途中での解約でも日割り返金はありません）。解約後は次の請求日から課金が発生しなくなります。解約手続きはダッシュボード（/me/）から行えます。",
       },
+      {
+        q: "PROアップグレードで何が変わりますか？",
+        a: "主な変化は3点です。(1)AIプロンプトカードが月次自動更新される（ChatGPT/Claude/Gemini向けに最適化されたプロンプトが毎月届く）。(2)タイムカプセル機能で過去の自分の診断結果と現在を比較できる。(3)自分史PDFで全診断・全シーン軸をエクスポートできる。広告も完全非表示になります。",
+      },
     ],
   },
   {
     category: "特徴的な機能",
+    icon: "✨",
     questions: [
       {
-        q: "招待相性診断って何ですか？",
-        a: "友達・パートナーに診断URLを送り、双方の結果が揃った時点で相性スコアを表示する機能です。招待された側は登録不要・無料で診断を受けられます（摩擦ゼロ）。相性スコア＋一言は無料で確認でき、5シーン軸の詳細レポートは¥390 PASSで開放されます。LINEやXで送れるURL形式に対応しています。",
+        q: "招待相性診断は本当に無料・無制限ですか？",
+        a: "はい、招待は完全無料・無制限です。友達・パートナーに診断URLを送り、双方の結果が揃った時点で相性スコアを表示します。招待された側は登録不要・無料で診断を受けられます。基本的な相性スコアと一言コメントは無料で確認でき、5シーン軸の詳細レポートは¥390 PASSで開放されます。LINEやXで送れるURL形式に対応しています。",
       },
       {
-        q: "AIプロンプトカードって何ですか？",
-        a: "あなたの統合診断プロファイルを、ChatGPT・Claude・Geminiそれぞれに最適化したフォーマットでカード化する機能です（¥390 PASS以上）。カードをAIにそのまま貼り付けると、あなたの性格タイプに合わせたパーソナライズされた回答が返ってきます。¥590/月 PROでは診断スコアの変化に応じて月次自動更新されます。",
+        q: "AIプロンプトカードとは何ですか？",
+        a: "あなたの統合診断プロファイルを、ChatGPT・Claude・Geminiそれぞれに最適化したフォーマットでカード化する機能です（¥390 PASS以上）。カードをAIチャットにそのまま貼り付けると、あなたの性格タイプに合わせたパーソナライズされた回答が返ってきます。AIへの「自己紹介フォーマット」としてご利用ください。¥590/月 PROでは診断スコアの変化に応じて月次自動更新されます。",
       },
       {
-        q: "「過去の自分への手紙」（タイムカプセル機能）って何ですか？",
-        a: "PRO限定機能です。診断受診時に「3ヶ月後・6ヶ月後・12ヶ月後の自分へ」のメッセージを書いておき、指定の日時にメール・LINE通知で届く機能です。届いた画面には「当時の診断結果」＋「書いた手紙」＋「今の診断結果」が並んで表示されます。SNSシェア用カードも自動生成されます。「性格変化を記録・実感できる」機能として設計されています。",
+        q: "統合プロファイルとは何ですか？",
+        a: "8診断すべてを受けると生成される「あなただけのプロファイル」です（/profile/）。8診断の結果を性格心理学の5因子（開放性・誠実性・外向性・協調性・情緒安定性）に内部換算・統合し、16種の動物キャラクターで直感的に表示します。仕事・恋愛・友人・家族・学習の5シーンで特性と行動指針を確認できます。",
       },
     ],
   },
   {
     category: "利用対象・シーン",
+    icon: "👥",
     questions: [
       {
-        q: "子供も使えますか？何歳から？",
-        a: "現在、当サービスのコンテンツは中学生以上（おおよそ13歳以上）を主な対象として設計しています。13歳未満のお子さんのご利用はお勧めしていません。保護者の方が子供の多重知能タイプを調べる目的では、保護者として結果を確認することは可能です（多重知能診断の「学校・学習軸」では「お子さんへのサポート法」が表示されます）。",
+        q: "結果を仕事や恋愛の判断に使っていいですか？",
+        a: "参考情報としての利用は可能です。ただし、採用選考・昇進判断・結婚の決断など、重要な人生の意思決定の唯一の根拠として使用することは推奨しません。診断結果は「今のあなたの性格傾向」の参考情報です。心身の不調・精神的なつらさを感じる場合は、必ず医師・臨床心理士にご相談ください。",
       },
       {
-        q: "学校・企業での研修利用は可能ですか？",
-        a: "参考ツールとしての利用は可能です。ただし、採用選考・成績評価・昇進判断などの重要な意思決定の根拠として使用することは推奨しません。当サービスの診断結果はあくまで性格傾向の参考情報です。法人・学校での大量利用や正式な活用については zawalab.info@gmail.com までご相談ください。",
+        q: "メンタル疾患の診断はできますか？",
+        a: "できません。当サービスは医療機器でも医療サービスでもありません。うつ病・発達障害・パーソナリティ障害等の精神疾患の診断・治療は一切扱いません。心身の不調・精神的なつらさを感じる場合は、必ず医師・臨床心理士にご相談ください（参考: 厚生労働省 こころの健康相談統一ダイヤル 0570-064-556）。",
       },
       {
-        q: "退会・アカウント削除はできますか？",
-        a: "はい、いつでも削除できます。ダッシュボード（/me/）の設定画面から退会手続きができます。退会と同時に全ての個人データ・診断結果・相性データが削除されます（復元不可）。PRO会員の方は退会前に解約手続きを完了させてください。データのエクスポートはPRO会員のみ退会前に「自分史PDF」として書き出せます。",
+        q: "子どもに使わせていいですか？",
+        a: "当サービスのコンテンツは中学生以上（おおよそ13歳以上）を主な対象として設計しています。13歳未満のお子さんのご利用はお勧めしていません。保護者の方が子供の多重知能タイプを調べる目的では、保護者として結果を確認することは可能です。",
+      },
+      {
+        q: "スマホで使えますか？PCで使えますか？",
+        a: "はい、スマホ・PC・タブレット、すべての端末でご利用いただけます。レスポンシブデザインで最適化されており、登録不要・アプリインストール不要です。Safari・Chrome・Firefox等の主要ブラウザに対応しています。",
+      },
+      {
+        q: "海外からアクセスできますか？",
+        a: "はい、アクセス可能です。ただし、コンテンツはすべて日本語です。海外在住の日本語ユーザーの方はご利用いただけます。今後の多言語化については未定です。",
+      },
+    ],
+  },
+  {
+    category: "運営・信頼性",
+    icon: "🏢",
+    questions: [
+      {
+        q: "運営者・連絡先はどこですか？",
+        a: "診断ナビ編集部が運営しています。メール: zawalab.info@gmail.com。お問い合わせフォーム: /contact/。詳細は/about/をご覧ください。",
+      },
+      {
+        q: "監修体制はどうなっていますか？",
+        a: "ITエンジニア出身の編集長が品質管理を担当し、専門ライターが一次情報（学術論文・公式機関資料）と照合の上でコンテンツを作成しています。外部の大学教授・臨床心理士等による正式な監修体制は現在設けていませんが、各理論の公式機関・原著論文を一次参照源とし、AI出力をそのまま使用することを禁止しています。誤りの報告は7営業日以内に対応します。",
       },
     ],
   },
@@ -121,7 +157,6 @@ const faqs = [
   <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
   <link rel="canonical" href={canonicalURL} />
 
-  <!-- hreflang（日本語単一言語サイト）-->
   <link rel="alternate" hreflang="ja" href={canonicalURL} />
   <link rel="alternate" hreflang="x-default" href={canonicalURL} />
 
@@ -140,13 +175,10 @@ const faqs = [
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=M+PLUS+Rounded+1c:wght@700&display=swap"
-    rel="stylesheet"
-  />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=M+PLUS+Rounded+1c:wght@700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/src/styles/design-tokens.css" />
 
-  <!-- 構造化データ: FAQPage -->
+  <!-- 構造化データ: FAQPage（20問全部）+ SpeakableSpecification -->
   <script type="application/ld+json">
     {JSON.stringify([
       {
@@ -155,12 +187,17 @@ const faqs = [
         "@id": "https://shindan-navi.jp/faq/",
         "url": "https://shindan-navi.jp/faq/",
         "name": "よくある質問 | 診断ナビ",
+        "dateModified": "2026-05-21",
+        "speakable": {
+          "@type": "SpeakableSpecification",
+          "cssSelector": [".faq-item[open] .faq-answer", ".faq-tldr"]
+        },
         "mainEntity": faqs.flatMap(cat => cat.questions).map(item => ({
           "@type": "Question",
           "name": item.q,
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": item.a
+            "text": item.a.replace(/<[^>]*>/g, '')
           }
         }))
       },
@@ -177,100 +214,47 @@ const faqs = [
 
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: var(--sn-font-family);
-      background: var(--sn-bg);
-      color: var(--sn-text);
-      line-height: var(--sn-leading-base);
-      font-size: var(--sn-text-base);
-    }
+    body { font-family: var(--sn-font-family); background: var(--sn-bg); color: var(--sn-text); line-height: var(--sn-leading-base); font-size: var(--sn-text-base); }
     .container { max-width: var(--sn-max-w-content); margin: 0 auto; padding: 0 var(--sn-space-4); }
-    /* ヘッダー */
-    .site-header {
-      position: sticky; top: 0; z-index: 100;
-      background: rgba(255,255,255,0.95); backdrop-filter: blur(8px);
-      border-bottom: 1px solid var(--sn-border); height: var(--sn-header-h);
-    }
-    .site-header .inner {
-      max-width: var(--sn-max-w); margin: 0 auto; padding: 0 var(--sn-space-4); height: 100%;
-      display: flex; align-items: center; justify-content: space-between;
-    }
+    .site-header { position: sticky; top: 0; z-index: 100; background: rgba(255,255,255,0.95); backdrop-filter: blur(8px); border-bottom: 1px solid var(--sn-border); height: var(--sn-header-h); }
+    .site-header .inner { max-width: var(--sn-max-w); margin: 0 auto; padding: 0 var(--sn-space-4); height: 100%; display: flex; align-items: center; justify-content: space-between; }
     .logo { font-family: var(--sn-font-rounded); font-size: var(--sn-text-xl); font-weight: 700; color: var(--sn-primary); text-decoration: none; }
-    .header-cta {
-      display: inline-flex; align-items: center; gap: var(--sn-space-2);
-      background: var(--sn-primary); color: #fff; font-size: var(--sn-text-sm); font-weight: 700;
-      padding: var(--sn-space-2) var(--sn-space-4); border-radius: var(--sn-radius-pill);
-      text-decoration: none; min-height: var(--sn-tap-min);
-    }
-    /* パンくず */
+    .header-cta { display: inline-flex; align-items: center; gap: var(--sn-space-2); background: var(--sn-primary); color: #fff; font-size: var(--sn-text-sm); font-weight: 700; padding: var(--sn-space-2) var(--sn-space-4); border-radius: var(--sn-radius-pill); text-decoration: none; min-height: var(--sn-tap-min); }
     .breadcrumb { font-size: var(--sn-text-sm); color: var(--sn-muted); padding: var(--sn-space-4) var(--sn-space-4); }
     .breadcrumb a { color: var(--sn-muted); text-decoration: none; }
     .breadcrumb a:hover { color: var(--sn-primary); }
-    /* ページヒーロー */
-    .page-hero {
-      background: linear-gradient(135deg, #fffbeb 0%, #eef2ff 100%);
-      padding: var(--sn-space-12) 0; text-align: center; margin-bottom: var(--sn-space-10);
-    }
+    .page-hero { background: linear-gradient(135deg, #fffbeb 0%, #eef2ff 100%); padding: var(--sn-space-12) 0; text-align: center; margin-bottom: var(--sn-space-10); }
     .page-hero h1 { font-family: var(--sn-font-rounded); font-size: var(--sn-text-3xl); font-weight: 700; margin-bottom: var(--sn-space-3); }
     .page-hero p { color: var(--sn-muted); font-size: var(--sn-text-sm); }
+    /* TL;DR */
+    .faq-tldr { background: #f0f4ff; border-left: 4px solid var(--sn-primary); border-radius: 0 var(--sn-radius-sm) var(--sn-radius-sm) 0; padding: var(--sn-space-5) var(--sn-space-6); margin-bottom: var(--sn-space-6); }
+    .faq-tldr__title { font-weight: 700; font-size: var(--sn-text-sm); color: var(--sn-primary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: var(--sn-space-3); }
+    .faq-tldr__list { list-style: none; display: flex; flex-direction: column; gap: var(--sn-space-2); padding-left: var(--sn-space-4); }
+    .faq-tldr__item { font-size: 0.9rem; line-height: 1.6; color: #1f2937; }
+    .faq-tldr__meta { font-size: var(--sn-text-xs); color: var(--sn-muted); margin-top: var(--sn-space-3); }
     /* カテゴリー */
     .faq-category { margin-bottom: var(--sn-space-10); }
-    .category-heading {
-      font-family: var(--sn-font-rounded); font-size: var(--sn-text-xl); font-weight: 700;
-      margin-bottom: var(--sn-space-5); padding: var(--sn-space-3) var(--sn-space-4);
-      background: var(--sn-primary-bg); border-radius: var(--sn-radius-sm);
-      border-left: 4px solid var(--sn-primary); display: flex; align-items: center; gap: var(--sn-space-2);
-    }
+    .category-heading { font-family: var(--sn-font-rounded); font-size: var(--sn-text-xl); font-weight: 700; margin-bottom: var(--sn-space-5); padding: var(--sn-space-3) var(--sn-space-4); background: var(--sn-primary-bg); border-radius: var(--sn-radius-sm); border-left: 4px solid var(--sn-primary); display: flex; align-items: center; gap: var(--sn-space-2); }
     .faq-list { display: flex; flex-direction: column; gap: var(--sn-space-4); }
-    /* FAQ アイテム */
-    details.faq-item {
-      background: var(--sn-bg-white); border-radius: var(--sn-radius);
-      border: 1px solid var(--sn-border); box-shadow: var(--sn-shadow-xs);
-      overflow: hidden;
-    }
+    details.faq-item { background: var(--sn-bg-white); border-radius: var(--sn-radius); border: 1px solid var(--sn-border); box-shadow: var(--sn-shadow-xs); overflow: hidden; }
     details.faq-item[open] { border-color: var(--sn-primary-light); box-shadow: var(--sn-shadow-sm); }
-    details.faq-item summary {
-      display: flex; align-items: flex-start; gap: var(--sn-space-3);
-      padding: var(--sn-space-5) var(--sn-space-6); cursor: pointer;
-      list-style: none; font-weight: 700; font-size: var(--sn-text-base);
-      transition: background 150ms;
-    }
+    details.faq-item summary { display: flex; align-items: flex-start; gap: var(--sn-space-3); padding: var(--sn-space-5) var(--sn-space-6); cursor: pointer; list-style: none; font-weight: 700; font-size: var(--sn-text-base); transition: background 150ms; }
     details.faq-item summary:hover { background: var(--sn-primary-bg); }
     details.faq-item summary::-webkit-details-marker { display: none; }
-    .faq-q-label {
-      flex-shrink: 0; width: 28px; height: 28px; border-radius: 50%;
-      background: var(--sn-primary); color: #fff;
-      font-family: var(--sn-font-rounded); font-weight: 700; font-size: var(--sn-text-sm);
-      display: flex; align-items: center; justify-content: center;
-    }
+    .faq-q-label { flex-shrink: 0; width: 28px; height: 28px; border-radius: 50%; background: var(--sn-primary); color: #fff; font-family: var(--sn-font-rounded); font-weight: 700; font-size: var(--sn-text-sm); display: flex; align-items: center; justify-content: center; }
     details.faq-item[open] .faq-q-label { background: var(--sn-primary-dark); }
     .faq-q-text { flex: 1; padding-top: 4px; }
-    .faq-toggle {
-      flex-shrink: 0; width: 24px; height: 24px; margin-top: 4px;
-      color: var(--sn-muted); font-size: var(--sn-text-lg); transition: transform 200ms;
-    }
+    .faq-toggle { flex-shrink: 0; width: 24px; height: 24px; margin-top: 4px; color: var(--sn-muted); font-size: var(--sn-text-lg); transition: transform 200ms; }
     details.faq-item[open] .faq-toggle { transform: rotate(45deg); }
-    .faq-answer {
-      padding: 0 var(--sn-space-6) var(--sn-space-5);
-      padding-left: calc(var(--sn-space-6) + 28px + var(--sn-space-3));
-      font-size: var(--sn-text-sm); color: var(--sn-text-soft);
-      line-height: var(--sn-leading-relaxed);
-      white-space: pre-line;
-    }
+    .faq-answer { padding: 0 var(--sn-space-6) var(--sn-space-5); padding-left: calc(var(--sn-space-6) + 28px + var(--sn-space-3)); font-size: var(--sn-text-sm); color: var(--sn-text-soft); line-height: var(--sn-leading-relaxed); white-space: pre-line; }
+    .faq-answer a { color: var(--sn-primary); }
+    /* 見つからない場合 */
+    .not-found-box { background: var(--sn-bg-soft); border-radius: var(--sn-radius-lg); padding: var(--sn-space-8); text-align: center; margin-bottom: var(--sn-space-10); }
     /* CTA */
-    .bottom-cta {
-      background: linear-gradient(135deg, var(--sn-primary) 0%, #8b5cf6 100%);
-      color: #fff; border-radius: var(--sn-radius-xl);
-      padding: var(--sn-space-10) var(--sn-space-8); text-align: center; margin: var(--sn-space-12) 0;
-    }
+    .bottom-cta { background: linear-gradient(135deg, var(--sn-primary) 0%, #8b5cf6 100%); color: #fff; border-radius: var(--sn-radius-xl); padding: var(--sn-space-10) var(--sn-space-8); text-align: center; margin: var(--sn-space-12) 0; }
     .bottom-cta h2 { font-family: var(--sn-font-rounded); font-size: var(--sn-text-2xl); font-weight: 700; margin-bottom: var(--sn-space-4); }
     .bottom-cta p { opacity: 0.9; font-size: var(--sn-text-sm); margin-bottom: var(--sn-space-6); }
-    .btn-white {
-      display: inline-flex; align-items: center; gap: var(--sn-space-2);
-      background: #fff; color: var(--sn-primary); font-weight: 700;
-      padding: var(--sn-space-3) var(--sn-space-8); border-radius: var(--sn-radius-pill);
-      text-decoration: none; min-height: var(--sn-tap-min);
-    }
+    .btn-white { display: inline-flex; align-items: center; gap: var(--sn-space-2); background: #fff; color: var(--sn-primary); font-weight: 700; padding: var(--sn-space-3) var(--sn-space-8); border-radius: var(--sn-radius-pill); text-decoration: none; min-height: var(--sn-tap-min); }
     /* フッター */
     .site-footer { background: var(--sn-text); color: rgba(255,255,255,0.7); padding: var(--sn-space-10) 0 var(--sn-space-8); margin-top: var(--sn-space-16); }
     .footer-inner { max-width: var(--sn-max-w); margin: 0 auto; padding: 0 var(--sn-space-4); }
@@ -280,6 +264,7 @@ const faqs = [
     .footer-links a:hover { color: #fff; }
     .footer-bottom { font-size: var(--sn-text-xs); border-top: 1px solid rgba(255,255,255,0.1); padding-top: var(--sn-space-6); }
   </style>
+
   <!-- GA4 -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-S4WP0YRDWW"></script>
   <script>
@@ -288,31 +273,27 @@ const faqs = [
     gtag('js', new Date());
     gtag('config', 'G-S4WP0YRDWW');
   </script>
-
   <!-- Google AdSense -->
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3827953973757487" crossorigin="anonymous"></script>
 </head>
 <body>
 
-  <!-- ヘッダー -->
   <header class="site-header">
     <div class="inner">
       <a href="/" class="logo">🧠 診断ナビ</a>
-      <a href="/personality/multiple-int/" class="header-cta">✨ 無料で診断スタート</a>
+      <a href="/diagnosis/multi-int/" class="header-cta">✨ 無料で診断スタート</a>
     </div>
   </header>
 
-  <!-- パンくず -->
   <nav class="breadcrumb" aria-label="パンくずリスト">
     <a href="/">ホーム</a> &gt; よくある質問
   </nav>
 
-  <!-- ページヒーロー -->
   <div class="page-hero">
     <div class="container">
       <h1>❓ よくある質問</h1>
       <p>
-        診断ナビについてのご質問をまとめました。<br />
+        診断ナビについてのご質問をまとめました（全{faqs.flatMap(c => c.questions).length}問）。<br />
         解決しない場合は <a href="/contact/" style="color: var(--sn-primary);">お問い合わせページ</a> からご連絡ください。
       </p>
     </div>
@@ -321,57 +302,45 @@ const faqs = [
   <main>
     <div class="container">
 
-      <!-- AIOブロック -->
-      <div style="margin-bottom: var(--sn-space-8);">
-        <blockquote style="
-          background: var(--sn-primary-bg); border-left: 4px solid var(--sn-primary);
-          border-radius: 0 var(--sn-radius-sm) var(--sn-radius-sm) 0;
-          padding: var(--sn-space-5) var(--sn-space-6);
-        ">
-          <p style="font-weight:700; margin-bottom: var(--sn-space-3);">このページでわかること</p>
-          <ul style="list-style:none; display:flex; flex-direction:column; gap:var(--sn-space-2); font-size: var(--sn-text-sm);">
-            <li>✅ 8診断統合の仕組み・科学的根拠・占いとの違い</li>
-            <li>✅ ¥390 PASS・¥590/月 PROの機能差・解約方法・データ保存期間</li>
-            <li>✅ 招待相性診断・タイムカプセル・AIプロンプトカードなど特徴的な機能の詳細</li>
-          </ul>
-        </blockquote>
-        <p style="font-size: var(--sn-text-xs); color: var(--sn-muted); margin-top: var(--sn-space-3);">
-          最終更新: 2026-05-20 ｜ 全 {faqs.flatMap(c => c.questions).length} 問
+      <!-- TL;DR ブロック（AIO引用最適化・Speakable対象）-->
+      <div class="faq-tldr" role="note" aria-label="このページのポイント">
+        <p class="faq-tldr__title">このページのポイント</p>
+        <ul class="faq-tldr__list">
+          <li class="faq-tldr__item">基本診断は全て無料・登録不要（詳細レポートは¥390 PASS・月額¥590 PRO）</li>
+          <li class="faq-tldr__item">データはブラウザのLocalStorageに保存（未登録時はサーバーに送信されない）</li>
+          <li class="faq-tldr__item">医療診断・精神疾患の診断はできない（YMYL非扱い）</li>
+          <li class="faq-tldr__item">招待相性診断は無料・無制限（招待された側も登録不要）</li>
+          <li class="faq-tldr__item">全{faqs.flatMap(c => c.questions).length}問に回答（サービス概要・料金・プライバシー・機能・利用対象・運営）</li>
+        </ul>
+        <p class="faq-tldr__meta">
+          <time datetime="2026-05-21">2026-05-21</time> 時点の情報。
         </p>
       </div>
 
       <!-- FAQ カテゴリー別表示 -->
-      {faqs.map((cat, ci) => (
+      {faqs.map((cat) => (
         <section class="faq-category">
           <h2 class="category-heading">
-            {ci === 0 && "🎯"}
-            {ci === 1 && "📊"}
-            {ci === 2 && "🔒"}
-            {ci === 3 && "💳"}
-            {ci === 4 && "✨"}
-            {ci === 5 && "👥"}
-            {cat.category}
+            <span>{cat.icon}</span>
+            <span>{cat.category}</span>
           </h2>
           <div class="faq-list">
             {cat.questions.map((item, qi) => (
-              <details class="faq-item" id={`faq-${ci}-${qi}`}>
+              <details class="faq-item">
                 <summary>
                   <span class="faq-q-label">Q</span>
                   <span class="faq-q-text">{item.q}</span>
                   <span class="faq-toggle" aria-hidden="true">+</span>
                 </summary>
-                <div class="faq-answer">{item.a}</div>
+                <div class="faq-answer" set:html={item.a.replace(/\n/g, '<br />')}></div>
               </details>
             ))}
           </div>
         </section>
       ))}
 
-      <!-- まだ解決しない場合 -->
-      <div style="
-        background: var(--sn-bg-soft); border-radius: var(--sn-radius-lg);
-        padding: var(--sn-space-8); text-align: center; margin-bottom: var(--sn-space-10);
-      ">
+      <!-- 解決しない場合 -->
+      <div class="not-found-box">
         <h3 style="font-family: var(--sn-font-rounded); font-size: var(--sn-text-xl); font-weight:700; margin-bottom: var(--sn-space-3);">
           🤔 解決しませんでしたか？
         </h3>
@@ -379,12 +348,7 @@ const faqs = [
           お問い合わせページからご質問をお送りください。<br />
           3〜5営業日以内にご回答いたします。
         </p>
-        <a href="/contact/" style="
-          display: inline-flex; align-items: center; gap: var(--sn-space-2);
-          background: var(--sn-primary); color: #fff; font-weight: 700;
-          padding: var(--sn-space-3) var(--sn-space-8); border-radius: var(--sn-radius-pill);
-          text-decoration: none; min-height: var(--sn-tap-min);
-        ">
+        <a href="/contact/" style="display: inline-flex; align-items: center; gap: var(--sn-space-2); background: var(--sn-primary); color: #fff; font-weight: 700; padding: var(--sn-space-3) var(--sn-space-8); border-radius: var(--sn-radius-pill); text-decoration: none; min-height: var(--sn-tap-min);">
           📬 お問い合わせする
         </a>
       </div>
@@ -392,27 +356,24 @@ const faqs = [
       <!-- 診断CTA -->
       <div class="bottom-cta">
         <h2>まず1つ、診断してみよう</h2>
-        <p>
-          読んでいるより、やってみると早い。<br />
-          完全無料・登録不要・3〜5分で完了します。
-        </p>
-        <a href="/personality/multiple-int/" class="btn-white">
+        <p>読んでいるより、やってみると早い。<br />完全無料・登録不要・3〜5分で完了します。</p>
+        <a href="/diagnosis/multi-int/" class="btn-white">
           🧠 多重知能テストから始める（推奨）
         </a>
       </div>
 
       <!-- 関連リンク -->
       <div style="display: flex; flex-wrap: wrap; gap: var(--sn-space-4); margin-bottom: var(--sn-space-8);">
-        <a href="/about/" style="color: var(--sn-primary); font-size: var(--sn-text-sm); text-decoration:none;">👤 運営者情報</a>
+        <a href="/about/" style="color: var(--sn-primary); font-size: var(--sn-text-sm); text-decoration:none;">🏢 運営者情報・E-E-A-T</a>
         <a href="/editorial-policy/" style="color: var(--sn-primary); font-size: var(--sn-text-sm); text-decoration:none;">📋 編集ポリシー</a>
         <a href="/privacy/" style="color: var(--sn-primary); font-size: var(--sn-text-sm); text-decoration:none;">🔒 プライバシーポリシー</a>
         <a href="/terms/" style="color: var(--sn-primary); font-size: var(--sn-text-sm); text-decoration:none;">📄 利用規約</a>
+        <a href="/contact/" style="color: var(--sn-primary); font-size: var(--sn-text-sm); text-decoration:none;">📬 お問い合わせ</a>
       </div>
 
     </div>
   </main>
 
-  <!-- フッター -->
   <footer class="site-footer">
     <div class="footer-inner">
       <a href="/" class="footer-logo">🧠 診断ナビ</a>
@@ -426,7 +387,7 @@ const faqs = [
         <a href="/disclaimer/">免責事項</a>
       </div>
       <div class="footer-bottom">
-        <p>© 2026 診断ナビ ｜ zawalab.info@gmail.com ｜ 最終更新: 2026-05-20</p>
+        <p>© 2026 診断ナビ ｜ zawalab.info@gmail.com ｜ 最終更新: <time datetime="2026-05-21">2026-05-21</time></p>
       </div>
     </div>
   </footer>

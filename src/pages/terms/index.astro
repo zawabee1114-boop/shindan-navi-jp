@@ -1,12 +1,208 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Container from '../../components/Container.astro';
+
+const pageUrl = 'https://shindan-navi.jp/terms/';
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    '@id': pageUrl,
+    url: pageUrl,
+    name: '利用規約 | 診断ナビ',
+    description: '診断ナビの利用規約。サービスの利用条件・禁止事項・免責事項・知的財産権・プラン解約条件について説明します。',
+    datePublished: '2026-05-20',
+    dateModified: '2026-05-21',
+    isPartOf: {
+      '@type': 'WebSite',
+      '@id': 'https://shindan-navi.jp/#website',
+      url: 'https://shindan-navi.jp',
+    },
+    publisher: {
+      '@type': 'Organization',
+      '@id': 'https://shindan-navi.jp/#organization',
+      name: '診断ナビ編集部',
+    },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'ホーム', item: 'https://shindan-navi.jp/' },
+      { '@type': 'ListItem', position: 2, name: '利用規約', item: pageUrl },
+    ],
+  },
+];
 ---
-<BaseLayout title="準備中 - 診断ナビ" description="準備中">
+
+<BaseLayout
+  title="利用規約 | 診断ナビ"
+  description="診断ナビの利用規約。サービスの利用条件・禁止事項・免責事項・知的財産権・プラン解約条件について説明します。"
+  canonical={pageUrl}
+  jsonLd={jsonLd}
+  breadcrumbs={[{ name: '利用規約', url: '/terms/' }]}
+  lastUpdated="2026-05-21"
+>
   <Container size="content">
-    <div style="padding-block:4rem; text-align:center;">
-      <h1 style="font-family:var(--sn-font-rounded); font-size:1.5rem; margin-bottom:1rem;">準備中</h1>
-      <p style="color:var(--sn-muted);">content-writer が作成します</p>
+    <div class="terms-wrap">
+
+      <div class="terms-hero">
+        <h1>📄 利用規約</h1>
+        <p>診断ナビのご利用条件について説明します</p>
+        <div class="terms-date">
+          制定: 2026-05-20 ｜ 最終更新: <time datetime="2026-05-21">2026-05-21</time>
+        </div>
+      </div>
+
+      <!-- 前文 -->
+      <p class="terms-preface">
+        この利用規約（以下「本規約」）は、診断ナビ編集部（以下「当編集部」）が運営する「診断ナビ」（https://shindan-navi.jp/、以下「本サービス」）の利用条件を定めるものです。ユーザーは本規約に同意の上、本サービスをご利用ください。
+      </p>
+
+      <!-- 1. サービスの定義 -->
+      <section class="terms-section">
+        <h2 class="terms-h2">第1条 サービスの定義</h2>
+        <p class="terms-text">
+          本サービスは、性格心理学・多重知能理論・行動経済学等の学術的フレームワークに基づく8診断（多重知能・MBTI・血液型・完璧主義・DiSC・恋愛スタイル・星座・金銭感覚）を統合し、5シーン軸（仕事・恋愛・友人・家族・学習）での自己理解をサポートする無料・有料ハイブリッドのWebサービスです。
+        </p>
+        <p class="terms-text">
+          本サービスは医療機器でも医療サービスでもありません。診断結果はあくまで「性格傾向の参考情報」であり、医学的診断・法的アドバイス・将来の保証を一切行いません。
+        </p>
+      </section>
+
+      <!-- 2. 利用条件 -->
+      <section class="terms-section">
+        <h2 class="terms-h2">第2条 利用条件</h2>
+        <ul class="terms-list">
+          <li>本サービスは、13歳以上の方のご利用を前提としています。13歳未満の方は保護者の同意のもとでご利用ください。</li>
+          <li>アカウント登録は任意です。登録なしで基本診断をご利用いただけます。</li>
+          <li>登録情報（メールアドレス等）は正確な情報を入力してください。</li>
+          <li>1人につき1アカウントの利用を原則とします。</li>
+        </ul>
+      </section>
+
+      <!-- 3. 禁止事項 -->
+      <section class="terms-section">
+        <h2 class="terms-h2">第3条 禁止事項</h2>
+        <p class="terms-text">ユーザーは以下の行為を行ってはなりません。</p>
+        <ul class="terms-list">
+          <li>本サービスの診断結果を採用選考・昇進判断・差別的処遇の根拠として使用すること（血液型・MBTIハラスメントを含む）</li>
+          <li>本サービスのコンテンツ（診断・解説・UIデザイン）を無断で複製・転載・商業利用すること</li>
+          <li>本サービスへの不正アクセス・クローリング・スクレイピング（robots.txtで許可したAIクローラーを除く）</li>
+          <li>他ユーザーのアカウントへの不正アクセスの試み</li>
+          <li>架空の情報・他人の情報でアカウントを登録すること</li>
+          <li>本サービスのシステムに過度の負荷を与える行為</li>
+          <li>その他、当編集部が不適切と判断する行為</li>
+        </ul>
+      </section>
+
+      <!-- 4. 有料プラン -->
+      <section class="terms-section">
+        <h2 class="terms-h2">第4条 有料プランの利用条件</h2>
+        <div class="terms-box">
+          <div class="terms-box__title">¥390 PASS（買い切り型・1年有効）</div>
+          <ul class="terms-list" style="margin-bottom:0;">
+            <li>購入日から1年間有効</li>
+            <li>購入後のキャンセル・返金には応じられません（日本の消費者契約法の定める範囲を除く）</li>
+          </ul>
+        </div>
+        <div class="terms-box" style="margin-top:1rem;">
+          <div class="terms-box__title">¥590/月 PRO（月額継続課金）</div>
+          <ul class="terms-list" style="margin-bottom:0;">
+            <li>毎月同日に自動更新されます</li>
+            <li>解約は /me/ から行えます。解約月の月末まで引き続きご利用いただけます</li>
+            <li>月途中での解約の場合、日割り返金は行いません</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- 5. 知的財産権 -->
+      <section class="terms-section">
+        <h2 class="terms-h2">第5条 知的財産権</h2>
+        <p class="terms-text">
+          本サービスのコンテンツ（診断問題・解説文・デザイン・ロゴ・UIコンポーネント等）の著作権は、診断ナビ編集部に帰属します。
+          ただし、以下は対象外です。
+        </p>
+        <ul class="terms-list">
+          <li>Howard Gardnerの多重知能理論（Harvard University / Project Zero の学術的成果）</li>
+          <li>Myers-Briggs Type Indicator® （The Myers & Briggs Foundation の登録商標・当サービスは同Foundation とは無関係）</li>
+          <li>DiSC® （Wiley社の登録商標・当サービスはWiley社の公式アセスメントではない）</li>
+          <li>Big Five / OCEAN（学術的概念・特定企業の商標ではない）</li>
+        </ul>
+        <p class="terms-text">
+          本サービスのコンテンツを個人的な学習・研究目的で参照・引用する場合は、出典（shindan-navi.jp）を明記した上で歓迎します。商業目的での無断転用は禁止します。
+        </p>
+      </section>
+
+      <!-- 6. 免責事項 -->
+      <section class="terms-section">
+        <h2 class="terms-h2">第6条 免責事項</h2>
+        <ul class="terms-list">
+          <li>本サービスの診断結果は「性格傾向の参考情報」です。医学的診断・法的アドバイス・投資アドバイスの代替ではありません。</li>
+          <li>診断結果に基づいて行った行動・判断の結果について、当編集部は一切の責任を負いません。</li>
+          <li>サービスの一時停止・終了・変更によって生じた損害について、当編集部は一切の責任を負いません。</li>
+          <li>LocalStorage はブラウザの設定によってはデータが保存されない場合があります。重要なデータはアカウント登録の上で保存することをお勧めします。</li>
+        </ul>
+      </section>
+
+      <!-- 7. サービスの変更・終了 -->
+      <section class="terms-section">
+        <h2 class="terms-h2">第7条 サービスの変更・終了</h2>
+        <p class="terms-text">
+          当編集部は予告なくサービスの一部または全部を変更・終了する権利を有します。
+          有料プランのユーザーに対しては、サービス終了の場合に30日前の事前通知を行い、残存期間に応じた返金を行うよう努めます。
+        </p>
+      </section>
+
+      <!-- 8. 準拠法・管轄 -->
+      <section class="terms-section">
+        <h2 class="terms-h2">第8条 準拠法・管轄裁判所</h2>
+        <p class="terms-text">
+          本規約は日本法に準拠します。本サービスに関する紛争の解決は、日本の裁判所を第一審の管轄裁判所とします。
+        </p>
+      </section>
+
+      <!-- 更新履歴 -->
+      <section class="terms-section">
+        <div class="terms-history">
+          <div class="terms-history__title">更新履歴</div>
+          <div><time datetime="2026-05-21">2026-05-21</time>: 知的財産権・商標注記を追加。第3巡AIO/LLMO強化版。</div>
+          <div><time datetime="2026-05-20">2026-05-20</time>: 初版制定・公開</div>
+        </div>
+      </section>
+
+      <!-- 関連リンク -->
+      <div class="terms-links">
+        <a href="/privacy/">🔒 プライバシーポリシー</a>
+        <a href="/editorial-policy/">📋 編集ポリシー</a>
+        <a href="/about/">🏢 運営者情報</a>
+        <a href="/disclaimer/">⚠️ 免責事項</a>
+        <a href="/contact/">📬 お問い合わせ</a>
+      </div>
+
     </div>
   </Container>
 </BaseLayout>
+
+<style>
+.terms-wrap { padding-block: 3rem; }
+.terms-hero { text-align: center; margin-bottom: 2rem; }
+.terms-hero h1 { font-family: var(--sn-font-rounded); font-size: var(--sn-text-3xl); font-weight: 700; margin-bottom: 0.5rem; }
+.terms-hero p { color: var(--sn-muted); font-size: var(--sn-text-sm); margin-bottom: 0.5rem; }
+.terms-date { font-size: var(--sn-text-xs); color: var(--sn-muted); }
+.terms-preface { font-size: var(--sn-text-sm); color: var(--sn-text-soft); line-height: var(--sn-leading-relaxed); margin-bottom: 2rem; padding: 1rem 1.25rem; background: var(--sn-bg-soft); border-radius: var(--sn-radius); }
+.terms-section { margin-bottom: 2.5rem; }
+.terms-h2 { font-family: var(--sn-font-rounded); font-size: var(--sn-text-xl); font-weight: 700; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--sn-primary-bg); }
+.terms-text { font-size: var(--sn-text-sm); color: var(--sn-text-soft); line-height: var(--sn-leading-relaxed); margin-bottom: 0.75rem; }
+.terms-list { list-style: none; display: flex; flex-direction: column; gap: 0.4rem; padding-left: 1rem; margin-bottom: 0.75rem; }
+.terms-list li { font-size: var(--sn-text-sm); color: var(--sn-text-soft); line-height: var(--sn-leading-relaxed); }
+.terms-list li::before { content: "・ "; color: var(--sn-primary); }
+.terms-box { background: var(--sn-primary-bg); border-radius: var(--sn-radius); padding: 1rem 1.25rem; border-left: 3px solid var(--sn-primary); }
+.terms-box__title { font-weight: 700; font-size: var(--sn-text-sm); margin-bottom: 0.5rem; }
+.terms-history { background: var(--sn-bg-soft); border-radius: var(--sn-radius); padding: 1rem 1.25rem; font-size: var(--sn-text-xs); color: var(--sn-muted); line-height: 1.8; }
+.terms-history__title { font-weight: 700; font-size: var(--sn-text-sm); margin-bottom: 0.5rem; color: var(--sn-text); }
+.terms-links { display: flex; flex-wrap: wrap; gap: 1rem; padding-top: 1rem; border-top: 1px solid var(--sn-border); margin-top: 2rem; }
+.terms-links a { color: var(--sn-primary); font-size: var(--sn-text-sm); text-decoration: none; }
+.terms-links a:hover { text-decoration: underline; }
+</style>
