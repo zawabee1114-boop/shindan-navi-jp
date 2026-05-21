@@ -1,0 +1,661 @@
+---
+/**
+ * O型 性格・特徴 詳細ページ
+ * KW: O型 性格 / O型 特徴
+ *
+ * 学術根拠:
+ * - 古川竹二 (1927) 「血液型による気質の研究」心理学研究 第2巻第4号
+ * - 能見正比古 (1971) 『血液型でわかる相性』青春出版社
+ * - Sakamoto A, Yamazaki K (2004) International Journal of Psychology 39(4)
+ *   https://doi.org/10.1080/00207590344000248
+ * - 日本心理学会 公式見解（2014）https://psych.or.jp/opinion/bl-personality/
+ * - 縄田健悟 (2014) 心理学研究 85(2) https://doi.org/10.4992/jjpsy.85.13E0025
+ *
+ * YMYL回避: 医療・精神疾患・治療言及ゼロ
+ * disclaimer: 必須表示（科学的相関は限定的）
+ * ブラハラ警告: 必須セクション
+ *
+ * 確認日: 2026-05-21
+ */
+
+import BaseLayout from '../../../../layouts/BaseLayout.astro';
+import Container from '../../../../components/Container.astro';
+import TldrBlock from '../../../../components/TldrBlock.astro';
+import ScienceNote from '../../../../components/ScienceNote.astro';
+import ReferenceList from '../../../../components/ReferenceList.astro';
+import { typesDetail } from '../../../../data/diagnoses/blood-compat/types-detail';
+
+const SITE_URL = 'https://shindan-navi.jp';
+const PAGE_URL = `${SITE_URL}/diagnosis/blood-type/o/`;
+const UPDATED_AT = '2026-05-21';
+
+const detail = typesDetail['O'];
+
+const references = [
+  {
+    title: '血液型による気質の研究',
+    author: '古川竹二',
+    year: 1927,
+    publisher: '心理学研究 第2巻第4号',
+    url: 'https://www.jstage.jst.go.jp/browse/psycholres',
+  },
+  {
+    title: '血液型でわかる相性',
+    author: '能見正比古',
+    year: 1971,
+    publisher: '青春出版社',
+    url: 'https://www.seishun.co.jp/',
+  },
+  {
+    title: 'Blood-typical Personality Stereotypes and Self-fulfilling Prophecy',
+    author: 'Sakamoto A, Yamazaki K',
+    year: 2004,
+    publisher: 'International Journal of Psychology, 39(4), 275-285',
+    url: 'https://doi.org/10.1080/00207590344000248',
+  },
+  {
+    title: '「血液型と性格」の関連についての公式見解',
+    author: '日本心理学会',
+    year: 2014,
+    publisher: '日本心理学会',
+    url: 'https://psych.or.jp/opinion/bl-personality/',
+  },
+  {
+    title: '血液型と性格は無関係——血液型刻印効果の危険性',
+    author: '縄田健悟',
+    year: 2014,
+    publisher: '心理学研究 85(2)',
+    url: 'https://doi.org/10.4992/jjpsy.85.13E0025',
+  },
+];
+
+const faqs = [
+  {
+    question: 'O型の性格の特徴を一言で表すと？',
+    answer:
+      '日本の血液型性格分類（古川 1927・能見 1971）では「頼れる社交的リーダー派」と表現されます。社交性・おおらかさ・前向きな行動力が際立つ傾向があるとされますが、科学的相関は限定的です（日本心理学会 2014）。個人差が大きい点に注意してください。',
+  },
+  {
+    question: 'O型がリーダーに向いていると言われる理由は何ですか？',
+    answer:
+      '古川竹二（1927）の研究でO型は「積極的・大らか・社交的」な気質傾向として記述されました。能見正比古（1971）が「リーダーシップ・おおらかさ」のイメージとして日本全国に普及させました。ただし日本心理学会（2014）は「血液型と性格の科学的相関は認められない」と明言しており、リーダー資質は経験・スキルで培われるものです。',
+  },
+  {
+    question: 'O型の人に向いている仕事は何ですか？',
+    answer:
+      '血液型と職業適性の科学的相関は確認されていません（日本心理学会 2014）。日本の文化的分類の傾向として、人と関わること・目標推進・チームをまとめる業務（営業・マネジメント・接客・プロジェクトリーダー等）との親和性が語られることがあります。実際の適職判断には適性検査・キャリアカウンセリングをご活用ください。',
+  },
+  {
+    question: 'O型の恋愛傾向はどうですか？',
+    answer:
+      '日本の血液型性格分類では、O型は「積極的にアプローチし、関係をどんどん深めていく傾向がある」とされています。パートナーを大切にする気持ちが強く、一緒に目標に向かって進める関係を好むとも言われます。ただしこれは文化的イメージであり、科学的根拠は限定的です。',
+  },
+  {
+    question: 'O型は本当におおらかですか？',
+    answer:
+      '「おおらか」はO型に帰属される文化的イメージですが、日本心理学会（2014）は「血液型と性格の科学的相関は認められない」と明言しています。おおらかさ・寛容さは育ち・経験・環境に大きく影響され、血液型では説明できません。O型でも細かいことが気になる人はいますし、他の血液型でもおおらかな人はいます。',
+  },
+  {
+    question: 'O型とAB型の相性はどうですか？',
+    answer:
+      '血液型相性の科学的根拠は限定的です（日本心理学会 2014）。日本の文化的分類では「O型の行動力・社交性」と「AB型の独創的・論理的なアプローチ」の組み合わせが語られることがあります。実際の人間関係は価値観・対話・互いへの理解で大きく変わります。詳細は血液型相性診断（/diagnosis/blood-compat/）をご覧ください。',
+  },
+  {
+    question: 'O型の競争心が強すぎる場合の対処法はありますか？',
+    answer:
+      '日本の血液型分類でO型に語られる「競争心・負けず嫌い」は文化的イメージです。競争心が対人関係にネガティブに影響する場合、「他者との比較」から「過去の自分との比較」に意識を向けることが有効とされます。ただし血液型が競争心の直接的な原因ではありません。',
+  },
+  {
+    question: 'O型の「大雑把」なイメージはどこから来ますか？',
+    answer:
+      '能見正比古（1971）の血液型分類でO型に「大局を見る・細かい段取りより全体優先」という傾向が記述されたことが起源です。ただし、Sakamoto & Yamazaki（2004）はこうしたステレオタイプが「自己成就予言」として機能することを指摘しており、科学的に大雑把さと血液型の相関は確認されていません（日本心理学会 2014）。',
+  },
+  {
+    question: 'O型の強みを最大限に発揮するコツは？',
+    answer:
+      '日本の血液型分類で語られるO型の傾向（リーダーシップ・社交性・前向きな行動力）を活かすには、人と関わる機会が多い環境・明確な目標があるプロジェクト・チームを動かせる役割が有利とされます。ただし能力の根拠は血液型ではなく個人のスキルと経験です。',
+  },
+  {
+    question: 'O型の人数は日本で何%ですか？',
+    answer:
+      '日本での血液型別人口比率はO型が約22%とされています（参照: 日本赤十字社 https://www.jrc.or.jp/mr/blood_type/）。A型（約38%）・B型（約30%）に次ぐ3番目の比率です。確認日: 2026-05-21。',
+  },
+];
+
+// JSON-LD: Article
+const jsonLdArticle = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  '@id': `${PAGE_URL}#article`,
+  mainEntityOfPage: { '@type': 'WebPage', '@id': PAGE_URL },
+  headline: 'O型の性格・特徴を徹底解説【社交的・おおらか・リーダーシップの傾向とは】',
+  description:
+    '古川竹二（1927）・能見正比古（1971）の研究をもとにO型の性格特徴を詳解。強み・気をつけたい傾向・仕事・恋愛・友人・家族スタイル・ブラハラ警告・FAQ10問を収録。科学的相関は限定的との免責明示あり。',
+  url: PAGE_URL,
+  datePublished: UPDATED_AT,
+  dateModified: UPDATED_AT,
+  inLanguage: 'ja',
+  author: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+    name: '診断ナビ',
+  },
+  publisher: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+    name: '診断ナビ',
+  },
+};
+
+const jsonLdFAQ = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  '@id': `${PAGE_URL}#faq`,
+  mainEntity: faqs.map(({ question, answer }) => ({
+    '@type': 'Question',
+    name: question,
+    acceptedAnswer: { '@type': 'Answer', text: answer },
+  })),
+};
+
+const jsonLdBreadcrumb = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  '@id': `${PAGE_URL}#breadcrumb`,
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'ホーム', item: SITE_URL },
+    { '@type': 'ListItem', position: 2, name: '診断一覧', item: `${SITE_URL}/diagnosis/` },
+    { '@type': 'ListItem', position: 3, name: '血液型タイプ別', item: `${SITE_URL}/diagnosis/blood-type/` },
+    { '@type': 'ListItem', position: 4, name: 'O型の性格', item: PAGE_URL },
+  ],
+};
+
+const jsonLdAll = [jsonLdArticle, jsonLdFAQ, jsonLdBreadcrumb];
+---
+
+<BaseLayout
+  title="O型の性格・特徴を徹底解説【社交的・おおらか・リーダーシップの傾向とは】｜診断ナビ"
+  description="古川竹二（1927）・能見正比古（1971）の研究をもとにO型の性格特徴を解説。強み4項目・気をつけたい傾向4項目・仕事/恋愛/友人/家族スタイル・ブラハラ警告・FAQ10問収録。科学的相関は限定的との免責明示あり。"
+  canonical={PAGE_URL}
+  jsonLd={jsonLdAll}
+  ogType="article"
+  publishDate={UPDATED_AT}
+  lastUpdated={UPDATED_AT}
+  breadcrumbs={[
+    { name: '診断一覧', url: '/diagnosis/' },
+    { name: '血液型タイプ別', url: '/diagnosis/blood-type/' },
+    { name: 'O型の性格', url: '/diagnosis/blood-type/o/' },
+  ]}
+>
+  {/* ========== ヒーロー ========== */}
+  <section class="bt-hero" aria-labelledby="bt-hero-h1">
+    <Container>
+      <div class="bt-hero-inner">
+        <div class="bt-hero-badge">古川竹二（1927）・能見正比古（1971）研究 + 日本心理学会見解</div>
+        <h1 id="bt-hero-h1" class="bt-hero-h1">
+          O型の性格・特徴<br />
+          <span class="bt-hero-sub-title">社交的・おおらか・リーダーシップの傾向を徹底解説</span>
+        </h1>
+        <p class="bt-hero-catch">
+          「おおらか」「社交的」「リーダー気質」なO型のイメージはどこから来るのか。<br />
+          古川竹二（1927）以来の文化的分類を正確に整理し、強みと気をつけたい傾向を解説します。
+        </p>
+        <div class="bt-hero-stats">
+          <span class="bt-stat">日本人口の約<strong>22%</strong></span>
+          <span class="bt-stat-sep">・</span>
+          <span class="bt-stat">確認日: <time datetime={UPDATED_AT}>{UPDATED_AT}</time></span>
+        </div>
+        <div class="bt-disclaimer-top" role="note" aria-label="免責事項">
+          <p>
+            本ページは日本の血液型性格分類文化を参考情報として解説します。
+            科学的に厳密な統計的相関は限定的です（<a href="https://psych.or.jp/opinion/bl-personality/" target="_blank" rel="noopener noreferrer">日本心理学会公式見解 2014</a>）。
+            自己理解の参考としてお楽しみください。
+          </p>
+        </div>
+      </div>
+    </Container>
+  </section>
+
+  <Container>
+    {/* ========== AIOブロック ========== */}
+    <div class="bt-aio-block" role="note" aria-label="このページでわかること">
+      <p class="bt-aio-title">このページでわかること</p>
+      <ul class="bt-aio-list">
+        <li>O型の性格傾向（社交的・おおらか・リーダーシップ・現実的）の文化的・歴史的背景</li>
+        <li>強み4項目・気をつけたい傾向4項目・仕事/恋愛/友人/家族スタイル</li>
+        <li>O型あるある場面3例・ブラハラ（血液型ハラスメント）警告</li>
+        <li>FAQ 10問・血液型相性診断・他タイプへの内部リンク</li>
+      </ul>
+      <p class="bt-aio-updated">
+        学術根拠:
+        <a href="https://www.jstage.jst.go.jp/browse/psycholres" target="_blank" rel="noopener noreferrer">古川（1927）</a>・
+        <a href="https://doi.org/10.1080/00207590344000248" target="_blank" rel="noopener noreferrer">Sakamoto & Yamazaki（2004）</a>・
+        <a href="https://psych.or.jp/opinion/bl-personality/" target="_blank" rel="noopener noreferrer">日本心理学会（2014）</a>
+        を確認済。
+      </p>
+    </div>
+
+    {/* ========== TL;DR ========== */}
+    <TldrBlock
+      title="O型性格 ポイントまとめ"
+      points={[
+        '古川竹二（1927）の研究でO型は「積極的・大らか・社交的・リーダーシップ」な気質傾向として最初に記述された。能見正比古（1971）により日本全国に普及した',
+        '日本の文化的分類での主な傾向: 大局を見渡してチームを引っ張るリーダーシップ・誰とでも打ち解ける社交性・前向きな行動力・目標達成への粘り強さ',
+        '気をつけたい傾向: 大雑把で細かい段取りが抜けやすい点・競争心・負けず嫌いが強く出ることがある点・意見を強く主張しすぎる場合がある点',
+        '日本心理学会（2014）・縄田（2014）は「血液型と性格の科学的相関は認められない」と明言。「O型だからリーダー向き」の決めつけはブラハラに繋がるリスクがある',
+        'O型は日本の血液型人口で約22%（日本赤十字社統計）。A型・B型に次ぐ比率',
+      ]}
+      updatedAt={UPDATED_AT}
+      sourceLabel="日本心理学会 公式見解（2014）"
+      sourceUrl="https://psych.or.jp/opinion/bl-personality/"
+    />
+
+    {/* ========== O型性格の文化的・歴史的背景 ========== */}
+    <section class="bt-section" aria-labelledby="bt-history-h2">
+      <h2 id="bt-history-h2" class="bt-h2">O型性格の文化的・歴史的背景</h2>
+      <p class="bt-lead">
+        「O型はおおらか・リーダー向き」というイメージはどこから生まれたのでしょうか。
+        日本の血液型性格分類の起源を正確に整理します。
+      </p>
+      <div class="bt-history-card">
+        <div class="bt-history-item">
+          <span class="bt-history-year">1927年</span>
+          <div class="bt-history-body">
+            <p class="bt-history-title">古川竹二「血液型による気質の研究」</p>
+            <p class="bt-history-text">
+              <a href="https://www.jstage.jst.go.jp/browse/psycholres" target="_blank" rel="noopener noreferrer">心理学研究 第2巻第4号</a>
+              に発表。O型を「積極的・大らか・社交的」と記述。
+              後の再現性検証で科学的批判を受けているが、日本の血液型文化の源流となった。
+            </p>
+          </div>
+        </div>
+        <div class="bt-history-item">
+          <span class="bt-history-year">1971年</span>
+          <div class="bt-history-body">
+            <p class="bt-history-title">能見正比古『血液型でわかる相性』（青春出版社）</p>
+            <p class="bt-history-text">
+              <a href="https://www.seishun.co.jp/" target="_blank" rel="noopener noreferrer">青春出版社</a>
+              刊。O型を「社交的・行動力がある・おおらか」として定義し、
+              日本社会に「O型＝リーダー気質」のイメージを広めた。
+            </p>
+          </div>
+        </div>
+        <div class="bt-history-item">
+          <span class="bt-history-year">2004年</span>
+          <div class="bt-history-body">
+            <p class="bt-history-title">Sakamoto & Yamazaki「自己成就予言効果」の指摘</p>
+            <p class="bt-history-text">
+              <a href="https://doi.org/10.1080/00207590344000248" target="_blank" rel="noopener noreferrer">International Journal of Psychology 39(4)</a>
+              。「O型だから社交的に振る舞おうとする」という
+              自己成就予言メカニズムを示唆。ステレオタイプが行動に影響する心理プロセスを分析した。
+            </p>
+          </div>
+        </div>
+        <div class="bt-history-item">
+          <span class="bt-history-year">2014年</span>
+          <div class="bt-history-body">
+            <p class="bt-history-title">日本心理学会 公式見解・縄田健悟 研究</p>
+            <p class="bt-history-text">
+              <a href="https://psych.or.jp/opinion/bl-personality/" target="_blank" rel="noopener noreferrer">日本心理学会（2014）</a>
+              が「血液型と性格の科学的統計的相関は認められない」と公式表明。
+              <a href="https://doi.org/10.4992/jjpsy.85.13E0025" target="_blank" rel="noopener noreferrer">縄田（2014）</a>
+              も大規模調査で同様の結論を示した。
+            </p>
+          </div>
+        </div>
+      </div>
+      <p class="bt-note">
+        O型のイメージは「科学的事実」ではなく「日本独自の文化的分類のイメージ」です。
+        「O型だからリーダー向き」という思い込みで役割を押しつけないことが重要です。
+      </p>
+    </section>
+
+    {/* ========== 強みと気をつけたい傾向 ========== */}
+    <section class="bt-section" aria-labelledby="bt-traits-h2">
+      <h2 id="bt-traits-h2" class="bt-h2">O型の強みと気をつけたい傾向</h2>
+      <p class="bt-lead">
+        以下は日本の血液型性格分類（古川 1927・能見 1971）に基づく傾向のイメージです。
+        個人差が大きく、科学的相関は限定的です。
+      </p>
+      <div class="bt-traits-grid">
+        <div class="bt-traits-col bt-traits-col--strengths">
+          <h3 class="bt-traits-title bt-traits-title--strengths">強みと得意なこと</h3>
+          <ul class="bt-traits-list">
+            {detail.strengths.map((s) => (
+              <li class="bt-traits-item">
+                <span class="bt-traits-icon bt-traits-icon--ok" aria-hidden="true">+</span>
+                <span>{s}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div class="bt-traits-col bt-traits-col--weaknesses">
+          <h3 class="bt-traits-title bt-traits-title--weaknesses">気をつけたい傾向</h3>
+          <ul class="bt-traits-list">
+            {detail.weaknesses.map((w) => (
+              <li class="bt-traits-item">
+                <span class="bt-traits-icon bt-traits-icon--caution" aria-hidden="true">!</span>
+                <span>{w}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+      <div class="bt-disclaimer-box" role="note" aria-label="免責事項">
+        <p>
+          上記はあくまで日本の文化的分類による傾向のイメージです。
+          血液型で個人の能力・性格・将来を断定することはできません（日本心理学会 2014）。
+        </p>
+      </div>
+    </section>
+
+    {/* ========== 仕事・恋愛・友人・家族スタイル ========== */}
+    <section class="bt-section" aria-labelledby="bt-styles-h2">
+      <h2 id="bt-styles-h2" class="bt-h2">O型の各場面での傾向</h2>
+      <p class="bt-lead">
+        日本の血液型文化で語られる、仕事・恋愛・友人・家族場面での傾向をまとめます。
+        いずれも「文化的分類のイメージ」であり個人差が大きい点に注意してください。
+      </p>
+      <div class="bt-styles-grid">
+        <div class="bt-style-card">
+          <div class="bt-style-icon" aria-hidden="true">&#128188;</div>
+          <h3 class="bt-style-title">仕事スタイル</h3>
+          <p class="bt-style-body">{detail.workStyle}</p>
+          <ul class="bt-style-examples">
+            <li>リーダー・マネジメントポジション</li>
+            <li>営業・渉外・交渉など人と関わる業務</li>
+            <li>目標達成型のプロジェクト推進</li>
+          </ul>
+        </div>
+        <div class="bt-style-card">
+          <div class="bt-style-icon" aria-hidden="true">&#10084;</div>
+          <h3 class="bt-style-title">恋愛スタイル</h3>
+          <p class="bt-style-body">{detail.loveStyle}</p>
+          <ul class="bt-style-examples">
+            <li>積極的にアプローチし関係を深めていく傾向</li>
+            <li>一緒に目標に向かって進める関係が長続きしやすい</li>
+            <li>競争心が恋愛の熱量に繋がる面がある</li>
+          </ul>
+        </div>
+        <div class="bt-style-card">
+          <div class="bt-style-icon" aria-hidden="true">&#128101;</div>
+          <h3 class="bt-style-title">友人関係スタイル</h3>
+          <p class="bt-style-body">{detail.friendStyle}</p>
+          <ul class="bt-style-examples">
+            <li>グループの中心になりやすい社交性がある</li>
+            <li>困っている友人を積極的に助けに動く</li>
+            <li>楽しい時間を一緒に作ることへの喜びが強い</li>
+          </ul>
+        </div>
+        <div class="bt-style-card">
+          <div class="bt-style-icon" aria-hidden="true">&#127968;</div>
+          <h3 class="bt-style-title">家族関係スタイル</h3>
+          <p class="bt-style-body">{detail.familyStyle}</p>
+          <ul class="bt-style-examples">
+            <li>家族のムードメーカー的な存在になりやすい</li>
+            <li>家族のイベントや行事を積極的に楽しもうとする</li>
+            <li>家族への気持ちが行動に表れやすいタイプ</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    {/* ========== O型あるある場面 ========== */}
+    <section class="bt-section" aria-labelledby="bt-scenes-h2">
+      <h2 id="bt-scenes-h2" class="bt-h2">O型あるある場面3例</h2>
+      <p class="bt-lead">
+        日本の血液型文化で「O型らしい」とされる典型場面を紹介します。
+        当てはまる部分もそうでない部分も、個人差の大きさを実感するきっかけにしてください。
+      </p>
+      <div class="bt-scenes-grid">
+        {detail.typicalScenes.map((scene) => (
+          <div class="bt-scene-card">
+            <p class="bt-scene-title">{scene.title}</p>
+            <p class="bt-scene-text">{scene.text}</p>
+          </div>
+        ))}
+      </div>
+      <p class="bt-note">
+        「全然自分と違う」と感じる方も多いはずです。
+        血液型のイメージは個人を正確に表せないことがほとんどです。
+      </p>
+    </section>
+
+    {/* ========== O型の詳細性格説明 ========== */}
+    <section class="bt-section" aria-labelledby="bt-detail-h2">
+      <h2 id="bt-detail-h2" class="bt-h2">O型性格の詳細解説</h2>
+      <div class="bt-detail-body">
+        <p class="bt-lead">{detail.description}</p>
+        <h3 class="bt-h3">リーダーシップと協調性のバランス</h3>
+        <p class="bt-lead">
+          日本の血液型文化でO型に語られる「リーダーシップ・推進力」は、
+          目標への強い牽引力になる一方、
+          意見の強さが「押しつけ」と感じられる場合があります。
+        </p>
+        <p class="bt-lead">
+          チームを率いる際に「なぜこの方向か」を丁寧に説明し、
+          異なる意見を積極的に引き出すプロセスを意識することで、
+          推進力と包容力を両立しやすくなるとされています。
+        </p>
+        <h3 class="bt-h3">おおらかさと細部への注意</h3>
+        <p class="bt-lead">
+          「大局優先・細かい段取りが抜けやすい」という傾向が語られますが、
+          これは「全体像を先に把握して動く」スタイルの裏面でもあります。
+          チェックリスト・確認の仕組み化・細かい部分を得意とするメンバーとの
+          役割分担が補完的に機能するとされています。
+        </p>
+        <h3 class="bt-h3">競争心と粘り強さの活かし方</h3>
+        <p class="bt-lead">
+          「目標達成への粘り強さ・競争心」は日本の血液型文化でO型の代表的な強みとして語られます。
+          この傾向を「他者との競争」ではなく「過去の自分との競争」に向けると、
+          長期的な成長に繋がりやすいとされています。
+          競争心は、チームのモチベーション向上にも活用できます。
+        </p>
+      </div>
+    </section>
+
+    {/* ========== ブラハラ警告 ========== */}
+    <section class="bt-section" aria-labelledby="bt-harassment-h2">
+      <h2 id="bt-harassment-h2" class="bt-h2">血液型ハラスメント（ブラハラ）への注意</h2>
+      <div class="bt-harassment-box" role="alert" aria-label="血液型ハラスメントの警告">
+        <p class="bt-harassment-lead">
+          「O型だからリーダーをやれ」「O型のくせに細かいね」など、
+          血液型を根拠にした役割の押しつけや揶揄は
+          <strong>血液型ハラスメント（ブラハラ）</strong>に該当する場合があります。
+        </p>
+        <ul class="bt-harassment-list">
+          <li>「O型だからまとめ役をやってもらう」——根拠なく役割を押しつける行為</li>
+          <li>「O型のくせに大雑把じゃないの？」——血液型イメージと異なる行動への揶揄</li>
+          <li>「O型は細かい仕事には向かない」——血液型を根拠にした能力の決めつけ</li>
+          <li>「O型だから採用しやすい/しにくい」——採用・評価への血液型適用</li>
+        </ul>
+        <div class="bt-harassment-important">
+          <p>
+            日本心理学会（2014）は「血液型と性格の科学的相関は認められない」と明言しています。
+            血液型による役割の押しつけや能力の決めつけは、科学的根拠のない差別的行為です。
+          </p>
+          <p>
+            本サイトは血液型を「自己理解と対話のきっかけ」として楽しむことを推奨しています。
+            <strong>血液型による結婚・採用・人間関係の判断は推奨しません。</strong>
+          </p>
+        </div>
+      </div>
+    </section>
+
+    {/* ========== 他タイプへのナビゲーション ========== */}
+    <section class="bt-section" aria-labelledby="bt-nav-h2">
+      <h2 id="bt-nav-h2" class="bt-h2">他の血液型の特徴を調べる</h2>
+      <div class="bt-type-nav-grid">
+        <a href="/diagnosis/blood-type/a/" class="bt-type-nav-card">
+          <span class="bt-type-nav-badge">A型</span>
+          <span class="bt-type-nav-name">几帳面な調和派</span>
+          <span class="bt-type-nav-link">A型の特徴を見る →</span>
+        </a>
+        <a href="/diagnosis/blood-type/b/" class="bt-type-nav-card">
+          <span class="bt-type-nav-badge">B型</span>
+          <span class="bt-type-nav-name">自由なマイペース探求派</span>
+          <span class="bt-type-nav-link">B型の特徴を見る →</span>
+        </a>
+        <a href="/diagnosis/blood-type/ab/" class="bt-type-nav-card">
+          <span class="bt-type-nav-badge">AB型</span>
+          <span class="bt-type-nav-name">独創的な合理派</span>
+          <span class="bt-type-nav-link">AB型の特徴を見る →</span>
+        </a>
+      </div>
+    </section>
+
+    {/* ========== 関連ページCTA ========== */}
+    <section class="bt-section" aria-labelledby="bt-cta-h2">
+      <h2 id="bt-cta-h2" class="bt-h2">関連する診断・ページ</h2>
+      <div class="bt-cta-grid">
+        <a href="/diagnosis/blood-compat/" class="bt-cta-card">
+          <h3 class="bt-cta-card-title">血液型相性診断</h3>
+          <p class="bt-cta-card-desc">
+            O型と他の血液型との相性スコアを確認。全10ペアの詳細解説つき。
+          </p>
+          <span class="bt-cta-card-link">相性診断を見る →</span>
+        </a>
+        <a href="/diagnosis/mbti/" class="bt-cta-card">
+          <h3 class="bt-cta-card-title">MBTI診断</h3>
+          <p class="bt-cta-card-desc">
+            心理学的根拠に基づく16タイプ分析。血液型と合わせて自己理解を深める。
+          </p>
+          <span class="bt-cta-card-link">MBTI診断を見る →</span>
+        </a>
+        <a href="/diagnosis/mbti-compat/" class="bt-cta-card">
+          <h3 class="bt-cta-card-title">MBTI相性一覧</h3>
+          <p class="bt-cta-card-desc">
+            16タイプ × 16タイプの相性をJung（1921）・Keirsey（1998）理論で解説。
+          </p>
+          <span class="bt-cta-card-link">MBTI相性を見る →</span>
+        </a>
+      </div>
+    </section>
+
+    {/* ========== FAQ ========== */}
+    <section class="bt-section" aria-labelledby="bt-faq-h2">
+      <h2 id="bt-faq-h2" class="bt-h2">よくある質問（FAQ）</h2>
+      <dl class="bt-faq-list">
+        {faqs.map(({ question, answer }) => (
+          <div class="bt-faq-item">
+            <dt class="bt-faq-q">
+              <span class="bt-faq-q-icon" aria-hidden="true">Q</span>
+              {question}
+            </dt>
+            <dd class="bt-faq-a">
+              <span class="bt-faq-a-icon" aria-hidden="true">A</span>
+              <span>{answer}</span>
+            </dd>
+          </div>
+        ))}
+      </dl>
+    </section>
+
+    {/* ========== ScienceNote ========== */}
+    <ScienceNote
+      basisText="古川竹二（1927）「血液型による気質の研究」・能見正比古（1971）の文化的研究・日本心理学会（2014）公式見解・Sakamoto & Yamazaki（2004）International Journal of Psychology 39(4)・縄田健悟（2014）心理学研究 85(2)を参照"
+      basisUrl="https://psych.or.jp/opinion/bl-personality/"
+      basisLabel="日本心理学会 公式見解（2014）"
+      notMedical={true}
+      updatedAt={UPDATED_AT}
+      additionalNote="血液型性格分類は日本独自の文化的現象です。国際的な心理学研究では科学的相関は確認されていません。本ページは文化的分類として傾向を参考提示しています。"
+    />
+
+    {/* ========== 参考文献 ========== */}
+    <ReferenceList references={references} confirmedAt={UPDATED_AT} />
+  </Container>
+</BaseLayout>
+
+<style>
+  :root {
+    --bt-primary: #e84393;
+    --bt-primary-dark: #c4307a;
+    --bt-text: var(--sn-text, #1f2937);
+    --bt-muted: var(--sn-muted, #6b7280);
+    --bt-border: var(--sn-border, #e5e7eb);
+    --bt-surface: var(--sn-surface, #f9fafb);
+    --bt-radius: 12px;
+  }
+  .bt-hero { background: linear-gradient(135deg, #fdf2f8 0%, #fce7f3 50%, #f9fafb 100%); padding: 3rem 0 2rem; border-bottom: 1px solid var(--bt-border); }
+  .bt-hero-inner { text-align: center; }
+  .bt-hero-badge { display: inline-block; background: rgba(232, 67, 147, 0.1); color: var(--bt-primary); border: 1px solid rgba(232, 67, 147, 0.3); border-radius: 999px; padding: 0.3rem 1rem; font-size: 0.8rem; font-weight: 600; margin-bottom: 1rem; }
+  .bt-hero-h1 { font-size: clamp(1.6rem, 5vw, 2.4rem); font-weight: 800; line-height: 1.3; color: var(--bt-text); margin: 0 0 0.8rem; }
+  .bt-hero-sub-title { display: block; font-size: clamp(0.95rem, 2.5vw, 1.15rem); font-weight: 600; color: var(--bt-primary); }
+  .bt-hero-catch { font-size: 0.97rem; color: var(--bt-muted); line-height: 1.8; margin: 0 0 1rem; }
+  .bt-hero-stats { display: flex; align-items: center; justify-content: center; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem; font-size: 0.9rem; }
+  .bt-stat strong { color: var(--bt-primary); font-size: 1.1rem; }
+  .bt-stat-sep { color: var(--bt-muted); }
+  .bt-disclaimer-top { max-width: 640px; margin: 0 auto; background: #fefce8; border: 1px solid #fde68a; border-radius: 8px; padding: 0.8rem 1rem; font-size: 0.85rem; color: #92400e; line-height: 1.7; text-align: left; }
+  .bt-disclaimer-top p { margin: 0; }
+  .bt-disclaimer-top a { color: #92400e; text-decoration: underline; }
+  .bt-section { margin: 3rem 0; }
+  .bt-h2 { font-size: clamp(1.2rem, 3vw, 1.5rem); font-weight: 800; color: var(--bt-text); margin: 0 0 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--bt-primary); }
+  .bt-h3 { font-size: 1.05rem; font-weight: 700; color: var(--bt-text); margin: 1.5rem 0 0.5rem; }
+  .bt-lead { font-size: 0.97rem; line-height: 1.8; color: var(--bt-text); margin: 0 0 1rem; }
+  .bt-note { font-size: 0.85rem; color: var(--bt-muted); line-height: 1.7; margin: 0.8rem 0 0; }
+  .bt-aio-block { background: #fdf2f8; border: 1px solid rgba(232, 67, 147, 0.2); border-radius: var(--bt-radius); padding: 1.2rem 1.5rem; margin: 1.5rem 0 2rem; }
+  .bt-aio-title { font-weight: 700; font-size: 0.95rem; color: var(--bt-primary); margin: 0 0 0.6rem; }
+  .bt-aio-list { margin: 0 0 0.8rem; padding-left: 1.4rem; font-size: 0.92rem; line-height: 1.7; color: var(--bt-text); }
+  .bt-aio-updated { font-size: 0.8rem; color: var(--bt-muted); margin: 0; }
+  .bt-aio-updated a { color: var(--bt-primary); }
+  .bt-history-card { background: #fff; border: 1px solid var(--bt-border); border-radius: var(--bt-radius); padding: 1.2rem 1.5rem; display: flex; flex-direction: column; gap: 1.2rem; margin-bottom: 1rem; }
+  .bt-history-item { display: grid; grid-template-columns: 5rem 1fr; gap: 1rem; align-items: flex-start; }
+  .bt-history-year { font-size: 0.82rem; font-weight: 700; color: var(--bt-primary); background: rgba(232, 67, 147, 0.08); padding: 0.2rem 0.4rem; border-radius: 4px; text-align: center; white-space: nowrap; }
+  .bt-history-title { font-size: 0.9rem; font-weight: 700; color: var(--bt-text); margin: 0 0 0.3rem; }
+  .bt-history-text { font-size: 0.88rem; line-height: 1.7; color: var(--bt-text); margin: 0; }
+  .bt-history-text a { color: var(--bt-primary); }
+  .bt-traits-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+  .bt-traits-col { border-radius: var(--bt-radius); padding: 1.2rem; }
+  .bt-traits-col--strengths { background: #d1fae5; }
+  .bt-traits-col--weaknesses { background: #fef3c7; }
+  .bt-traits-title { font-size: 0.9rem; font-weight: 700; margin: 0 0 0.8rem; }
+  .bt-traits-title--strengths { color: #065f46; }
+  .bt-traits-title--weaknesses { color: #92400e; }
+  .bt-traits-list { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 0.5rem; }
+  .bt-traits-item { display: flex; align-items: flex-start; gap: 0.5rem; font-size: 0.88rem; line-height: 1.6; color: var(--bt-text); }
+  .bt-traits-icon { width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 800; flex-shrink: 0; margin-top: 0.1rem; }
+  .bt-traits-icon--ok { background: #059669; color: #fff; }
+  .bt-traits-icon--caution { background: #f59e0b; color: #fff; }
+  .bt-disclaimer-box { background: #fefce8; border: 1px solid #fde68a; border-radius: 8px; padding: 0.8rem 1rem; font-size: 0.85rem; color: #92400e; line-height: 1.7; }
+  .bt-disclaimer-box p { margin: 0; }
+  .bt-styles-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; }
+  .bt-style-card { background: #fff; border: 1px solid var(--bt-border); border-radius: var(--bt-radius); padding: 1.2rem; }
+  .bt-style-icon { font-size: 1.5rem; margin-bottom: 0.4rem; display: block; }
+  .bt-style-title { font-size: 0.95rem; font-weight: 700; color: var(--bt-text); margin: 0 0 0.5rem; }
+  .bt-style-body { font-size: 0.88rem; line-height: 1.7; color: var(--bt-text); margin: 0 0 0.7rem; white-space: pre-line; }
+  .bt-style-examples { margin: 0; padding-left: 1.2rem; font-size: 0.82rem; line-height: 1.7; color: var(--bt-muted); }
+  .bt-scenes-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0.8rem; margin-bottom: 0.5rem; }
+  .bt-scene-card { background: #fdf2f8; border: 1px solid rgba(232, 67, 147, 0.15); border-radius: 8px; padding: 1rem; }
+  .bt-scene-title { font-size: 0.88rem; font-weight: 700; color: var(--bt-primary); margin: 0 0 0.4rem; }
+  .bt-scene-text { font-size: 0.85rem; line-height: 1.65; color: var(--bt-text); margin: 0; }
+  .bt-detail-body { background: #fff; border: 1px solid var(--bt-border); border-radius: var(--bt-radius); padding: 1.5rem; }
+  .bt-harassment-box { background: #fff7ed; border: 1.5px solid #f59e0b; border-radius: var(--bt-radius); padding: 1.2rem 1.5rem; }
+  .bt-harassment-lead { font-size: 0.95rem; line-height: 1.75; margin: 0 0 0.8rem; color: var(--bt-text); }
+  .bt-harassment-list { margin: 0 0 0.8rem; padding-left: 1.4rem; font-size: 0.9rem; line-height: 1.75; color: var(--bt-text); }
+  .bt-harassment-important { background: #fff; border: 1px solid #f59e0b; border-radius: 8px; padding: 0.8rem 1rem; font-size: 0.88rem; line-height: 1.7; color: #92400e; }
+  .bt-harassment-important p { margin: 0 0 0.5rem; }
+  .bt-harassment-important p:last-child { margin: 0; }
+  .bt-type-nav-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.8rem; }
+  .bt-type-nav-card { display: flex; flex-direction: column; align-items: flex-start; background: #fff; border: 1.5px solid var(--bt-border); border-radius: var(--bt-radius); padding: 1rem; text-decoration: none; color: var(--bt-text); transition: border-color 0.15s, box-shadow 0.15s; gap: 0.3rem; }
+  .bt-type-nav-card:hover { border-color: var(--bt-primary); box-shadow: 0 2px 8px rgba(232, 67, 147, 0.1); }
+  .bt-type-nav-badge { display: inline-block; background: var(--bt-primary); color: #fff; border-radius: 999px; padding: 0.15rem 0.7rem; font-size: 0.8rem; font-weight: 700; }
+  .bt-type-nav-name { font-size: 0.88rem; font-weight: 600; color: var(--bt-text); }
+  .bt-type-nav-link { font-size: 0.82rem; font-weight: 700; color: var(--bt-primary); margin-top: auto; }
+  .bt-cta-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; }
+  .bt-cta-card { display: flex; flex-direction: column; background: #fff; border: 1.5px solid var(--bt-border); border-radius: var(--bt-radius); padding: 1.2rem; text-decoration: none; color: var(--bt-text); transition: border-color 0.15s, box-shadow 0.15s; }
+  .bt-cta-card:hover { border-color: var(--bt-primary); box-shadow: 0 2px 8px rgba(232, 67, 147, 0.1); }
+  .bt-cta-card-title { font-size: 0.97rem; font-weight: 700; margin: 0 0 0.4rem; }
+  .bt-cta-card-desc { font-size: 0.87rem; line-height: 1.65; color: var(--bt-muted); margin: 0 0 0.8rem; flex: 1; }
+  .bt-cta-card-link { font-size: 0.87rem; font-weight: 700; color: var(--bt-primary); margin-top: auto; }
+  .bt-faq-list { display: flex; flex-direction: column; gap: 1rem; }
+  .bt-faq-item { background: #fff; border: 1px solid var(--bt-border); border-radius: var(--bt-radius); padding: 1.2rem; }
+  .bt-faq-q { display: flex; align-items: flex-start; gap: 0.6rem; font-weight: 700; font-size: 0.97rem; color: var(--bt-text); margin-bottom: 0.6rem; }
+  .bt-faq-q-icon { background: var(--bt-primary); color: #fff; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.78rem; font-weight: 800; flex-shrink: 0; }
+  .bt-faq-a { display: flex; align-items: flex-start; gap: 0.6rem; font-size: 0.92rem; line-height: 1.75; color: var(--bt-text); margin: 0; }
+  .bt-faq-a-icon { background: #d1fae5; color: #065f46; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.78rem; font-weight: 800; flex-shrink: 0; }
+  @media (max-width: 640px) {
+    .bt-traits-grid { grid-template-columns: 1fr; }
+    .bt-history-item { grid-template-columns: 1fr; }
+    .bt-history-year { width: fit-content; }
+  }
+</style>

@@ -1,0 +1,671 @@
+---
+/**
+ * AB型 性格・特徴 詳細ページ
+ * KW: AB型 性格 / AB型 特徴
+ *
+ * 学術根拠:
+ * - 古川竹二 (1927) 「血液型による気質の研究」心理学研究 第2巻第4号
+ * - 能見正比古 (1971) 『血液型でわかる相性』青春出版社
+ * - Sakamoto A, Yamazaki K (2004) International Journal of Psychology 39(4)
+ *   https://doi.org/10.1080/00207590344000248
+ * - 日本心理学会 公式見解（2014）https://psych.or.jp/opinion/bl-personality/
+ * - 縄田健悟 (2014) 心理学研究 85(2) https://doi.org/10.4992/jjpsy.85.13E0025
+ *
+ * YMYL回避: 医療・精神疾患・治療言及ゼロ
+ * disclaimer: 必須表示（科学的相関は限定的）
+ * ブラハラ警告: 必須セクション
+ *
+ * 確認日: 2026-05-21
+ */
+
+import BaseLayout from '../../../../layouts/BaseLayout.astro';
+import Container from '../../../../components/Container.astro';
+import TldrBlock from '../../../../components/TldrBlock.astro';
+import ScienceNote from '../../../../components/ScienceNote.astro';
+import ReferenceList from '../../../../components/ReferenceList.astro';
+import { typesDetail } from '../../../../data/diagnoses/blood-compat/types-detail';
+
+const SITE_URL = 'https://shindan-navi.jp';
+const PAGE_URL = `${SITE_URL}/diagnosis/blood-type/ab/`;
+const UPDATED_AT = '2026-05-21';
+
+const detail = typesDetail['AB'];
+
+const references = [
+  {
+    title: '血液型による気質の研究',
+    author: '古川竹二',
+    year: 1927,
+    publisher: '心理学研究 第2巻第4号',
+    url: 'https://www.jstage.jst.go.jp/browse/psycholres',
+  },
+  {
+    title: '血液型でわかる相性',
+    author: '能見正比古',
+    year: 1971,
+    publisher: '青春出版社',
+    url: 'https://www.seishun.co.jp/',
+  },
+  {
+    title: 'Blood-typical Personality Stereotypes and Self-fulfilling Prophecy',
+    author: 'Sakamoto A, Yamazaki K',
+    year: 2004,
+    publisher: 'International Journal of Psychology, 39(4), 275-285',
+    url: 'https://doi.org/10.1080/00207590344000248',
+  },
+  {
+    title: '「血液型と性格」の関連についての公式見解',
+    author: '日本心理学会',
+    year: 2014,
+    publisher: '日本心理学会',
+    url: 'https://psych.or.jp/opinion/bl-personality/',
+  },
+  {
+    title: '血液型と性格は無関係——血液型刻印効果の危険性',
+    author: '縄田健悟',
+    year: 2014,
+    publisher: '心理学研究 85(2)',
+    url: 'https://doi.org/10.4992/jjpsy.85.13E0025',
+  },
+];
+
+const faqs = [
+  {
+    question: 'AB型の性格の特徴を一言で表すと？',
+    answer:
+      '日本の血液型性格分類（古川 1927・能見 1971）では「独創的な合理派」と表現されます。洞察力・論理性・独自の視点が際立つとされますが、科学的相関は限定的です（日本心理学会 2014）。個人差が大きい点に注意してください。',
+  },
+  {
+    question: 'AB型が「謎が多い」「複雑」と言われる理由は何ですか？',
+    answer:
+      '能見正比古（1971）の血液型分類でAB型は「A型とB型の両方の特性を持つ二面性」として記述されました。几帳面な面とマイペースな面が状況によって切り替わるため、周囲から「何を考えているかわかりにくい」と感じられることがあると文化的に語られます。ただし日本心理学会（2014）は「血液型と性格の科学的相関は認められない」と明言しています。',
+  },
+  {
+    question: 'AB型の人数は日本で何%ですか？',
+    answer:
+      '日本での血液型別人口比率はAB型が約10%と最も少ない血液型です（参照: 日本赤十字社 https://www.jrc.or.jp/mr/blood_type/）。希少性から「変わり者」「個性的」というイメージが強まった側面があると指摘されることがあります。確認日: 2026-05-21。',
+  },
+  {
+    question: 'AB型に向いている仕事は何ですか？',
+    answer:
+      '血液型と職業適性の科学的相関は確認されていません（日本心理学会 2014）。日本の文化的分類の傾向として、独創性・論理思考・分析力が活かせる業務（企画・研究・分析・クリエイティブ系）との親和性が語られることがあります。実際の適職判断には適性検査・キャリアカウンセリングをご活用ください。',
+  },
+  {
+    question: 'AB型の恋愛傾向はどうですか？',
+    answer:
+      '日本の血液型性格分類では、AB型は「理性と感情のバランスを大切にした関係を求める。一度心を開いた相手とは深く誠実に向き合う」傾向があるとされています。ただしこれは文化的イメージであり、科学的根拠は限定的です。',
+  },
+  {
+    question: 'AB型と他の血液型の相性はどうですか？',
+    answer:
+      '血液型相性の科学的根拠は限定的です（日本心理学会 2014）。本サイトの血液型相性診断（/diagnosis/blood-compat/）ではAB型のスコア詳細を確認できます。実際の人間関係は価値観・対話・互いへの理解で大きく変わります。',
+  },
+  {
+    question: 'AB型の二面性を周囲に理解してもらうコツは？',
+    answer:
+      '日本の血液型分類でAB型に語られる「二面性」は文化的イメージです。仕事モードとプライベートモードの違いは多くの人に見られるものであり、血液型とは無関係です。「こういう状況ではこういう行動をしやすい」と言語化して伝えることが、相互理解の助けになるとされています。',
+  },
+  {
+    question: 'AB型が「変わり者」と言われることへの対処法は？',
+    answer:
+      '「AB型だから変わり者」という決めつけは血液型ハラスメント（ブラハラ）に該当する場合があります。日本心理学会（2014）は「血液型と性格の科学的相関は認められない」と明言しています。「AB型だから〇〇」という先入観には科学的根拠がありません。必要に応じて冷静に「血液型で性格は決まらない」と伝えることが有効です。',
+  },
+  {
+    question: 'AB型の独創性を仕事に活かすコツは？',
+    answer:
+      '日本の血液型分類で語られるAB型の傾向（独創性・論理思考・洞察力）を活かすには、自由に発想できる環境・前提を問い直せる文化・少ない制約でアウトプットできる場が有利とされます。ただし能力の根拠は血液型ではなく個人のスキルと経験です。',
+  },
+  {
+    question: 'AB型の「論理的すぎる」と言われる傾向はどう向き合えばいいですか？',
+    answer:
+      '日本の血液型分類でAB型に語られる「論理的・合理的な思考」は、複雑な問題を冷静に整理する強みになります。「なぜ感情的な反応をするのか」を論理で分析するより、相手の感情をそのまま受け取る時間を意識的に作ることで、人間関係の幅が広がるとされています。ただしこれは血液型とは無関係な一般的なコミュニケーションスキルです。',
+  },
+];
+
+// JSON-LD: Article
+const jsonLdArticle = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  '@id': `${PAGE_URL}#article`,
+  mainEntityOfPage: { '@type': 'WebPage', '@id': PAGE_URL },
+  headline: 'AB型の性格・特徴を徹底解説【独創的・二面性・知的・合理派の傾向とは】',
+  description:
+    '古川竹二（1927）・能見正比古（1971）の研究をもとにAB型の性格特徴を詳解。強み・気をつけたい傾向・仕事・恋愛・友人・家族スタイル・ブラハラ警告・FAQ10問を収録。科学的相関は限定的との免責明示あり。',
+  url: PAGE_URL,
+  datePublished: UPDATED_AT,
+  dateModified: UPDATED_AT,
+  inLanguage: 'ja',
+  author: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+    name: '診断ナビ',
+  },
+  publisher: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+    name: '診断ナビ',
+  },
+};
+
+const jsonLdFAQ = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  '@id': `${PAGE_URL}#faq`,
+  mainEntity: faqs.map(({ question, answer }) => ({
+    '@type': 'Question',
+    name: question,
+    acceptedAnswer: { '@type': 'Answer', text: answer },
+  })),
+};
+
+const jsonLdBreadcrumb = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  '@id': `${PAGE_URL}#breadcrumb`,
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'ホーム', item: SITE_URL },
+    { '@type': 'ListItem', position: 2, name: '診断一覧', item: `${SITE_URL}/diagnosis/` },
+    { '@type': 'ListItem', position: 3, name: '血液型タイプ別', item: `${SITE_URL}/diagnosis/blood-type/` },
+    { '@type': 'ListItem', position: 4, name: 'AB型の性格', item: PAGE_URL },
+  ],
+};
+
+const jsonLdAll = [jsonLdArticle, jsonLdFAQ, jsonLdBreadcrumb];
+---
+
+<BaseLayout
+  title="AB型の性格・特徴を徹底解説【独創的・二面性・知的・合理派の傾向とは】｜診断ナビ"
+  description="古川竹二（1927）・能見正比古（1971）の研究をもとにAB型の性格特徴を解説。強み4項目・気をつけたい傾向4項目・仕事/恋愛/友人/家族スタイル・ブラハラ警告・FAQ10問収録。科学的相関は限定的との免責明示あり。"
+  canonical={PAGE_URL}
+  jsonLd={jsonLdAll}
+  ogType="article"
+  publishDate={UPDATED_AT}
+  lastUpdated={UPDATED_AT}
+  breadcrumbs={[
+    { name: '診断一覧', url: '/diagnosis/' },
+    { name: '血液型タイプ別', url: '/diagnosis/blood-type/' },
+    { name: 'AB型の性格', url: '/diagnosis/blood-type/ab/' },
+  ]}
+>
+  {/* ========== ヒーロー ========== */}
+  <section class="bt-hero" aria-labelledby="bt-hero-h1">
+    <Container>
+      <div class="bt-hero-inner">
+        <div class="bt-hero-badge">古川竹二（1927）・能見正比古（1971）研究 + 日本心理学会見解</div>
+        <h1 id="bt-hero-h1" class="bt-hero-h1">
+          AB型の性格・特徴<br />
+          <span class="bt-hero-sub-title">独創的・二面性・知的・合理派の傾向を徹底解説</span>
+        </h1>
+        <p class="bt-hero-catch">
+          日本で最も人口が少なく、「謎が多い」と言われるAB型。<br />
+          古川竹二（1927）以来の文化的分類を正確に整理し、強みと気をつけたい傾向を解説します。
+        </p>
+        <div class="bt-hero-stats">
+          <span class="bt-stat">日本人口の約<strong>10%</strong></span>
+          <span class="bt-stat-sep">・</span>
+          <span class="bt-stat">最も少ない血液型</span>
+          <span class="bt-stat-sep">・</span>
+          <span class="bt-stat">確認日: <time datetime={UPDATED_AT}>{UPDATED_AT}</time></span>
+        </div>
+        <div class="bt-disclaimer-top" role="note" aria-label="免責事項">
+          <p>
+            本ページは日本の血液型性格分類文化を参考情報として解説します。
+            科学的に厳密な統計的相関は限定的です（<a href="https://psych.or.jp/opinion/bl-personality/" target="_blank" rel="noopener noreferrer">日本心理学会公式見解 2014</a>）。
+            自己理解の参考としてお楽しみください。
+          </p>
+        </div>
+      </div>
+    </Container>
+  </section>
+
+  <Container>
+    {/* ========== AIOブロック ========== */}
+    <div class="bt-aio-block" role="note" aria-label="このページでわかること">
+      <p class="bt-aio-title">このページでわかること</p>
+      <ul class="bt-aio-list">
+        <li>AB型の性格傾向（独創的・二面性・知的・合理的）の文化的・歴史的背景</li>
+        <li>強み4項目・気をつけたい傾向4項目・仕事/恋愛/友人/家族スタイル</li>
+        <li>AB型あるある場面3例・ブラハラ（血液型ハラスメント）警告</li>
+        <li>FAQ 10問・血液型相性診断・他タイプへの内部リンク</li>
+      </ul>
+      <p class="bt-aio-updated">
+        学術根拠:
+        <a href="https://www.jstage.jst.go.jp/browse/psycholres" target="_blank" rel="noopener noreferrer">古川（1927）</a>・
+        <a href="https://doi.org/10.1080/00207590344000248" target="_blank" rel="noopener noreferrer">Sakamoto & Yamazaki（2004）</a>・
+        <a href="https://psych.or.jp/opinion/bl-personality/" target="_blank" rel="noopener noreferrer">日本心理学会（2014）</a>
+        を確認済。
+      </p>
+    </div>
+
+    {/* ========== TL;DR ========== */}
+    <TldrBlock
+      title="AB型性格 ポイントまとめ"
+      points={[
+        '古川竹二（1927）の研究でAB型は「二面性・合理的・独創的」な気質傾向として記述された。能見正比古（1971）により「A型とB型の両方の特性を持つ複雑なタイプ」として日本全国に普及した',
+        '日本の文化的分類での主な傾向: 物事の本質を冷静に分析する洞察力と論理性・独自視点での独創力・状況に応じた柔軟な適応力・A型の丁寧さとB型の自由さを発揮できる二面性',
+        '気をつけたい傾向: 何を考えているか周囲に伝わりにくい不透明さ・気分や状況による態度変化が誤解を招く場合がある点・広い社交が負担になりやすい点',
+        '日本心理学会（2014）・縄田（2014）は「血液型と性格の科学的相関は認められない」と明言。AB型は日本で最も人口が少なく（約10%）、希少性が「変わり者」イメージを強めた面がある',
+        'AB型への「謎が多い」「変わり者」という決めつけはブラハラに該当する場合がある。科学的根拠のない偏見は人格を傷つける',
+      ]}
+      updatedAt={UPDATED_AT}
+      sourceLabel="日本心理学会 公式見解（2014）"
+      sourceUrl="https://psych.or.jp/opinion/bl-personality/"
+    />
+
+    {/* ========== AB型性格の文化的・歴史的背景 ========== */}
+    <section class="bt-section" aria-labelledby="bt-history-h2">
+      <h2 id="bt-history-h2" class="bt-h2">AB型性格の文化的・歴史的背景</h2>
+      <p class="bt-lead">
+        「AB型は謎が多い」「二面性がある」というイメージはどこから生まれたのでしょうか。
+        日本の血液型性格分類の起源を正確に整理します。
+      </p>
+      <div class="bt-history-card">
+        <div class="bt-history-item">
+          <span class="bt-history-year">1927年</span>
+          <div class="bt-history-body">
+            <p class="bt-history-title">古川竹二「血液型による気質の研究」</p>
+            <p class="bt-history-text">
+              <a href="https://www.jstage.jst.go.jp/browse/psycholres" target="_blank" rel="noopener noreferrer">心理学研究 第2巻第4号</a>
+              に発表。AB型を「二面性・合理的・独創的」と記述。
+              ABO式血液型でAB型は最後に発見された型であり、A型とB型の特性が混在するとの仮説が起源。
+            </p>
+          </div>
+        </div>
+        <div class="bt-history-item">
+          <span class="bt-history-year">1971年</span>
+          <div class="bt-history-body">
+            <p class="bt-history-title">能見正比古『血液型でわかる相性』（青春出版社）</p>
+            <p class="bt-history-text">
+              <a href="https://www.seishun.co.jp/" target="_blank" rel="noopener noreferrer">青春出版社</a>
+              刊。AB型を「複雑・個性的・天才肌・二面性がある」として定義。
+              日本社会に「AB型＝謎の人物」というイメージを広めた主要因となった。
+            </p>
+          </div>
+        </div>
+        <div class="bt-history-item">
+          <span class="bt-history-year">人口10%の希少性</span>
+          <div class="bt-history-body">
+            <p class="bt-history-title">日本人口の約10%という少なさ</p>
+            <p class="bt-history-text">
+              日本赤十字社の統計によると、AB型は日本人の約10%と最も少ない血液型です
+              （参照: <a href="https://www.jrc.or.jp/mr/blood_type/" target="_blank" rel="noopener noreferrer">日本赤十字社</a>）。
+              「あまり会わない」希少性が「謎めいた個性」のイメージをさらに強めた社会的側面があります。
+            </p>
+          </div>
+        </div>
+        <div class="bt-history-item">
+          <span class="bt-history-year">2004-2014年</span>
+          <div class="bt-history-body">
+            <p class="bt-history-title">Sakamoto & Yamazaki（2004）・日本心理学会（2014）</p>
+            <p class="bt-history-text">
+              <a href="https://doi.org/10.1080/00207590344000248" target="_blank" rel="noopener noreferrer">Sakamoto & Yamazaki（2004）</a>
+              はAB型への「変わり者」ステレオタイプが自己成就予言として機能することを指摘。
+              <a href="https://psych.or.jp/opinion/bl-personality/" target="_blank" rel="noopener noreferrer">日本心理学会（2014）</a>
+              は「血液型と性格の科学的相関は認められない」と公式表明した。
+            </p>
+          </div>
+        </div>
+      </div>
+      <p class="bt-note">
+        AB型の「謎が多い」イメージは「科学的事実」ではなく「日本独自の文化的分類のイメージ」です。
+        人口が少ないゆえのステレオタイプの固定化という側面も存在します。
+      </p>
+    </section>
+
+    {/* ========== 強みと気をつけたい傾向 ========== */}
+    <section class="bt-section" aria-labelledby="bt-traits-h2">
+      <h2 id="bt-traits-h2" class="bt-h2">AB型の強みと気をつけたい傾向</h2>
+      <p class="bt-lead">
+        以下は日本の血液型性格分類（古川 1927・能見 1971）に基づく傾向のイメージです。
+        個人差が大きく、科学的相関は限定的です。
+      </p>
+      <div class="bt-traits-grid">
+        <div class="bt-traits-col bt-traits-col--strengths">
+          <h3 class="bt-traits-title bt-traits-title--strengths">強みと得意なこと</h3>
+          <ul class="bt-traits-list">
+            {detail.strengths.map((s) => (
+              <li class="bt-traits-item">
+                <span class="bt-traits-icon bt-traits-icon--ok" aria-hidden="true">+</span>
+                <span>{s}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div class="bt-traits-col bt-traits-col--weaknesses">
+          <h3 class="bt-traits-title bt-traits-title--weaknesses">気をつけたい傾向</h3>
+          <ul class="bt-traits-list">
+            {detail.weaknesses.map((w) => (
+              <li class="bt-traits-item">
+                <span class="bt-traits-icon bt-traits-icon--caution" aria-hidden="true">!</span>
+                <span>{w}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+      <div class="bt-disclaimer-box" role="note" aria-label="免責事項">
+        <p>
+          上記はあくまで日本の文化的分類による傾向のイメージです。
+          血液型で個人の能力・性格・将来を断定することはできません（日本心理学会 2014）。
+        </p>
+      </div>
+    </section>
+
+    {/* ========== 仕事・恋愛・友人・家族スタイル ========== */}
+    <section class="bt-section" aria-labelledby="bt-styles-h2">
+      <h2 id="bt-styles-h2" class="bt-h2">AB型の各場面での傾向</h2>
+      <p class="bt-lead">
+        日本の血液型文化で語られる、仕事・恋愛・友人・家族場面での傾向をまとめます。
+        いずれも「文化的分類のイメージ」であり個人差が大きい点に注意してください。
+      </p>
+      <div class="bt-styles-grid">
+        <div class="bt-style-card">
+          <div class="bt-style-icon" aria-hidden="true">&#128188;</div>
+          <h3 class="bt-style-title">仕事スタイル</h3>
+          <p class="bt-style-body">{detail.workStyle}</p>
+          <ul class="bt-style-examples">
+            <li>企画・分析・リサーチ・クリエイティブ系業務</li>
+            <li>独自のアウトプットを生み出せる環境</li>
+            <li>前提を問い直して新しい解決策を探せる仕事</li>
+          </ul>
+        </div>
+        <div class="bt-style-card">
+          <div class="bt-style-icon" aria-hidden="true">&#10084;</div>
+          <h3 class="bt-style-title">恋愛スタイル</h3>
+          <p class="bt-style-body">{detail.loveStyle}</p>
+          <ul class="bt-style-examples">
+            <li>理性と感情のバランスを大切にした関係を好む</li>
+            <li>一度心を開くと深く誠実に向き合う</li>
+            <li>内面でつながれる相手との関係が長続きしやすい</li>
+          </ul>
+        </div>
+        <div class="bt-style-card">
+          <div class="bt-style-icon" aria-hidden="true">&#128101;</div>
+          <h3 class="bt-style-title">友人関係スタイル</h3>
+          <p class="bt-style-body">{detail.friendStyle}</p>
+          <ul class="bt-style-examples">
+            <li>少数の信頼できる友人を深く大切にする</li>
+            <li>知的な会話・独自の視点を共有できる相手と波長が合う</li>
+            <li>表面的な付き合いより内面でつながった関係を好む</li>
+          </ul>
+        </div>
+        <div class="bt-style-card">
+          <div class="bt-style-icon" aria-hidden="true">&#127968;</div>
+          <h3 class="bt-style-title">家族関係スタイル</h3>
+          <p class="bt-style-body">{detail.familyStyle}</p>
+          <ul class="bt-style-examples">
+            <li>論理的・公平に家族と関わろうとする傾向がある</li>
+            <li>感情的な言い合いより対話での問題解決を好む</li>
+            <li>各自の個性を尊重した関わり方を大切にする</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    {/* ========== AB型あるある場面 ========== */}
+    <section class="bt-section" aria-labelledby="bt-scenes-h2">
+      <h2 id="bt-scenes-h2" class="bt-h2">AB型あるある場面3例</h2>
+      <p class="bt-lead">
+        日本の血液型文化で「AB型らしい」とされる典型場面を紹介します。
+        当てはまる部分もそうでない部分も、個人差の大きさを実感するきっかけにしてください。
+      </p>
+      <div class="bt-scenes-grid">
+        {detail.typicalScenes.map((scene) => (
+          <div class="bt-scene-card">
+            <p class="bt-scene-title">{scene.title}</p>
+            <p class="bt-scene-text">{scene.text}</p>
+          </div>
+        ))}
+      </div>
+      <p class="bt-note">
+        「全然当てはまらない」と感じる方も多いはずです。
+        AB型は人口が少ないため、サンプル数が限られるほどステレオタイプが一人歩きしやすい特徴があります。
+      </p>
+    </section>
+
+    {/* ========== AB型の詳細性格説明 ========== */}
+    <section class="bt-section" aria-labelledby="bt-detail-h2">
+      <h2 id="bt-detail-h2" class="bt-h2">AB型性格の詳細解説</h2>
+      <div class="bt-detail-body">
+        <p class="bt-lead">{detail.description}</p>
+        <h3 class="bt-h3">「二面性」との向き合い方</h3>
+        <p class="bt-lead">
+          日本の血液型文化でAB型に語られる「二面性」は、
+          状況に応じてアプローチを柔軟に切り替えられる適応力とも読めます。
+          「仕事モードとプライベートモードが違う」こと自体は多くの人に共通しており、
+          AB型固有の特性ではありません。
+        </p>
+        <p class="bt-lead">
+          周囲から「何を考えているかわからない」と言われる場合、
+          考えている途中でも「今こういうことを考えている」と言語化・共有するプロセスが
+          相互理解の助けになるとされています。
+        </p>
+        <h3 class="bt-h3">独創性と論理性のバランス</h3>
+        <p class="bt-lead">
+          日本の血液型文化でAB型に語られる「独創性と論理性」の組み合わせは、
+          「なぜこうなっているのか」を疑う視点と
+          「こうすればより良くなる」と構造化する力が組み合わさった傾向です。
+        </p>
+        <p class="bt-lead">
+          この傾向を活かすには、既存の前提を問い直せる環境や、
+          自分のペースで深く考えられる時間が重要とされています。
+          「すぐ答えを出すこと」より「正しい問いを立てること」に注力できる
+          仕事環境が向いているとも語られます。
+        </p>
+        <h3 class="bt-h3">少人数との深い関係</h3>
+        <p class="bt-lead">
+          日本の血液型文化でAB型に語られる「広い社交より内面でつながった少数の関係を重視する」傾向は、
+          表面的な付き合いより本質的な対話を好む姿勢として語られます。
+          これは多くの内向的な傾向を持つ人に共通する特性であり、
+          血液型に固有のものではありません。
+        </p>
+      </div>
+    </section>
+
+    {/* ========== ブラハラ警告 ========== */}
+    <section class="bt-section" aria-labelledby="bt-harassment-h2">
+      <h2 id="bt-harassment-h2" class="bt-h2">血液型ハラスメント（ブラハラ）への注意</h2>
+      <div class="bt-harassment-box" role="alert" aria-label="血液型ハラスメントの警告">
+        <p class="bt-harassment-lead">
+          「AB型だから変わり者」「AB型は何考えているかわからない」など、
+          血液型を根拠にした決めつけや人格の否定は
+          <strong>血液型ハラスメント（ブラハラ）</strong>に該当する場合があります。
+          AB型は人口が少ないため「異質」「理解しにくい」という偏見を受けやすい傾向があります。
+        </p>
+        <ul class="bt-harassment-list">
+          <li>「AB型は変わり者だから採用を迷う」——採用・評価への血液型適用</li>
+          <li>「AB型は二面性があるから信用しにくい」——血液型を根拠にした人格否定</li>
+          <li>「AB型だから何考えているかわからない」——根拠のない先入観での疎外</li>
+          <li>「AB型と付き合うのは大変」——血液型を理由にした関係の排除</li>
+        </ul>
+        <div class="bt-harassment-important">
+          <p>
+            日本心理学会（2014）は「血液型と性格の科学的相関は認められない」と明言しています。
+            AB型への偏ったイメージは人口が少ないゆえの先入観が強まっている面があります。
+            科学的根拠のない決めつけで人を評価・排除することは差別的行為です。
+          </p>
+          <p>
+            本サイトは血液型を「自己理解と対話のきっかけ」として楽しむことを推奨しています。
+            <strong>血液型による結婚・採用・人間関係の判断は推奨しません。</strong>
+          </p>
+        </div>
+      </div>
+    </section>
+
+    {/* ========== 他タイプへのナビゲーション ========== */}
+    <section class="bt-section" aria-labelledby="bt-nav-h2">
+      <h2 id="bt-nav-h2" class="bt-h2">他の血液型の特徴を調べる</h2>
+      <div class="bt-type-nav-grid">
+        <a href="/diagnosis/blood-type/a/" class="bt-type-nav-card">
+          <span class="bt-type-nav-badge">A型</span>
+          <span class="bt-type-nav-name">几帳面な調和派</span>
+          <span class="bt-type-nav-link">A型の特徴を見る →</span>
+        </a>
+        <a href="/diagnosis/blood-type/b/" class="bt-type-nav-card">
+          <span class="bt-type-nav-badge">B型</span>
+          <span class="bt-type-nav-name">自由なマイペース探求派</span>
+          <span class="bt-type-nav-link">B型の特徴を見る →</span>
+        </a>
+        <a href="/diagnosis/blood-type/o/" class="bt-type-nav-card">
+          <span class="bt-type-nav-badge">O型</span>
+          <span class="bt-type-nav-name">頼れる社交的リーダー派</span>
+          <span class="bt-type-nav-link">O型の特徴を見る →</span>
+        </a>
+      </div>
+    </section>
+
+    {/* ========== 関連ページCTA ========== */}
+    <section class="bt-section" aria-labelledby="bt-cta-h2">
+      <h2 id="bt-cta-h2" class="bt-h2">関連する診断・ページ</h2>
+      <div class="bt-cta-grid">
+        <a href="/diagnosis/blood-compat/" class="bt-cta-card">
+          <h3 class="bt-cta-card-title">血液型相性診断</h3>
+          <p class="bt-cta-card-desc">
+            AB型と他の血液型との相性スコアを確認。全10ペアの詳細解説つき。
+          </p>
+          <span class="bt-cta-card-link">相性診断を見る →</span>
+        </a>
+        <a href="/diagnosis/mbti/" class="bt-cta-card">
+          <h3 class="bt-cta-card-title">MBTI診断</h3>
+          <p class="bt-cta-card-desc">
+            心理学的根拠に基づく16タイプ分析。血液型と合わせて自己理解を深める。
+          </p>
+          <span class="bt-cta-card-link">MBTI診断を見る →</span>
+        </a>
+        <a href="/diagnosis/mbti-compat/" class="bt-cta-card">
+          <h3 class="bt-cta-card-title">MBTI相性一覧</h3>
+          <p class="bt-cta-card-desc">
+            16タイプ × 16タイプの相性をJung（1921）・Keirsey（1998）理論で解説。
+          </p>
+          <span class="bt-cta-card-link">MBTI相性を見る →</span>
+        </a>
+      </div>
+    </section>
+
+    {/* ========== FAQ ========== */}
+    <section class="bt-section" aria-labelledby="bt-faq-h2">
+      <h2 id="bt-faq-h2" class="bt-h2">よくある質問（FAQ）</h2>
+      <dl class="bt-faq-list">
+        {faqs.map(({ question, answer }) => (
+          <div class="bt-faq-item">
+            <dt class="bt-faq-q">
+              <span class="bt-faq-q-icon" aria-hidden="true">Q</span>
+              {question}
+            </dt>
+            <dd class="bt-faq-a">
+              <span class="bt-faq-a-icon" aria-hidden="true">A</span>
+              <span>{answer}</span>
+            </dd>
+          </div>
+        ))}
+      </dl>
+    </section>
+
+    {/* ========== ScienceNote ========== */}
+    <ScienceNote
+      basisText="古川竹二（1927）「血液型による気質の研究」・能見正比古（1971）の文化的研究・日本心理学会（2014）公式見解・Sakamoto & Yamazaki（2004）International Journal of Psychology 39(4)・縄田健悟（2014）心理学研究 85(2)を参照"
+      basisUrl="https://psych.or.jp/opinion/bl-personality/"
+      basisLabel="日本心理学会 公式見解（2014）"
+      notMedical={true}
+      updatedAt={UPDATED_AT}
+      additionalNote="AB型は日本で人口が最も少ない血液型（約10%）です。希少性ゆえのステレオタイプ強化という社会的背景があります。血液型性格分類は日本独自の文化的現象であり、科学的相関は確認されていません。"
+    />
+
+    {/* ========== 参考文献 ========== */}
+    <ReferenceList references={references} confirmedAt={UPDATED_AT} />
+  </Container>
+</BaseLayout>
+
+<style>
+  :root {
+    --bt-primary: #e84393;
+    --bt-primary-dark: #c4307a;
+    --bt-text: var(--sn-text, #1f2937);
+    --bt-muted: var(--sn-muted, #6b7280);
+    --bt-border: var(--sn-border, #e5e7eb);
+    --bt-surface: var(--sn-surface, #f9fafb);
+    --bt-radius: 12px;
+  }
+  .bt-hero { background: linear-gradient(135deg, #fdf2f8 0%, #fce7f3 50%, #f9fafb 100%); padding: 3rem 0 2rem; border-bottom: 1px solid var(--bt-border); }
+  .bt-hero-inner { text-align: center; }
+  .bt-hero-badge { display: inline-block; background: rgba(232, 67, 147, 0.1); color: var(--bt-primary); border: 1px solid rgba(232, 67, 147, 0.3); border-radius: 999px; padding: 0.3rem 1rem; font-size: 0.8rem; font-weight: 600; margin-bottom: 1rem; }
+  .bt-hero-h1 { font-size: clamp(1.6rem, 5vw, 2.4rem); font-weight: 800; line-height: 1.3; color: var(--bt-text); margin: 0 0 0.8rem; }
+  .bt-hero-sub-title { display: block; font-size: clamp(0.95rem, 2.5vw, 1.15rem); font-weight: 600; color: var(--bt-primary); }
+  .bt-hero-catch { font-size: 0.97rem; color: var(--bt-muted); line-height: 1.8; margin: 0 0 1rem; }
+  .bt-hero-stats { display: flex; align-items: center; justify-content: center; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem; font-size: 0.9rem; }
+  .bt-stat strong { color: var(--bt-primary); font-size: 1.1rem; }
+  .bt-stat-sep { color: var(--bt-muted); }
+  .bt-disclaimer-top { max-width: 640px; margin: 0 auto; background: #fefce8; border: 1px solid #fde68a; border-radius: 8px; padding: 0.8rem 1rem; font-size: 0.85rem; color: #92400e; line-height: 1.7; text-align: left; }
+  .bt-disclaimer-top p { margin: 0; }
+  .bt-disclaimer-top a { color: #92400e; text-decoration: underline; }
+  .bt-section { margin: 3rem 0; }
+  .bt-h2 { font-size: clamp(1.2rem, 3vw, 1.5rem); font-weight: 800; color: var(--bt-text); margin: 0 0 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--bt-primary); }
+  .bt-h3 { font-size: 1.05rem; font-weight: 700; color: var(--bt-text); margin: 1.5rem 0 0.5rem; }
+  .bt-lead { font-size: 0.97rem; line-height: 1.8; color: var(--bt-text); margin: 0 0 1rem; }
+  .bt-note { font-size: 0.85rem; color: var(--bt-muted); line-height: 1.7; margin: 0.8rem 0 0; }
+  .bt-aio-block { background: #fdf2f8; border: 1px solid rgba(232, 67, 147, 0.2); border-radius: var(--bt-radius); padding: 1.2rem 1.5rem; margin: 1.5rem 0 2rem; }
+  .bt-aio-title { font-weight: 700; font-size: 0.95rem; color: var(--bt-primary); margin: 0 0 0.6rem; }
+  .bt-aio-list { margin: 0 0 0.8rem; padding-left: 1.4rem; font-size: 0.92rem; line-height: 1.7; color: var(--bt-text); }
+  .bt-aio-updated { font-size: 0.8rem; color: var(--bt-muted); margin: 0; }
+  .bt-aio-updated a { color: var(--bt-primary); }
+  .bt-history-card { background: #fff; border: 1px solid var(--bt-border); border-radius: var(--bt-radius); padding: 1.2rem 1.5rem; display: flex; flex-direction: column; gap: 1.2rem; margin-bottom: 1rem; }
+  .bt-history-item { display: grid; grid-template-columns: 7rem 1fr; gap: 1rem; align-items: flex-start; }
+  .bt-history-year { font-size: 0.78rem; font-weight: 700; color: var(--bt-primary); background: rgba(232, 67, 147, 0.08); padding: 0.2rem 0.4rem; border-radius: 4px; text-align: center; white-space: nowrap; }
+  .bt-history-title { font-size: 0.9rem; font-weight: 700; color: var(--bt-text); margin: 0 0 0.3rem; }
+  .bt-history-text { font-size: 0.88rem; line-height: 1.7; color: var(--bt-text); margin: 0; }
+  .bt-history-text a { color: var(--bt-primary); }
+  .bt-traits-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+  .bt-traits-col { border-radius: var(--bt-radius); padding: 1.2rem; }
+  .bt-traits-col--strengths { background: #d1fae5; }
+  .bt-traits-col--weaknesses { background: #fef3c7; }
+  .bt-traits-title { font-size: 0.9rem; font-weight: 700; margin: 0 0 0.8rem; }
+  .bt-traits-title--strengths { color: #065f46; }
+  .bt-traits-title--weaknesses { color: #92400e; }
+  .bt-traits-list { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 0.5rem; }
+  .bt-traits-item { display: flex; align-items: flex-start; gap: 0.5rem; font-size: 0.88rem; line-height: 1.6; color: var(--bt-text); }
+  .bt-traits-icon { width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 800; flex-shrink: 0; margin-top: 0.1rem; }
+  .bt-traits-icon--ok { background: #059669; color: #fff; }
+  .bt-traits-icon--caution { background: #f59e0b; color: #fff; }
+  .bt-disclaimer-box { background: #fefce8; border: 1px solid #fde68a; border-radius: 8px; padding: 0.8rem 1rem; font-size: 0.85rem; color: #92400e; line-height: 1.7; }
+  .bt-disclaimer-box p { margin: 0; }
+  .bt-styles-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; }
+  .bt-style-card { background: #fff; border: 1px solid var(--bt-border); border-radius: var(--bt-radius); padding: 1.2rem; }
+  .bt-style-icon { font-size: 1.5rem; margin-bottom: 0.4rem; display: block; }
+  .bt-style-title { font-size: 0.95rem; font-weight: 700; color: var(--bt-text); margin: 0 0 0.5rem; }
+  .bt-style-body { font-size: 0.88rem; line-height: 1.7; color: var(--bt-text); margin: 0 0 0.7rem; white-space: pre-line; }
+  .bt-style-examples { margin: 0; padding-left: 1.2rem; font-size: 0.82rem; line-height: 1.7; color: var(--bt-muted); }
+  .bt-scenes-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0.8rem; margin-bottom: 0.5rem; }
+  .bt-scene-card { background: #fdf2f8; border: 1px solid rgba(232, 67, 147, 0.15); border-radius: 8px; padding: 1rem; }
+  .bt-scene-title { font-size: 0.88rem; font-weight: 700; color: var(--bt-primary); margin: 0 0 0.4rem; }
+  .bt-scene-text { font-size: 0.85rem; line-height: 1.65; color: var(--bt-text); margin: 0; }
+  .bt-detail-body { background: #fff; border: 1px solid var(--bt-border); border-radius: var(--bt-radius); padding: 1.5rem; }
+  .bt-harassment-box { background: #fff7ed; border: 1.5px solid #f59e0b; border-radius: var(--bt-radius); padding: 1.2rem 1.5rem; }
+  .bt-harassment-lead { font-size: 0.95rem; line-height: 1.75; margin: 0 0 0.8rem; color: var(--bt-text); }
+  .bt-harassment-list { margin: 0 0 0.8rem; padding-left: 1.4rem; font-size: 0.9rem; line-height: 1.75; color: var(--bt-text); }
+  .bt-harassment-important { background: #fff; border: 1px solid #f59e0b; border-radius: 8px; padding: 0.8rem 1rem; font-size: 0.88rem; line-height: 1.7; color: #92400e; }
+  .bt-harassment-important p { margin: 0 0 0.5rem; }
+  .bt-harassment-important p:last-child { margin: 0; }
+  .bt-type-nav-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.8rem; }
+  .bt-type-nav-card { display: flex; flex-direction: column; align-items: flex-start; background: #fff; border: 1.5px solid var(--bt-border); border-radius: var(--bt-radius); padding: 1rem; text-decoration: none; color: var(--bt-text); transition: border-color 0.15s, box-shadow 0.15s; gap: 0.3rem; }
+  .bt-type-nav-card:hover { border-color: var(--bt-primary); box-shadow: 0 2px 8px rgba(232, 67, 147, 0.1); }
+  .bt-type-nav-badge { display: inline-block; background: var(--bt-primary); color: #fff; border-radius: 999px; padding: 0.15rem 0.7rem; font-size: 0.8rem; font-weight: 700; }
+  .bt-type-nav-name { font-size: 0.88rem; font-weight: 600; color: var(--bt-text); }
+  .bt-type-nav-link { font-size: 0.82rem; font-weight: 700; color: var(--bt-primary); margin-top: auto; }
+  .bt-cta-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; }
+  .bt-cta-card { display: flex; flex-direction: column; background: #fff; border: 1.5px solid var(--bt-border); border-radius: var(--bt-radius); padding: 1.2rem; text-decoration: none; color: var(--bt-text); transition: border-color 0.15s, box-shadow 0.15s; }
+  .bt-cta-card:hover { border-color: var(--bt-primary); box-shadow: 0 2px 8px rgba(232, 67, 147, 0.1); }
+  .bt-cta-card-title { font-size: 0.97rem; font-weight: 700; margin: 0 0 0.4rem; }
+  .bt-cta-card-desc { font-size: 0.87rem; line-height: 1.65; color: var(--bt-muted); margin: 0 0 0.8rem; flex: 1; }
+  .bt-cta-card-link { font-size: 0.87rem; font-weight: 700; color: var(--bt-primary); margin-top: auto; }
+  .bt-faq-list { display: flex; flex-direction: column; gap: 1rem; }
+  .bt-faq-item { background: #fff; border: 1px solid var(--bt-border); border-radius: var(--bt-radius); padding: 1.2rem; }
+  .bt-faq-q { display: flex; align-items: flex-start; gap: 0.6rem; font-weight: 700; font-size: 0.97rem; color: var(--bt-text); margin-bottom: 0.6rem; }
+  .bt-faq-q-icon { background: var(--bt-primary); color: #fff; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.78rem; font-weight: 800; flex-shrink: 0; }
+  .bt-faq-a { display: flex; align-items: flex-start; gap: 0.6rem; font-size: 0.92rem; line-height: 1.75; color: var(--bt-text); margin: 0; }
+  .bt-faq-a-icon { background: #d1fae5; color: #065f46; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.78rem; font-weight: 800; flex-shrink: 0; }
+  @media (max-width: 640px) {
+    .bt-traits-grid { grid-template-columns: 1fr; }
+    .bt-history-item { grid-template-columns: 1fr; }
+    .bt-history-year { width: fit-content; }
+  }
+</style>
