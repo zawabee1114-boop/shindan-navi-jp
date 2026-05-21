@@ -210,18 +210,29 @@ const faqTop = [
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>{title}</title>
   <meta name="description" content={description} />
+  <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
   <link rel="canonical" href={canonicalURL} />
+
+  <!-- hreflang（日本語単一言語サイト）-->
+  <link rel="alternate" hreflang="ja" href={canonicalURL} />
+  <link rel="alternate" hreflang="x-default" href={canonicalURL} />
 
   <!-- OGP -->
   <meta property="og:type" content="website" />
   <meta property="og:title" content={title} />
   <meta property="og:description" content={description} />
   <meta property="og:url" content={canonicalURL} />
+  <meta property="og:image" content="https://shindan-navi.jp/ogp-default.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="診断ナビ - 8診断統合自己理解プラットフォーム" />
   <meta property="og:site_name" content="診断ナビ" />
   <meta property="og:locale" content="ja_JP" />
   <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:site" content="@shindan_navi" />
   <meta name="twitter:title" content={title} />
   <meta name="twitter:description" content={description} />
+  <meta name="twitter:image" content="https://shindan-navi.jp/ogp-default.png" />
 
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -234,30 +245,64 @@ const faqTop = [
   <!-- デザイントークン -->
   <link rel="stylesheet" href="/src/styles/design-tokens.css" />
 
-  <!-- 構造化データ: WebSite -->
+  <!-- 構造化データ: Organization（@id連結の基盤・E-E-A-T強化）-->
+  <script type="application/ld+json">
+    {JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "@id": "https://shindan-navi.jp/#organization",
+      "name": "診断ナビ編集部",
+      "alternateName": "診断ナビ",
+      "url": "https://shindan-navi.jp",
+      "logo": {
+        "@type": "ImageObject",
+        "@id": "https://shindan-navi.jp/#logo",
+        "url": "https://shindan-navi.jp/favicon.svg",
+        "width": 32,
+        "height": 32
+      },
+      "foundingDate": "2026",
+      "areaServed": { "@type": "Country", "name": "日本" },
+      "sameAs": []
+    })}
+  </script>
+
+  <!-- 構造化データ: WebSite（@id連結・SearchAction）-->
   <script type="application/ld+json">
     {JSON.stringify({
       "@context": "https://schema.org",
       "@type": "WebSite",
+      "@id": "https://shindan-navi.jp/#website",
       "name": "診断ナビ",
       "url": "https://shindan-navi.jp",
       "description": "8診断統合で、仕事・恋愛・友人・家族・学校の5シーンの行動指針を提供する自己理解プラットフォーム",
+      "inLanguage": "ja-JP",
       "potentialAction": {
         "@type": "SearchAction",
         "target": {
           "@type": "EntryPoint",
-          "urlTemplate": "https://shindan-navi.jp/search/?q={search_term_string}"
+          "urlTemplate": "https://shindan-navi.jp/search?q={search_term_string}"
         },
         "query-input": "required name=search_term_string"
       },
       "publisher": {
         "@type": "Organization",
-        "name": "診断ナビ編集部",
-        "url": "https://shindan-navi.jp",
-        "email": "zawalab.info@gmail.com"
+        "@id": "https://shindan-navi.jp/#organization"
       }
     })}
   </script>
+
+  <!-- GA4 -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-S4WP0YRDWW"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-S4WP0YRDWW');
+  </script>
+
+  <!-- Google AdSense -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3827953973757487" crossorigin="anonymous"></script>
 
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }

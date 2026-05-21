@@ -1,6 +1,11 @@
 ---
 /**
  * SiteFooter.astro - グローバルフッター
+ * 内部リンク最適化: 2026-05-21 更新
+ * - 8診断全リンク追加（完璧主義・金銭感覚・星座追加）
+ * - 相性ツール・表・星座相性表を追加
+ * - シーン軸・FAQ・編集ポリシーを追加
+ * - 姉妹サイトリンク追加（相互リンク強化）
  */
 import siteMeta from '../data/site-meta.json';
 
@@ -8,36 +13,43 @@ const currentYear = new Date().getFullYear();
 
 const footerLinks = [
   {
-    heading: '診断',
+    heading: '性格診断',
     links: [
-      { label: 'MBTI診断', href: '/diagnosis/mbti/' },
-      { label: '血液型診断', href: '/diagnosis/ketsuekigata/' },
       { label: '多重知能テスト', href: '/diagnosis/multi-int/' },
+      { label: 'MBTI診断', href: '/diagnosis/mbti/' },
       { label: 'DiSC診断', href: '/diagnosis/disc/' },
+      { label: '完璧主義タイプ診断', href: '/diagnosis/perfectionism/' },
       { label: '恋愛スタイル診断', href: '/diagnosis/love-style/' },
+      { label: '金銭感覚診断', href: '/diagnosis/money-sense/' },
+      { label: '星座性格診断', href: '/diagnosis/seiza/' },
+      { label: '血液型性格診断', href: '/diagnosis/ketsuekigata/' },
     ],
   },
   {
-    heading: '相性',
+    heading: '相性診断',
     links: [
-      { label: '恋愛相性診断', href: '/aisei/renai/' },
-      { label: '友達相性診断', href: '/aisei/yujin/' },
-      { label: '夫婦相性診断', href: '/aisei/kazoku/fufu/' },
-      { label: '親子相性診断', href: '/aisei/kazoku/oyako/' },
+      { label: 'MBTI相性一覧', href: '/diagnosis/mbti-compat/' },
+      { label: 'MBTI恋愛相性', href: '/diagnosis/mbti-compat/love/' },
+      { label: '血液型相性診断', href: '/diagnosis/blood-compat/' },
+      { label: '友達相性診断', href: '/diagnosis/friend-compat/' },
+      { label: 'MBTI相性表', href: '/diagnosis/mbti-compat/table/' },
+      { label: '血液型相性表', href: '/diagnosis/blood-compat/table/' },
+      { label: '星座相性表', href: '/diagnosis/zodiac/compatibility/' },
     ],
   },
   {
-    heading: '機能',
+    heading: 'シーン別',
     links: [
-      { label: '強み発見診断', href: '/strengths/' },
+      { label: '診断一覧', href: '/diagnosis/' },
+      { label: 'よくある質問', href: '/faq/' },
       { label: 'PRO会員', href: '/pro/' },
-      { label: 'マイページ', href: '/me/' },
     ],
   },
   {
     heading: 'サイト情報',
     links: [
-      { label: '編集方針', href: '/about/' },
+      { label: '診断ナビについて', href: '/about/' },
+      { label: '編集ポリシー', href: '/editorial-policy/' },
       { label: 'プライバシーポリシー', href: '/privacy/' },
       { label: '利用規約', href: '/terms/' },
       { label: '免責事項', href: '/disclaimer/' },
@@ -63,6 +75,15 @@ const footerLinks = [
           </ul>
         </div>
       ))}
+    </div>
+
+    <!-- 姉妹サイトリンク（内部リンク強化・相互ネットワーク）-->
+    <div class="footer-sister">
+      <p class="footer-sister-label">姉妹サイト</p>
+      <ul class="footer-sister-links">
+        <li><a href="https://keisan-navi.jp" class="footer-sister-link" rel="noopener">計算ナビ</a></li>
+        <li><a href="https://template-free.jp" class="footer-sister-link" rel="noopener">テンプレートフリー</a></li>
+      </ul>
     </div>
 
     <!-- ブランド・コピーライト -->
@@ -91,7 +112,7 @@ const footerLinks = [
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: var(--sn-space-8);
-    margin-bottom: var(--sn-space-10);
+    margin-bottom: var(--sn-space-8);
   }
 
   @media (min-width: 768px) {
@@ -127,6 +148,41 @@ const footerLinks = [
   .footer-link:hover {
     color: #ffffff;
     text-decoration: none;
+  }
+
+  /* 姉妹サイト */
+  .footer-sister {
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    padding-top: var(--sn-space-4);
+    margin-bottom: var(--sn-space-6);
+    display: flex;
+    align-items: center;
+    gap: var(--sn-space-4);
+    flex-wrap: wrap;
+  }
+
+  .footer-sister-label {
+    font-size: var(--sn-text-xs);
+    color: var(--sn-muted);
+    white-space: nowrap;
+  }
+
+  .footer-sister-links {
+    list-style: none;
+    display: flex;
+    gap: var(--sn-space-4);
+    flex-wrap: wrap;
+  }
+
+  .footer-sister-link {
+    font-size: var(--sn-text-xs);
+    color: var(--sn-muted-light);
+    text-decoration: none;
+    transition: color var(--sn-dur-fast) var(--sn-ease);
+  }
+
+  .footer-sister-link:hover {
+    color: #ffffff;
   }
 
   .footer-bottom {

@@ -1,7 +1,7 @@
 ---
 /**
  * BaseLayout.astro - 診断ナビ 共通レイアウト
- * SEO/AIO/LLMO 基盤設定完了（2026-05-20）
+ * SEO/AIO/LLMO 基盤設定完了（2026-05-21 更新）
  * 準拠基準書: zawa-empire/docs/seo-aio/01-foundations.md / 02-structured-data.md
  *
  * テーマ変更ガイド:
@@ -93,6 +93,8 @@ const jsonLdArray = jsonLd
 // ============================================================
 
 // Organization JSON-LD（E-E-A-T強化・@id連結の基盤）
+// @id: https://shindan-navi.jp/#organization
+// 全ページの WebApplication.author / Article.publisher がここを参照する
 const organizationSchema = {
   '@context': 'https://schema.org',
   '@type': 'Organization',
@@ -102,9 +104,11 @@ const organizationSchema = {
   url: SITE_URL,
   logo: {
     '@type': 'ImageObject',
+    '@id': `${SITE_URL}/#logo`,
     url: `${SITE_URL}/favicon.svg`,
     width: 32,
     height: 32,
+    caption: '診断ナビ',
   },
   foundingDate: '2026',
   description: 'Big5（ビッグファイブ）を裏エンジンとして8診断を統合し、仕事・恋愛・友人・家族・学校の5シーンで具体的な行動指針を提供する自己理解プラットフォームを運営する編集部。心理学の標準モデルに基づく性格分類のみを扱い、占いやスピリチュアルは一切扱わない。',
@@ -149,10 +153,12 @@ const websiteSchema = {
 };
 
 // BreadcrumbList JSON-LD（breadcrumbs prop があるページのみ生成）
+// @id を付与してエンティティグラフに統合
 const breadcrumbSchema = breadcrumbs && breadcrumbs.length > 0
   ? {
       '@context': 'https://schema.org',
       '@type': 'BreadcrumbList',
+      '@id': `${pageUrl}#breadcrumb`,
       itemListElement: [
         {
           '@type': 'ListItem',
@@ -174,7 +180,19 @@ const breadcrumbSchema = breadcrumbs && breadcrumbs.length > 0
 const speakableSchema = {
   '@context': 'https://schema.org',
   '@type': 'WebPage',
+  '@id': `${pageUrl}#webpage`,
   url: pageUrl,
+  name: fullTitle,
+  description: description,
+  inLanguage: 'ja-JP',
+  isPartOf: {
+    '@type': 'WebSite',
+    '@id': `${SITE_URL}/#website`,
+  },
+  about: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+  },
   speakable: {
     '@type': 'SpeakableSpecification',
     cssSelector: ['.hero-description', 'h1', '.result-summary', '.tldr'],
@@ -227,6 +245,10 @@ const GSC_VERIFICATION = '';
   }
   <link rel="canonical" href={pageUrl} />
 
+  <!-- hreflang（日本語単一言語サイト）-->
+  <link rel="alternate" hreflang="ja" href={pageUrl} />
+  <link rel="alternate" hreflang="x-default" href={pageUrl} />
+
   <!-- Google Search Console 確認（CEO設定後に有効化）-->
   {GSC_VERIFICATION && (
     <meta name="google-site-verification" content={GSC_VERIFICATION} />
@@ -266,7 +288,10 @@ const GSC_VERIFICATION = '';
   <!-- ============================================================
        JSON-LD 構造化データ（全ページ共通）
        準拠: zawa-empire/docs/seo-aio/02-structured-data.md
-       @id 連結: Organization/#organization ← WebSite.publisher
+       @id 連結:
+         Organization/#organization  ← WebSite.publisher / WebPage.about
+         WebSite/#website            ← WebPage.isPartOf
+         WebPage/#webpage            ← BreadcrumbList / ページ別スキーマ
        ============================================================ -->
 
   <!-- Organization JSON-LD（E-E-A-T・@id連結の基盤）-->
@@ -275,13 +300,13 @@ const GSC_VERIFICATION = '';
   <!-- WebSite JSON-LD（SiteLinksSearchBox・SearchAction）-->
   <script type="application/ld+json" set:html={JSON.stringify(websiteSchema)} />
 
+  <!-- WebPage + Speakable JSON-LD（全ページ・エンティティグラフ統合）-->
+  <script type="application/ld+json" set:html={JSON.stringify(speakableSchema)} />
+
   <!-- BreadcrumbList JSON-LD（breadcrumbs prop があるページのみ）-->
   {breadcrumbSchema && (
     <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
   )}
-
-  <!-- Speakable JSON-LD（音声検索対応）-->
-  <script type="application/ld+json" set:html={JSON.stringify(speakableSchema)} />
 
   <!-- ページ別 JSON-LD（content-writer / seo-optimizer が個別設定）-->
   {jsonLdArray.map((schema) => (
