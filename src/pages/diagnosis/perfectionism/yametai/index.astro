@@ -1,0 +1,1189 @@
+---
+/**
+ * 完璧主義 やめたい - サブページ
+ * KW: 完璧主義 やめたい（VOL2,400/SD21）
+ * Phase 2 拡張: Week 5-6
+ *
+ * YMYL注意:
+ * - 「治す」「治療」「疾患」「障害」絶対NG
+ * - 「向き合う」「整える」「マネジメント」表現を使う
+ * - 専門家相談推奨を境界部分に明示
+ *
+ * 学術根拠:
+ * - Hewitt & Flett (1991) 多次元完璧主義尺度
+ * - Beck AT (1979) Cognitive Therapy of Depression
+ * - Neff KD (2003) Self-Compassion
+ * - Shafran R, Cooper Z, Fairburn CG (2002) Clinical perfectionism
+ *
+ * 確認日: 2026-05-21
+ */
+
+import BaseLayout from '../../../../layouts/BaseLayout.astro';
+import Container from '../../../../components/Container.astro';
+import TldrBlock from '../../../../components/TldrBlock.astro';
+import ReferenceList from '../../../../components/ReferenceList.astro';
+import ScienceNote from '../../../../components/ScienceNote.astro';
+
+const SITE_URL = 'https://shindan-navi.jp';
+const PAGE_URL = `${SITE_URL}/diagnosis/perfectionism/yametai/`;
+const UPDATED_AT = '2026-05-21';
+
+const title = '完璧主義をやめたい人へ｜CBTで向き合う5ステップ｜診断ナビ';
+const description =
+  '「完璧主義をやめたい」と感じた時の心理状態と、CBT（認知行動療法）で向き合う5ステップを解説。思考記録法・行動実験・セルフコンパッションの実践法と、4タイプ別の対処法を2026-05-21時点の情報でお届けします。';
+
+// JSON-LD: Article
+const jsonLdArticle = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  '@id': `${PAGE_URL}#article`,
+  headline: '完璧主義をやめたい人へ｜CBT（認知行動療法）で向き合う5ステップ',
+  description,
+  url: PAGE_URL,
+  datePublished: UPDATED_AT,
+  dateModified: UPDATED_AT,
+  inLanguage: 'ja',
+  author: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+    name: '診断ナビ',
+    url: SITE_URL,
+  },
+  publisher: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+    name: '診断ナビ',
+    url: SITE_URL,
+  },
+  about: {
+    '@type': 'Thing',
+    name: '完璧主義 向き合い方',
+  },
+  citation: [
+    {
+      '@type': 'ScholarlyArticle',
+      name: 'Perfectionism in the self and social contexts',
+      author: 'Hewitt PL, Flett GL',
+      datePublished: '1991',
+      url: 'https://doi.org/10.1037/0022-3514.60.3.456',
+    },
+    {
+      '@type': 'Book',
+      name: 'Cognitive Therapy of Depression',
+      author: 'Beck AT',
+      datePublished: '1979',
+    },
+    {
+      '@type': 'ScholarlyArticle',
+      name: 'Self-compassion: An alternative conceptualization of a healthy attitude toward oneself',
+      author: 'Neff KD',
+      datePublished: '2003',
+      url: 'https://doi.org/10.1207/S15327957PSPR0702_02',
+    },
+    {
+      '@type': 'ScholarlyArticle',
+      name: 'Clinical perfectionism: A cognitive-behavioural analysis',
+      author: 'Shafran R, Cooper Z, Fairburn CG',
+      datePublished: '2002',
+      url: 'https://doi.org/10.1016/S0005-7967(01)00059-6',
+    },
+  ],
+};
+
+// JSON-LD: HowTo（5ステップ）
+const jsonLdHowTo = {
+  '@context': 'https://schema.org',
+  '@type': 'HowTo',
+  '@id': `${PAGE_URL}#howto`,
+  name: 'CBTで完璧主義と向き合う5ステップ',
+  description:
+    '認知行動療法（CBT）の手法を活用して、完璧主義の傾向と無理なく向き合うための5ステップ。',
+  totalTime: 'PT30D',
+  step: [
+    {
+      '@type': 'HowToStep',
+      position: 1,
+      name: '認知の歪みに気づく',
+      text: '白黒思考・破滅化などの思考パターンを「認知の歪み」として認識する。「完璧でないと意味がない」という思考に気づくことが最初のステップ。',
+    },
+    {
+      '@type': 'HowToStep',
+      position: 2,
+      name: '思考記録法を実践する',
+      text: 'CBTの「思考記録表（Thought Record）」を使い、ストレスを感じた場面・自動思考・感情・証拠・別の見方を書き出す。認知の歪みを具体的に可視化する。',
+    },
+    {
+      '@type': 'HowToStep',
+      position: 3,
+      name: '行動実験で「完璧でなくても大丈夫」を体験する',
+      text: '「70点の成果を出して様子を見る」など、意図的に完璧でない行動をとり、実際の結果を観察する。多くの場合、想像より穏やかな結果が得られ、現実感覚が整う。',
+    },
+    {
+      '@type': 'HowToStep',
+      position: 4,
+      name: 'セルフコンパッションを練習する',
+      text: 'Neff（2003）のセルフコンパッション理論に基づき、自分を親友に接するように扱う。「この状況で同じように感じる人は多い」と視野を広げる自己への優しさを育てる。',
+    },
+    {
+      '@type': 'HowToStep',
+      position: 5,
+      name: 'プロセス重視に切り替える',
+      text: '「結果の完璧さ」から「取り組んだプロセス」へ評価軸を移す。毎日「今日うまくやれたこと」を1つ書き出す習慣で、プロセス重視の思考が定着していく。',
+    },
+  ],
+};
+
+// FAQ 10問
+const faqs = [
+  {
+    question: '完璧主義は本当にやめた方がいいですか？',
+    answer:
+      '完璧主義を「やめる」よりも「向き合い方を調整する」視点が現代心理学では主流です。Stoeber & Otto（2006）は完璧主義に「適応的」な側面もあると示しています。高い基準が仕事の質や信頼につながる場面もあるため、傾向ごとに活かす・整えるアプローチが有効です。',
+  },
+  {
+    question: '完璧主義をやめるのに何ヶ月かかりますか？',
+    answer:
+      '個人差があります。CBTを用いた介入研究では、6〜12週間のプログラムで思考パターンの変化が確認されています（Shafran et al., 2002）。日常的な練習で少しずつ変化が積み重なるため、「何ヶ月で完全にやめる」より「毎日小さな練習を続ける」視点の方が合いやすいです。',
+  },
+  {
+    question: 'CBTは自分で実践できますか？',
+    answer:
+      '基本的な思考記録法・行動実験・セルフコンパッション練習は、自己学習で始めることができます。書籍（『いやな気分よ、さようなら』バーンズ著など）やワークブックを活用すると実践しやすいです。ただし、日常生活に大きな支障が出ている場合は、臨床心理士・公認心理師への相談をご検討ください。',
+  },
+  {
+    question: '完璧主義をやめると仕事の質が下がりませんか？',
+    answer:
+      '「完璧主義をやめる」＝「手を抜く」ではありません。Stoeber & Otto（2006）の研究では、適応的完璧主義（高い基準 + 自分への柔軟さ）を持つ人の方が、不適応的完璧主義（高い基準 + 自己批判）より長期的にパフォーマンスが高い傾向があります。基準を下げるのではなく、自分への消耗を減らすことが目標です。',
+  },
+  {
+    question: '専門家に相談すべきタイミングはいつですか？',
+    answer:
+      '完璧主義の傾向が日常生活（睡眠・食事・人間関係・仕事）に継続して支障をきたしていると感じる場合は、臨床心理士・公認心理師・医師に相談することが選択肢のひとつです。本診断はあくまで自己理解の参考ツールであり、専門的な判断の代替にはなりません。',
+  },
+  {
+    question: 'やめようとする過程でつらくなったらどうすればいいですか？',
+    answer:
+      '変化の過程で一時的に不安や抵抗感が生じることはよくあります。無理に「やめる」スピードを上げず、できることから小さく始めることが大切です。つらさが続く場合は、一人で抱え込まず、信頼できる人や専門家に話すことを検討してください。',
+  },
+  {
+    question: '完璧主義な傾向を周りの人にどう伝えればいいですか？',
+    answer:
+      '「高い基準を持つ傾向がある」「細部が気になりやすい」のように、事実として伝えるのが効果的です。完璧主義診断の結果ページを共有することで、自分の傾向を第三者的な言葉で伝えやすくなります。',
+  },
+  {
+    question: '完璧主義でも仕事の評価が下がらない方法はありますか？',
+    answer:
+      '「優先度の高いタスクに完璧さを集中させ、他は80点で完了する」配分法が有効です。全てに100点を求めるのではなく、重要度に応じて基準を使い分けることで、評価を保ちながら消耗を減らせます。',
+  },
+  {
+    question: '完璧主義を活かす方法はありますか？',
+    answer:
+      '品質管理・編集・研究・法務・医療などの「精度が命」の仕事では完璧主義は大きな強みです。また、「徹底型」「こだわり型」の場合は品質保証・QAの役割で特に力を発揮します。自分のタイプに合った場面を選ぶことが、強みとして活かす近道です。',
+  },
+  {
+    question: '子どもの完璧主義をサポートしたい場合はどうすればいいですか？',
+    answer:
+      '結果より「取り組んだこと」を評価する声かけが重要です。「よく頑張ったね」より「やってみたことが大事」と伝えることで、プロセスへの注目を育てられます。子どもの完璧主義が日常生活に継続して支障をきたしている場合は、スクールカウンセラーや専門家に相談することも選択肢のひとつです。',
+  },
+];
+
+const jsonLdFAQ = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  '@id': `${PAGE_URL}#faq`,
+  mainEntity: faqs.map(({ question, answer }) => ({
+    '@type': 'Question',
+    name: question,
+    acceptedAnswer: { '@type': 'Answer', text: answer },
+  })),
+};
+
+const jsonLdBreadcrumb = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'ホーム', item: SITE_URL },
+    { '@type': 'ListItem', position: 2, name: '診断一覧', item: `${SITE_URL}/diagnosis/` },
+    {
+      '@type': 'ListItem',
+      position: 3,
+      name: '完璧主義診断',
+      item: `${SITE_URL}/diagnosis/perfectionism/`,
+    },
+    { '@type': 'ListItem', position: 4, name: '完璧主義をやめたい', item: PAGE_URL },
+  ],
+};
+
+const jsonLdAll = [jsonLdArticle, jsonLdHowTo, jsonLdFAQ, jsonLdBreadcrumb];
+
+// 参考文献
+const references = [
+  {
+    title:
+      'Perfectionism in the self and social contexts: Conceptualization, assessment, and association with psychopathology',
+    author: 'Hewitt PL, Flett GL',
+    year: 1991,
+    journal: 'Journal of Personality and Social Psychology',
+    volume: '60(3)',
+    pages: '456-470',
+    url: 'https://doi.org/10.1037/0022-3514.60.3.456',
+  },
+  {
+    title: 'Cognitive Therapy of Depression',
+    author: 'Beck AT',
+    year: 1979,
+    publisher: 'Guilford Press',
+  },
+  {
+    title:
+      'Self-compassion: An alternative conceptualization of a healthy attitude toward oneself',
+    author: 'Neff KD',
+    year: 2003,
+    journal: 'Self and Identity',
+    volume: '2(2)',
+    pages: '85-101',
+    url: 'https://doi.org/10.1207/S15327957PSPR0702_02',
+  },
+  {
+    title: 'Clinical perfectionism: A cognitive-behavioural analysis',
+    author: 'Shafran R, Cooper Z, Fairburn CG',
+    year: 2002,
+    journal: 'Behaviour Research and Therapy',
+    volume: '40(7)',
+    pages: '773-791',
+    url: 'https://doi.org/10.1016/S0005-7967(01)00059-6',
+  },
+  {
+    title: 'Positive conceptions of perfectionism: Approaches, evidence, challenges',
+    author: 'Stoeber J, Otto K',
+    year: 2006,
+    journal: 'Personality and Social Psychology Review',
+    volume: '10(4)',
+    pages: '295-319',
+    url: 'https://doi.org/10.1207/s15327957pspr1004_2',
+  },
+  {
+    title: 'The dimensions of perfectionism',
+    author: 'Frost RO, Marten P, Lahart C, Rosenblate R',
+    year: 1990,
+    journal: 'Cognitive Therapy and Research',
+    volume: '14(5)',
+    pages: '449-468',
+    url: 'https://doi.org/10.1007/BF01172967',
+  },
+];
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  canonical={PAGE_URL}
+  jsonLd={jsonLdAll}
+  ogType="article"
+  publishDate={UPDATED_AT}
+  lastUpdated={UPDATED_AT}
+  breadcrumbs={[
+    { name: '診断一覧', url: '/diagnosis/' },
+    { name: '完璧主義診断', url: '/diagnosis/perfectionism/' },
+    { name: '完璧主義をやめたい', url: '/diagnosis/perfectionism/yametai/' },
+  ]}
+>
+  <section class="ym-hero" aria-labelledby="ym-h1">
+    <Container>
+      <nav class="ym-breadcrumb" aria-label="パンくずリスト">
+        <ol class="ym-breadcrumb-list">
+          <li><a href="/">ホーム</a></li>
+          <li><a href="/diagnosis/">診断一覧</a></li>
+          <li><a href="/diagnosis/perfectionism/">完璧主義診断</a></li>
+          <li aria-current="page">やめたい</li>
+        </ol>
+      </nav>
+      <div class="ym-hero-inner">
+        <div class="ym-hero-badge">CBT（認知行動療法）視点</div>
+        <h1 id="ym-h1" class="ym-h1">
+          完璧主義を「やめたい」と思ったあなたへ
+          <span class="ym-h1-sub">CBT（認知行動療法）で向き合う5ステップ</span>
+        </h1>
+        <p class="ym-hero-meta">
+          <time datetime={UPDATED_AT}>{UPDATED_AT}</time> 時点の情報
+        </p>
+      </div>
+    </Container>
+  </section>
+
+  <Container>
+    <TldrBlock
+      title="このページでわかること"
+      points={[
+        '「完璧主義をやめたい」と感じる状態とは何か、心理学的な観点から説明します',
+        'CBT（認知行動療法）を活用した5ステップ（気づく→記録→実験→セルフコンパッション→プロセス重視）を具体的に解説します',
+        '完璧主義4タイプ（徹底型・こだわり型・先延ばし型・期待型）別の対処法と、完璧主義診断への導線を紹介します',
+      ]}
+      updatedAt={UPDATED_AT}
+      sourceLabel="Shafran et al. (2002) Clinical perfectionism"
+      sourceUrl="https://doi.org/10.1016/S0005-7967(01)00059-6"
+    />
+
+    {/* ========== 定義パラグラフ ========== */}
+    <section class="ym-section" aria-labelledby="ym-def-h2">
+      <h2 id="ym-def-h2" class="ym-h2">「完璧主義をやめたい」と感じる状態とは</h2>
+      <p class="ym-body">
+        「やめたい」という気持ちは、完璧主義の傾向が自分を消耗させていると感じているサインです。
+        完璧主義そのものが悪いわけではありません。
+        問題になるのは、高い基準が「自分を追いつめるコスト」を上回り始めたときです。
+      </p>
+      <p class="ym-body">
+        Shafran, Cooper & Fairburn（2002）は「臨床的完璧主義（Clinical Perfectionism）」を
+        「自己評価が自分で設定した高い基準への到達度だけに基づいている状態」と定義しています
+        （<a href="https://doi.org/10.1016/S0005-7967(01)00059-6" target="_blank" rel="noopener noreferrer">Shafran et al., 2002</a>、2026-05-21確認）。
+        この状態では、どれだけ成果を出しても「まだ足りない」という感覚が続き、
+        達成感より消耗感が先に来るようになります。
+      </p>
+      <p class="ym-body">
+        「やめたい」という感覚は、この消耗に気づいた重要なシグナルです。
+        問題を認識できているということは、変化の入口に立っているということでもあります。
+      </p>
+    </section>
+
+    {/* ========== やめたいと思う5サイン ========== */}
+    <section class="ym-section" aria-labelledby="ym-signs-h2">
+      <h2 id="ym-signs-h2" class="ym-h2">「完璧主義をやめたい」と感じる時の心理状態・5つのサイン</h2>
+      <p class="ym-body">
+        次の5つのサインが続いている場合、完璧主義の傾向と向き合う時期かもしれません。
+      </p>
+      <ol class="ym-sign-list">
+        <li class="ym-sign-item">
+          <span class="ym-sign-num">1</span>
+          <div class="ym-sign-body">
+            <strong class="ym-sign-title">どんな成果でも満足できない</strong>
+            <p class="ym-sign-desc">
+              提出した後も「もっとうまくできたはず」という感覚が続く。
+              達成感より次の不足点が先に目に入る状態。
+            </p>
+          </div>
+        </li>
+        <li class="ym-sign-item">
+          <span class="ym-sign-num">2</span>
+          <div class="ym-sign-body">
+            <strong class="ym-sign-title">ミスへの恐れが行動を止める</strong>
+            <p class="ym-sign-desc">
+              「失敗したらどうしよう」という不安が先に立ち、
+              スタートが遅れたり、やめることができなかったりする。
+            </p>
+          </div>
+        </li>
+        <li class="ym-sign-item">
+          <span class="ym-sign-num">3</span>
+          <div class="ym-sign-body">
+            <strong class="ym-sign-title">疲れているのにやめられない</strong>
+            <p class="ym-sign-desc">
+              体や気持ちが疲弊しているのに「まだ終わっていない」と感じて休めない。
+              オフの時間も頭の中で仕事が続いている状態。
+            </p>
+          </div>
+        </li>
+        <li class="ym-sign-item">
+          <span class="ym-sign-num">4</span>
+          <div class="ym-sign-body">
+            <strong class="ym-sign-title">他者の「十分」が自分には届かない</strong>
+            <p class="ym-sign-desc">
+              周囲が「いいよ」「十分だよ」と言っても、自分の基準に届いていないと感じる。
+              他者の評価と自己評価のギャップが大きい。
+            </p>
+          </div>
+        </li>
+        <li class="ym-sign-item">
+          <span class="ym-sign-num">5</span>
+          <div class="ym-sign-body">
+            <strong class="ym-sign-title">「やめたい」と思い始めた</strong>
+            <p class="ym-sign-desc">
+              この傾向が自分にとってコストになっていると気づいている。
+              「もっと楽に生きたい」という気持ちが出てきている。
+            </p>
+          </div>
+        </li>
+      </ol>
+    </section>
+
+    {/* ========== CBT 5ステップ（最重要） ========== */}
+    <section class="ym-section" aria-labelledby="ym-cbt-h2">
+      <h2 id="ym-cbt-h2" class="ym-h2">CBT（認知行動療法）で完璧主義と向き合う5ステップ</h2>
+      <p class="ym-body">
+        CBT（Cognitive Behavioral Therapy / 認知行動療法）は、思考・感情・行動の関係を整える心理学的アプローチです。
+        Beck（1979）が体系化し、Shafran et al.（2002）が完璧主義への適用を研究しています。
+        以下の5ステップは、自己学習で始めることができる基本的な実践法です。
+      </p>
+
+      <div class="ym-step-block">
+        <div class="ym-step-card">
+          <div class="ym-step-header">
+            <span class="ym-step-num" aria-hidden="true">Step 1</span>
+            <h3 class="ym-step-title">認知の歪みに気づく（白黒思考・破滅化）</h3>
+          </div>
+          <div class="ym-step-body">
+            <p>
+              完璧主義の思考には「認知の歪み」が伴いやすいとされています（Beck, 1979）。
+              代表的なパターンを把握することが、最初のステップです。
+            </p>
+            <table class="ym-table">
+              <caption class="ym-table-caption">完璧主義に多い認知の歪みパターン</caption>
+              <thead>
+                <tr>
+                  <th scope="col">歪みの種類</th>
+                  <th scope="col">特徴</th>
+                  <th scope="col">例</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>白黒思考（All-or-nothing thinking）</td>
+                  <td>「完璧か失敗か」の二択で評価する</td>
+                  <td>「95点は失敗だ」</td>
+                </tr>
+                <tr>
+                  <td>破滅化（Catastrophizing）</td>
+                  <td>小さなミスが最悪の結果につながると感じる</td>
+                  <td>「1か所ミスしたら全て台無しだ」</td>
+                </tr>
+                <tr>
+                  <td>過度な一般化（Overgeneralization）</td>
+                  <td>1回の失敗を「いつも」に拡大する</td>
+                  <td>「また失敗した。自分はダメだ」</td>
+                </tr>
+                <tr>
+                  <td>フィルタリング（Mental filter）</td>
+                  <td>ネガティブな点だけに注目する</td>
+                  <td>「褒められても欠点しか目に入らない」</td>
+                </tr>
+              </tbody>
+            </table>
+            <p class="ym-step-tip">
+              <strong>実践:</strong>
+              「今、どんな思考パターンが出ているか」を、上の表と照らし合わせて確認してみてください。
+              名前をつけるだけで客観視しやすくなります。
+            </p>
+          </div>
+        </div>
+
+        <div class="ym-step-card">
+          <div class="ym-step-header">
+            <span class="ym-step-num" aria-hidden="true">Step 2</span>
+            <h3 class="ym-step-title">思考記録法（CBT Thought Record）を実践する</h3>
+          </div>
+          <div class="ym-step-body">
+            <p>
+              思考記録法（Thought Record）はCBTの基本ツールです。
+              ストレスを感じた場面を書き出し、思考の歪みを可視化します。
+            </p>
+            <div class="ym-example-box">
+              <p class="ym-example-label">記録の例</p>
+              <table class="ym-table">
+                <tbody>
+                  <tr>
+                    <th scope="row">状況</th>
+                    <td>報告書を提出したが、1か所表記ミスを後で発見した</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">自動思考</th>
+                    <td>「あのミスでこの報告書は台無しだ。信頼を失った」</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">感情（強さ0-100）</th>
+                    <td>不安85、自己嫌悪70</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">証拠（思考を支持するもの）</th>
+                    <td>実際にミスがあった</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">証拠（思考に反するもの）</th>
+                    <td>内容自体は正確だった。上司からの指摘もなかった</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">別の見方</th>
+                    <td>「1か所のミスで信頼が崩れるわけではない。修正して次につなげればいい」</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">感情（再評価）</th>
+                    <td>不安40、自己嫌悪30</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="ym-step-tip">
+              <strong>実践:</strong>
+              紙やノートに書く形式でOKです。スマートフォンのメモでも始められます。
+              続けることで「パターンに気づく力」が養われます。
+            </p>
+          </div>
+        </div>
+
+        <div class="ym-step-card">
+          <div class="ym-step-header">
+            <span class="ym-step-num" aria-hidden="true">Step 3</span>
+            <h3 class="ym-step-title">行動実験で「完璧でなくても大丈夫」を実体験する</h3>
+          </div>
+          <div class="ym-step-body">
+            <p>
+              行動実験は「考え方を変えること」でなく「体験から学ぶこと」で変化を促すCBTの技法です。
+              完璧主義への行動実験では「意図的に完璧でない成果を出し、実際の反応を観察する」ことを行います。
+            </p>
+            <ul class="ym-list">
+              <li>メールの返信を「丁寧すぎない文章」で送ってみる</li>
+              <li>提案資料を「70点の状態」で共有し、フィードバックを受ける</li>
+              <li>家の掃除を「全部でなく1か所だけ」で今日は完了とする</li>
+            </ul>
+            <p class="ym-body">
+              多くの場合、実際の周囲の反応は自分が想像したよりも穏やかです。
+              この体験を繰り返すことで「完璧でなくても問題なかった」という現実の証拠が積み重なります。
+            </p>
+          </div>
+        </div>
+
+        <div class="ym-step-card">
+          <div class="ym-step-header">
+            <span class="ym-step-num" aria-hidden="true">Step 4</span>
+            <h3 class="ym-step-title">自己への思いやり（セルフコンパッション）を育てる</h3>
+          </div>
+          <div class="ym-step-body">
+            <p>
+              Neff（2003）が提唱するセルフコンパッション（Self-Compassion）は、
+              自己批判の代わりに「自分を親友に接するように扱う」心理的スキルです
+              （<a href="https://doi.org/10.1207/S15327957PSPR0702_02" target="_blank" rel="noopener noreferrer">Neff, 2003</a>、2026-05-21確認）。
+            </p>
+            <p class="ym-body">セルフコンパッションの3つの要素:</p>
+            <div class="ym-cards-row">
+              <div class="ym-mini-card">
+                <p class="ym-mini-card-title">自己への優しさ</p>
+                <p class="ym-mini-card-desc">
+                  自己批判の代わりに、失敗や欠点を温かく受け入れる。
+                </p>
+              </div>
+              <div class="ym-mini-card">
+                <p class="ym-mini-card-title">人間共通の経験</p>
+                <p class="ym-mini-card-desc">
+                  「完璧にできないのは自分だけ」ではなく、誰もが感じることと認識する。
+                </p>
+              </div>
+              <div class="ym-mini-card">
+                <p class="ym-mini-card-title">マインドフルな観察</p>
+                <p class="ym-mini-card-desc">
+                  感情を抑圧せず、距離をとって「今、自分はこう感じている」と観察する。
+                </p>
+              </div>
+            </div>
+            <p class="ym-step-tip">
+              <strong>実践:</strong>
+              ミスをしたとき「親友が同じ失敗をしたら、自分は何と言うか？」と問いかけてみてください。
+              多くの場合、自分には言えない優しい言葉をかけられるはずです。
+            </p>
+          </div>
+        </div>
+
+        <div class="ym-step-card">
+          <div class="ym-step-header">
+            <span class="ym-step-num" aria-hidden="true">Step 5</span>
+            <h3 class="ym-step-title">プロセス重視への評価軸の切り替え</h3>
+          </div>
+          <div class="ym-step-body">
+            <p>
+              完璧主義の評価軸は「結果の完璧さ」に集中しがちです。
+              この評価軸を「取り組んだプロセス」へ少しずつ移すことが、
+              長期的に消耗しない向き合い方の核心です。
+            </p>
+            <ul class="ym-list">
+              <li>毎日「今日うまくやれたこと」を1つ書き出す（内容の出来不出来ではなく、取り組んだこと自体）</li>
+              <li>作業終了時に「結果」でなく「今日のプロセスで良かった点」を1分間振り返る</li>
+              <li>週1回「完璧でなかったが、それでも前進できたこと」を書き留める</li>
+            </ul>
+            <p class="ym-body">
+              評価軸の移行は数週間・数ヶ月単位で少しずつ起きるものです。
+              「すぐに変わらないといけない」と思わず、プロセスを積み重ねる視点で取り組むことが大切です。
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    {/* ========== 4タイプ別対処法 ========== */}
+    <section class="ym-section" aria-labelledby="ym-types-h2">
+      <h2 id="ym-types-h2" class="ym-h2">4タイプ別「やめたい時」の向き合い方</h2>
+      <p class="ym-body">
+        完璧主義のタイプによって、「やめたい」と感じる原因と有効な対処法が異なります。
+        自分のタイプを把握してから取り組むと、より効果的です。
+      </p>
+
+      <div class="ym-type-grid">
+        <div class="ym-type-card ym-type-card--thorough">
+          <div class="ym-type-header">
+            <span class="ym-type-icon" aria-hidden="true">🔱</span>
+            <h3 class="ym-type-title">徹底型（自己志向型）</h3>
+          </div>
+          <p class="ym-type-cause"><strong>「やめたい」の主な原因:</strong> 自分への評価が厳しく、達成感がなかなか得られない</p>
+          <ul class="ym-type-tips">
+            <li>「今の自分の最善」を正解と再定義する練習を積む</li>
+            <li>完了した作業の「良かった点」を先に3つ書く（不足点より先に）</li>
+            <li>期限内の完成を成功とルール化し、自己評価の基準をずらす</li>
+          </ul>
+        </div>
+
+        <div class="ym-type-card ym-type-card--particular">
+          <div class="ym-type-header">
+            <span class="ym-type-icon" aria-hidden="true">⚙️</span>
+            <h3 class="ym-type-title">こだわり型（組織化志向型）</h3>
+          </div>
+          <p class="ym-type-cause"><strong>「やめたい」の主な原因:</strong> こだわりが柔軟性を下げ、環境の変化に消耗する</p>
+          <ul class="ym-type-tips">
+            <li>「100点を目指すタスク」と「80点で完了タスク」を事前に分類する</li>
+            <li>週1回「整っていなくてもいい時間」を意図的に設ける</li>
+            <li>「手順が違っても結果が同じなら正解」を体験で積み重ねる</li>
+          </ul>
+        </div>
+
+        <div class="ym-type-card ym-type-card--procrastinating">
+          <div class="ym-type-header">
+            <span class="ym-type-icon" aria-hidden="true">⏳</span>
+            <h3 class="ym-type-title">先延ばし型（失敗回避型）</h3>
+          </div>
+          <p class="ym-type-cause"><strong>「やめたい」の主な原因:</strong> 完璧にできない恐れが行動を止め、機会を逃す</p>
+          <ul class="ym-type-tips">
+            <li>「完璧でなくていいから5分だけ始める」ルールを設ける</li>
+            <li>「着手した」こと自体を成功とカウントする習慣をつける</li>
+            <li>過去に「準備不足でもうまくいった体験」を書き出し証拠として持つ</li>
+          </ul>
+        </div>
+
+        <div class="ym-type-card ym-type-card--expecting">
+          <div class="ym-type-header">
+            <span class="ym-type-icon" aria-hidden="true">🌟</span>
+            <h3 class="ym-type-title">期待型（社会規定型）</h3>
+          </div>
+          <p class="ym-type-cause"><strong>「やめたい」の主な原因:</strong> 他者の期待に応え続け、自分の気持ちが後回しになる</p>
+          <ul class="ym-type-tips">
+            <li>「これは誰のためにやっているか」を日常的に確認する習慣をつける</li>
+            <li>1日1回「自分が本当にやりたかったこと」を書き出す</li>
+            <li>「他者から完璧を求められている」と感じたとき、実際に言われたか確認する</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="ym-cta-box">
+        <p class="ym-cta-text">自分のタイプがわからない場合は、まず診断から始めましょう。</p>
+        <a href="/diagnosis/perfectionism/" class="ym-cta-btn">
+          あなたの完璧主義タイプを診断する（無料・3分）
+          <span aria-hidden="true">→</span>
+        </a>
+      </div>
+    </section>
+
+    {/* ========== ScienceNote ========== */}
+    <ScienceNote
+      basisText="CBT（認知行動療法）は Beck（1979）が体系化した心理学的アプローチです。Shafran, Cooper & Fairburn（2002）が完璧主義への適用を研究し、思考記録法・行動実験・セルフコンパッション（Neff, 2003）を組み合わせたアプローチが有効とされています。本ページは自己理解・傾向把握のための情報提供を目的としており、心理療法・医療の代替ではありません。"
+      basisUrl="https://doi.org/10.1016/S0005-7967(01)00059-6"
+      basisLabel="Shafran et al. (2002) Behaviour Research and Therapy"
+      notMedical={true}
+      updatedAt={UPDATED_AT}
+      additionalNote="日常生活に継続して支障が出ている場合は、臨床心理士・公認心理師・医師への相談を検討してください。"
+    />
+
+    {/* ========== FAQ ========== */}
+    <section class="ym-section" aria-labelledby="ym-faq-h2">
+      <h2 id="ym-faq-h2" class="ym-h2">よくある質問</h2>
+      <dl class="ym-faq-list">
+        {faqs.map(({ question, answer }) => (
+          <div class="ym-faq-item">
+            <dt class="ym-faq-q">{question}</dt>
+            <dd class="ym-faq-a">{answer}</dd>
+          </div>
+        ))}
+      </dl>
+    </section>
+
+    {/* ========== 関連ページ ========== */}
+    <section class="ym-section" aria-labelledby="ym-related-h2">
+      <h2 id="ym-related-h2" class="ym-h2">もっと深く知る</h2>
+      <ul class="ym-related-list">
+        <li class="ym-related-item">
+          <a href="/diagnosis/perfectionism/" class="ym-related-link">
+            <span class="ym-related-icon" aria-hidden="true">📋</span>
+            <span class="ym-related-body">
+              <span class="ym-related-title">完璧主義診断（メイン）</span>
+              <span class="ym-related-desc">28問・約3分でタイプを判定。仕事・恋愛・CBTTipsを確認</span>
+            </span>
+          </a>
+        </li>
+        <li class="ym-related-item">
+          <a href="/diagnosis/perfectionism/naoshikata/" class="ym-related-link">
+            <span class="ym-related-icon" aria-hidden="true">🔬</span>
+            <span class="ym-related-body">
+              <span class="ym-related-title">完璧主義の向き合い方ガイド</span>
+              <span class="ym-related-desc">CBT・ACT・マインドフルネス・セルフコンパッションを科学的に整理</span>
+            </span>
+          </a>
+        </li>
+        <li class="ym-related-item">
+          <a href="/diagnosis/perfectionism/work/" class="ym-related-link">
+            <span class="ym-related-icon" aria-hidden="true">💼</span>
+            <span class="ym-related-body">
+              <span class="ym-related-title">完璧主義 × 仕事</span>
+              <span class="ym-related-desc">強みと注意点・上司・部下・同僚との付き合い方を解説</span>
+            </span>
+          </a>
+        </li>
+      </ul>
+    </section>
+
+    {/* ========== 参考文献 ========== */}
+    <ReferenceList references={references} confirmedAt={UPDATED_AT} />
+  </Container>
+</BaseLayout>
+
+<style>
+/* ========== ヒーロー ========== */
+.ym-hero {
+  background: linear-gradient(135deg, #7c3aed 0%, #6366f1 100%);
+  color: #fff;
+  padding-block: 2.5rem 3rem;
+}
+.ym-breadcrumb {
+  margin-bottom: 1.5rem;
+}
+.ym-breadcrumb-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  opacity: 0.8;
+}
+.ym-breadcrumb-list li::after {
+  content: '›';
+  margin-left: 0.5rem;
+}
+.ym-breadcrumb-list li:last-child::after {
+  content: '';
+}
+.ym-breadcrumb-list a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.ym-hero-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.ym-hero-badge {
+  display: inline-block;
+  background: rgba(255 255 255 / 0.2);
+  border: 1px solid rgba(255 255 255 / 0.4);
+  border-radius: 2rem;
+  padding: 0.2rem 0.85rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  align-self: flex-start;
+}
+.ym-h1 {
+  font-size: clamp(1.5rem, 4vw, 2.2rem);
+  font-family: var(--sn-font-rounded, sans-serif);
+  font-weight: 700;
+  line-height: 1.4;
+  margin: 0;
+}
+.ym-h1-sub {
+  display: block;
+  font-size: clamp(1rem, 2.5vw, 1.4rem);
+  opacity: 0.88;
+  font-weight: 600;
+  margin-top: 0.25rem;
+}
+.ym-hero-meta {
+  font-size: 0.78rem;
+  opacity: 0.7;
+  margin: 0;
+}
+
+/* ========== セクション共通 ========== */
+.ym-section {
+  margin-block: 3rem;
+}
+.ym-h2 {
+  font-size: clamp(1.2rem, 3.5vw, 1.6rem);
+  font-family: var(--sn-font-rounded, sans-serif);
+  font-weight: 700;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--sn-primary);
+}
+.ym-body {
+  font-size: 0.95rem;
+  line-height: 1.8;
+  color: #374151;
+  margin-bottom: 0.75rem;
+}
+
+/* ========== サインリスト ========== */
+.ym-sign-list {
+  list-style: none;
+  padding: 0;
+  margin: 1.5rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.ym-sign-item {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  padding: 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  background: #f9fafb;
+}
+.ym-sign-num {
+  flex-shrink: 0;
+  width: 2rem;
+  height: 2rem;
+  background: var(--sn-primary);
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+.ym-sign-body {
+  flex: 1;
+}
+.ym-sign-title {
+  display: block;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 0.25rem;
+}
+.ym-sign-desc {
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: #4b5563;
+  margin: 0;
+}
+
+/* ========== CBT ステップブロック ========== */
+.ym-step-block {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+.ym-step-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+.ym-step-header {
+  background: var(--sn-primary);
+  color: #fff;
+  padding: 0.75rem 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.ym-step-num {
+  font-size: 0.75rem;
+  font-weight: 700;
+  background: rgba(255 255 255 / 0.2);
+  padding: 0.2rem 0.6rem;
+  border-radius: 1rem;
+  flex-shrink: 0;
+}
+.ym-step-title {
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 0;
+  line-height: 1.4;
+}
+.ym-step-body {
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.ym-step-body p {
+  font-size: 0.9rem;
+  line-height: 1.7;
+  color: #374151;
+  margin: 0;
+}
+.ym-step-tip {
+  background: #f0f4ff;
+  border-left: 3px solid var(--sn-primary);
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: #374151;
+  border-radius: 0 0.25rem 0.25rem 0;
+}
+
+/* ========== テーブル ========== */
+.ym-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+.ym-table th,
+.ym-table td {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #e5e7eb;
+  text-align: left;
+  line-height: 1.5;
+}
+.ym-table thead th {
+  background: #f3f4f6;
+  font-weight: 700;
+}
+.ym-table tbody tr:nth-child(even) {
+  background: #f9fafb;
+}
+.ym-table-caption {
+  font-size: 0.78rem;
+  color: var(--sn-muted, #6b7280);
+  text-align: left;
+  padding: 0.25rem 0 0.5rem;
+}
+
+/* ========== 記録の例ボックス ========== */
+.ym-example-box {
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+.ym-example-label {
+  background: #f3f4f6;
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 0.4rem 0.75rem;
+  margin: 0;
+  color: #6b7280;
+}
+.ym-example-box .ym-table th {
+  width: 9rem;
+  background: #f9fafb;
+}
+
+/* ========== リスト ========== */
+.ym-list {
+  padding-left: 1.5rem;
+  margin: 0.5rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.ym-list li {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: #374151;
+}
+
+/* ========== ミニカード（3列） ========== */
+.ym-cards-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 0.75rem;
+  margin-block: 0.5rem;
+}
+.ym-mini-card {
+  background: #f0f4ff;
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+}
+.ym-mini-card-title {
+  font-size: 0.83rem;
+  font-weight: 700;
+  margin: 0 0 0.35rem;
+  color: var(--sn-primary);
+}
+.ym-mini-card-desc {
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: #4b5563;
+  margin: 0;
+}
+
+/* ========== タイプグリッド ========== */
+.ym-type-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+  margin-block: 1.5rem;
+}
+.ym-type-card {
+  border: 2px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+}
+.ym-type-card--thorough { border-top-color: #6366f1; }
+.ym-type-card--particular { border-top-color: #059669; }
+.ym-type-card--procrastinating { border-top-color: #d97706; }
+.ym-type-card--expecting { border-top-color: #db2777; }
+.ym-type-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+.ym-type-icon {
+  font-size: 1.5rem;
+}
+.ym-type-title {
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 0;
+  color: #1f2937;
+}
+.ym-type-cause {
+  font-size: 0.85rem;
+  line-height: 1.6;
+  color: #4b5563;
+  margin-bottom: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  background: #f9fafb;
+  border-radius: 0.375rem;
+}
+.ym-type-tips {
+  padding-left: 1.25rem;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+.ym-type-tips li {
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: #374151;
+}
+
+/* ========== CTA ========== */
+.ym-cta-box {
+  margin-top: 2rem;
+  background: linear-gradient(135deg, #f0f4ff, #ede9fe);
+  border: 1px solid #c7d2fe;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  text-align: center;
+}
+.ym-cta-text {
+  font-size: 0.9rem;
+  color: #374151;
+  margin: 0 0 1rem;
+}
+.ym-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--sn-primary);
+  color: #fff;
+  font-weight: 700;
+  font-size: 1rem;
+  padding: 0.75rem 2rem;
+  border-radius: 2.5rem;
+  text-decoration: none;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.ym-cta-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(99 102 241 / 0.3);
+}
+
+/* ========== FAQ ========== */
+.ym-faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+.ym-faq-item {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+.ym-faq-q {
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 1rem 1.25rem;
+  background: #f9fafb;
+  margin: 0;
+  display: block;
+}
+.ym-faq-q::before {
+  content: 'Q. ';
+  color: var(--sn-primary);
+}
+.ym-faq-a {
+  font-size: 0.9rem;
+  line-height: 1.7;
+  padding: 1rem 1.25rem;
+  margin: 0;
+  color: #4b5563;
+}
+.ym-faq-a::before {
+  content: 'A. ';
+  font-weight: 700;
+  color: #16a34a;
+}
+
+/* ========== 関連リンク ========== */
+.ym-related-list {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.ym-related-link {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.ym-related-link:hover {
+  border-color: var(--sn-primary);
+  box-shadow: 0 2px 8px rgba(99 102 241 / 0.1);
+}
+.ym-related-icon {
+  font-size: 1.75rem;
+  flex-shrink: 0;
+}
+.ym-related-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+.ym-related-title {
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+.ym-related-desc {
+  font-size: 0.8rem;
+  color: var(--sn-muted, #6b7280);
+}
+
+/* ========== レスポンシブ ========== */
+@media (max-width: 640px) {
+  .ym-type-grid {
+    grid-template-columns: 1fr;
+  }
+  .ym-cards-row {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
