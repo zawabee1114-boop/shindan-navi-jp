@@ -1,0 +1,1314 @@
+---
+/**
+ * DiSC × 仕事・ビジネス活用ガイド（BtoB特化・収益最重要）
+ * KW: DiSC 仕事（CPC¥191） / DiSC ビジネス / DiSC 営業 / DiSC マネジメント / DiSC チームビルディング
+ * 学術根拠: Marston (1928) + Clarke (1956) + Wiley DiSC公式 (2024)
+ * 確認日: 2026-05-21
+ *
+ * DiSC® はJohn Wiley & Sons, Inc. の登録商標。
+ * 本ページはWiley社の公式アセスメントではありません。
+ *
+ * 収益化:
+ * - Wiley DiSC公式研修プログラムへのアフィリエイトスタブ
+ * - コンサルティング・コーチング将来用アフィ枠
+ * - リーダーシップ研修・営業研修スタブ
+ */
+import BaseLayout from '../../../../layouts/BaseLayout.astro';
+import Container from '../../../../components/Container.astro';
+import TldrBlock from '../../../../components/TldrBlock.astro';
+import ReferenceList from '../../../../components/ReferenceList.astro';
+import ScienceNote from '../../../../components/ScienceNote.astro';
+import { meta } from '../../../../data/diagnoses/disc/meta';
+
+const SITE_URL = 'https://shindan-navi.jp';
+const PAGE_URL = `${SITE_URL}/diagnosis/disc/business/`;
+const UPDATED_AT = '2026-05-21';
+
+const title = 'DiSC 仕事・ビジネス活用完全ガイド｜営業・マネジメント・チームビルディング';
+const description =
+  'DiSC® を仕事で活かす完全ガイド。営業スタイル別活用・マネジメント・1on1・商談・採用面接・研修・リモートワークでの実践方法を解説。Marston（1928）学術根拠付き。2026-05-21時点。';
+
+// JSON-LD: Article
+const jsonLdArticle = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  '@id': `${PAGE_URL}#article`,
+  headline: title,
+  description: description,
+  url: PAGE_URL,
+  datePublished: '2026-05-21',
+  dateModified: UPDATED_AT,
+  inLanguage: 'ja',
+  author: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+    name: '診断ナビ',
+    url: SITE_URL,
+  },
+  publisher: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+    name: '診断ナビ',
+    url: SITE_URL,
+  },
+  citation: meta.references.map((ref) => ({
+    '@type': 'CreativeWork',
+    name: ref.title,
+    author: ref.author,
+    datePublished: String(ref.year),
+    url: ref.url,
+  })),
+};
+
+// HowTo: DiSC実務活用5ステップ
+const jsonLdHowTo = {
+  '@context': 'https://schema.org',
+  '@type': 'HowTo',
+  '@id': `${PAGE_URL}#howto`,
+  name: 'DiSCを職場・チームで活用する5ステップ',
+  description: 'DiSC® 診断結果をビジネス現場で実践的に活かすための5ステップガイド',
+  totalTime: 'P4W',
+  step: [
+    {
+      '@type': 'HowToStep',
+      position: 1,
+      name: '自分のDiSCタイプを把握する',
+      text: '無料診断（28問・約3分）でD/i/S/Cタイプを確認する。自分の強み・弱み・コミュニケーション傾向を言語化する。',
+      url: `${SITE_URL}/diagnosis/disc/`,
+    },
+    {
+      '@type': 'HowToStep',
+      position: 2,
+      name: 'チームメンバーのタイプを把握する',
+      text: '1on1などで自己開示しながら、メンバーにも診断を受けてもらう。チーム全体のタイプ分布を可視化する。',
+    },
+    {
+      '@type': 'HowToStep',
+      position: 3,
+      name: 'タイプ別コミュニケーション設計をする',
+      text: 'D型には結論から短く、i型には感情と意義を、S型には丁寧に背景説明を、C型にはデータと根拠を示すスタイルで対話を設計する。',
+    },
+    {
+      '@type': 'HowToStep',
+      position: 4,
+      name: '1on1・フィードバックをタイプ別に最適化する',
+      text: '月1回の1on1で「行動スタイルの違いによる摩擦」を確認・解消する。公式研修（Wiley DiSC）で深い実践ガイドを取得することも検討する。',
+      url: 'https://www.everythingdisc.com/',
+    },
+    {
+      '@type': 'HowToStep',
+      position: 5,
+      name: 'チームビルディング研修に組み込む',
+      text: '全員でDiSCタイプを共有するワークショップを実施する。スタイルの違いを「個性」として組織文化に根付かせる。',
+    },
+  ],
+};
+
+// FAQ 12問
+const faqs = [
+  {
+    question: 'DiSCを仕事で活用するメリットは？',
+    answer:
+      'DiSCを仕事で活用するメリットは主に3つです。1. チームコミュニケーションの改善（スタイルの違いを客観的に理解し、摩擦を減らす）、2. リーダーシップの質向上（自分の強みを活かし、盲点を補完する戦略が立てられる）、3. 営業・交渉スキルの向上（顧客のタイプに応じたアプローチで成約率が上がる）。Wiley社によると、DiSCは世界75か国・年間100万人以上の組織研修で活用されています（https://www.everythingdisc.com/、2026-05-21確認）。',
+  },
+  {
+    question: 'DiSCを採用に使っていいですか？',
+    answer:
+      '採用選考・人事評価・昇進判断の基準としてDiSCを使うことは推奨しません。理由は2つあります。1. 行動スタイルの多様性は組織の強みであり、特定のタイプを「採用基準」とすることは公平採用の観点から問題になる可能性があります。2. Wiley社も「DiSCは採用選考ツールではない」と明記しています（https://www.discprofile.com/what-is-disc/overview、2026-05-21確認）。DiSCは自己理解・チームコミュニケーション改善の目的でご活用ください。採用面接では「応募者の自己理解を深めるための対話ツール」として参考にするにとどめてください。',
+  },
+  {
+    question: '営業職でDiSCを活かす方法は？',
+    answer:
+      'DiSCを営業で活かす主な方法は「自分の営業スタイルの強みを把握する」こととあわせて「顧客のDiSCタイプを見極めてアプローチを変える」ことです。D型顧客には結論・ROIを簡潔に、i型顧客には関係構築・体験談を重視、S型顧客には安心感・実績・継続サポートを強調、C型顧客にはデータ・仕様・根拠を詳しく提示するアプローチが効果的です。自分のスタイルと顧客スタイルの「組み合わせ」を意識することで、スタイルの違いによる摩擦を減らせます。',
+  },
+  {
+    question: 'マネージャーがDiSCを学ぶ価値は？',
+    answer:
+      'マネージャーがDiSCを学ぶ価値は「部下のタイプ別コミュニケーション最適化」にあります。D型部下には権限移譲・高い目標設定を、i型部下には感謝・承認・意義の共有を、S型部下には安定した環境・丁寧な変更説明を、C型部下には根拠・品質への評価を示すことで、メンバーのモチベーションを引き出しやすくなります。Wiley社のEverything DiSC Manage®プログラムはマネジメント特化の公式研修です（https://www.everythingdisc.com/、2026-05-21確認）。',
+  },
+  {
+    question: '公式研修（Wiley DiSC）と無料診断の違いは？',
+    answer:
+      'Wiley社の公式DiSC®アセスメント（https://www.discprofile.com/）は有料の認定プログラムで、適応型テスト・詳細解釈レポート・認定ファシリテーターによる研修サポートが含まれます。本サイトの無料診断はDiSC理論の学術的知見に基づく28問の自己理解ツールであり、タイプの傾向把握に適しています。職場への本格導入・組織研修での活用にはWiley社の認定プログラムをご検討ください。',
+  },
+  {
+    question: 'DiSC × MBTI の使い分け方は？',
+    answer:
+      'DiSCとMBTIは測定軸が異なります。DiSCは「職場での行動スタイル（D/i/S/C）」を測り、ビジネスコミュニケーション・リーダーシップ・チームビルディングに特化しています。MBTIは「性格・認知スタイル（内向/外向・感覚/直感・思考/感情・判断/知覚）の16タイプ」を測り、人間関係や意思決定パターン全般を対象にします。DiSCを「職場での自分」の理解に、MBTIを「性格の根本傾向」の理解に使い分けると、自己理解が格段に深まります。',
+  },
+  {
+    question: '部下のタイプを知るとどう変わる？',
+    answer:
+      '部下のDiSCタイプを知ることで「なぜあの人は動いてくれないのか」「なぜあの指示で摩擦が生まれるのか」が客観的に見えてきます。例えばC型部下に「とにかくやってみて」と伝えるより「こういうデータと根拠があるから試してみよう」と説明する方が動きやすくなります。S型部下に急な方針転換を伝えるときは、変更の背景と理由を丁寧に説明するだけで受け入れがスムーズになります。',
+  },
+  {
+    question: 'DiSCを使った1on1の進め方は？',
+    answer:
+      'DiSCを使った1on1は「相手のスタイルに合わせた対話設計」が基本です。D型部下との1on1は成果・次の目標の確認を中心に短く。i型部下とは近況・感情の共有から入る。S型部下には十分な話す時間を確保し急かさない。C型部下には事前にアジェンダを共有し、データに基づいた具体的フィードバックを。月1回の定期1on1でタイプ別コミュニケーションを継続することで、関係の質が長期的に向上します。',
+  },
+  {
+    question: 'リモートワークでDiSCは効くか？',
+    answer:
+      'リモートワーク環境でも、DiSCはコミュニケーション設計に有効です。D型にはチャットで結論から短く送る。i型にはビデオ通話でコミュニケーションを取る機会を増やす。S型にはSlackの非同期対話よりも1on1ビデオ通話を設ける。C型には文書・仕様書での丁寧な情報共有を優先する。リモート環境では対面より「スタイルの違い」が増幅されやすいため、DiSCの活用価値がさらに高まります。',
+  },
+  {
+    question: 'DiSC研修の費用相場は？',
+    answer:
+      'Wiley社の公式DiSC®アセスメント（Everything DiSC®）は1人あたり約$100〜$200程度（2026-05-21時点・Wiley社代理店経由での購入）が目安です。組織研修（ファシリテーション込み）の場合は1回あたり数十万〜数百万円規模になることもあります。詳細・最新の価格は公式代理店または https://www.everythingdisc.com/ でお確かめください。本サイトの無料診断はDiSC理論に基づく自己理解ツールとして費用なしで利用できます。',
+  },
+  {
+    question: 'DiSCコンサルタントになるには？',
+    answer:
+      'DiSCを専門的に活用する「認定DiSCファシリテーター」になるには、Wiley社の認定プログラムを修了する必要があります（https://www.everythingdisc.com/facilitate/、2026-05-21確認）。認定後は研修・コーチング・組織コンサルティングでDiSCを公式プログラムとして提供できます。費用・期間・前提条件はWiley社の公式サイトでご確認ください。',
+  },
+  {
+    question: 'DiSCのROIを測る方法は？',
+    answer:
+      'DiSC導入のROIを測る主な指標は「チームの生産性・エンゲージメントスコア変化」「離職率の変化」「1on1の質の主観評価（1〜5点スケール）」「営業成約率の変化」などです。組織研修として導入する場合は、研修前後のアンケートと3ヶ月後の行動変容ヒアリングをセットで実施することが推奨されます。Wiley社も研修効果測定のガイドラインを提供しています（https://www.everythingdisc.com/）。',
+  },
+];
+
+// JSON-LD: FAQPage
+const jsonLdFAQ = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  '@id': `${PAGE_URL}#faq`,
+  mainEntity: faqs.map(({ question, answer }) => ({
+    '@type': 'Question',
+    name: question,
+    acceptedAnswer: { '@type': 'Answer', text: answer },
+  })),
+};
+
+// JSON-LD: BreadcrumbList
+const jsonLdBreadcrumb = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'ホーム', item: SITE_URL },
+    { '@type': 'ListItem', position: 2, name: '診断一覧', item: `${SITE_URL}/diagnosis/` },
+    { '@type': 'ListItem', position: 3, name: 'DiSC診断', item: `${SITE_URL}/diagnosis/disc/` },
+    { '@type': 'ListItem', position: 4, name: 'DiSC 仕事・ビジネス活用', item: PAGE_URL },
+  ],
+};
+
+const jsonLdAll = [jsonLdArticle, jsonLdHowTo, jsonLdFAQ, jsonLdBreadcrumb];
+
+// 営業スタイル別データ
+const salesStyles = [
+  {
+    type: 'D',
+    emoji: '🦁',
+    name: 'D型（主導型）営業',
+    color: '#dc2626',
+    bgColor: '#fef2f2',
+    style: 'クロージング型・結果直結型',
+    strength: '決断を促す力・スピード感・クロージングの強さ',
+    approach: '「御社の課題をこう解決します。決めましょう」と結論から入り、ROIを簡潔に提示する。',
+    caution: '顧客が検討時間を必要とするS型・C型には押しすぎに注意。',
+    customerHint: 'D型顧客には：結論・ROI・スピードを前面に出す。長い説明は逆効果。',
+  },
+  {
+    type: 'i',
+    emoji: '🌟',
+    name: 'i型（感化型）営業',
+    color: '#d97706',
+    bgColor: '#fffbeb',
+    style: '関係構築型・体験談重視型',
+    strength: '初対面での信頼構築・熱意の伝達・口コミ紹介獲得',
+    approach: '体験談・事例・感情共有から始め、「あなたにとって素晴らしい選択」と意義を伝える。',
+    caution: '楽観的に話が進みすぎて、詳細確認・契約条件の詰めが後回しになるリスクがある。',
+    customerHint: 'i型顧客には：関係構築の時間を作り、感情的な共感から入る。事例・体験談が有効。',
+  },
+  {
+    type: 'S',
+    emoji: '🌿',
+    name: 'S型（安定型）営業',
+    color: '#16a34a',
+    bgColor: '#f0fdf4',
+    style: '信頼蓄積型・長期関係構築型',
+    strength: '既存顧客からの継続受注・紹介獲得・信頼の長期蓄積',
+    approach: '急かさず丁寧にフォローし、「安心してお使いいただけます」と継続サポートを強調する。',
+    caution: '新規開拓・クロージングには時間がかかる傾向がある。',
+    customerHint: 'S型顧客には：安心感・実績・サポート体制を強調。急かさず、十分な検討時間を確保。',
+  },
+  {
+    type: 'C',
+    emoji: '🔬',
+    name: 'C型（慎重型）営業',
+    color: '#2563eb',
+    bgColor: '#eff6ff',
+    style: '提案型・データ根拠型',
+    strength: '技術的な深い提案・根拠ある説明・専門知識での信頼獲得',
+    approach: 'データ・仕様・比較資料を丁寧に整えて「根拠のある選択」を提示する。',
+    caution: '完璧な資料作成に時間をかけすぎて、スピード感が失われることがある。',
+    customerHint: 'C型顧客には：詳細な仕様書・比較データ・根拠を事前に送付。質問への丁寧な回答が信頼を生む。',
+  },
+];
+
+// マネジメント別データ
+const mgmtStyles = [
+  { type: 'D', emoji: '🦁', color: '#dc2626', name: 'D型部下へのマネジメント', points: ['権限移譲し、結果で評価する', '高い目標・チャレンジングな役割を与える', '意見を押さえつけない。「なぜ」を説明する', '成果の認証は具体的に・即座に'] },
+  { type: 'i', emoji: '🌟', color: '#d97706', name: 'i型部下へのマネジメント', points: ['感謝・承認の言葉を惜しまない', '仕事の「意義・誰のためになるか」を伝える', '1on1の冒頭は近況・感情の共有から', '細部のフォローアップは静かに支援'] },
+  { type: 'S', emoji: '🌿', color: '#16a34a', name: 'S型部下へのマネジメント', points: ['方針変更は背景・理由を丁寧に説明する', '意見を言えるよう十分な時間を確保する', '急な変更・優先順位変更は最小限に', '長期的な信頼・安定した関係を重視する'] },
+  { type: 'C', emoji: '🔬', color: '#2563eb', name: 'C型部下へのマネジメント', points: ['根拠・データに基づいた具体的フィードバック', '専門性・正確さへの評価を言語化する', '1on1の前日にアジェンダを共有する', 'リスクへの懸念を丁寧に聞き、一緒に整理する'] },
+];
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  canonical={PAGE_URL}
+  jsonLd={jsonLdAll}
+  ogType="article"
+  publishDate="2026-05-21"
+  lastUpdated={UPDATED_AT}
+  breadcrumbs={[
+    { name: '診断一覧', url: '/diagnosis/' },
+    { name: 'DiSC診断', url: '/diagnosis/disc/' },
+    { name: 'DiSC 仕事・ビジネス活用', url: '/diagnosis/disc/business/' },
+  ]}
+>
+  {/* ========== ヒーロー ========== */}
+  <section class="biz-hero" aria-labelledby="biz-h1">
+    <Container>
+      <div class="biz-hero-inner">
+        <p class="biz-hero-badge">DiSC&#174; Wiley社登録商標 | Marston (1928) 学術根拠付き | 2026-05-21 更新</p>
+        <h1 id="biz-h1" class="biz-h1">
+          DiSC ビジネス活用完全ガイド
+        </h1>
+        <p class="biz-hero-sub">
+          営業・マネジメント・1on1・チームビルディング・採用面接・研修・リモートワークへの実践的な活かし方
+        </p>
+        <div class="biz-hero-tags">
+          <span class="biz-tag">営業スタイル別活用</span>
+          <span class="biz-tag">マネジメント最適化</span>
+          <span class="biz-tag">1on1設計</span>
+          <span class="biz-tag">研修プログラム</span>
+          <span class="biz-tag">FAQ 12問</span>
+        </div>
+        <div class="biz-hero-caution">
+          採用・評価判定への使用は推奨しません（公平採用法・Wiley社非推奨・詳細はFAQ参照）
+        </div>
+      </div>
+    </Container>
+  </section>
+
+  <Container>
+    {/* ========== TldrBlock ========== */}
+    <TldrBlock
+      title="このページでわかること"
+      points={[
+        "DiSC® を仕事で活かす7つの実践シーン（営業・マネジメント・1on1・商談・採用面接・研修・リモートワーク）を具体的な行動レベルで解説",
+        "D/i/S/C の4タイプ別「営業スタイル」と「顧客タイプ別アプローチ」を網羅。CPC¥191の高収益KWに対応したBtoB特化コンテンツ",
+        "採用・評価へのDiSC利用は非推奨（公平採用法リスク・Wiley社明示）。正しい用途と危険な用途を明確に区別して解説"
+      ]}
+      updatedAt={UPDATED_AT}
+      sourceLabel="Wiley DiSC公式"
+      sourceUrl="https://www.discprofile.com/what-is-disc/overview"
+    />
+
+    {/* ========== リード：BtoB現場でのDiSC活用 ========== */}
+    <section class="biz-section" aria-labelledby="biz-intro-h2">
+      <h2 id="biz-intro-h2" class="biz-h2">DiSCをビジネスで活かす前に知っておくこと</h2>
+      <p class="biz-lead">
+        DiSC® は世界75か国・年間100万人以上が受ける組織研修ツールです
+        （<a href="https://www.everythingdisc.com/" target="_blank" rel="noopener noreferrer">Everything DiSC公式</a>、2026-05-21確認）。
+        その活用範囲はチームビルディングから営業・マネジメント・1on1・研修設計にまで及びます。
+        本ページでは、DiSCを職場で実践的に活かす7つのシーンを具体的な行動レベルで解説します。
+      </p>
+      <div class="biz-summary-table-wrap">
+        <table class="biz-summary-table">
+          <caption class="biz-table-caption">DiSC ビジネス活用シーン一覧（2026-05-21時点）</caption>
+          <thead>
+            <tr>
+              <th scope="col">活用シーン</th>
+              <th scope="col">主な目的</th>
+              <th scope="col">効果指標</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">営業</th>
+              <td>自分の強みを活かし、顧客タイプに合わせたアプローチ</td>
+              <td>成約率・顧客満足度向上</td>
+            </tr>
+            <tr>
+              <th scope="row">マネジメント</th>
+              <td>部下のタイプ別コミュニケーション設計</td>
+              <td>エンゲージメント・生産性向上</td>
+            </tr>
+            <tr>
+              <th scope="row">1on1</th>
+              <td>対話スタイルの最適化・心理的安全性の確保</td>
+              <td>信頼関係・フィードバック品質向上</td>
+            </tr>
+            <tr>
+              <th scope="row">商談・交渉</th>
+              <td>相手のスタイルを読んで対話を設計</td>
+              <td>合意形成のスムーズさ向上</td>
+            </tr>
+            <tr>
+              <th scope="row">採用面接</th>
+              <td>応募者の自己理解を深める対話（判断基準には使わない）</td>
+              <td>面接体験の質向上</td>
+            </tr>
+            <tr>
+              <th scope="row">研修</th>
+              <td>チーム全体のコミュニケーション文化を構築</td>
+              <td>組織全体の心理的安全性向上</td>
+            </tr>
+            <tr>
+              <th scope="row">リモートワーク</th>
+              <td>非同期・オンライン環境でのスタイル別配慮</td>
+              <td>リモートチームの一体感維持</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    {/* ========== 営業での活用 ========== */}
+    <section class="biz-section" aria-labelledby="biz-sales-h2">
+      <h2 id="biz-sales-h2" class="biz-h2">DiSCを営業で活かす</h2>
+      <p class="biz-lead">
+        DiSCは営業において「自分の強みを活かすスタイル把握」と「顧客のタイプを読むアプローチ設計」の2軸で活用できます。
+        4タイプそれぞれ異なる営業スタイルの強みがあり、顧客タイプとの組み合わせを意識することで成約率の向上が期待できます。
+      </p>
+      <div class="biz-sales-grid">
+        {salesStyles.map((s) => (
+          <article
+            class="biz-sales-card"
+            style={`border-top-color: ${s.color}; background: ${s.bgColor};`}
+            aria-labelledby={`sales-${s.type}-h3`}
+          >
+            <div class="biz-sales-header">
+              <span class="biz-sales-emoji" aria-hidden="true">{s.emoji}</span>
+              <div>
+                <h3 id={`sales-${s.type}-h3`} class="biz-sales-name" style={`color: ${s.color}`}>{s.name}</h3>
+                <span class="biz-sales-style">{s.style}</span>
+              </div>
+            </div>
+            <dl class="biz-sales-dl">
+              <div class="biz-sales-row">
+                <dt>強み</dt>
+                <dd>{s.strength}</dd>
+              </div>
+              <div class="biz-sales-row">
+                <dt>アプローチ</dt>
+                <dd>{s.approach}</dd>
+              </div>
+              <div class="biz-sales-row">
+                <dt>注意点</dt>
+                <dd>{s.caution}</dd>
+              </div>
+            </dl>
+            <div class="biz-sales-customer">
+              <p>{s.customerHint}</p>
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    {/* ========== マネジメントでの活用 ========== */}
+    <section class="biz-section" aria-labelledby="biz-mgmt-h2">
+      <h2 id="biz-mgmt-h2" class="biz-h2">DiSCをマネジメントで活かす</h2>
+      <p class="biz-lead">
+        マネージャーがDiSCを理解することで、「なぜあの部下は動いてくれないのか」という摩擦が客観的に見えてきます。
+        部下のタイプ別コミュニケーションを設計することで、エンゲージメントと生産性の向上が期待できます。
+      </p>
+      <div class="biz-mgmt-grid">
+        {mgmtStyles.map((m) => (
+          <div class="biz-mgmt-card" aria-labelledby={`mgmt-${m.type}-h3`}>
+            <h3 id={`mgmt-${m.type}-h3`} class="biz-mgmt-title" style={`color: ${m.color};`}>
+              {m.emoji} {m.name}
+            </h3>
+            <ul class="biz-mgmt-list">
+              {m.points.map((p) => <li>{p}</li>)}
+            </ul>
+          </div>
+        ))}
+      </div>
+      <div class="biz-info-box">
+        <p>
+          チーム全体のDiSCタイプ分布を「4タイプのバランス」で見ることも重要です。
+          D型とC型が多いチームは推進力×品質管理で強力ですが、i型の不足でチームの雰囲気が硬くなりやすい傾向があります。
+          タイプの偏りを把握した上でチーム編成・採用方針を考えることで、補完関係が生まれやすくなります。
+        </p>
+      </div>
+    </section>
+
+    {/* ========== 1on1での活用 ========== */}
+    <section class="biz-section" aria-labelledby="biz-1on1-h2">
+      <h2 id="biz-1on1-h2" class="biz-h2">DiSCを1on1ミーティングで活かす</h2>
+      <p class="biz-lead">
+        1on1はDiSCを最も実践しやすい場面の一つです。
+        相手のスタイルに合わせた「対話の設計」を月1回継続するだけで、信頼関係の質が長期的に変わります。
+      </p>
+      <div class="biz-oneon-table-wrap">
+        <table class="biz-oneon-table">
+          <caption class="biz-table-caption">DiSCタイプ別 1on1設計ガイド（2026-05-21時点）</caption>
+          <thead>
+            <tr>
+              <th scope="col">タイプ</th>
+              <th scope="col">冒頭</th>
+              <th scope="col">フィードバックの伝え方</th>
+              <th scope="col">モチベーション確認</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row" style="color: #dc2626; font-weight: 700;">🦁 D型</th>
+              <td>成果の確認から始め、次の目標をすぐ共有</td>
+              <td>具体的・直接的・改善点を簡潔に</td>
+              <td>「次はどんな挑戦をしたいか」</td>
+            </tr>
+            <tr>
+              <th scope="row" style="color: #d97706; font-weight: 700;">🌟 i型</th>
+              <td>近況・感情の共有から入る（雑談OK）</td>
+              <td>肯定→改善点→再肯定の「サンドイッチ」</td>
+              <td>「仕事の意義や楽しさを感じているか」</td>
+            </tr>
+            <tr>
+              <th scope="row" style="color: #16a34a; font-weight: 700;">🌿 S型</th>
+              <td>急かさず、話す時間を十分確保</td>
+              <td>温かいトーン・背景説明を先に</td>
+              <td>「今の環境で安心して働けているか」</td>
+            </tr>
+            <tr>
+              <th scope="row" style="color: #2563eb; font-weight: 700;">🔬 C型</th>
+              <td>前日にアジェンダを送付・準備時間を確保</td>
+              <td>データ・事実・具体例で根拠を示す</td>
+              <td>「専門性が活かせているか・品質評価」</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    {/* ========== 商談・交渉での活用 ========== */}
+    <section class="biz-section" aria-labelledby="biz-nego-h2">
+      <h2 id="biz-nego-h2" class="biz-h2">DiSCを商談・交渉で活かす</h2>
+      <p class="biz-lead">
+        商談・交渉では相手のDiSCタイプを「会話の初期段階で読む」ことが鍵になります。
+        以下のサインを参考に、相手のスタイルを推定してアプローチを変えましょう。
+      </p>
+      <ul class="biz-nego-list">
+        <li><strong>D型のサイン:</strong> 「結論は？」「コストは？」「決めましょう」と短く聞く。時間に厳しく、細かい説明を嫌がる。</li>
+        <li><strong>i型のサイン:</strong> 雑談が多く、体験談を好む。感情的に話し、場の雰囲気を重視する。</li>
+        <li><strong>S型のサイン:</strong> 「他社はどうですか？」「すぐには決められない」と慎重。関係構築を優先する。</li>
+        <li><strong>C型のサイン:</strong> 「詳細な仕様を送ってください」「データの根拠は？」と質問が多い。メールや書面を好む。</li>
+      </ul>
+      <p class="biz-note">
+        相手のタイプを「決めつける」より「仮説として持ち、反応を見ながら調整する」姿勢が重要です。
+      </p>
+    </section>
+
+    {/* ========== 採用面接での活用（差別禁止明記） ========== */}
+    <section class="biz-section" aria-labelledby="biz-hiring-h2">
+      <h2 id="biz-hiring-h2" class="biz-h2">DiSCを採用面接で活かす（注意点あり）</h2>
+      <div class="biz-caution-box" role="alert">
+        <p class="biz-caution-title">重要: DiSCを採用・評価判定に使わないでください</p>
+        <p class="biz-caution-body">
+          DiSCを採用基準・不採用理由・昇進評価に使うことは推奨しません。
+          行動スタイルの多様性は組織の強みであり、特定のタイプを「適切」とすることは
+          <strong>公平採用の観点から問題になる可能性</strong>があります。
+          Wiley社も採用選考への使用を明示的に非推奨としています
+          （<a href="https://www.discprofile.com/what-is-disc/overview" target="_blank" rel="noopener noreferrer">Wiley公式</a>、2026-05-21確認）。
+        </p>
+      </div>
+      <p class="biz-lead" style="margin-top: 1rem;">
+        採用面接でDiSCを活かせる正しい用途は「応募者の自己理解を深める対話ツール」としての参考です。
+        具体的には以下のような活用が考えられます。
+      </p>
+      <ul class="biz-hiring-list">
+        <li>面接後の「セルフ振り返り補助」として候補者に診断を案内する（強制はしない）</li>
+        <li>「どんな環境・コミュニケーションスタイルで働くと力が出ますか？」という自己開示を促す対話の参考にする</li>
+        <li>入社後のオンボーディングでチームメンバーとの相互理解を深める目的で活用する</li>
+      </ul>
+    </section>
+
+    {/* ========== 研修プログラムでの活用 ========== */}
+    <section class="biz-section" aria-labelledby="biz-training-h2">
+      <h2 id="biz-training-h2" class="biz-h2">DiSCを研修プログラムで活かす</h2>
+      <p class="biz-lead">
+        チームビルディング研修でDiSCを活用するには、「全員が自分のタイプを把握した上で、相互のスタイルを共有するワークショップ」が最も効果的です。
+        以下のステップを参考に研修を設計してください。
+      </p>
+      <ol class="biz-training-steps">
+        <li>
+          <span class="biz-step-num">1</span>
+          <div>
+            <strong>事前診断（本サイト無料診断・28問）:</strong>
+            参加者全員が診断を受け、自分のタイプを把握した状態で研修に臨む。
+          </div>
+        </li>
+        <li>
+          <span class="biz-step-num">2</span>
+          <div>
+            <strong>タイプ共有ワーク:</strong>
+            グループでタイプを開示し、「各タイプが何を大切にするか」を話し合う。
+            「タイプで人を決めつけない」ルールを最初に共有する。
+          </div>
+        </li>
+        <li>
+          <span class="biz-step-num">3</span>
+          <div>
+            <strong>ケーススタディ:</strong>
+            過去の「コミュニケーションの摩擦事例」をDiSCの視点で振り返る。
+          </div>
+        </li>
+        <li>
+          <span class="biz-step-num">4</span>
+          <div>
+            <strong>コミュニケーション設計実践:</strong>
+            ペアになって「相手のスタイルに合わせた伝え方」を練習するロールプレイ。
+          </div>
+        </li>
+        <li>
+          <span class="biz-step-num">5</span>
+          <div>
+            <strong>3ヶ月後フォロー:</strong>
+            変化のヒアリング・行動変容の確認。公式研修への移行も検討。
+          </div>
+        </li>
+      </ol>
+
+      {/* ========== アフィリエイトスタブ ========== */}
+      <div class="biz-aff-section" aria-labelledby="biz-aff-h3">
+        <h3 id="biz-aff-h3" class="biz-aff-title">DiSC公式プログラムでさらに深く学ぶ</h3>
+        <p class="biz-aff-lead">
+          組織への本格導入・認定ファシリテーター資格取得には、Wiley社の公式プログラムをご検討ください。
+        </p>
+        <div class="biz-aff-cards">
+          <div class="biz-aff-card biz-aff-card--primary">
+            <p class="biz-aff-card-label">DiSC公式研修プログラム</p>
+            <p class="biz-aff-card-name">Everything DiSC® （Wiley社）</p>
+            <p class="biz-aff-card-desc">
+              世界75か国で導入。適応型テスト・詳細解釈レポート・認定ファシリテーターによる研修サポート付き。
+              マネジメント・営業・チームビルディング特化のプログラムも提供。
+            </p>
+            <a
+              href="https://www.everythingdisc.com/"
+              target="_blank"
+              rel="noopener noreferrer sponsored"
+              class="biz-aff-btn biz-aff-btn--primary"
+            >
+              公式サイトを見る（英語）
+              <span aria-hidden="true"> →</span>
+            </a>
+          </div>
+          <div class="biz-aff-card biz-aff-card--secondary">
+            <p class="biz-aff-card-label">コンサルティング・コーチング（準備中）</p>
+            <p class="biz-aff-card-name">DiSCコーチング・組織診断サービス</p>
+            <p class="biz-aff-card-desc">
+              DiSCを活用した組織コンサルティング・エグゼクティブコーチング・チームビルディング支援サービス。
+              詳細は近日公開予定です。
+            </p>
+            <span class="biz-aff-btn biz-aff-btn--disabled" aria-disabled="true">
+              準備中
+            </span>
+          </div>
+        </div>
+        <p class="biz-aff-note">
+          ※上記リンクはWiley社の公式サイトへの外部リンクです。
+          「DiSC&#174;」「Everything DiSC&#174;」はJohn Wiley &amp; Sons, Inc. の登録商標です。
+        </p>
+      </div>
+    </section>
+
+    {/* ========== リモートワークでの活用 ========== */}
+    <section class="biz-section" aria-labelledby="biz-remote-h2">
+      <h2 id="biz-remote-h2" class="biz-h2">DiSCをリモートワークで活かす</h2>
+      <p class="biz-lead">
+        リモートワーク環境では、対面より「スタイルの違い」が増幅されやすい傾向があります。
+        非同期コミュニケーションでは特に、タイプ別の配慮が関係の質を左右します。
+      </p>
+      <ul class="biz-remote-list">
+        <li><strong>D型:</strong> チャット・Slack では結論から短く送る。返信のスピードを遅らせない。</li>
+        <li><strong>i型:</strong> テキストだけでなくビデオ通話の機会を定期的に設ける。絵文字・リアクションで感情を伝える。</li>
+        <li><strong>S型:</strong> 非同期だけでなく1on1ビデオ通話を月2回以上確保する。急な方針変更のSlack通知は翌日以降に詳細を補足する。</li>
+        <li><strong>C型:</strong> 仕様書・議事録・ドキュメントを丁寧に整備する。質問への回答は文書で残す。</li>
+      </ul>
+    </section>
+
+    {/* ========== DiSC実務活用 5ステップ ========== */}
+    <section class="biz-section" aria-labelledby="biz-steps-h2">
+      <h2 id="biz-steps-h2" class="biz-h2">DiSCを職場・チームで活用する5ステップ</h2>
+      <ol class="biz-steps">
+        <li class="biz-step">
+          <span class="biz-step-num">1</span>
+          <div class="biz-step-body">
+            <h3 class="biz-step-title">自分のDiSCタイプを把握する</h3>
+            <p>無料診断（28問・約3分）でD/i/S/Cタイプを確認する。自分の強み・弱み・コミュニケーション傾向を言語化する。</p>
+            <a href="/diagnosis/disc/" class="biz-step-link">DiSC診断を受ける（無料）→</a>
+          </div>
+        </li>
+        <li class="biz-step">
+          <span class="biz-step-num">2</span>
+          <div class="biz-step-body">
+            <h3 class="biz-step-title">チームメンバーのタイプを把握する</h3>
+            <p>1on1などで自己開示しながら、メンバーにも診断を受けてもらう。チーム全体のタイプ分布を可視化する。</p>
+          </div>
+        </li>
+        <li class="biz-step">
+          <span class="biz-step-num">3</span>
+          <div class="biz-step-body">
+            <h3 class="biz-step-title">タイプ別コミュニケーション設計をする</h3>
+            <p>D型には結論から短く。i型には感情と意義を。S型には丁寧に背景説明を。C型にはデータと根拠を示すスタイルで対話を設計する。</p>
+          </div>
+        </li>
+        <li class="biz-step">
+          <span class="biz-step-num">4</span>
+          <div class="biz-step-body">
+            <h3 class="biz-step-title">1on1・フィードバックをタイプ別に最適化する</h3>
+            <p>月1回の1on1で「行動スタイルの違いによる摩擦」を確認・解消する。公式研修（Wiley DiSC）で深い実践ガイドを取得することも検討する。</p>
+          </div>
+        </li>
+        <li class="biz-step">
+          <span class="biz-step-num">5</span>
+          <div class="biz-step-body">
+            <h3 class="biz-step-title">チームビルディング研修に組み込む</h3>
+            <p>全員でDiSCタイプを共有するワークショップを実施する。スタイルの違いを「個性」として組織文化に根付かせる。</p>
+          </div>
+        </li>
+      </ol>
+    </section>
+
+    {/* ========== FAQ 12問 ========== */}
+    <section class="biz-section" aria-labelledby="biz-faq-h2">
+      <h2 id="biz-faq-h2" class="biz-h2">よくある質問（FAQ 12問）</h2>
+      <dl class="biz-faq-list">
+        {faqs.map(({ question, answer }) => (
+          <div class="biz-faq-item">
+            <dt class="biz-faq-q">{question}</dt>
+            <dd class="biz-faq-a">{answer}</dd>
+          </div>
+        ))}
+      </dl>
+    </section>
+
+    {/* ========== ScienceNote ========== */}
+    <ScienceNote
+      basisText="William Moulton Marston (1928) 「Emotions of Normal People」（Routledge）+ Walter Clarke (1956) Activity Vector Analysis + John Geier (1970年代) Personal Profile System。現代版はWiley社が「Everything DiSC®」として整備（世界75か国・年間100万人以上の組織研修で活用）。"
+      basisUrl="https://www.discprofile.com/what-is-disc/overview"
+      basisLabel="Wiley DiSC公式・What is DiSC?"
+      notMedical={true}
+      updatedAt={UPDATED_AT}
+      additionalNote="DiSC® はJohn Wiley & Sons, Inc. の登録商標です。採用選考・人事評価・昇進判断の基準としての使用は推奨しません（Wiley社非推奨・公平採用法リスク）。DiSCはチームコミュニケーション改善・リーダーシップ開発の目的でご活用ください。"
+    />
+
+    {/* ========== 関連ページ内部リンク ========== */}
+    <section class="biz-section" aria-labelledby="biz-related-h2">
+      <h2 id="biz-related-h2" class="biz-h2">関連ページ</h2>
+      <ul class="biz-related-list">
+        <li>
+          <a href="/diagnosis/disc/" class="biz-related-link">
+            <span class="biz-related-icon" aria-hidden="true">🎯</span>
+            <span class="biz-related-body">
+              <span class="biz-related-title">DiSC診断【無料・28問】</span>
+              <span class="biz-related-desc">あなたのDiSCタイプを3分で判定。登録不要。</span>
+            </span>
+          </a>
+        </li>
+        <li>
+          <a href="/diagnosis/disc/types-summary/" class="biz-related-link">
+            <span class="biz-related-icon" aria-hidden="true">📊</span>
+            <span class="biz-related-body">
+              <span class="biz-related-title">DiSC 4タイプ完全まとめ</span>
+              <span class="biz-related-desc">D/i/S/C の特徴・強み・相性を一覧解説</span>
+            </span>
+          </a>
+        </li>
+        <li>
+          <a href="/diagnosis/mbti/" class="biz-related-link">
+            <span class="biz-related-icon" aria-hidden="true">🧠</span>
+            <span class="biz-related-body">
+              <span class="biz-related-title">MBTI（16タイプ）診断</span>
+              <span class="biz-related-desc">DiSCと組み合わせると自己理解が格段に深まる</span>
+            </span>
+          </a>
+        </li>
+        <li>
+          <a href="/diagnosis/" class="biz-related-link">
+            <span class="biz-related-icon" aria-hidden="true">📋</span>
+            <span class="biz-related-body">
+              <span class="biz-related-title">全診断一覧</span>
+              <span class="biz-related-desc">多重知能・完璧主義・血液型など8種類の診断</span>
+            </span>
+          </a>
+        </li>
+      </ul>
+    </section>
+
+    {/* ========== 参考文献 ========== */}
+    <ReferenceList references={meta.references} confirmedAt={UPDATED_AT} />
+
+    {/* ========== 商標フッターノート ========== */}
+    <p class="biz-trademark-note">
+      DiSC&#174; / Everything DiSC&#174; はJohn Wiley &amp; Sons, Inc. の登録商標です。
+      本ページはWiley社の公式アセスメントとは独立した、DiSC理論に基づく自己理解・ビジネス活用コンテンツです。
+      公式DiSCアセスメントについては
+      <a href="https://www.discprofile.com/" target="_blank" rel="noopener noreferrer">discprofile.com</a>
+      および
+      <a href="https://www.everythingdisc.com/" target="_blank" rel="noopener noreferrer">everythingdisc.com</a>
+      をご確認ください。
+    </p>
+  </Container>
+</BaseLayout>
+
+<style>
+/* ========== ヒーロー ========== */
+.biz-hero {
+  background: linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 40%, #6366f1 100%);
+  color: #fff;
+  padding-block: 3rem 3.5rem;
+  text-align: center;
+}
+.biz-hero-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.875rem;
+}
+.biz-hero-badge {
+  display: inline-block;
+  background: rgba(255 255 255 / 0.15);
+  border: 1px solid rgba(255 255 255 / 0.3);
+  border-radius: 2rem;
+  padding: 0.25rem 1rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.03em;
+}
+.biz-h1 {
+  font-size: clamp(1.6rem, 4.5vw, 2.25rem);
+  font-family: var(--sn-font-rounded, sans-serif);
+  font-weight: 700;
+  margin: 0;
+  line-height: 1.25;
+}
+.biz-hero-sub {
+  font-size: clamp(0.83rem, 2.2vw, 0.95rem);
+  opacity: 0.9;
+  margin: 0;
+  line-height: 1.6;
+  max-width: 640px;
+}
+.biz-hero-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+}
+.biz-tag {
+  background: rgba(255 255 255 / 0.2);
+  border: 1px solid rgba(255 255 255 / 0.35);
+  border-radius: 1rem;
+  padding: 0.2rem 0.75rem;
+  font-size: 0.75rem;
+}
+.biz-hero-caution {
+  background: rgba(251 191 36 / 0.25);
+  border: 1px solid rgba(251 191 36 / 0.5);
+  border-radius: 0.5rem;
+  padding: 0.4rem 1rem;
+  font-size: 0.75rem;
+  color: #fef3c7;
+  max-width: 640px;
+}
+
+/* ========== セクション共通 ========== */
+.biz-section {
+  margin-block: 3rem;
+}
+.biz-h2 {
+  font-size: clamp(1.2rem, 3.5vw, 1.6rem);
+  font-family: var(--sn-font-rounded, sans-serif);
+  font-weight: 700;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #1d4ed8;
+}
+.biz-lead {
+  font-size: 1rem;
+  line-height: 1.8;
+  margin-bottom: 1.25rem;
+  color: #374151;
+}
+.biz-note {
+  font-size: 0.82rem;
+  color: #6b7280;
+  margin-top: 0.75rem;
+  line-height: 1.6;
+}
+.biz-table-caption {
+  font-size: 0.78rem;
+  color: #6b7280;
+  text-align: left;
+  padding: 0.25rem 0 0.5rem;
+}
+
+/* ========== サマリーテーブル ========== */
+.biz-summary-table-wrap { overflow-x: auto; margin-top: 1rem; }
+.biz-summary-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+.biz-summary-table th,
+.biz-summary-table td {
+  padding: 0.6rem 0.9rem;
+  border: 1px solid #e5e7eb;
+  text-align: left;
+  vertical-align: top;
+  line-height: 1.5;
+}
+.biz-summary-table thead th {
+  background: #1d4ed8;
+  color: #fff;
+  font-weight: 600;
+}
+.biz-summary-table tbody tr:nth-child(even) { background: #f9fafb; }
+.biz-summary-table tbody th { font-weight: 600; }
+
+/* ========== 営業カード ========== */
+.biz-sales-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.25rem;
+  margin-top: 1.25rem;
+}
+.biz-sales-card {
+  border: 1px solid #e5e7eb;
+  border-top: 4px solid;
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+}
+.biz-sales-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin-bottom: 0.875rem;
+}
+.biz-sales-emoji { font-size: 2rem; flex-shrink: 0; line-height: 1; }
+.biz-sales-name {
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 0 0 0.2rem;
+}
+.biz-sales-style {
+  font-size: 0.75rem;
+  color: #6b7280;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+}
+.biz-sales-dl {
+  margin: 0 0 0.875rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.biz-sales-row {
+  display: grid;
+  grid-template-columns: 5rem 1fr;
+  gap: 0.5rem;
+  align-items: baseline;
+  font-size: 0.85rem;
+}
+.biz-sales-row dt {
+  font-weight: 700;
+  color: #374151;
+  font-size: 0.78rem;
+}
+.biz-sales-row dd {
+  margin: 0;
+  color: #4b5563;
+  line-height: 1.6;
+}
+.biz-sales-customer {
+  background: rgba(0 0 0 / 0.04);
+  border-radius: 0.5rem;
+  padding: 0.6rem 0.875rem;
+}
+.biz-sales-customer p {
+  font-size: 0.82rem;
+  line-height: 1.6;
+  color: #374151;
+  margin: 0;
+}
+
+/* ========== マネジメントカード ========== */
+.biz-mgmt-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+.biz-mgmt-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  background: #f9fafb;
+}
+.biz-mgmt-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin: 0 0 0.75rem;
+}
+.biz-mgmt-list {
+  margin: 0;
+  padding-left: 1.25rem;
+  font-size: 0.85rem;
+  line-height: 1.7;
+  color: #374151;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+.biz-info-box {
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 0.75rem;
+  padding: 1rem 1.25rem;
+  margin-top: 1rem;
+  font-size: 0.875rem;
+  line-height: 1.7;
+  color: #1e40af;
+}
+.biz-info-box p { margin: 0; }
+
+/* ========== 1on1テーブル ========== */
+.biz-oneon-table-wrap { overflow-x: auto; margin-top: 1.25rem; }
+.biz-oneon-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+.biz-oneon-table th,
+.biz-oneon-table td {
+  padding: 0.6rem 0.875rem;
+  border: 1px solid #e5e7eb;
+  text-align: left;
+  vertical-align: top;
+  line-height: 1.5;
+}
+.biz-oneon-table thead th {
+  background: #1d4ed8;
+  color: #fff;
+  font-weight: 600;
+}
+.biz-oneon-table tbody tr:nth-child(even) { background: #f9fafb; }
+
+/* ========== 商談リスト ========== */
+.biz-nego-list {
+  margin: 1rem 0;
+  padding-left: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+  font-size: 0.9rem;
+  line-height: 1.7;
+  color: #374151;
+}
+
+/* ========== 採用注意ボックス ========== */
+.biz-caution-box {
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  border-left: 4px solid #f97316;
+  border-radius: 0 0.75rem 0.75rem 0;
+  padding: 1.25rem;
+}
+.biz-caution-title {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #92400e;
+  margin: 0 0 0.625rem;
+}
+.biz-caution-body {
+  font-size: 0.875rem;
+  line-height: 1.7;
+  color: #92400e;
+  margin: 0;
+}
+.biz-hiring-list {
+  margin: 1rem 0;
+  padding-left: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  line-height: 1.7;
+  color: #374151;
+}
+
+/* ========== 研修ステップ ========== */
+.biz-training-steps {
+  list-style: none;
+  padding: 0;
+  margin: 1.25rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.biz-training-steps li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.875rem;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 1rem 1.25rem;
+  font-size: 0.875rem;
+  line-height: 1.7;
+  color: #374151;
+}
+.biz-step-num {
+  flex-shrink: 0;
+  width: 2rem;
+  height: 2rem;
+  background: #1d4ed8;
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+/* ========== アフィリエイトセクション ========== */
+.biz-aff-section {
+  background: linear-gradient(135deg, #f0f4ff 0%, #e8f5e9 100%);
+  border: 1px solid #c7d2fe;
+  border-radius: 1rem;
+  padding: 1.75rem;
+  margin-top: 2rem;
+}
+.biz-aff-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #1e40af;
+  margin: 0 0 0.5rem;
+}
+.biz-aff-lead {
+  font-size: 0.9rem;
+  color: #374151;
+  margin: 0 0 1.25rem;
+  line-height: 1.6;
+}
+.biz-aff-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+.biz-aff-card {
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+}
+.biz-aff-card--primary {
+  background: #fff;
+  border: 2px solid #1d4ed8;
+}
+.biz-aff-card--secondary {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+}
+.biz-aff-card-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #1d4ed8;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0 0 0.3rem;
+}
+.biz-aff-card-name {
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem;
+  color: #1f2937;
+}
+.biz-aff-card-desc {
+  font-size: 0.82rem;
+  line-height: 1.65;
+  color: #4b5563;
+  margin: 0 0 1rem;
+}
+.biz-aff-btn {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.875rem;
+  font-weight: 700;
+  padding: 0.5rem 1.25rem;
+  border-radius: 0.5rem;
+  text-decoration: none;
+  transition: opacity 0.15s;
+}
+.biz-aff-btn--primary {
+  background: #1d4ed8;
+  color: #fff;
+}
+.biz-aff-btn--primary:hover { opacity: 0.85; }
+.biz-aff-btn--disabled {
+  background: #f3f4f6;
+  color: #9ca3af;
+  border: 1px solid #e5e7eb;
+  cursor: not-allowed;
+}
+.biz-aff-note {
+  font-size: 0.75rem;
+  color: #6b7280;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* ========== リモートリスト ========== */
+.biz-remote-list {
+  margin: 1rem 0;
+  padding-left: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  line-height: 1.7;
+  color: #374151;
+}
+
+/* ========== 5ステップ ========== */
+.biz-steps {
+  list-style: none;
+  padding: 0;
+  margin: 1.25rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.biz-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.875rem;
+}
+.biz-step-body {
+  flex: 1;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 1rem 1.25rem;
+}
+.biz-step-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin: 0 0 0.375rem;
+  color: #1f2937;
+}
+.biz-step-body p {
+  font-size: 0.875rem;
+  line-height: 1.7;
+  color: #4b5563;
+  margin: 0 0 0.5rem;
+}
+.biz-step-link {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #1d4ed8;
+  text-decoration: none;
+}
+.biz-step-link:hover { text-decoration: underline; }
+
+/* ========== FAQ ========== */
+.biz-faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+.biz-faq-item {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+.biz-faq-q {
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 0.875rem 1.25rem;
+  background: #f9fafb;
+  margin: 0;
+  display: block;
+}
+.biz-faq-q::before {
+  content: 'Q. ';
+  color: #1d4ed8;
+}
+.biz-faq-a {
+  font-size: 0.875rem;
+  line-height: 1.75;
+  padding: 0.875rem 1.25rem;
+  margin: 0;
+  color: #4b5563;
+}
+.biz-faq-a::before {
+  content: 'A. ';
+  font-weight: 700;
+  color: #16a34a;
+}
+
+/* ========== 関連リンク ========== */
+.biz-related-list {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.biz-related-link {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.biz-related-link:hover {
+  border-color: #1d4ed8;
+  box-shadow: 0 2px 8px rgba(29 78 216 / 0.1);
+}
+.biz-related-icon { font-size: 1.75rem; flex-shrink: 0; }
+.biz-related-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+.biz-related-title { font-weight: 700; font-size: 0.95rem; }
+.biz-related-desc { font-size: 0.8rem; color: var(--sn-muted, #6b7280); }
+
+/* ========== 商標ノート ========== */
+.biz-trademark-note {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  border-top: 1px solid #e5e7eb;
+  padding-top: 1.5rem;
+  margin-top: 2rem;
+  line-height: 1.6;
+}
+
+/* ========== レスポンシブ ========== */
+@media (max-width: 640px) {
+  .biz-sales-grid { grid-template-columns: 1fr; }
+  .biz-mgmt-grid { grid-template-columns: 1fr; }
+  .biz-aff-cards { grid-template-columns: 1fr; }
+  .biz-sales-row {
+    grid-template-columns: 1fr;
+    gap: 0.2rem;
+  }
+  .biz-sales-row dt {
+    border-bottom: 1px solid #f3f4f6;
+    padding-bottom: 0.2rem;
+  }
+}
+</style>

@@ -1,0 +1,1032 @@
+---
+/**
+ * DiSC 4タイプ解説まとめページ
+ * KW: DiSC タイプ（VOL1,900/CPC¥191） / DiSC 4タイプ / DiSC まとめ
+ * 学術根拠: Marston (1928) + Clarke (1956) + Wiley DiSC公式 (2024)
+ * 確認日: 2026-05-21
+ *
+ * DiSC® はJohn Wiley & Sons, Inc. の登録商標。
+ * 本ページはWiley社の公式アセスメントではありません。
+ */
+import BaseLayout from '../../../../layouts/BaseLayout.astro';
+import Container from '../../../../components/Container.astro';
+import TldrBlock from '../../../../components/TldrBlock.astro';
+import ReferenceList from '../../../../components/ReferenceList.astro';
+import ScienceNote from '../../../../components/ScienceNote.astro';
+import { meta } from '../../../../data/diagnoses/disc/meta';
+
+const SITE_URL = 'https://shindan-navi.jp';
+const PAGE_URL = `${SITE_URL}/diagnosis/disc/types-summary/`;
+const UPDATED_AT = '2026-05-21';
+
+const title = 'DiSC 4タイプ完全まとめ｜D・i・S・C の特徴・強み・相性を一覧解説';
+const description =
+  'DiSC® の4タイプ（D＝主導型・i＝感化型・S＝安定型・C＝慎重型）を特徴・強み・弱み・向いている職種・16組合せ相性まで網羅。Marston（1928）学術根拠付き。2026-05-21時点。';
+
+// JSON-LD: Article
+const jsonLdArticle = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  '@id': `${PAGE_URL}#article`,
+  headline: title,
+  description: description,
+  url: PAGE_URL,
+  datePublished: '2026-05-21',
+  dateModified: UPDATED_AT,
+  inLanguage: 'ja',
+  author: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+    name: '診断ナビ',
+    url: SITE_URL,
+  },
+  publisher: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+    name: '診断ナビ',
+    url: SITE_URL,
+  },
+  citation: meta.references.map((ref) => ({
+    '@type': 'CreativeWork',
+    name: ref.title,
+    author: ref.author,
+    datePublished: String(ref.year),
+    url: ref.url,
+  })),
+};
+
+// FAQ 10問
+const faqs = [
+  {
+    question: 'DiSCの4タイプとは何ですか？',
+    answer:
+      'DiSCの4タイプとはD（Dominance・主導型）・i（influence・感化型）・S（Steadiness・安定型）・C（Conscientiousness・慎重型）の4つの行動スタイルです。Marston（1928）が著書「Emotions of Normal People」で提唱した理論をWiley社が「Everything DiSC®」として整備し、世界75か国・年間100万人以上の組織研修で活用されています（出典: https://www.discprofile.com/what-is-disc/overview、2026-05-21確認）。',
+  },
+  {
+    question: 'DiSCのどのタイプが最も優れていますか？',
+    answer:
+      'DiSCではどのタイプも優劣はありません。D型は推進力、i型は巻き込み力、S型は安定・継続力、C型は正確性と分析力という異なる強みを持ちます。Wiley社も「DiSCはタイプの優劣を示すものではない」と明示しています（https://www.discprofile.com/what-is-disc/overview）。状況やチームに応じて各タイプの強みが補完し合うことが重要です。',
+  },
+  {
+    question: 'DiSCタイプは変わることがありますか？',
+    answer:
+      'DiSCの行動スタイルはある程度安定していますが、役割・環境・ストレス状況によって変化することがあります。「職場での自分」と「プライベートの自分」でスコアが異なることもあります。3〜6ヶ月後に再受診して変化を確認するのも自己理解を深める方法の一つです。',
+  },
+  {
+    question: 'DiSCの4タイプで相性が良い組み合わせはどれですか？',
+    answer:
+      'D型とi型は推進力×巻き込み力で相乗効果を生む補完関係です。S型とC型は丁寧さ・安定志向で協力しやすいペアです。D型とC型はスピード重視と品質重視で対照的ですが、互いの弱点を補い合える組み合わせです。Wiley社の研究では、多様なタイプが混在するチームが最も高いパフォーマンスを発揮するとされています（https://www.everythingdisc.com/、2026-05-21確認）。',
+  },
+  {
+    question: 'D型（主導型）の仕事での強みは何ですか？',
+    answer:
+      'D型の仕事での強みは「目標に向けた強い推進力」「即断即決の意思決定」「リーダーシップの自然な発揮」「困難な課題への粘り強い対応」の4点です。変化の多い環境・高い目標・新しい挑戦のあるポジションで特に力を発揮します。一方で、細部の確認やチームメンバーへの配慮が後回しになる傾向があります。',
+  },
+  {
+    question: 'i型（感化型）はどんな職種に向いていますか？',
+    answer:
+      'i型（感化型）は「人を動かす」仕事に向いています。具体的には営業職・法人営業・アカウントマネージャー、マーケター・ブランドマネージャー、採用担当・HR、コーチ・研修講師・ファシリテーターなどです。初対面でも短時間で信頼関係を構築できる強みと、高い説得力・巻き込み力がビジネスで活きます。',
+  },
+  {
+    question: 'S型（安定型）はどのような環境で活躍できますか？',
+    answer:
+      'S型（安定型）は「継続性・協調・信頼構築」が求められる環境で活躍できます。顧客サポート・カスタマーサクセス、人事・労務・社内広報、プロジェクトコーディネーター・PMO、品質保証・QA担当などに向いています。急な変化より一定のペースで安定したパフォーマンスを発揮します。',
+  },
+  {
+    question: 'C型（慎重型）の特徴と向いている仕事は？',
+    answer:
+      'C型（慎重型）は「正確性・データ・根拠」を最重視します。判断前に徹底的に情報を集め、ルールや手順を把握してから動くスタイルです。データアナリスト・リサーチャー、品質保証・QA・コンプライアンス担当、エンジニア・アーキテクト、財務・会計・監査、法務・知財担当に向いています。',
+  },
+  {
+    question: 'DiSCの4タイプを自分で見極める方法は？',
+    answer:
+      '自分のDiSCタイプを見極めるヒントとして、以下の問いに答えてみてください。「何にモチベーションを感じるか（成果/関係/安定/品質）」「コミュニケーションスタイル（直接的/感情豊か/温かく/分析的）」「意思決定のペース（即断/直感/慎重/データ確認後）」「ストレスの原因（失敗/批判/変化/不正確さ）」。最も正確な判定は本サイトの無料診断（28問・約3分）で確認できます。',
+  },
+  {
+    question: 'DiSCを採用・評価に使っていいですか？',
+    answer:
+      'DiSCを採用選考・人事評価・昇進判断の基準として使うことは推奨しません。行動スタイルの多様性は組織の強みであり、特定のタイプを「採用基準」とすることは公平採用の観点から問題になる可能性があります。Wiley社も採用への使用を明示的に非推奨としています（https://www.discprofile.com/what-is-disc/overview、2026-05-21確認）。DiSCは自己理解・チームコミュニケーション改善の目的でご活用ください。',
+  },
+];
+
+// JSON-LD: FAQPage
+const jsonLdFAQ = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  '@id': `${PAGE_URL}#faq`,
+  mainEntity: faqs.map(({ question, answer }) => ({
+    '@type': 'Question',
+    name: question,
+    acceptedAnswer: { '@type': 'Answer', text: answer },
+  })),
+};
+
+// JSON-LD: BreadcrumbList
+const jsonLdBreadcrumb = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'ホーム', item: SITE_URL },
+    { '@type': 'ListItem', position: 2, name: '診断一覧', item: `${SITE_URL}/diagnosis/` },
+    { '@type': 'ListItem', position: 3, name: 'DiSC診断', item: `${SITE_URL}/diagnosis/disc/` },
+    { '@type': 'ListItem', position: 4, name: '4タイプまとめ', item: PAGE_URL },
+  ],
+};
+
+const jsonLdAll = [jsonLdArticle, jsonLdFAQ, jsonLdBreadcrumb];
+
+// 4タイプ詳細比較データ
+const typeDetails = [
+  {
+    id: 'D',
+    name: '主導型',
+    nameEn: 'Dominance',
+    emoji: '🦁',
+    color: '#dc2626',
+    bgColor: '#fef2f2',
+    borderColor: '#fca5a5',
+    keyword: '結果・スピード・挑戦',
+    description:
+      '課題環境において直接的に行動し、結果を出すことを最重視します。意思決定が速く、リーダーシップを自然に発揮します。',
+    strengths: ['強力な推進力で目標達成を牽引', '即断即決の意思決定力', 'リーダーシップの自然な発揮', '困難な課題への粘り強い対応'],
+    weaknesses: ['細部の確認・プロセス管理が後回しになりやすい', '周囲への配慮が後回しになる', '意見が強すぎて対立に発展しやすい'],
+    careers: ['経営者・事業責任者', '法人営業・セールスマネージャー', 'コンサルタント', 'プロジェクトマネージャー', '起業家・事業開発担当'],
+    commStyle: '直接的・率直。結論を先に話し、簡潔な対話を好む。',
+    motivation: '成果の認証・高い目標・競争環境',
+    stress: '非効率・コントロール喪失・成果なき議論',
+  },
+  {
+    id: 'i',
+    name: '感化型',
+    nameEn: 'influence',
+    emoji: '🌟',
+    color: '#d97706',
+    bgColor: '#fffbeb',
+    borderColor: '#fcd34d',
+    keyword: '人・楽観・巻き込み',
+    description:
+      '有利な環境において人に影響を与えることを重視します。社交的で楽観的、人を巻き込む力が特徴です。',
+    strengths: ['高い説得力と親しみやすさで対外交渉・営業で成果', 'チームのモチベーションを自然に高める', '人脈形成・ネットワーク活用', '熱意でアイデアへの賛同を得やすい'],
+    weaknesses: ['細部確認・リスク管理が後回しになりやすい', '集中作業より会話・交流を優先しがち', '批判的フィードバックを感情的に受け取りやすい'],
+    careers: ['営業職・アカウントマネージャー', 'マーケター・ブランドマネージャー', '採用担当・HR', 'コーチ・研修講師', '経営企画・事業開発'],
+    commStyle: '感情豊か・肯定から入る。思い・感想・体験を共有するスタイル。',
+    motivation: '承認・感謝の言葉・仕事の意義と誰のためになるか',
+    stress: '批判・孤立・感情的な無関心',
+  },
+  {
+    id: 'S',
+    name: '安定型',
+    nameEn: 'Steadiness',
+    emoji: '🌿',
+    color: '#16a34a',
+    bgColor: '#f0fdf4',
+    borderColor: '#86efac',
+    keyword: '協調・忍耐・信頼',
+    description:
+      '有利な環境において忍耐強く安定的に行動します。チームの調和と継続性を最重視します。',
+    strengths: ['高い協調性でチームの対立を和らげる', '忍耐強い仕事ぶりで長期プロジェクトを支える', '信頼関係の構築が得意で長く頼りにされる', '安定したパフォーマンスでチームの予測可能性を高める'],
+    weaknesses: ['急な変化・環境変動への適応に時間がかかる', '対立を避けるあまり自分の意見を言い出せない', '他者ペースに合わせすぎて自分の優先事項が後回しになる'],
+    careers: ['顧客サポート・カスタマーサクセス', '人事・労務・社内広報', 'プロジェクトコーディネーター・PMO', 'ナース・介護職・教員', '品質保証・QA担当'],
+    commStyle: '温かく落ち着いたトーン。相手に安心感を与え、十分に考える時間があるときに意見を表明。',
+    motivation: '感謝・労いの言葉・長期的な信頼関係',
+    stress: '急な変更・対立・不安定な環境',
+  },
+  {
+    id: 'C',
+    name: '慎重型',
+    nameEn: 'Conscientiousness',
+    emoji: '🔬',
+    color: '#2563eb',
+    bgColor: '#eff6ff',
+    borderColor: '#93c5fd',
+    keyword: '正確性・データ・品質',
+    description:
+      '不利な環境において品質と正確さを守ることを重視します。データと根拠に基づく判断が特徴です。',
+    strengths: ['高い専門性・正確さで品質の高い成果物を安定して出す', 'データ・根拠による客観的な意思決定', 'リスク管理・品質保証でチームのミスを事前防止', '論理的分析力で複雑な問題を体系化'],
+    weaknesses: ['完璧を求めるあまり意思決定・実行が遅くなる', 'データと事実を優先しすぎて感情面が後回しになる', 'リスクへの慎重さが新しいチャレンジの踏み出しを遅くする'],
+    careers: ['データアナリスト・リサーチャー', '品質保証・QA・コンプライアンス担当', 'エンジニア・アーキテクト', '財務・会計・監査', '法務・知財・規制対応担当'],
+    commStyle: '事実・データ・論理中心。根拠のない主張には慎重に反応。具体的データ・根拠・リスク評価とセットで提案を。',
+    motivation: '専門的な知識・スキルの認証・正確さへの評価',
+    stress: '不正確な情報・ルール不在・準備不足での意思決定',
+  },
+];
+
+// 16組合せ相性表
+const combinations: { a: string; b: string; summary: string }[] = [
+  { a: 'D', b: 'i', summary: '推進力×巻き込み力。スピードと熱量が相乗効果を生む最強ペアの一つ。' },
+  { a: 'D', b: 'S', summary: 'D型の急進×S型のブレーキ。摩擦になりやすいが、目標共有で補完関係に。' },
+  { a: 'D', b: 'C', summary: 'スピード重視vs品質重視で対照的。C型がリスク補完するとD型がより活きる。' },
+  { a: 'i', b: 'S', summary: 'アイデア×実行。i型の計画漏れをS型が丁寧にフォローする相性の良いペア。' },
+  { a: 'i', b: 'C', summary: 'アイデア×根拠。i型の熱意にC型がデータを加えると説得力が格段に上がる。' },
+  { a: 'S', b: 'C', summary: '丁寧さ・安定志向で共通点が多く、実行フェーズで安定したパートナーシップ。' },
+  { a: 'D', b: 'D', summary: '目標を共有すれば最強の推進力。競争的になりやすい点に注意。' },
+  { a: 'i', b: 'i', summary: '盛り上がりやすいが実行フェーズで役割分担を明確に。' },
+  { a: 'S', b: 'S', summary: 'チームの安定を支えるが、変化への対応で背中を押し合う機会が必要。' },
+  { a: 'C', b: 'C', summary: '高い基準を共有しやすいが、意思決定スピードを意識的に上げることが重要。' },
+];
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  canonical={PAGE_URL}
+  jsonLd={jsonLdAll}
+  ogType="article"
+  publishDate="2026-05-21"
+  lastUpdated={UPDATED_AT}
+  breadcrumbs={[
+    { name: '診断一覧', url: '/diagnosis/' },
+    { name: 'DiSC診断', url: '/diagnosis/disc/' },
+    { name: '4タイプまとめ', url: '/diagnosis/disc/types-summary/' },
+  ]}
+>
+  {/* ========== ヒーロー ========== */}
+  <section class="ts-hero" aria-labelledby="ts-h1">
+    <Container>
+      <div class="ts-hero-inner">
+        <p class="ts-hero-badge">DiSC&#174; Wiley社登録商標 | Marston (1928) 学術根拠付き | 2026-05-21 更新</p>
+        <h1 id="ts-h1" class="ts-h1">
+          DiSC 4タイプ完全まとめ
+        </h1>
+        <p class="ts-hero-sub">
+          D（主導型）・i（感化型）・S（安定型）・C（慎重型）の特徴・強み・相性を一覧解説
+        </p>
+        <div class="ts-hero-tags">
+          <span class="ts-tag">特徴・強み・弱み</span>
+          <span class="ts-tag">向いている職種</span>
+          <span class="ts-tag">16組合せ相性表</span>
+          <span class="ts-tag">FAQ 10問</span>
+        </div>
+      </div>
+    </Container>
+  </section>
+
+  <Container>
+    {/* ========== TldrBlock（AIO引用最適化） ========== */}
+    <TldrBlock
+      title="このページでわかること"
+      points={[
+        "DiSC® 4タイプ（D＝主導型・i＝感化型・S＝安定型・C＝慎重型）の特徴・強み・弱み・向いている職種を1ページで網羅（Marston 1928 / Wiley DiSC公式根拠付き）",
+        "4タイプ × 4タイプ 16組合せの「コミュニケーション相性まとめ」で、職場の対人関係改善に活用できる",
+        "自分のタイプが不明な方は無料のDiSC診断（28問・約3分）ですぐ確認可能"
+      ]}
+      updatedAt={UPDATED_AT}
+      sourceLabel="Wiley DiSC公式"
+      sourceUrl="https://www.discprofile.com/what-is-disc/overview"
+    />
+
+    {/* ========== DiSC理論の定義 ========== */}
+    <section class="ts-section" aria-labelledby="ts-what-h2">
+      <h2 id="ts-what-h2" class="ts-h2">DiSC理論とは（定義）</h2>
+      <p class="ts-lead">
+        DiSCとは、心理学者 William Moulton Marston が 1928年に著書
+        「Emotions of Normal People」（Routledge）で提唱した行動スタイル理論です。
+        その後 Walter Clarke（1956年）、John Geier（1970年代）を経て、
+        Wiley社が「Everything DiSC&#174;」として整備しました
+        （<a href="https://www.discprofile.com/what-is-disc/history-of-disc" target="_blank" rel="noopener noreferrer">Wiley DiSC・歴史ページ</a>、2026-05-21確認）。
+      </p>
+      <div class="ts-info-table-wrap">
+        <table class="ts-info-table">
+          <caption class="ts-table-caption">DiSC 4タイプの基本定義（2026-05-21時点）</caption>
+          <thead>
+            <tr>
+              <th scope="col">タイプ</th>
+              <th scope="col">英語名</th>
+              <th scope="col">Marston定義</th>
+              <th scope="col">キーワード</th>
+            </tr>
+          </thead>
+          <tbody>
+            {typeDetails.map((t) => (
+              <tr>
+                <th scope="row" style={`color: ${t.color}; font-weight: 700;`}>
+                  {t.emoji} {t.name}（{t.id}型）
+                </th>
+                <td>{t.nameEn}</td>
+                <td>{t.description}</td>
+                <td><span class="ts-kw-tag" style={`background: ${t.bgColor}; color: ${t.color};`}>{t.keyword}</span></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p class="ts-note">
+        「DiSC&#174;」はJohn Wiley &amp; Sons, Inc. の登録商標です。
+        本ページはDiSC理論に基づく自己理解コンテンツであり、Wiley社の公式アセスメントとは別のものです。
+      </p>
+    </section>
+
+    {/* ========== 4タイプ詳細カード ========== */}
+    <section class="ts-section" aria-labelledby="ts-types-h2">
+      <h2 id="ts-types-h2" class="ts-h2">各タイプの詳細解説</h2>
+      <p class="ts-lead">
+        4タイプそれぞれの特徴・強み・弱み・向いている職種・コミュニケーションスタイルを詳しく解説します。
+      </p>
+      {typeDetails.map((t) => (
+        <article
+          class="ts-type-card"
+          id={`type-${t.id}`}
+          style={`border-top-color: ${t.color}; --type-bg: ${t.bgColor}; --type-border: ${t.borderColor}; --type-color: ${t.color};`}
+          aria-labelledby={`type-${t.id}-h3`}
+        >
+          <div class="ts-type-header">
+            <span class="ts-type-emoji" aria-hidden="true">{t.emoji}</span>
+            <div>
+              <h3 id={`type-${t.id}-h3`} class="ts-type-name" style={`color: ${t.color}`}>
+                {t.id}型（{t.name}・{t.nameEn}）
+              </h3>
+              <p class="ts-type-keyword">{t.keyword}</p>
+            </div>
+          </div>
+          <p class="ts-type-desc">{t.description}</p>
+
+          <div class="ts-type-grid">
+            <div class="ts-type-col">
+              <h4 class="ts-type-col-title ts-col-strength">強み</h4>
+              <ul class="ts-type-list">
+                {t.strengths.map((s) => <li>{s}</li>)}
+              </ul>
+            </div>
+            <div class="ts-type-col">
+              <h4 class="ts-type-col-title ts-col-weak">気をつけたい傾向</h4>
+              <ul class="ts-type-list">
+                {t.weaknesses.map((w) => <li>{w}</li>)}
+              </ul>
+            </div>
+          </div>
+
+          <div class="ts-type-detail-grid">
+            <div class="ts-type-detail-item">
+              <span class="ts-detail-label">向いている職種</span>
+              <ul class="ts-careers-list">
+                {t.careers.map((c) => <li>{c}</li>)}
+              </ul>
+            </div>
+            <div class="ts-type-detail-item">
+              <span class="ts-detail-label">コミュニケーションスタイル</span>
+              <p class="ts-detail-text">{t.commStyle}</p>
+            </div>
+            <div class="ts-type-detail-item">
+              <span class="ts-detail-label">モチベーションの源泉</span>
+              <p class="ts-detail-text">{t.motivation}</p>
+            </div>
+            <div class="ts-type-detail-item">
+              <span class="ts-detail-label">ストレスの原因</span>
+              <p class="ts-detail-text">{t.stress}</p>
+            </div>
+          </div>
+
+          <div class="ts-type-footer">
+            <a href={`/diagnosis/disc/result/${t.id}/`} class="ts-type-link" style={`color: ${t.color}; border-color: ${t.color};`}>
+              {t.name}（{t.id}型）の詳細レポートを見る →
+            </a>
+          </div>
+        </article>
+      ))}
+    </section>
+
+    {/* ========== 16組合せ相性表 ========== */}
+    <section class="ts-section" aria-labelledby="ts-combo-h2">
+      <h2 id="ts-combo-h2" class="ts-h2">4タイプ × 4タイプ 組合せ相性まとめ</h2>
+      <p class="ts-lead">
+        異なるタイプが一緒に働くとき、どのような関係になりやすいかをまとめました。
+        Wiley社の研究では、多様なタイプが混在するチームが最も高いパフォーマンスを発揮するとされています
+        （<a href="https://www.everythingdisc.com/" target="_blank" rel="noopener noreferrer">Everything DiSC公式</a>、2026-05-21確認）。
+      </p>
+      <div class="ts-combo-table-wrap">
+        <table class="ts-combo-table">
+          <caption class="ts-table-caption">DiSC 組合せ別コミュニケーション傾向（2026-05-21時点）</caption>
+          <thead>
+            <tr>
+              <th scope="col">組合せ</th>
+              <th scope="col">関係性のポイント</th>
+            </tr>
+          </thead>
+          <tbody>
+            {combinations.map((c) => (
+              <tr>
+                <th scope="row" class="ts-combo-pair">
+                  <span class="ts-combo-badge" style={`background: ${typeDetails.find((t) => t.id === c.a)?.bgColor}; color: ${typeDetails.find((t) => t.id === c.a)?.color};`}>
+                    {typeDetails.find((t) => t.id === c.a)?.emoji} {c.a}型
+                  </span>
+                  <span class="ts-combo-sep">×</span>
+                  <span class="ts-combo-badge" style={`background: ${typeDetails.find((t) => t.id === c.b)?.bgColor}; color: ${typeDetails.find((t) => t.id === c.b)?.color};`}>
+                    {typeDetails.find((t) => t.id === c.b)?.emoji} {c.b}型
+                  </span>
+                </th>
+                <td class="ts-combo-summary">{c.summary}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p class="ts-note">
+        上記はDiSC理論に基づく一般的な傾向です。個人差があります。
+        「タイプで人を決めつける」ことは推奨しません。
+      </p>
+    </section>
+
+    {/* ========== 自分のタイプを見極めるヒント ========== */}
+    <section class="ts-section" aria-labelledby="ts-find-h2">
+      <h2 id="ts-find-h2" class="ts-h2">自分のタイプを見極めるヒント</h2>
+      <p class="ts-lead">
+        まだ自分のDiSCタイプが分からない方は、以下の4つの問いを参考にしてください。
+        「職場での自分」を思い浮かべながら考えると、タイプの傾向が見えてきます。
+      </p>
+      <div class="ts-hint-grid">
+        <div class="ts-hint-card">
+          <span class="ts-hint-num" aria-hidden="true">1</span>
+          <div>
+            <h3 class="ts-hint-title">何にモチベーションを感じますか？</h3>
+            <ul class="ts-hint-list">
+              <li><span class="ts-hint-type" style="color: #dc2626;">D型:</span> 高い目標・成果の達成・競争</li>
+              <li><span class="ts-hint-type" style="color: #d97706;">i型:</span> 人との関わり・承認・楽しい場</li>
+              <li><span class="ts-hint-type" style="color: #16a34a;">S型:</span> チームの調和・安定・長期的信頼</li>
+              <li><span class="ts-hint-type" style="color: #2563eb;">C型:</span> 正確さ・専門性の向上・品質</li>
+            </ul>
+          </div>
+        </div>
+        <div class="ts-hint-card">
+          <span class="ts-hint-num" aria-hidden="true">2</span>
+          <div>
+            <h3 class="ts-hint-title">コミュニケーションスタイルは？</h3>
+            <ul class="ts-hint-list">
+              <li><span class="ts-hint-type" style="color: #dc2626;">D型:</span> 直接的・結論から・短く</li>
+              <li><span class="ts-hint-type" style="color: #d97706;">i型:</span> 感情豊か・体験談・盛り上げる</li>
+              <li><span class="ts-hint-type" style="color: #16a34a;">S型:</span> 温かく・聞き役・丁寧に</li>
+              <li><span class="ts-hint-type" style="color: #2563eb;">C型:</span> 論理的・データ優先・根拠重視</li>
+            </ul>
+          </div>
+        </div>
+        <div class="ts-hint-card">
+          <span class="ts-hint-num" aria-hidden="true">3</span>
+          <div>
+            <h3 class="ts-hint-title">意思決定のペースは？</h3>
+            <ul class="ts-hint-list">
+              <li><span class="ts-hint-type" style="color: #dc2626;">D型:</span> 即断即決・迷わず動く</li>
+              <li><span class="ts-hint-type" style="color: #d97706;">i型:</span> 直感的・感情で判断</li>
+              <li><span class="ts-hint-type" style="color: #16a34a;">S型:</span> 慎重に・十分考えてから</li>
+              <li><span class="ts-hint-type" style="color: #2563eb;">C型:</span> データ確認後・分析してから</li>
+            </ul>
+          </div>
+        </div>
+        <div class="ts-hint-card">
+          <span class="ts-hint-num" aria-hidden="true">4</span>
+          <div>
+            <h3 class="ts-hint-title">ストレスの主な原因は？</h3>
+            <ul class="ts-hint-list">
+              <li><span class="ts-hint-type" style="color: #dc2626;">D型:</span> 非効率・コントロール喪失</li>
+              <li><span class="ts-hint-type" style="color: #d97706;">i型:</span> 批判・孤立・無関心</li>
+              <li><span class="ts-hint-type" style="color: #16a34a;">S型:</span> 急な変更・不安定な環境</li>
+              <li><span class="ts-hint-type" style="color: #2563eb;">C型:</span> 不正確な情報・ルール不在</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="ts-cta-box">
+        <p class="ts-cta-text">
+          28問・約3分の無料診断で正確なタイプを判定できます。登録不要。
+        </p>
+        <a href="/diagnosis/disc/" class="ts-cta-btn">
+          無料DiSC診断を受ける（28問）
+          <span aria-hidden="true">→</span>
+        </a>
+      </div>
+    </section>
+
+    {/* ========== FAQ ========== */}
+    <section class="ts-section" aria-labelledby="ts-faq-h2">
+      <h2 id="ts-faq-h2" class="ts-h2">よくある質問（FAQ）</h2>
+      <dl class="ts-faq-list">
+        {faqs.map(({ question, answer }) => (
+          <div class="ts-faq-item">
+            <dt class="ts-faq-q">{question}</dt>
+            <dd class="ts-faq-a">{answer}</dd>
+          </div>
+        ))}
+      </dl>
+    </section>
+
+    {/* ========== ScienceNote ========== */}
+    <ScienceNote
+      basisText="William Moulton Marston (1928) 「Emotions of Normal People」（Routledge）+ Walter Clarke (1956) Activity Vector Analysis + John Geier (1970年代) Personal Profile System。現代版はWiley社が「Everything DiSC®」として整備（世界75か国・年間100万人以上の組織研修で活用）。"
+      basisUrl="https://www.discprofile.com/what-is-disc/overview"
+      basisLabel="Wiley DiSC公式・What is DiSC?"
+      notMedical={true}
+      updatedAt={UPDATED_AT}
+      additionalNote="DiSC® はJohn Wiley & Sons, Inc. の登録商標です。本ページはWiley社の公式アセスメントではなく、DiSC理論に基づく自己理解コンテンツです。採用・評価・昇進判断の基準としての使用は推奨しません。"
+    />
+
+    {/* ========== 関連ページ内部リンク ========== */}
+    <section class="ts-section" aria-labelledby="ts-related-h2">
+      <h2 id="ts-related-h2" class="ts-h2">関連ページ</h2>
+      <ul class="ts-related-list">
+        <li>
+          <a href="/diagnosis/disc/" class="ts-related-link">
+            <span class="ts-related-icon" aria-hidden="true">🎯</span>
+            <span class="ts-related-body">
+              <span class="ts-related-title">DiSC診断【無料・28問】</span>
+              <span class="ts-related-desc">あなたのDiSCタイプを3分で判定</span>
+            </span>
+          </a>
+        </li>
+        <li>
+          <a href="/diagnosis/disc/business/" class="ts-related-link">
+            <span class="ts-related-icon" aria-hidden="true">💼</span>
+            <span class="ts-related-body">
+              <span class="ts-related-title">DiSC × 仕事・ビジネス活用ガイド</span>
+              <span class="ts-related-desc">営業・マネジメント・1on1・チームビルディングへの応用</span>
+            </span>
+          </a>
+        </li>
+        <li>
+          <a href="/diagnosis/mbti/" class="ts-related-link">
+            <span class="ts-related-icon" aria-hidden="true">🧠</span>
+            <span class="ts-related-body">
+              <span class="ts-related-title">MBTI（16タイプ）診断</span>
+              <span class="ts-related-desc">DiSCと組み合わせると自己理解が格段に深まる</span>
+            </span>
+          </a>
+        </li>
+        <li>
+          <a href="/diagnosis/" class="ts-related-link">
+            <span class="ts-related-icon" aria-hidden="true">📋</span>
+            <span class="ts-related-body">
+              <span class="ts-related-title">全診断一覧</span>
+              <span class="ts-related-desc">多重知能・完璧主義・血液型など8種類の診断</span>
+            </span>
+          </a>
+        </li>
+      </ul>
+    </section>
+
+    {/* ========== 参考文献 ========== */}
+    <ReferenceList references={meta.references} confirmedAt={UPDATED_AT} />
+
+    {/* ========== 商標フッターノート ========== */}
+    <p class="ts-trademark-note">
+      DiSC&#174; はJohn Wiley &amp; Sons, Inc. の登録商標です。
+      本ページはWiley社の公式アセスメントとは独立した、DiSC理論に基づく自己理解コンテンツです。
+      公式DiSCアセスメントについては
+      <a href="https://www.discprofile.com/" target="_blank" rel="noopener noreferrer">discprofile.com</a>
+      をご確認ください。
+    </p>
+  </Container>
+</BaseLayout>
+
+<style>
+/* ========== ヒーロー ========== */
+.ts-hero {
+  background: linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 50%, #3b82f6 100%);
+  color: #fff;
+  padding-block: 3rem 3.5rem;
+  text-align: center;
+}
+.ts-hero-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.875rem;
+}
+.ts-hero-badge {
+  display: inline-block;
+  background: rgba(255 255 255 / 0.15);
+  border: 1px solid rgba(255 255 255 / 0.3);
+  border-radius: 2rem;
+  padding: 0.25rem 1rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.03em;
+}
+.ts-h1 {
+  font-size: clamp(1.6rem, 4.5vw, 2.25rem);
+  font-family: var(--sn-font-rounded, sans-serif);
+  font-weight: 700;
+  margin: 0;
+  line-height: 1.25;
+}
+.ts-hero-sub {
+  font-size: clamp(0.875rem, 2.5vw, 1rem);
+  opacity: 0.9;
+  margin: 0;
+  line-height: 1.6;
+}
+.ts-hero-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+}
+.ts-tag {
+  background: rgba(255 255 255 / 0.2);
+  border: 1px solid rgba(255 255 255 / 0.35);
+  border-radius: 1rem;
+  padding: 0.2rem 0.75rem;
+  font-size: 0.75rem;
+}
+
+/* ========== セクション共通 ========== */
+.ts-section {
+  margin-block: 3rem;
+}
+.ts-h2 {
+  font-size: clamp(1.2rem, 3.5vw, 1.6rem);
+  font-family: var(--sn-font-rounded, sans-serif);
+  font-weight: 700;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #1d4ed8;
+}
+.ts-lead {
+  font-size: 1rem;
+  line-height: 1.8;
+  margin-bottom: 1.25rem;
+  color: #374151;
+}
+.ts-note {
+  font-size: 0.82rem;
+  color: #6b7280;
+  margin-top: 0.75rem;
+  line-height: 1.6;
+}
+
+/* ========== 定義テーブル ========== */
+.ts-info-table-wrap {
+  overflow-x: auto;
+  margin-top: 1.25rem;
+}
+.ts-info-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+.ts-info-table th,
+.ts-info-table td {
+  padding: 0.6rem 0.9rem;
+  border: 1px solid #e5e7eb;
+  text-align: left;
+  vertical-align: top;
+  line-height: 1.5;
+}
+.ts-info-table thead th {
+  background: #1d4ed8;
+  color: #fff;
+  font-weight: 600;
+}
+.ts-info-table tbody tr:nth-child(even) td,
+.ts-info-table tbody tr:nth-child(even) th { background: #f9fafb; }
+.ts-kw-tag {
+  display: inline-block;
+  padding: 0.15rem 0.6rem;
+  border-radius: 1rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+.ts-table-caption {
+  font-size: 0.78rem;
+  color: #6b7280;
+  text-align: left;
+  padding: 0.25rem 0 0.5rem;
+}
+
+/* ========== タイプカード ========== */
+.ts-type-card {
+  border: 1px solid #e5e7eb;
+  border-top: 4px solid;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  background: var(--type-bg, #fff);
+}
+.ts-type-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+.ts-type-emoji {
+  font-size: 2.25rem;
+  flex-shrink: 0;
+  line-height: 1;
+}
+.ts-type-name {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin: 0 0 0.2rem;
+}
+.ts-type-keyword {
+  font-size: 0.78rem;
+  color: #6b7280;
+  margin: 0;
+}
+.ts-type-desc {
+  font-size: 0.9rem;
+  line-height: 1.75;
+  color: #374151;
+  margin-bottom: 1rem;
+}
+.ts-type-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+@media (max-width: 640px) {
+  .ts-type-grid { grid-template-columns: 1fr; }
+}
+.ts-type-col {
+  background: #fff;
+  border: 1px solid var(--type-border, #e5e7eb);
+  border-radius: 0.5rem;
+  padding: 0.875rem;
+}
+.ts-type-col-title {
+  font-size: 0.82rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem;
+}
+.ts-col-strength { color: #15803d; }
+.ts-col-weak { color: #b45309; }
+.ts-type-list {
+  margin: 0;
+  padding-left: 1.25rem;
+  font-size: 0.83rem;
+  line-height: 1.6;
+  color: #374151;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+.ts-type-detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+@media (max-width: 640px) {
+  .ts-type-detail-grid { grid-template-columns: 1fr; }
+}
+.ts-type-detail-item {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+}
+.ts-detail-label {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #1d4ed8;
+  margin-bottom: 0.3rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.ts-detail-text {
+  font-size: 0.83rem;
+  line-height: 1.6;
+  color: #4b5563;
+  margin: 0;
+}
+.ts-careers-list {
+  margin: 0;
+  padding-left: 1rem;
+  font-size: 0.82rem;
+  line-height: 1.6;
+  color: #4b5563;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+.ts-type-footer {
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid #e5e7eb;
+}
+.ts-type-link {
+  font-size: 0.875rem;
+  font-weight: 700;
+  text-decoration: none;
+  padding: 0.4rem 1rem;
+  border: 2px solid;
+  border-radius: 0.5rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  transition: opacity 0.15s;
+}
+.ts-type-link:hover { opacity: 0.75; }
+
+/* ========== 組合せ表 ========== */
+.ts-combo-table-wrap {
+  overflow-x: auto;
+  margin-top: 1.25rem;
+}
+.ts-combo-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+.ts-combo-table th,
+.ts-combo-table td {
+  padding: 0.6rem 0.9rem;
+  border: 1px solid #e5e7eb;
+  text-align: left;
+  vertical-align: middle;
+  line-height: 1.5;
+}
+.ts-combo-table thead th {
+  background: #1d4ed8;
+  color: #fff;
+  font-weight: 600;
+}
+.ts-combo-table tbody tr:nth-child(even) { background: #f9fafb; }
+.ts-combo-pair {
+  white-space: nowrap;
+  font-weight: 400;
+}
+.ts-combo-badge {
+  display: inline-block;
+  padding: 0.15rem 0.6rem;
+  border-radius: 0.5rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+.ts-combo-sep {
+  margin-inline: 0.3rem;
+  color: #9ca3af;
+  font-size: 0.8rem;
+}
+.ts-combo-summary {
+  font-size: 0.875rem;
+  color: #374151;
+}
+
+/* ========== ヒントカード ========== */
+.ts-hint-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1rem;
+  margin-block: 1.25rem;
+}
+.ts-hint-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  background: #f9fafb;
+}
+.ts-hint-num {
+  flex-shrink: 0;
+  width: 2rem;
+  height: 2rem;
+  background: #1d4ed8;
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+.ts-hint-title {
+  font-size: 0.9rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem;
+}
+.ts-hint-list {
+  margin: 0;
+  padding-left: 0;
+  list-style: none;
+  font-size: 0.82rem;
+  line-height: 1.6;
+  color: #374151;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+.ts-hint-type {
+  font-weight: 700;
+}
+
+/* ========== CTA ========== */
+.ts-cta-box {
+  background: linear-gradient(135deg, #eff6ff 0%, #e0e7ff 100%);
+  border: 1px solid #bfdbfe;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  text-align: center;
+  margin-top: 1.5rem;
+}
+.ts-cta-text {
+  font-size: 0.95rem;
+  color: #1e40af;
+  margin: 0 0 0.875rem;
+}
+.ts-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: #1d4ed8;
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 0.7rem 1.75rem;
+  border-radius: 2rem;
+  text-decoration: none;
+  transition: background 0.15s, transform 0.15s;
+}
+.ts-cta-btn:hover {
+  background: #1e40af;
+  transform: translateY(-2px);
+}
+
+/* ========== FAQ ========== */
+.ts-faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+.ts-faq-item {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+.ts-faq-q {
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 0.875rem 1.25rem;
+  background: #f9fafb;
+  margin: 0;
+  display: block;
+}
+.ts-faq-q::before {
+  content: 'Q. ';
+  color: #1d4ed8;
+}
+.ts-faq-a {
+  font-size: 0.88rem;
+  line-height: 1.75;
+  padding: 0.875rem 1.25rem;
+  margin: 0;
+  color: #4b5563;
+}
+.ts-faq-a::before {
+  content: 'A. ';
+  font-weight: 700;
+  color: #16a34a;
+}
+
+/* ========== 関連リンク ========== */
+.ts-related-list {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.ts-related-link {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.ts-related-link:hover {
+  border-color: #1d4ed8;
+  box-shadow: 0 2px 8px rgba(29 78 216 / 0.1);
+}
+.ts-related-icon {
+  font-size: 1.75rem;
+  flex-shrink: 0;
+}
+.ts-related-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+.ts-related-title {
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+.ts-related-desc {
+  font-size: 0.8rem;
+  color: var(--sn-muted, #6b7280);
+}
+
+/* ========== 商標ノート ========== */
+.ts-trademark-note {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  border-top: 1px solid #e5e7eb;
+  padding-top: 1.5rem;
+  margin-top: 2rem;
+  line-height: 1.6;
+}
+</style>
