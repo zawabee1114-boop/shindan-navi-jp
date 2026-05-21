@@ -1,0 +1,350 @@
+---
+/**
+ * /signup/ - 新規登録ページ（Magic Linkと同一フロー）
+ *
+ * Phase 3.1: env未設定時は「準備中」表示
+ * Phase 3.2: /login/ と同じ Supabase Magic Link
+ */
+
+export const prerender = false;
+
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Container from '../../components/Container.astro';
+
+const isConfigured = Boolean(
+  import.meta.env.PUBLIC_SUPABASE_URL && import.meta.env.PUBLIC_SUPABASE_ANON_KEY
+);
+const siteUrl = 'https://shindan-navi.jp';
+const pageUrl = `${siteUrl}/signup/`;
+---
+
+<BaseLayout
+  title="無料登録｜診断ナビ"
+  description="メールアドレスだけで無料登録。パスワード不要。診断結果を保存・統合プロファイル・タイムカプセルをご利用ください。"
+  canonical={pageUrl}
+  noindex={true}
+>
+  <Container>
+    <div class="signup-page">
+      <div class="signup-card">
+        <div class="signup-logo" aria-hidden="true">📋</div>
+        <h1 class="signup-title">無料登録</h1>
+        <p class="signup-subtitle">
+          メールアドレスのみで登録できます。<br />
+          パスワードは不要です。
+        </p>
+
+        <ul class="signup-benefits" role="list" aria-label="登録のメリット">
+          <li class="signup-benefit-item">
+            <span aria-hidden="true">✓</span>
+            診断結果を複数デバイスで引き継ぎ
+          </li>
+          <li class="signup-benefit-item">
+            <span aria-hidden="true">✓</span>
+            統合プロファイルの保存・更新履歴
+          </li>
+          <li class="signup-benefit-item">
+            <span aria-hidden="true">✓</span>
+            PASS（¥390）・PRO（¥590/月）機能が使えるようになる
+          </li>
+        </ul>
+
+        {isConfigured ? (
+          <form id="signup-form" class="signup-form" novalidate>
+            <label class="signup-label" for="signup-email">
+              メールアドレス
+            </label>
+            <input
+              id="signup-email"
+              type="email"
+              name="email"
+              class="signup-input"
+              placeholder="your@email.com"
+              autocomplete="email"
+              required
+              aria-required="true"
+            />
+            <button type="submit" class="signup-btn" id="signup-submit-btn">
+              登録リンクを送る（無料）
+            </button>
+            <div id="signup-message" class="signup-message" role="alert" aria-live="polite" hidden></div>
+          </form>
+        ) : (
+          <div class="signup-coming-soon">
+            <div class="signup-coming-icon" aria-hidden="true">🚧</div>
+            <p class="signup-coming-text">
+              登録機能は現在準備中です。<br />
+              診断は登録なしでも今すぐご利用いただけます。
+            </p>
+            <a href="/diagnosis/" class="signup-fallback-btn">
+              登録なしで診断を受ける →
+            </a>
+          </div>
+        )}
+
+        <p class="signup-login-link">
+          すでにアカウントをお持ちの方は <a href="/login/">ログイン →</a>
+        </p>
+
+        <p class="signup-terms">
+          登録することで
+          <a href="/terms/">利用規約</a>・
+          <a href="/privacy/">プライバシーポリシー</a>
+          に同意したものとみなします。
+        </p>
+      </div>
+    </div>
+  </Container>
+</BaseLayout>
+
+{isConfigured && (
+  <script>
+    const form = document.getElementById('signup-form') as HTMLFormElement;
+    const submitBtn = document.getElementById('signup-submit-btn') as HTMLButtonElement;
+    const messageEl = document.getElementById('signup-message') as HTMLElement;
+
+    form?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = (form.elements.namedItem('email') as HTMLInputElement).value.trim();
+      if (!email) return;
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = '送信中...';
+
+      try {
+        const { signUp } = await import('../../lib/supabase/client');
+        const { error } = await signUp(email);
+
+        if (error) {
+          messageEl.textContent = `エラー: ${error.message}`;
+          messageEl.className = 'signup-message signup-message--error';
+          messageEl.removeAttribute('hidden');
+        } else {
+          messageEl.textContent = `${email} に登録リンクを送りました。メールをご確認ください。`;
+          messageEl.className = 'signup-message signup-message--success';
+          messageEl.removeAttribute('hidden');
+          form.reset();
+        }
+      } catch {
+        messageEl.textContent = '送信に失敗しました。しばらく後でお試しください。';
+        messageEl.className = 'signup-message signup-message--error';
+        messageEl.removeAttribute('hidden');
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = '登録リンクを送る（無料）';
+      }
+    });
+  </script>
+)}
+
+<style>
+.signup-page {
+  max-width: 480px;
+  margin-inline: auto;
+  padding-block: 3rem;
+}
+
+.signup-card {
+  background: #fff;
+  border: 1px solid #e0e7ff;
+  border-radius: 1rem;
+  padding: 2rem 1.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  box-shadow: 0 4px 16px rgba(79 70 229 / 0.08);
+}
+
+.signup-logo {
+  font-size: 2.5rem;
+  text-align: center;
+}
+
+.signup-title {
+  font-size: 1.5rem;
+  font-family: var(--sn-font-rounded, sans-serif);
+  font-weight: 900;
+  color: #1e1b4b;
+  text-align: center;
+  margin: 0;
+}
+
+.signup-subtitle {
+  font-size: 0.9rem;
+  color: #6b7280;
+  text-align: center;
+  line-height: 1.7;
+  margin: 0;
+}
+
+.signup-benefits {
+  list-style: none;
+  padding: 0.875rem 1rem;
+  margin: 0;
+  background: #eef2ff;
+  border-radius: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.signup-benefit-item {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  font-size: 0.875rem;
+  color: #3730a3;
+  font-weight: 500;
+}
+
+.signup-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.signup-label {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #374151;
+}
+
+.signup-input {
+  width: 100%;
+  padding: 0.875rem 1rem;
+  border: 1.5px solid #d1d5db;
+  border-radius: 0.625rem;
+  font-size: 1rem;
+  color: #1f2937;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  box-sizing: border-box;
+}
+
+.signup-input:focus {
+  outline: none;
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99 102 241 / 0.15);
+}
+
+.signup-btn {
+  width: 100%;
+  padding: 0.9rem;
+  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  min-height: 48px;
+  font-family: inherit;
+  transition: opacity 0.15s, transform 0.15s;
+  box-shadow: 0 4px 12px rgba(79 70 229 / 0.3);
+}
+
+.signup-btn:hover:not(:disabled) {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.signup-btn:focus-visible {
+  outline: 3px solid #4f46e5;
+  outline-offset: 3px;
+}
+
+.signup-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.signup-message {
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+.signup-message--success {
+  background: #f0fdf4;
+  border: 1px solid #86efac;
+  color: #065f46;
+}
+
+.signup-message--error {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #dc2626;
+}
+
+.signup-coming-soon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.875rem;
+  text-align: center;
+  padding: 1.5rem;
+  background: #f9fafb;
+  border-radius: 0.75rem;
+  border: 1px dashed #d1d5db;
+}
+
+.signup-coming-icon { font-size: 2rem; }
+
+.signup-coming-text {
+  font-size: 0.9rem;
+  color: #6b7280;
+  line-height: 1.7;
+  margin: 0;
+}
+
+.signup-fallback-btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.75rem 1.5rem;
+  background: var(--sn-primary, #4f46e5);
+  color: #fff;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  text-decoration: none;
+  min-height: 44px;
+  transition: opacity 0.15s;
+}
+
+.signup-fallback-btn:hover {
+  opacity: 0.85;
+  text-decoration: none;
+  color: #fff;
+}
+
+.signup-login-link {
+  font-size: 0.875rem;
+  color: #6b7280;
+  text-align: center;
+  margin: 0;
+}
+
+.signup-login-link a {
+  color: #4f46e5;
+  font-weight: 700;
+}
+
+.signup-terms {
+  font-size: 0.78rem;
+  color: #9ca3af;
+  text-align: center;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.signup-terms a {
+  color: #6b7280;
+  text-decoration: underline;
+}
+
+@media (max-width: 480px) {
+  .signup-page { padding-block: 1.5rem; }
+  .signup-card { padding: 1.5rem 1.25rem; }
+}
+</style>

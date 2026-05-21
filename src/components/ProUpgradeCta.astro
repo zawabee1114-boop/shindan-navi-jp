@@ -1,0 +1,366 @@
+---
+/**
+ * ProUpgradeCta.astro - PRO ¥590/月 アップグレードCTA
+ *
+ * Phase 3.1: env未設定時は「準備中」表示、設定済みはStripe Checkoutへ
+ * Phase 3.3: env設定後に Stripe Checkout Session 作成 API 呼び出し
+ *
+ * 使用箇所: 全有料機能の前 / /pro/ ページ
+ */
+
+interface Props {
+  /** 見出し（省略可） */
+  headline?: string;
+  /** 強調する機能（省略可） */
+  highlightFeature?: string;
+  /** フルカードモード（false=コンパクト） */
+  fullCard?: boolean;
+}
+
+const {
+  headline = '3ヶ月後の自分にも、今の気持ちを届けてみませんか',
+  highlightFeature = 'タイムカプセル機能',
+  fullCard = false,
+} = Astro.props;
+
+const isStripeConfigured = Boolean(
+  import.meta.env.PUBLIC_STRIPE_PUBLISHABLE_KEY &&
+  import.meta.env.STRIPE_SECRET_KEY
+);
+---
+
+{fullCard ? (
+  <div class="pro-cta-card">
+    <div class="pro-cta-header">
+      <span class="pro-cta-badge">PRO限定</span>
+      <span class="pro-cta-price">¥590<span class="pro-cta-unit">/月</span></span>
+      <span class="pro-cta-tax">税込・いつでも解約可</span>
+    </div>
+    <div class="pro-cta-body">
+      <p class="pro-cta-headline">{headline}</p>
+      <ul class="pro-cta-features">
+        <li class="pro-cta-feature pro-cta-feature--highlight">
+          <span aria-hidden="true">⏳</span>
+          <span><strong>{highlightFeature}</strong>（3・6・12ヶ月後に自動通知）</span>
+        </li>
+        <li class="pro-cta-feature">
+          <span aria-hidden="true">🤖</span>
+          <span>AIプロンプトカード無制限</span>
+        </li>
+        <li class="pro-cta-feature">
+          <span aria-hidden="true">📈</span>
+          <span>特性変化グラフ（全期間）</span>
+        </li>
+        <li class="pro-cta-feature">
+          <span aria-hidden="true">🚫</span>
+          <span>広告完全非表示</span>
+        </li>
+      </ul>
+      {isStripeConfigured ? (
+        <button
+          id="pro-upgrade-btn-full"
+          class="pro-cta-btn"
+          type="button"
+          aria-label="PRO会員になる ¥590/月"
+        >
+          PRO会員になる ¥590/月
+        </button>
+      ) : (
+        <a href="/pro/" class="pro-cta-btn" aria-label="PRO会員の詳細を見る">
+          PRO会員の詳細を見る →
+        </a>
+      )}
+      <p class="pro-cta-note">
+        {isStripeConfigured
+          ? '今すぐ申し込めます・いつでも解約可'
+          : '現在プレビュー中・Stripe設定後に申込可能'}
+      </p>
+    </div>
+  </div>
+) : (
+  /* コンパクト版 */
+  <div class="pro-cta-compact">
+    <div class="pro-cta-compact-body">
+      <div>
+        <p class="pro-cta-compact-label">
+          <span class="pro-cta-badge-sm">PRO</span>
+          {highlightFeature}
+        </p>
+        <p class="pro-cta-compact-price">¥590/月・いつでも解約可</p>
+      </div>
+      {isStripeConfigured ? (
+        <button
+          id="pro-upgrade-btn-compact"
+          class="pro-cta-compact-btn"
+          type="button"
+          aria-label="PRO で試す"
+        >
+          PRO で試す
+        </button>
+      ) : (
+        <a href="/pro/" class="pro-cta-compact-btn" aria-label="PRO の詳細を見る">
+          詳細を見る
+        </a>
+      )}
+    </div>
+  </div>
+)}
+
+{isStripeConfigured && (
+  <script>
+    // Stripe Checkout へリダイレクト
+    async function handleProUpgrade() {
+      const btn = document.getElementById('pro-upgrade-btn-full') || document.getElementById('pro-upgrade-btn-compact');
+      if (!btn) return;
+
+      btn.setAttribute('disabled', 'true');
+      btn.textContent = '処理中...';
+
+      try {
+        const res = await fetch('/api/stripe/checkout-session', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ type: 'pro' }),
+        });
+        const data = await res.json();
+
+        if (data.ok && data.url) {
+          window.location.href = data.url;
+        } else if (data.mock) {
+          alert('準備中です。もうしばらくお待ちください。');
+        } else {
+          alert(`エラー: ${data.message ?? '決済に失敗しました'}`);
+        }
+      } catch {
+        alert('通信エラーが発生しました。しばらく後でお試しください。');
+      } finally {
+        btn?.removeAttribute('disabled');
+      }
+    }
+
+    document.getElementById('pro-upgrade-btn-full')?.addEventListener('click', handleProUpgrade);
+    document.getElementById('pro-upgrade-btn-compact')?.addEventListener('click', handleProUpgrade);
+  </script>
+)}
+
+<style>
+/* フルカード */
+.pro-cta-card {
+  background: #fff;
+  border: 2px solid #4f46e5;
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(79 70 229 / 0.15);
+}
+
+.pro-cta-header {
+  background: linear-gradient(135deg, #1e1b4b 0%, #4f46e5 50%, #7c3aed 100%);
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  flex-wrap: wrap;
+}
+
+.pro-cta-badge {
+  background: rgba(255 255 255 / 0.2);
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.2rem 0.65rem;
+  border-radius: 2rem;
+  border: 1px solid rgba(255 255 255 / 0.4);
+  white-space: nowrap;
+}
+
+.pro-cta-price {
+  font-family: var(--sn-font-rounded, sans-serif);
+  font-size: 1.75rem;
+  font-weight: 900;
+  color: #fff;
+  margin-left: auto;
+}
+
+.pro-cta-unit {
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.pro-cta-tax {
+  font-size: 0.75rem;
+  color: rgba(255 255 255 / 0.7);
+  white-space: nowrap;
+}
+
+.pro-cta-body {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.pro-cta-headline {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1e1b4b;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.pro-cta-features {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.pro-cta-feature {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  font-size: 0.875rem;
+  color: #374151;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.5rem;
+}
+
+.pro-cta-feature--highlight {
+  background: #eef2ff;
+  border: 1px solid #c7d2fe;
+  color: #1e1b4b;
+}
+
+.pro-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 0.9rem;
+  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  min-height: 52px;
+  font-family: inherit;
+  text-decoration: none;
+  transition: opacity 0.15s, transform 0.15s;
+  box-shadow: 0 4px 12px rgba(79 70 229 / 0.3);
+}
+
+.pro-cta-btn:hover:not([disabled]) {
+  opacity: 0.9;
+  transform: translateY(-1px);
+  text-decoration: none;
+  color: #fff;
+}
+
+.pro-cta-btn:focus-visible {
+  outline: 3px solid #4f46e5;
+  outline-offset: 3px;
+}
+
+.pro-cta-btn[disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pro-cta-note {
+  font-size: 0.78rem;
+  color: #9ca3af;
+  text-align: center;
+  margin: 0;
+}
+
+/* コンパクト版 */
+.pro-cta-compact {
+  background: linear-gradient(135deg, #eef2ff 0%, #faf5ff 100%);
+  border-radius: 0.75rem;
+  border: 1px solid #c7d2fe;
+  padding: 1rem 1.25rem;
+}
+
+.pro-cta-compact-body {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.pro-cta-badge-sm {
+  font-size: 0.65rem;
+  font-weight: 700;
+  background: #4f46e5;
+  color: #fff;
+  padding: 2px 6px;
+  border-radius: 999px;
+  margin-right: 0.375rem;
+}
+
+.pro-cta-compact-label {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #1e1b4b;
+  margin: 0 0 0.2rem;
+  display: flex;
+  align-items: center;
+}
+
+.pro-cta-compact-price {
+  font-size: 0.78rem;
+  color: #6b7280;
+  margin: 0;
+}
+
+.pro-cta-compact-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.625rem 1.25rem;
+  background: #4f46e5;
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 0.875rem;
+  cursor: pointer;
+  min-height: 44px;
+  font-family: inherit;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: opacity 0.15s, transform 0.15s;
+  flex-shrink: 0;
+}
+
+.pro-cta-compact-btn:hover:not([disabled]) {
+  opacity: 0.85;
+  transform: translateY(-1px);
+  text-decoration: none;
+  color: #fff;
+}
+
+.pro-cta-compact-btn:focus-visible {
+  outline: 3px solid #4f46e5;
+  outline-offset: 3px;
+}
+
+@media (max-width: 480px) {
+  .pro-cta-compact-body {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .pro-cta-compact-btn {
+    width: 100%;
+  }
+  .pro-cta-header {
+    flex-wrap: wrap;
+  }
+  .pro-cta-price {
+    margin-left: 0;
+  }
+}
+</style>
