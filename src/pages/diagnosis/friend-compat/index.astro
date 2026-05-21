@@ -19,6 +19,9 @@ import DiagnosisFlow from '../../../components/DiagnosisFlow';
 import { meta } from '../../../data/diagnoses/friend-compat/meta';
 import { questions } from '../../../data/diagnoses/friend-compat/questions';
 import { calculateResultTypeId } from '../../../data/diagnoses/friend-compat/results';
+import TldrBlock from '../../../components/TldrBlock.astro';
+import ReferenceList from '../../../components/ReferenceList.astro';
+import ScienceNote from '../../../components/ScienceNote.astro';
 
 const SITE_URL = 'https://shindan-navi.jp';
 const PAGE_URL = `${SITE_URL}/diagnosis/friend-compat/`;
@@ -128,6 +131,26 @@ const faqs = [
     answer:
       '完全無料・無制限です。招待コードの発行回数に制限はありません。友達を何人招待しても、何度使っても、料金は一切かかりません。アカウント登録も不要です。「招待したら課金される」という仕組みは一切ありません。',
   },
+  {
+    question: '友達相性診断 vs MBTI相性、どちらが当たる？',
+    answer:
+      '本診断はBig Five（Costa & McCrae 1992）・FIRO-B（Schutz 1958）・Hartup（1996）の友情研究に基づいており、MBTIとは異なる軸（友情特性4軸: 外向性・共感性・主導性・独立性）で分類します。MBTI相性が職場や恋愛も含む広範な対人関係を扱うのに対して、本診断は「友人グループ内での役割と相性」に特化しています。どちらが当たるかではなく、目的に応じて使い分けることを推奨します。',
+  },
+  {
+    question: '診断結果は何回受けても同じ結果になる？',
+    answer:
+      'Big Five（Costa & McCrae 1992）の研究では、性格の5因子は成人後に比較的安定することが示されています（https://doi.org/10.1037/0022-3514.64.5.853）。ただし環境・経験・成長によって変化することもあります。一般的には同じ状況で受ければ近い結果が出ますが、時期によって異なることもあります。定期的に受けることで自己理解の変化を確認できます。',
+  },
+  {
+    question: '友達相性診断でメンタルや病気の判断はできますか？',
+    answer:
+      'できません。本診断は「友情スタイルの傾向把握」のための自己理解ツールです。精神疾患・発達障害・心理的問題の診断・治療には使用できません。友人関係や対人関係に深刻な悩みがある場合は、医師・臨床心理士・スクールカウンセラーにご相談ください。',
+  },
+  {
+    question: '結果を友達に見せていい？',
+    answer:
+      'はい、ご自由にシェアしてください。招待機能（URLシェア）を使えば、友達にも同じ診断を受けてもらい相性スコアを確認できます。ただし「このタイプだから仲良くなれない」という断定的な伝え方は避けてください。スコアはあくまで傾向であり、個人差・関係の深さによって大きく変わります。',
+  },
 ];
 
 const jsonLdFAQ = {
@@ -155,7 +178,24 @@ const jsonLdBreadcrumb = {
   ],
 };
 
-const jsonLdAll = [jsonLdWebApp, jsonLdQuiz, jsonLdFAQ, jsonLdBreadcrumb];
+// JSON-LD: HowTo（使い方ガイド）
+const jsonLdHowTo = {
+  '@context': 'https://schema.org',
+  '@type': 'HowTo',
+  '@id': `${PAGE_URL}#howto`,
+  name: '友達相性診断の使い方',
+  description: '友達との相性を6タイプで診断する方法を5ステップで解説します。招待機能でお互いの結果を確認できます。',
+  totalTime: 'PT7M',
+  step: [
+    { '@type': 'HowToStep', position: 1, name: '診断を開始する', text: '「診断スタート」ボタンを押して24問の質問に回答してください。所要時間は約5〜7分です。' },
+    { '@type': 'HowToStep', position: 2, name: '6タイプの結果を確認する', text: '回答完了後、ムードメーカー/聴き上手/仕切り屋/一匹狼/同調型/知性派の6タイプのうちあなたのタイプが表示されます。' },
+    { '@type': 'HowToStep', position: 3, name: '招待コードを発行する', text: '結果ページの「友達を招待する」から招待コードを発行してください。友達に共有すると相互の相性スコアが確認できます。' },
+    { '@type': 'HowToStep', position: 4, name: '友達の結果と比較する', text: '友達が招待コードを使って診断を完了すると、2人の相性スコアとタイプ間の相性解説が表示されます。完全無料・無制限です。' },
+    { '@type': 'HowToStep', position: 5, name: '関連診断で理解を深める', text: 'MBTI相性診断（/diagnosis/mbti-compat/）やMBTI診断（/diagnosis/mbti/）と組み合わせることで、より多角的な自己理解ができます。' },
+  ],
+};
+
+const jsonLdAll = [jsonLdWebApp, jsonLdQuiz, jsonLdFAQ, jsonLdBreadcrumb, jsonLdHowTo];
 
 // 6タイプカード用データ
 const typeCards = [
@@ -271,6 +311,21 @@ const typeCards = [
         を確認済。
       </p>
     </div>
+
+    {/* ========== TL;DRブロック（AI Overview引用最適化） ========== */}
+    <TldrBlock
+      title="友達相性診断 ポイントまとめ"
+      points={[
+        '友達相性診断は、Big Five特性理論（Costa & McCrae 1992）・FIRO-B対人欲求理論（Schutz 1958）・Hartup（1996）の友情発達研究に基づく6タイプ分類（ムードメーカー/聴き上手/仕切り屋/一匹狼/同調型/知性派）',
+        '24問・約5〜7分で完了。登録不要・完全無料。回答データはブラウザに7日間保存のみ（サーバー送信なし）',
+        '招待機能は完全無料・無制限。友達を招待して相互の相性スコアを確認できる。「こっそりモード」「完全共有モード」等4種の招待方式',
+        'Hartup（1996）の友情発達研究によると、友情は「同質性（類似性）」と「補完性（異なる強み）」の組み合わせで成立しやすい',
+        '本ツールは友情スタイルの傾向把握のための参考ツール。医学的・精神医学的診断や、人間関係の断定的判断には使用不可',
+      ]}
+      updatedAt={meta.updatedAt}
+      sourceLabel="Hartup（1996）友情発達研究"
+      sourceUrl="https://doi.org/10.2307/1131834"
+    />
 
     {/* ========== 友達相性診断とは ========== */}
     <section class="fc-section" aria-labelledby="fc-what-h2">
@@ -590,6 +645,41 @@ const typeCards = [
         </div>
       </div>
     </section>
+
+    {/* ========== ScienceNote ========== */}
+    <ScienceNote
+      basisText="Big Five特性理論（Costa & McCrae 1992）・FIRO-B対人欲求理論（Schutz 1958）・Hartup（1996）の友情発達研究・Selman（1980）の対人理解発達理論を複合参照"
+      basisUrl="https://doi.org/10.2307/1131834"
+      basisLabel="Hartup（1996）Child Development"
+      notMedical={true}
+      updatedAt={meta.updatedAt}
+      additionalNote="Big Five（NEO-PI-R）はCosta & McCrae（1992）が開発した科学的に検証された性格特性モデルです（https://doi.org/10.1037/0022-3514.64.5.853）。本診断はこのモデルに基づく傾向把握ツールです。"
+    />
+
+    {/* ========== 編集部検証コメント ========== */}
+    <section class="fc-section fc-editor-note" aria-labelledby="fc-editor-h2">
+      <h2 id="fc-editor-h2" class="fc-h2">診断ナビ編集部の検証コメント</h2>
+      <div class="fc-editor-body">
+        <p>
+          本診断は、友情・対人関係に関する複数の学術研究を複合参照しています。
+          Big Five（Costa &amp; McCrae 1992）の外向性・協調性・開放性・誠実性・神経症傾向の5因子は、
+          心理学の主要測定モデルとして国際的に広く採用されています（https://doi.org/10.1037/0022-3514.64.5.853）。
+          FIRO-B（Schutz 1958）の「包含・支配・愛情」の3次元対人欲求理論は、
+          グループダイナミクスと個人の役割理解に有用なフレームワークとして実証研究に使用されています。
+        </p>
+        <p>
+          Hartup（1996）の友情発達研究（Child Development 67: 1-13）では、
+          友情の質が学業成績・社会的適応・精神的健康に与える影響が長期追跡研究で示されています。
+          本診断はこれらの理論的背景を参照しながら、友人グループ内での役割把握と相性傾向の理解を促進することを目的としています。
+        </p>
+        <p class="fc-editor-updated">
+          最終検証日: <time datetime={meta.updatedAt}>{meta.updatedAt}</time>（診断ナビ編集部）
+        </p>
+      </div>
+    </section>
+
+    {/* ========== ReferenceList ========== */}
+    <ReferenceList references={meta.references} confirmedAt={meta.updatedAt} />
 
     {/* ========== 関連診断 ========== */}
     <section class="fc-section" aria-labelledby="fc-related-h2">

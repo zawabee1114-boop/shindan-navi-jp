@@ -23,6 +23,9 @@ import ZodiacFinder from '../../../components/ZodiacFinder';
 import { meta, ZODIAC_TYPES } from '../../../data/diagnoses/zodiac/meta';
 import { typesDetail } from '../../../data/diagnoses/zodiac/types-detail';
 import { elementsData, modalitiesData } from '../../../data/diagnoses/zodiac/elements-modality';
+import TldrBlock from '../../../components/TldrBlock.astro';
+import ReferenceList from '../../../components/ReferenceList.astro';
+import ScienceNote from '../../../components/ScienceNote.astro';
 
 const SITE_URL = 'https://shindan-navi.jp';
 const PAGE_URL = `${SITE_URL}/diagnosis/zodiac/`;
@@ -77,6 +80,26 @@ const faqs = [
     question: '占星術と天文学の違いは何ですか？',
     answer:
       '天文学は星・惑星・宇宙の物理的現象を科学的に研究する学問です。占星術は天体の位置と人間の性格・運命の関係を探る文化的・歴史的実践です。国際天文学連合（IAU）は「占星術は天文学とは異なり、科学的方法論に基づいていない」と明記しています（https://www.iau.org/public/themes/astrology_vs_astronomy/）。Carlson（1985 Nature）の二重盲検試験でも占星術の予測能力に科学的根拠がないことが示されています。',
+  },
+  {
+    question: '星座性格診断 vs MBTI性格診断、どちらが信頼できる？',
+    answer:
+      'MBTI（Myers-Briggs）はJung（1921）の心理学理論に基づき、認定機関（Myers-Briggs Company）による検証を経た性格分類ツールです（https://www.mbtionline.com/）。星座性格分類はCarlson（1985 Nature doi:10.1038/318419a0）の研究で科学的予測能力が否定されています。信頼性の観点ではMBTI等の心理学的ツールが学術的な裏付けを持ちます。星座は文化的な自己理解のきっかけとして活用してください。',
+  },
+  {
+    question: '星座で病気や心理的問題の診断はできますか？',
+    answer:
+      'できません。星座は文化的な性格分類フレームワークであり、医学的・精神医学的な診断には使用できません。Carlson（1985 Nature）の研究で示されたように、占星術的予測に科学的根拠はありません。心身の不調・心理的問題がある場合は医師・臨床心理士にご相談ください。',
+  },
+  {
+    question: '結果を友達に見せていい？',
+    answer:
+      'ご自由にお使いください。ただし「この星座だから性格が悪い」「この組み合わせは合わない」という断定的な伝え方は避けてください。Carlson（1985 Nature）の研究が示すように、星座による性格予測に科学的根拠はなく、スコアはあくまで文化的な傾向値です。楽しいコミュニケーションのきっかけとしてご活用ください。',
+  },
+  {
+    question: 'このサイトでPASS/PROに加入すると星座機能は変わりますか？',
+    answer:
+      '星座性格診断・相性機能自体はすべて無料・登録不要でご利用いただけます。PASS/PROでは8診断の統合プロファイル（/profile/）・シーン別相性（/aisei/）・より詳細な分析レポートへのアクセスが広がります。',
   },
 ];
 
@@ -166,6 +189,21 @@ const ELEMENT_COLORS: Record<string, { bg: string; border: string; text: string;
   description={meta.description}
 >
   <Fragment slot="head">
+    <script type="application/ld+json" set:html={JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'HowTo',
+      '@id': `${PAGE_URL}#howto`,
+      name: '星座性格診断の使い方',
+      description: '12星座の性格特性・相性を調べる方法を5ステップで解説します。',
+      totalTime: 'PT2M',
+      step: [
+        { '@type': 'HowToStep', position: 1, name: '誕生日から星座を調べる', text: '「誕生日から自分の星座を調べる」ツールに生年月日を入力してください。' },
+        { '@type': 'HowToStep', position: 2, name: '12星座の詳細カードを読む', text: '牡羊座〜魚座の12星座カードから自分の星座の特徴・強み・仕事スタイルを確認してください。' },
+        { '@type': 'HowToStep', position: 3, name: '4エレメントと3モダリティを確認する', text: '火・地・風・水の4エレメントと活動・不動・柔軟の3モダリティで12星座の分類パターンを把握してください。' },
+        { '@type': 'HowToStep', position: 4, name: '相性概観を確認する', text: 'エレメント別・モダリティ別の相性傾向を参考にしてください。スコアはあくまで文化的傾向値です。' },
+        { '@type': 'HowToStep', position: 5, name: '科学的位置付けを理解する', text: 'Carlson（1985 Nature）・IAU公式の立場を確認し、星座を「文化的な自己理解のフレームワーク」として正しく活用してください。' },
+      ],
+    })} />
     <link rel="canonical" href={PAGE_URL} />
     <script type="application/ld+json" set:html={JSON.stringify(jsonLdWebApp)} />
     <script type="application/ld+json" set:html={JSON.stringify(jsonLdArticle)} />
@@ -205,6 +243,21 @@ const ELEMENT_COLORS: Record<string, { bg: string; border: string; text: string;
         <li>12星座の相性概観・科学的位置付け（Carlson 1985 Nature 引用）</li>
       </ul>
     </blockquote>
+
+    <!-- TL;DRブロック（AI Overview引用最適化） -->
+    <TldrBlock
+      title="星座性格診断 ポイントまとめ"
+      points={[
+        '星座性格分類は古代ギリシャ（プトレマイオス 2世紀）に由来し、12星座・4エレメント（火・地・風・水）・3モダリティ（活動・不動・柔軟）の体系で西洋文化に根付いた分類フレームワーク',
+        'Carlson S（1985）がNature誌（doi:10.1038/318419a0）に発表した二重盲検試験で、占星術的予測が偶然レベルと差がないことが示されており、科学的根拠は確認されていない',
+        '国際天文学連合（IAU）は「占星術は科学ではない」と明記（https://www.iau.org/public/themes/astrology_vs_astronomy/）。国立天文台も同様の立場（https://www.nao.ac.jp/faq/a0204.html）',
+        '本サイトは12星座を「文化的な性格分類フレームワーク」として参照。運勢・将来予測・ラッキーアイテム等の占い的コンテンツは一切提供しない',
+        '就職・結婚等の重要な判断を星座で行うことは推奨しない。自己理解と会話のきっかけとしてのみ活用を推奨する',
+      ]}
+      updatedAt={meta.updatedAt}
+      sourceLabel="Carlson（1985）Nature 318, 419-425"
+      sourceUrl="https://doi.org/10.1038/318419a0"
+    />
 
     <!-- ★ 誕生日入力ツール（React Island） -->
     <section style="margin-bottom: 3rem;">
@@ -423,6 +476,39 @@ const ELEMENT_COLORS: Record<string, { bg: string; border: string; text: string;
         ))}
       </ul>
     </section>
+
+    <!-- ScienceNote -->
+    <ScienceNote
+      basisText="Carlson S（1985）「A double-blind test of astrology」Nature 318, 419-425（doi:10.1038/318419a0）・国際天文学連合（IAU）公式見解・国立天文台FAQ・Hartmann P et al.（2006）Personality and Individual Differences 40(7)を参照"
+      basisUrl="https://doi.org/10.1038/318419a0"
+      basisLabel="Carlson（1985）Nature誌"
+      notMedical={true}
+      updatedAt={meta.updatedAt}
+      additionalNote="西洋占星術の12星座分類は文化的・歴史的なフレームワークです。科学的予測能力は確認されておらず（Carlson 1985 Nature）、天文学的な星座の位置とも現代では一致しません（歳差運動の影響）。"
+    />
+
+    <!-- 編集部検証コメント -->
+    <section style="background: #f0fdf4; border-left: 4px solid #059669; border-radius: 0 0.5rem 0.5rem 0; padding: 1.5rem; margin-bottom: 2rem;" aria-labelledby="zodiac-editor-h2">
+      <h2 id="zodiac-editor-h2" style="font-size: 1rem; font-weight: 700; color: #065f46; margin: 0 0 0.75rem;">診断ナビ編集部の検証コメント</h2>
+      <p style="font-size: 0.9rem; line-height: 1.7; color: #1f2937; margin: 0 0 0.75rem;">
+        本ページの星座性格データは、西洋占星術の伝統的分類（プトレマイオス2世紀の体系）を文化的フレームワークとして参照しています。
+        Carlson S（1985年）がNature誌に発表した二重盲検試験（doi:10.1038/318419a0）では、
+        28名の認定占星術師の予測精度が偶然レベルと統計的に差がないことが示されています。
+        また、Hartmann P et al.（2006 Personality and Individual Differences 40(7)）の大規模研究（N=15,198）でも、
+        誕生月と性格特性の有意な相関は確認されていません。
+      </p>
+      <p style="font-size: 0.9rem; line-height: 1.7; color: #1f2937; margin: 0 0 0.75rem;">
+        国際天文学連合（IAU）と国立天文台はいずれも、現代の星座の位置と西洋占星術の星座区分が歳差運動により約1ヶ月ずれていることを指摘しています。
+        これらの科学的立場を踏まえ、本サイトは星座を「日本でも広く親しまれている文化的な性格分類の話題」として提供しています。
+        占い的な運命論・予言・将来予測は一切提供せず、科学的位置付けを明示した上で自己理解のきっかけとしてご活用いただくことを推奨します。
+      </p>
+      <p style="font-size: 0.8rem; color: #6b7280; margin: 0;">
+        最終検証日: <time datetime={meta.updatedAt}>{meta.updatedAt}</time>（診断ナビ編集部）
+      </p>
+    </section>
+
+    <!-- ReferenceList -->
+    <ReferenceList references={meta.references} confirmedAt={meta.updatedAt} />
 
     <!-- Disclaimer -->
     <aside

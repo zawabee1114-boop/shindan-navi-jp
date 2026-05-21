@@ -19,6 +19,9 @@ import DiagnosisFlow from '../../../components/DiagnosisFlow';
 import { meta } from '../../../data/diagnoses/money-style/meta';
 import { questions } from '../../../data/diagnoses/money-style/questions';
 import { calculateResultTypeId } from '../../../data/diagnoses/money-style/results';
+import TldrBlock from '../../../components/TldrBlock.astro';
+import ReferenceList from '../../../components/ReferenceList.astro';
+import ScienceNote from '../../../components/ScienceNote.astro';
 
 const SITE_URL = 'https://shindan-navi.jp';
 const PAGE_URL = `${SITE_URL}/diagnosis/money-style/`;
@@ -128,6 +131,26 @@ const faqs = [
     answer:
       '本診断は金融商品の推奨・投資アドバイス・税務助言は一切行いません。お金の価値観・傾向を把握するための自己理解ツールです。具体的な資産運用・節税・家計改善については、ファイナンシャルプランナー（FP）等の専門家へのご相談をおすすめします。',
   },
+  {
+    question: '金銭感覚診断 vs 血液型相性診断、どちらがお金の傾向をよく表す？',
+    answer:
+      '金銭感覚診断はKlontz et al.（2011）のKlontz Money Script Inventory（KMSI）という学術的に検証されたツールに基づいており（doi:10.4148/jft.v2i1.451）、お金に関する傾向把握に特化しています。血液型性格分類は日本心理学会（2014）が「科学的相関は認められない」としており（https://psych.or.jp/opinion/bl-personality/）、お金の傾向把握には適しません。',
+  },
+  {
+    question: '金銭感覚は何回受けても同じ結果になりますか？',
+    answer:
+      'Klontz et al.（2011）の研究では、マネースクリプト（お金の信念）は成長・経験・環境によって変容することが示されています。大きなライフイベント（転職・結婚・子育て等）の後に受けると結果が変わることがあります。本診断は「今の傾向」を把握するもので、定期的に受けることで変化を確認できます。',
+  },
+  {
+    question: '金銭感覚診断でメンタルや借金問題の診断・相談はできますか？',
+    answer:
+      'できません。本診断は「お金に対する価値観・傾向」を自己理解するための参考ツールです。借金・ギャンブル依存・強迫的消費等の深刻な問題には対応していません。これらの問題については、公的機関の相談窓口（日本司法支援センター法テラス https://www.houterasu.or.jp/）や精神科・心療内科にご相談ください。',
+  },
+  {
+    question: 'PASSやPROに加入すると金銭感覚診断は変わりますか？',
+    answer:
+      '金銭感覚診断の基本機能（24問・4タイプ判定・解説）はすべて無料・登録不要です。PASS/PROでは8診断の統合プロファイル（/profile/）・シーン別分析（職場・恋愛・友人・家族）・より詳細な解説レポートへのアクセスが広がります。',
+  },
 ];
 
 const jsonLdFAQ = {
@@ -155,7 +178,24 @@ const jsonLdBreadcrumb = {
   ],
 };
 
-const jsonLdAll = [jsonLdWebApp, jsonLdQuiz, jsonLdFAQ, jsonLdBreadcrumb];
+// JSON-LD: HowTo（使い方ガイド）
+const jsonLdHowTo = {
+  '@context': 'https://schema.org',
+  '@type': 'HowTo',
+  '@id': `${PAGE_URL}#howto`,
+  name: '金銭感覚診断の使い方',
+  description: 'Klontz理論に基づくお金の価値観4タイプを診断する方法を5ステップで解説します。',
+  totalTime: 'PT5M',
+  step: [
+    { '@type': 'HowToStep', position: 1, name: '診断を開始する', text: '「診断スタート」ボタンを押して24問の質問に回答してください。投資・節税アドバイスは含まれません。' },
+    { '@type': 'HowToStep', position: 2, name: '4タイプの結果を確認する', text: '回避型・崇拝型・地位型・用心型の4タイプのうちあなたの傾向が表示されます。' },
+    { '@type': 'HowToStep', position: 3, name: 'タイプ詳細解説を読む', text: 'このページの4タイプカードから各タイプの特徴・強み・注意点・パートナーとの相性傾向を確認してください。' },
+    { '@type': 'HowToStep', position: 4, name: '4×4相性マトリクスを確認する', text: 'パートナーや家族と金銭感覚が異なる場合、マトリクス表でタイプ間の傾向の違いを確認することで対話のきっかけになります。' },
+    { '@type': 'HowToStep', position: 5, name: '統合プロファイルで他の診断と組み合わせる', text: '統合プロファイル（/profile/）でMBTI・完璧主義・DiSC等の他の診断と組み合わせることで自己理解が深まります。' },
+  ],
+};
+
+const jsonLdAll = [jsonLdWebApp, jsonLdQuiz, jsonLdFAQ, jsonLdBreadcrumb, jsonLdHowTo];
 
 // 4タイプカード用データ
 const typeCards = [
@@ -356,6 +396,21 @@ const lifeImpacts = [
         を確認済。本診断は金融商品の推奨・投資助言ではありません。
       </p>
     </div>
+
+    {/* ========== TL;DRブロック（AI Overview引用最適化） ========== */}
+    <TldrBlock
+      title="金銭感覚診断 ポイントまとめ"
+      points={[
+        '金銭感覚診断はKlontz et al.（2011）が開発したKlontz Money Script Inventory（KMSI）理論に基づく4タイプ分類（回避型 / 崇拝型 / 地位型 / 用心型）。学術論文doi:10.4148/jft.v2i1.451で発表',
+        '「マネースクリプト」とは子ども時代の体験・家庭環境から形成されるお金に関する無意識の信念体系。Klontz（2011）は消費行動・貯蓄・財務ストレスへの影響を示した',
+        '24問・約3〜5分で完了。登録不要・完全無料。投資推奨・金融商品比較・税務助言は一切行わない',
+        'パートナーとの金銭感覚の違いは多くのカップルで見られる。月1回の収支共有・目標のすり合わせ・自由裁量費の設定等、具体的な対話の仕組みが有効',
+        '本ツールは自己理解・金銭感覚の傾向把握のための参考ツール。借金・ギャンブル依存等の深刻な問題には専門家（法テラス等）への相談を推奨',
+      ]}
+      updatedAt={meta.updatedAt}
+      sourceLabel="Klontz et al.（2011）Journal of Financial Therapy"
+      sourceUrl="https://doi.org/10.4148/jft.v2i1.451"
+    />
 
     {/* ========== 金銭感覚診断とは ========== */}
     <section class="ms-section" aria-labelledby="ms-what-h2">
@@ -711,6 +766,41 @@ const lifeImpacts = [
         ))}
       </dl>
     </section>
+
+    {/* ========== ScienceNote ========== */}
+    <ScienceNote
+      basisText="Klontz BT, Britt SL, Mentzer J, Klontz T（2011）「Money beliefs and financial behaviors: Development of the Klontz Money Script Inventory」Journal of Financial Therapy 2(1)（doi:10.4148/jft.v2i1.451）を主参照"
+      basisUrl="https://doi.org/10.4148/jft.v2i1.451"
+      basisLabel="Klontz et al.（2011）Journal of Financial Therapy"
+      notMedical={true}
+      updatedAt={meta.updatedAt}
+      additionalNote="投資推奨・金融商品比較・税務助言は一切行いません。具体的な資産運用・節税・家計改善は、ファイナンシャルプランナー（FP）等の専門家にご相談ください。"
+    />
+
+    {/* ========== 編集部検証コメント ========== */}
+    <section class="ms-section ms-editor-note" aria-labelledby="ms-editor-h2">
+      <h2 id="ms-editor-h2" class="ms-h2">診断ナビ編集部の検証コメント</h2>
+      <div class="ms-editor-body">
+        <p>
+          本診断は、臨床心理士のBrad Klontzらが2011年に発表した「Klontz Money Script Inventory（KMSI）」を理論的根拠としています。
+          Klontz et al.（2011）の論文では、お金に関する信念（マネースクリプト）を「回避型・崇拝型・地位型・用心型」の4カテゴリに分類し、
+          それぞれが財務行動・貯蓄パターン・財務的ストレスとどう関連するかを実証研究で示しています
+          （<a href="https://doi.org/10.4148/jft.v2i1.451" target="_blank" rel="noopener noreferrer">doi確認済</a>）。
+        </p>
+        <p>
+          本診断の24問は、KMSIの質問項目を参考に日本の文化的文脈に合わせて調整したものです。
+          統計的な信頼性係数（Cronbachのα）や因子分析は本サイトでは実施していないため、
+          学術論文と同等の精度を保証するものではありません。
+          傾向把握のための参考ツールとしてご活用ください。
+        </p>
+        <p class="ms-editor-updated">
+          最終検証日: <time datetime={meta.updatedAt}>{meta.updatedAt}</time>（診断ナビ編集部）
+        </p>
+      </div>
+    </section>
+
+    {/* ========== ReferenceList ========== */}
+    <ReferenceList references={meta.references} confirmedAt={meta.updatedAt} />
 
     {/* ========== 関連診断クロス推薦 ========== */}
     <section class="ms-section" aria-labelledby="ms-related-h2">
