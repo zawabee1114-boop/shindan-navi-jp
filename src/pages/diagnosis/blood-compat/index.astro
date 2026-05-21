@@ -722,16 +722,16 @@ const typeLabels: Record<string, string> = { A: 'A型', B: 'B型', O: 'O型', AB
 
   /* ========== ヒーロー ========== */
   .bc-hero {
-    background: linear-gradient(135deg, #fdf2f8 0%, #fce7f3 50%, #f9fafb 100%);
+    background: linear-gradient(135deg, #fff0f1 0%, #ffe4e6 60%, #ffeaec 100%);
     padding: 3rem 0 2rem;
     border-bottom: 1px solid var(--bc-border);
   }
   .bc-hero-inner { text-align: center; }
   .bc-hero-badge {
     display: inline-block;
-    background: rgba(232, 67, 147, 0.1);
+    background: rgba(255,111,122,.15);
     color: var(--bc-primary);
-    border: 1px solid rgba(232, 67, 147, 0.3);
+    border: 1px solid rgba(255,111,122,.4);
     border-radius: 999px;
     padding: 0.3rem 1rem;
     font-size: 0.8rem;
@@ -782,7 +782,8 @@ const typeLabels: Record<string, string> = { A: 'A型', B: 'B型', O: 'O型', AB
     font-size: 1rem;
     text-decoration: none;
     transition: opacity 0.15s;
-  }
+    box-shadow: 0 10px 22px rgba(255,111,122,.35);
+}
   .bc-cta-btn:hover { opacity: 0.85; }
   .bc-cta-btn--primary { background: var(--bc-primary); color: #fff; }
   .bc-cta-btn--secondary {

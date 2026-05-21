@@ -1,7 +1,8 @@
 ---
 /**
- * SiteHeader.astro - グローバルヘッダー
- * Phase 3.2: 認証状態表示 + ログアウト UI 追加
+ * SiteHeader.astro - グローバルヘッダー v2.0
+ * Claude Design ハンドオフ準拠: 白半透明 + backdrop-filter
+ * 2026-05-22 更新
  *
  * AuthHeader.tsx を React Island として組み込み
  * ログイン状態は client:only="react" でマウント後に取得
@@ -19,34 +20,42 @@ const navItems = [
 ---
 
 <header class="site-header">
-  <div class="container">
-    <div class="header-inner">
-      <!-- ロゴ -->
-      <a href="/" class="site-logo" aria-label={`${siteMeta.siteName} - トップページ`}>
-        <!-- TODO: 本番ではSVGロゴに差し替え -->
-        <span class="logo-icon" aria-hidden="true">🔮</span>
-        <span class="logo-text">{siteMeta.siteName}</span>
-      </a>
+  <div class="header-inner-wrap">
+    <!-- ロゴ -->
+    <a href="/" class="site-logo" aria-label={`${siteMeta.siteName} - トップページ`}>
+      <span class="logo-mark" aria-hidden="true">
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <circle cx="14" cy="14" r="14" fill="url(#logo-grad)"/>
+          <defs>
+            <linearGradient id="logo-grad" x1="0" y1="0" x2="28" y2="28" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#9b85ff"/>
+              <stop offset="100%" stop-color="#6a47ff"/>
+            </linearGradient>
+          </defs>
+          <path d="M14 7l1.5 4.2L20 12.5l-4.2 1.8.7 4.3L14 16.4l-2.5 2.2.7-4.3-4.2-1.8 4.5-1.3L14 7z" fill="white"/>
+        </svg>
+      </span>
+      <span class="logo-text">{siteMeta.siteName}</span>
+    </a>
 
-      <!-- PC ナビ -->
-      <nav class="header-nav" aria-label="グローバルナビゲーション">
-        <ul class="nav-list">
-          {navItems.map((item) => (
-            <li>
-              <a href={item.href} class="nav-link">{item.label}</a>
-            </li>
-          ))}
-        </ul>
-      </nav>
+    <!-- PC ナビ -->
+    <nav class="header-nav" aria-label="グローバルナビゲーション">
+      <ul class="nav-list">
+        {navItems.map((item) => (
+          <li>
+            <a href={item.href} class="nav-link">{item.label}</a>
+          </li>
+        ))}
+      </ul>
+    </nav>
 
-      <!-- 認証 UI（React Island）-->
-      <div class="header-auth" aria-label="認証メニュー">
-        <!--
-          client:only="react": SSR スキップ（LocalStorage / Supabase はブラウザ専用）
-          CLS 対策: --auth-placeholder-w でマウント前の幅を確保
-        -->
-        <AuthHeader client:only="react" />
-      </div>
+    <!-- 認証 UI（React Island）-->
+    <div class="header-auth" aria-label="認証メニュー">
+      <!--
+        client:only="react": SSR スキップ（LocalStorage / Supabase はブラウザ専用）
+        CLS 対策: min-width でマウント前の幅を確保
+      -->
+      <AuthHeader client:only="react" />
     </div>
   </div>
 </header>
@@ -57,23 +66,39 @@ const navItems = [
     top: 0;
     z-index: 100;
     height: var(--sn-header-h);
-    background: var(--sn-bg-white);
-    border-bottom: 1px solid var(--sn-border);
-    box-shadow: var(--sn-shadow-xs);
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--line);
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow var(--sn-dur-fast) var(--sn-ease);
   }
 
-  .header-inner {
+  .site-header.is-scrolled {
+    box-shadow: var(--shadow-md);
+  }
+
+  .header-inner-wrap {
     display: flex;
     align-items: center;
     height: 100%;
+    max-width: var(--sn-max-w);
+    margin-inline: auto;
+    padding-inline: var(--sn-space-4);
     gap: var(--sn-space-4);
+  }
+
+  @media (min-width: 640px) {
+    .header-inner-wrap {
+      padding-inline: var(--sn-space-6);
+    }
   }
 
   /* ロゴ */
   .site-logo {
     display: flex;
     align-items: center;
-    gap: var(--sn-space-2);
+    gap: 8px;
     text-decoration: none;
     flex-shrink: 0;
   }
@@ -82,17 +107,18 @@ const navItems = [
     text-decoration: none;
   }
 
-  .logo-icon {
-    font-size: var(--sn-text-xl);
+  .logo-mark {
+    display: flex;
+    align-items: center;
     line-height: 1;
   }
 
   .logo-text {
-    font-family: var(--sn-font-rounded);
+    font-family: 'Inter', 'Noto Sans JP', system-ui, sans-serif;
     font-size: var(--sn-text-lg);
-    font-weight: 900;
-    color: var(--sn-primary);
-    letter-spacing: -0.02em;
+    font-weight: 700;
+    color: var(--ink-900);
+    letter-spacing: -0.01em;
   }
 
   /* PC ナビ */
@@ -111,23 +137,23 @@ const navItems = [
   .nav-list {
     display: flex;
     list-style: none;
-    gap: var(--sn-space-1);
+    gap: 4px;
   }
 
   .nav-link {
     display: block;
-    padding: var(--sn-space-2) var(--sn-space-3);
-    border-radius: var(--sn-radius-sm);
+    padding: 8px 12px;
+    border-radius: var(--radius-sm);
     font-size: var(--sn-text-sm);
     font-weight: 500;
-    color: var(--sn-text-soft);
+    color: var(--ink-700);
     text-decoration: none;
     transition: background-color var(--sn-dur-fast) var(--sn-ease), color var(--sn-dur-fast) var(--sn-ease);
   }
 
   .nav-link:hover {
-    background: var(--sn-primary-bg);
-    color: var(--sn-primary);
+    background: var(--brand-50);
+    color: var(--brand-600);
     text-decoration: none;
   }
 
@@ -148,5 +174,13 @@ const navItems = [
     .header-auth :global(.auth-header-email) {
       display: block !important;
     }
+  }
+
+  /* フォーカスリング */
+  .nav-link:focus-visible,
+  .site-logo:focus-visible {
+    outline: 2px solid var(--brand-400);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
   }
 </style>
