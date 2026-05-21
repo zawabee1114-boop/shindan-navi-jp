@@ -2,10 +2,13 @@
 /**
  * /login/ - Magic Link ログインページ
  *
- * Phase 3.1: env未設定時は「準備中」表示
- * Phase 3.2: Supabase Magic Link でメール送信
+ * Phase 3.2: Supabase Magic Link でメール送信（本接続）
  *
- * export const prerender = false; で SSR 動作
+ * - ログイン済みなら /profile/ へリダイレクト（middleware が処理）
+ * - ?redirect= パラメータでログイン後の遷移先を保持
+ * - ?auth_error= パラメータでコールバックエラーを表示
+ * - Magic Link = @supabase/supabase-js の signInWithOtp 使用
+ * - 同意チェック: ログインボタン押下でポリシー同意とみなす（再確認は不要）
  */
 
 export const prerender = false;
@@ -18,6 +21,11 @@ const isConfigured = Boolean(
 );
 const siteUrl = 'https://shindan-navi.jp';
 const pageUrl = `${siteUrl}/login/`;
+
+// ?redirect= パラメータを取得（ログイン後の遷移先）
+const redirectTo = Astro.url.searchParams.get('redirect') ?? '/profile/';
+// ?auth_error= パラメータを取得（コールバックエラー）
+const authError = Astro.url.searchParams.get('auth_error');
 ---
 
 <BaseLayout
@@ -36,9 +44,22 @@ const pageUrl = `${siteUrl}/login/`;
           パスワードは不要です。
         </p>
 
+        {/* コールバックエラー表示 */}
+        {authError && (
+          <div class="login-message login-message--error" role="alert">
+            {authError === 'no_code'
+              ? 'ログインリンクが無効です。もう一度お試しください。'
+              : authError === 'session_exchange_failed'
+              ? 'ログインリンクの期限が切れています。新しいリンクを送信してください。'
+              : `ログインエラー: ${decodeURIComponent(authError)}`
+            }
+          </div>
+        )}
+
         {isConfigured ? (
-          /* 本番フォーム（env設定済み） */
+          /* 本番フォーム（env設定済み）*/
           <form id="login-form" class="login-form" novalidate>
+            <input type="hidden" name="redirect" value={redirectTo} />
             <label class="login-label" for="login-email">
               メールアドレス
             </label>
@@ -62,7 +83,7 @@ const pageUrl = `${siteUrl}/login/`;
             <div id="login-message" class="login-message" role="alert" aria-live="polite" hidden></div>
           </form>
         ) : (
-          /* 準備中表示（env未設定） */
+          /* 準備中表示（env未設定）*/
           <div class="login-coming-soon">
             <div class="login-coming-icon" aria-hidden="true">🚧</div>
             <p class="login-coming-text">
@@ -76,6 +97,10 @@ const pageUrl = `${siteUrl}/login/`;
         )}
 
         <div class="login-divider" aria-hidden="true"></div>
+
+        <p class="login-signup-link">
+          アカウントをお持ちでない方は <a href="/signup/">新規登録 →</a>
+        </p>
 
         <p class="login-terms">
           ログインすることで
@@ -97,6 +122,7 @@ const pageUrl = `${siteUrl}/login/`;
     form?.addEventListener('submit', async (e) => {
       e.preventDefault();
       const email = (form.elements.namedItem('email') as HTMLInputElement).value.trim();
+      const redirectPath = (form.elements.namedItem('redirect') as HTMLInputElement).value;
       if (!email) return;
 
       submitBtn.disabled = true;
@@ -104,25 +130,38 @@ const pageUrl = `${siteUrl}/login/`;
 
       try {
         const { signInWithMagicLink } = await import('../../lib/supabase/client');
+
+        // redirectTo にリダイレクト先を含める
+        const siteOrigin = window.location.origin;
+        const callbackUrl = `${siteOrigin}/api/auth/callback?next=${encodeURIComponent(redirectPath)}`;
+
+        // signInWithMagicLink はメール送信のみ（redirectTo は emailRedirectTo として渡る）
         const { error } = await signInWithMagicLink(email);
 
         if (error) {
-          messageEl.textContent = `エラー: ${error.message}`;
+          messageEl.textContent = `エラー: ${(error as Error).message}`;
           messageEl.className = 'login-message login-message--error';
           messageEl.removeAttribute('hidden');
         } else {
-          messageEl.textContent = `${email} にログインリンクを送りました。メールをご確認ください。`;
+          // 送信成功
+          messageEl.innerHTML = `
+            <strong>${email}</strong> にログインリンクを送りました。<br>
+            メールをご確認ください（迷惑メールフォルダもご確認を）。
+          `;
           messageEl.className = 'login-message login-message--success';
           messageEl.removeAttribute('hidden');
-          form.reset();
+          form.querySelector('input[type="email"]')?.setAttribute('disabled', 'true');
+          submitBtn.style.display = 'none';
         }
       } catch {
         messageEl.textContent = '送信に失敗しました。しばらく後でお試しください。';
         messageEl.className = 'login-message login-message--error';
         messageEl.removeAttribute('hidden');
       } finally {
-        submitBtn.disabled = false;
-        submitBtn.textContent = 'ログインリンクを送る';
+        if (!submitBtn.style.display) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'ログインリンクを送る';
+        }
       }
     });
   </script>
@@ -195,6 +234,11 @@ const pageUrl = `${siteUrl}/login/`;
   outline: none;
   border-color: #6366f1;
   box-shadow: 0 0 0 3px rgba(99 102 241 / 0.15);
+}
+
+.login-input:disabled {
+  background: #f9fafb;
+  color: #9ca3af;
 }
 
 .login-hint {
@@ -301,6 +345,18 @@ const pageUrl = `${siteUrl}/login/`;
 .login-divider {
   height: 1px;
   background: #f3f4f6;
+}
+
+.login-signup-link {
+  font-size: 0.875rem;
+  color: #6b7280;
+  text-align: center;
+  margin: 0;
+}
+
+.login-signup-link a {
+  color: #4f46e5;
+  font-weight: 700;
 }
 
 .login-terms {
