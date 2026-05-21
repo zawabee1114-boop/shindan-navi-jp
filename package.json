@@ -12,15 +12,21 @@
     "astro": "astro"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.97.1",
+    "@astrojs/cloudflare": "^13.5.3",
     "@astrojs/react": "^4.3.0",
     "@astrojs/sitemap": "^3.7.2",
+    "@supabase/ssr": "^0.10.3",
+    "@supabase/supabase-js": "^2.106.1",
     "@tailwindcss/vite": "4.2.4",
     "@types/react": "^19.1.5",
     "@types/react-dom": "^19.1.5",
-    "astro": "6.2.0",
+    "astro": "^6.3.6",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
+    "resend": "^6.12.3",
     "sharp": "^0.33.5",
+    "stripe": "^22.1.1",
     "tailwindcss": "4.2.4",
     "vite": "7.3.2"
   }

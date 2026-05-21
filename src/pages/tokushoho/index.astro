@@ -1,0 +1,268 @@
+---
+/**
+ * /tokushoho/ - 特定商取引法に基づく表記
+ *
+ * 住所・電話番号は 【CEO記入: 住所】 プレースホルダー（CEO 提供待ち）
+ *
+ * 必須記載事項:
+ *   - 販売者名
+ *   - 所在地・連絡先
+ *   - 代金支払い方法
+ *   - 引き渡し時期
+ *   - 返品・解約ポリシー
+ *   - サービス概要
+ */
+
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Container from '../../components/Container.astro';
+
+const siteUrl = 'https://shindan-navi.jp';
+const pageUrl = `${siteUrl}/tokushoho/`;
+const LAST_UPDATED = '2026-05-21';
+---
+
+<BaseLayout
+  title="特定商取引法に基づく表記｜診断ナビ"
+  description="診断ナビの特定商取引法に基づく表記。販売者情報・支払い方法・返品ポリシー・サービス概要を記載しています。"
+  canonical={pageUrl}
+>
+  <Container>
+    <div class="tsh-page">
+      <h1 class="tsh-h1">特定商取引法に基づく表記</h1>
+      <p class="tsh-updated">最終更新: {LAST_UPDATED}</p>
+
+      <table class="tsh-table">
+        <tbody>
+          <tr class="tsh-row">
+            <th class="tsh-th" scope="row">販売業者</th>
+            <td class="tsh-td">個人事業主（屋号: 診断ナビ）</td>
+          </tr>
+          <tr class="tsh-row">
+            <th class="tsh-th" scope="row">運営者名</th>
+            <td class="tsh-td">【CEO記入: 運営者氏名】</td>
+          </tr>
+          <tr class="tsh-row">
+            <th class="tsh-th" scope="row">所在地</th>
+            <td class="tsh-td">
+              【CEO記入: 住所（〒XXX-XXXX 都道府県市区町村番地）】
+              <br />
+              <small class="tsh-note">
+                ※ 消費者からの請求があった場合は遅滞なく開示します
+              </small>
+            </td>
+          </tr>
+          <tr class="tsh-row">
+            <th class="tsh-th" scope="row">電話番号</th>
+            <td class="tsh-td">
+              【CEO記入: 電話番号】
+              <br />
+              <small class="tsh-note">
+                ※ お問い合わせはメールをご利用ください
+              </small>
+            </td>
+          </tr>
+          <tr class="tsh-row">
+            <th class="tsh-th" scope="row">メールアドレス</th>
+            <td class="tsh-td">
+              <a href="/contact/" class="tsh-link">お問い合わせフォーム</a> よりご連絡ください
+            </td>
+          </tr>
+          <tr class="tsh-row">
+            <th class="tsh-th" scope="row">サービス名称</th>
+            <td class="tsh-td">
+              診断ナビ（shindan-navi.jp）<br />
+              ・診断ナビ PASS（¥390 / 買い切り）<br />
+              ・診断ナビ PRO（¥590 / 月・税込）
+            </td>
+          </tr>
+          <tr class="tsh-row">
+            <th class="tsh-th" scope="row">サービス概要</th>
+            <td class="tsh-td">
+              MBTI・多重知能・DiSC・完璧主義スタイル・恋愛スタイル・金銭感覚・星座・血液型
+              の8診断を統合した性格分析プラットフォームです。
+              <br /><br />
+              PASS（¥390）: 5軸（仕事・恋愛・友人・家族・学校）詳細レポート + AIプロンプトカード（5回分）を1年間ご利用いただけます。
+              <br /><br />
+              PRO（¥590/月）: PASS機能に加え、タイムカプセル機能・AI無制限・特性変化グラフ・広告非表示をご利用いただけます。
+            </td>
+          </tr>
+          <tr class="tsh-row">
+            <th class="tsh-th" scope="row">販売価格</th>
+            <td class="tsh-td">
+              ・診断ナビ PASS: ¥390（税込）/ 1回払い・1年間有効<br />
+              ・診断ナビ PRO: ¥590（税込）/ 月額
+              <br /><br />
+              <small class="tsh-note">
+                表示価格はすべて消費税込みです。
+              </small>
+            </td>
+          </tr>
+          <tr class="tsh-row">
+            <th class="tsh-th" scope="row">支払い方法</th>
+            <td class="tsh-td">
+              クレジットカード決済（Stripe 経由）<br />
+              対応ブランド: Visa / Mastercard / American Express / JCB
+            </td>
+          </tr>
+          <tr class="tsh-row">
+            <th class="tsh-th" scope="row">支払い時期</th>
+            <td class="tsh-td">
+              PASS: 購入時に一括決済<br />
+              PRO: 登録日を起算日として毎月自動課金
+            </td>
+          </tr>
+          <tr class="tsh-row">
+            <th class="tsh-th" scope="row">サービス提供時期</th>
+            <td class="tsh-td">
+              決済完了後、即時ご利用いただけます。<br />
+              システムの都合により遅延が発生した場合はメールにてご連絡します。
+            </td>
+          </tr>
+          <tr class="tsh-row">
+            <th class="tsh-th" scope="row">返品・キャンセルポリシー</th>
+            <td class="tsh-td">
+              <strong>PASS（買い切り）:</strong><br />
+              デジタルコンテンツの性質上、購入完了後の返金は原則承っておりません。
+              ただし、システム障害等による提供不能の場合は全額返金いたします。
+              <br /><br />
+              <strong>PRO（月額サブスク）:</strong><br />
+              マイページからいつでも解約できます。解約後は当月末まで引き続きご利用いただけます。
+              月途中の解約による日割り返金は行っておりません。
+              <br /><br />
+              返金対応が必要な場合は <a href="/contact/" class="tsh-link">お問い合わせフォーム</a> よりご連絡ください。
+            </td>
+          </tr>
+          <tr class="tsh-row">
+            <th class="tsh-th" scope="row">動作環境</th>
+            <td class="tsh-td">
+              インターネット接続環境・モダンブラウザ（Chrome / Safari / Firefox / Edge 最新版）
+              <br />
+              JavaScript を有効にしてご利用ください。
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="tsh-notice">
+        <p class="tsh-notice-title">注意事項</p>
+        <ul class="tsh-notice-list">
+          <li>本サービスは心理学的自己理解・娯楽目的のツールです。医療診断・医療行為に代わるものではありません。</li>
+          <li>診断結果は科学的参考指標であり、絶対的な真実を示すものではありません。</li>
+          <li>未成年者（18歳未満）が有料サービスを利用する場合は、保護者の同意を得てください。</li>
+        </ul>
+      </div>
+    </div>
+  </Container>
+</BaseLayout>
+
+<style>
+.tsh-page {
+  max-width: 800px;
+  margin-inline: auto;
+  padding-block: 2.5rem;
+}
+
+.tsh-h1 {
+  font-size: clamp(1.3rem, 4vw, 1.8rem);
+  font-family: var(--sn-font-rounded, sans-serif);
+  font-weight: 900;
+  color: #1e1b4b;
+  margin: 0 0 0.5rem;
+}
+
+.tsh-updated {
+  font-size: 0.8rem;
+  color: #9ca3af;
+  margin: 0 0 2rem;
+}
+
+.tsh-table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  font-size: 0.9rem;
+}
+
+.tsh-row:nth-child(even) {
+  background: #f9fafb;
+}
+
+.tsh-th {
+  padding: 1rem 1.25rem;
+  text-align: left;
+  vertical-align: top;
+  font-weight: 700;
+  color: #374151;
+  background: #f3f4f6;
+  white-space: nowrap;
+  border-bottom: 1px solid #e5e7eb;
+  width: 9rem;
+}
+
+.tsh-td {
+  padding: 1rem 1.25rem;
+  vertical-align: top;
+  color: #4b5563;
+  line-height: 1.75;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.tsh-link {
+  color: #4f46e5;
+  text-decoration: underline;
+}
+
+.tsh-note {
+  font-size: 0.8em;
+  color: #9ca3af;
+}
+
+.tsh-notice {
+  margin-top: 2.5rem;
+  padding: 1.25rem 1.5rem;
+  background: #fffbeb;
+  border-radius: 0.75rem;
+  border: 1px solid #fde68a;
+}
+
+.tsh-notice-title {
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: #92400e;
+  margin: 0 0 0.75rem;
+}
+
+.tsh-notice-list {
+  padding-left: 1.5rem;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.tsh-notice-list li {
+  font-size: 0.875rem;
+  color: #78350f;
+  line-height: 1.7;
+}
+
+@media (max-width: 640px) {
+  .tsh-table,
+  .tsh-th,
+  .tsh-td {
+    display: block;
+  }
+  .tsh-th {
+    width: auto;
+    border-bottom: none;
+    padding-bottom: 0.25rem;
+    background: #eef2ff;
+    color: #3730a3;
+  }
+  .tsh-td {
+    padding-top: 0.5rem;
+  }
+}
+</style>

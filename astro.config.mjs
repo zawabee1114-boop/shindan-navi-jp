@@ -3,6 +3,7 @@ import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 import react from '@astrojs/react';
 import tailwindcss from '@tailwindcss/vite';
+import cloudflare from '@astrojs/cloudflare';
 
 /**
  * URL ごとの最終更新日マップ（JST）
@@ -166,6 +167,7 @@ const SITEMAP_EXCLUDE = [
 
 export default defineConfig({
   site: 'https://shindan-navi.jp',
+  adapter: cloudflare({ platformProxy: { enabled: true } }),
   integrations: [
     react(),
     sitemap({
