@@ -1,0 +1,881 @@
+---
+/**
+ * /aisei/gakkou/parent-support/ - 子どもタイプ別サポート法
+ * ターゲットKW: 子供 性格 接し方 / 親 子供 タイプ別 / 子供 強み 伸ばし方
+ * 理論: MBTI 16タイプ × 親の関わり方 / 多重知能 × 強みを伸ばす環境
+ * 確認日: 2026-05-21
+ *
+ * 絶対NG:
+ * - 「正しい育て方」「躾の方法」「子どもの問題行動」等の価値判断
+ * - 学習障害・発達障害判定
+ * - YMYL違反
+ * - 心理的決定論（「このタイプの子は〇〇になる」等の断定）
+ */
+import BaseLayout from '../../../../layouts/BaseLayout.astro';
+import Container from '../../../../components/Container.astro';
+import TldrBlock from '../../../../components/TldrBlock.astro';
+import ReferenceList from '../../../../components/ReferenceList.astro';
+import ScienceNote from '../../../../components/ScienceNote.astro';
+
+const SITE_URL = 'https://shindan-navi.jp';
+const PAGE_URL = `${SITE_URL}/aisei/gakkou/parent-support/`;
+const UPDATED_AT = '2026-05-21';
+
+// MBTI 4グループ × 子どもサポート法
+const mbtiChildGroups = [
+  {
+    group: 'NTグループの子ども',
+    types: ['INTJ', 'INTP', 'ENTJ', 'ENTP'],
+    icon: '♟️',
+    color: '#0891b2',
+    childTrait: '論理的な思考・「なぜ？」への探求を好む傾向が見られる',
+    parentTips: [
+      '「なぜそう考えたの？」と論理的な対話を楽しむ',
+      '子どもの「なぜ？」という質問を大切にして一緒に調べる',
+      '間違いを「学びの機会」として肯定的に捉える環境を作る',
+      '批判的に物事を考える機会（議論・ディベート）を提供する',
+    ],
+    environmentTips: [
+      '知的好奇心を刺激する本・パズル・図鑑を手の届く場所に置く',
+      '「正解を教える」より「一緒に考える」対話を大切にする',
+    ],
+    note: 'NT傾向の子どもも感情的なサポートを必要としています。論理だけでなく気持ちへの関心も忘れずに。',
+  },
+  {
+    group: 'NFグループの子ども',
+    types: ['INFJ', 'INFP', 'ENFJ', 'ENFP'],
+    icon: '🌟',
+    color: '#7c3aed',
+    childTrait: '感情・価値観・人との繋がりを大切にする傾向が見られる',
+    parentTips: [
+      '子どもの感情を否定せず「そう感じたんだね」と受け止める',
+      '子どもが大切にしていることへの敬意を言葉で示す',
+      '「なぜそう感じた？」と内面を引き出す対話をする',
+      '競争より「自分なりの成長」を評価する関わりをする',
+    ],
+    environmentTips: [
+      '自分を表現できる創作の時間・空間を用意する',
+      '子どもが一人で過ごす「感情整理の時間」を尊重する',
+    ],
+    note: 'NF傾向の子どもは批判に敏感なことがあります。フィードバックは「行動」を具体的に伝え、人格への批判に見えない表現を心がけましょう。',
+  },
+  {
+    group: 'SJグループの子ども',
+    types: ['ISTJ', 'ISFJ', 'ESTJ', 'ESFJ'],
+    icon: '🏛️',
+    color: '#16a34a',
+    childTrait: '秩序・ルール・責任感を大切にする傾向が見られる',
+    parentTips: [
+      '決まったルーティン・スケジュールを一緒に作る',
+      '「お手伝い」「役割」を持たせることで責任感を育む',
+      '急な変更がある場合は事前に説明し安心感を提供する',
+      '達成したことを具体的に褒めて成功体験を積み重ねる',
+    ],
+    environmentTips: [
+      '整理された安心できる生活環境を整える',
+      '「やること・終わったこと」が見える学習管理ツールを活用する',
+    ],
+    note: 'SJ傾向の子どもも新しい経験・遊びから多くを学びます。ルーティンを大切にしながら、新しい体験の機会も提供してみましょう。',
+  },
+  {
+    group: 'SPグループの子ども',
+    types: ['ISTP', 'ISFP', 'ESTP', 'ESFP'],
+    icon: '🔧',
+    color: '#ea580c',
+    childTrait: '実践・体験・自由な表現を好む傾向が見られる',
+    parentTips: [
+      '「体験してから学ぶ」アプローチを支援する',
+      '「じっとしていない」ことを否定的に評価しない',
+      '手を動かす工作・実験・スポーツの機会を積極的に作る',
+      '子どもの「今この瞬間」の行動・成果を認める',
+    ],
+    environmentTips: [
+      '体を動かせる空間・工作ができる環境を整える',
+      '短い集中×頻繁な体験切り替えの学習スタイルが合うことがある',
+    ],
+    note: 'SP傾向の子どもも計画性・継続性を育むことができます。短いゴールを設定して達成感を積み重ねることから始めてみましょう。',
+  },
+];
+
+// 多重知能 × 強みを伸ばす環境作り
+const miEnvironments = [
+  {
+    intel: '言語的知能',
+    icon: '🦉',
+    signs: '物語を作る・言葉遊びを好む・よくしゃべる・読書量が多い',
+    environment: '本・図書館・読み聞かせ・日記・作文の機会',
+    activities: '読み聞かせ・創作・語りかけ対話・詩や物語の作成',
+  },
+  {
+    intel: '論理数学的知能',
+    icon: '♟️',
+    signs: '数・パターンに熱中・「なぜ？」が多い・論理的に話す',
+    environment: '数学パズル・ボードゲーム・実験キット・プログラミング体験',
+    activities: '一緒にパズル・計算遊び・科学実験・論理パズルゲーム',
+  },
+  {
+    intel: '視空間的知能',
+    icon: '🦎',
+    signs: '絵を描く・積み木・レゴ好き・地図・方向感覚が良い',
+    environment: '絵の具・粘土・ブロック・美術館・地図の絵本',
+    activities: 'お絵かき・工作・積み木・建築モデル・博物館・美術館',
+  },
+  {
+    intel: '身体運動的知能',
+    icon: '🐆',
+    signs: '体を動かすのが好き・手先が器用・じっとしていられない',
+    environment: 'スポーツ・ダンス・工作・料理・身体を動かす遊び空間',
+    activities: '外遊び・スポーツ・ダンス・料理・工作・フィールドワーク',
+  },
+  {
+    intel: '音楽的知能',
+    icon: '🎵',
+    signs: 'リズムをとる・鼻歌・音に敏感・音楽が好き',
+    environment: '楽器・音楽鑑賞の機会・音楽教室・リズム体験',
+    activities: '楽器体験・歌遊び・リズム遊び・コンサート・音楽教室',
+  },
+  {
+    intel: '対人的知能',
+    icon: '🐬',
+    signs: 'おしゃべりが活発・友達をまとめる・人の気持ちを読む',
+    environment: '友達との遊び・グループ活動・チームスポーツ・ボランティア',
+    activities: '協力ゲーム・グループ制作・お手伝い・友達との遊び機会',
+  },
+  {
+    intel: '内省的知能',
+    icon: '🐱',
+    signs: '一人遊びを好む・日記・深く考える・自分の感情を語る',
+    environment: '一人の時間・日記・スケッチブック・静かな読書環境',
+    activities: '日記・自由な制作時間・哲学的な対話・一人でできる趣味',
+  },
+  {
+    intel: '博物的知能',
+    icon: '🌿',
+    signs: '虫・植物・生き物が好き・コレクション・自然観察を好む',
+    environment: '自然体験・図鑑・植物栽培・動物との触れ合い・博物館',
+    activities: '昆虫採集・植物栽培・キャンプ・水族館・自然観察会',
+  },
+];
+
+// FAQ
+const faqs = [
+  {
+    question: '子どもの性格タイプを親が決めることはできますか？',
+    answer:
+      '性格タイプの傾向は観察できますが、「この子はINFJだ」と断定することは難しく、また断定する必要もありません。本ページの情報は「子どもを深く理解するための観察のヒント」として活用することを推奨します。中学生以上になれば本人が自分で診断を受けることができます。',
+  },
+  {
+    question: '子どもに性格診断を受けさせるのは何歳から適切ですか？',
+    answer:
+      '診断ナビの各診断（多重知能・MBTI・DiSCなど）は中学生以上を対象としています。小学生以下のお子さんには、保護者が日常行動を観察して傾向を把握する方法が有効です。また、子どもに診断結果を伝える際は「あなたはこういうタイプだ」と決定論的に伝えず、「こういう傾向があるかもね」と柔軟に伝えることが大切です。',
+  },
+  {
+    question: '子どもの強みを伸ばすことは他の能力を伸ばすことを妨げますか？',
+    answer:
+      '強みを伸ばすことは他の能力の成長を妨げません。得意なことで自信・学習への意欲が生まれ、苦手なことへの挑戦意欲にもつながることがあります。ただし「苦手なことは全くやらなくていい」ではなく、基礎的な学習は継続しながら強みをさらに伸ばすバランスが大切です。',
+  },
+  {
+    question: 'MBTI傾向が親と全く違う子どもとはどう関わればいいですか？',
+    answer:
+      '親と子どものタイプ・傾向が異なることは非常に多くあります。「なぜこの子はこう考えるんだろう？」という疑問をタイプの観点から理解するきっかけにできます。例えば、外向型の親と内向型の子どもでは、「一人の時間を求める」行動の意味が違います。タイプの違いを理解することで、相互理解が深まることがあります。',
+  },
+  {
+    question: '内省的知能が強い子どもは人見知りで心配ですか？',
+    answer:
+      '内省的知能の強さは「人と関わりたくない」ではなく「自分の内面を深く理解する力が強い」という特性です。一人の時間を大切にすること自体は問題ではありません。社会生活に必要な基本的なコミュニケーションを楽しく体験できる機会を少しずつ作ることが助けになりますが、「内向的な性格を直す」必要はありません。心配な場合は学校のスクールカウンセラーにご相談ください。',
+  },
+  {
+    question: '複数の知能が同程度に高い子どもはどうすれば良いですか？',
+    answer:
+      '複数の知能がバランスよく発達していることは強みです。「VARK診断のマルチモーダル型」と同様に、複数の方法・分野で学べる柔軟性があります。一つに絞らず、複数の活動・体験を提供し、子どもが自然と惹きつけられるものを観察することが有効です。',
+  },
+  {
+    question: '子どもに診断結果をどう伝えると良いですか？',
+    answer:
+      '「あなたは〇〇タイプだから〇〇が向いている」という断定的な伝え方は避けることをお勧めします。「こういう傾向があるみたいだけど、あなたはどう思う？」と子どもの意見を引き出す対話型が理想的です。診断結果を「制限」ではなく「自分を知る出発点」として伝えることが大切です。',
+  },
+  {
+    question: '親の価値観で子どもの強みを歪めることはありますか？',
+    answer:
+      '子どもの強みが親の価値観・職業・期待と一致しない場合、無意識に否定的な反応をしてしまうことがあります。例えば「身体運動的知能が強い子どもが勉強よりスポーツを好む」場合、それが強みの表れである可能性があります。子どもの行動・興味を批判の前に「これはどんな強みの表れかもしれない？」と考えてみることが助けになります。',
+  },
+  {
+    question: '子どもの傾向が変わることはありますか？',
+    answer:
+      '傾向は変化します。多重知能理論（Gardner 1983）では「知能は経験・学習・環境によって発達する」と述べています。子ども期に強い知能タイプが大人になっても同じとは限りません。定期的に「今の子どもの強みはどこにあるか？」を観察し直すことが大切です。',
+  },
+  {
+    question: '子どものタイプを知ることで子育てのプレッシャーが増えませんか？',
+    answer:
+      '「このタイプの子はこうしなければならない」というプレッシャーを感じる必要はありません。本ページの情報は「完璧な子育ての手引き」ではなく、「子どもを理解する視点を増やすヒント」として活用するものです。子どもとの関係で困難を感じた場合は、学校のスクールカウンセラー・子育て支援センター・小児科医などの専門家にご相談ください。',
+  },
+  {
+    question: 'このページの内容は発達障害の子どもにも適用できますか？',
+    answer:
+      '本ページの情報は発達障害の有無に関わらず「子どもの性格・強みを理解するヒント」として活用できますが、発達障害がある子どもへの具体的なサポートは専門家（発達支援センター・小児科医・臨床心理士）と連携することが重要です。本ページの情報が専門的な支援の代替にはなりません。',
+  },
+];
+
+const jsonLdArticle = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  '@id': `${PAGE_URL}#article`,
+  headline: '子どもタイプ別サポート法｜性格・多重知能で強みを伸ばす環境作り',
+  url: PAGE_URL,
+  datePublished: UPDATED_AT,
+  dateModified: UPDATED_AT,
+  inLanguage: 'ja',
+  publisher: { '@type': 'Organization', '@id': `${SITE_URL}/#organization` },
+  mentions: [
+    { '@type': 'Person', name: 'Howard Gardner', sameAs: 'https://www.pz.harvard.edu/' },
+  ],
+};
+
+const jsonLdFAQ = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map(({ question, answer }) => ({
+    '@type': 'Question',
+    name: question,
+    acceptedAnswer: { '@type': 'Answer', text: answer },
+  })),
+};
+
+const jsonLdBreadcrumb = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'ホーム', item: SITE_URL },
+    { '@type': 'ListItem', position: 2, name: '学校軸', item: `${SITE_URL}/aisei/gakkou/` },
+    { '@type': 'ListItem', position: 3, name: '子どもタイプ別サポート法', item: PAGE_URL },
+  ],
+};
+
+const jsonLdAll = [jsonLdArticle, jsonLdFAQ, jsonLdBreadcrumb];
+
+const references = [
+  {
+    title: 'Frames of Mind: The Theory of Multiple Intelligences',
+    author: 'Gardner, H.',
+    year: 1983,
+    publisher: 'Basic Books',
+    url: 'https://www.basicbooks.com/titles/howard-gardner/frames-of-mind/9780465024339/',
+  },
+  {
+    title: 'Multiple Intelligences: New Horizons in Theory and Practice',
+    author: 'Gardner, H.',
+    year: 2006,
+    publisher: 'Basic Books',
+  },
+  {
+    title: 'MBTI Manual: A Guide to the Development and Use of the Myers-Briggs Type Indicator (3rd ed.)',
+    author: 'Myers, I.B., McCaulley, M.H., Quenk, N.L., & Hammer, A.L.',
+    year: 1998,
+    publisher: 'CPP Inc.',
+  },
+  {
+    title: 'Multiple Intelligences（Project Zero 公式）',
+    author: 'Harvard Project Zero',
+    year: 2024,
+    url: 'https://www.pz.harvard.edu/projects/multiple-intelligences',
+  },
+];
+---
+
+<BaseLayout
+  title="子どもタイプ別サポート法｜性格・多重知能で強みを伸ばす環境作り（保護者向け）"
+  description="MBTIタイプ別・多重知能タイプ別の子どもへの関わり方と強みを伸ばす環境作りガイド。育て方の断定でなく、性格・才能の傾向を理解するための保護者向け参考情報。2026-05-21確認。"
+  canonical={PAGE_URL}
+  jsonLd={jsonLdAll}
+  ogType="article"
+  publishDate={UPDATED_AT}
+  lastUpdated={UPDATED_AT}
+  breadcrumbs={[
+    { name: '学校軸', url: '/aisei/gakkou/' },
+    { name: '子どもタイプ別サポート法', url: '/aisei/gakkou/parent-support/' },
+  ]}
+>
+  {/* ========== ヒーロー ========== */}
+  <section class="ps-hero" aria-labelledby="ps-h1">
+    <Container>
+      <div class="ps-hero-inner">
+        <div class="ps-badge">保護者向けガイド（MBTI × 多重知能）</div>
+        <h1 id="ps-h1" class="ps-hero-h1">
+          子どもタイプ別サポート法
+        </h1>
+        <p class="ps-hero-catch">
+          性格・多重知能の観点から「子どもを深く理解するヒント」を提供します。<br />
+          強みを伸ばす環境作りと、タイプ別の関わり方を整理しました。
+        </p>
+        <div class="ps-hero-disclaimer" role="note">
+          本ページは「育て方の正解」を示すものではありません。子ども理解を深める参考情報です。
+          「正しい育て方」「躾の方法」「問題行動の改善」については専門家（スクールカウンセラー・小児科医等）にご相談ください。
+        </div>
+      </div>
+    </Container>
+  </section>
+
+  <Container>
+    {/* ========== TL;DRブロック ========== */}
+    <TldrBlock
+      title="このページでわかること"
+      points={[
+        "MBTI 4グループ（NT/NF/SJ/SP）別：子どもの傾向の観察ポイント・保護者の関わり方・環境作りヒント",
+        "多重知能8タイプ別：強い知能が見られるサイン・強みを伸ばす活動・環境作りの具体例（Gardner 1983参照 2026-05-21確認）",
+        "重要な前提：すべての情報は「傾向の参考」であり、育て方の断定・発達障害の判定・問題行動の解決策ではありません"
+      ]}
+      updatedAt={UPDATED_AT}
+      sourceLabel="Harvard Project Zero（多重知能理論・2026-05-21確認）"
+      sourceUrl="https://www.pz.harvard.edu/projects/multiple-intelligences"
+    />
+
+    {/* ========== 絶対NGの明示 ========== */}
+    <div class="ps-ymyl-note" role="note" aria-label="重要な前提">
+      <h2 class="ps-ymyl-title">本ページで扱わないこと（YMYL境界）</h2>
+      <div class="ps-ymyl-grid">
+        <div class="ps-ymyl-item ps-ymyl-ng">
+          <span class="ps-ymyl-icon" aria-hidden="true">🚫</span>
+          <span>「正しい育て方」の提示</span>
+        </div>
+        <div class="ps-ymyl-item ps-ymyl-ng">
+          <span class="ps-ymyl-icon" aria-hidden="true">🚫</span>
+          <span>躾・しつけの方法の推奨</span>
+        </div>
+        <div class="ps-ymyl-item ps-ymyl-ng">
+          <span class="ps-ymyl-icon" aria-hidden="true">🚫</span>
+          <span>子どもの問題行動・不適応の解決策</span>
+        </div>
+        <div class="ps-ymyl-item ps-ymyl-ng">
+          <span class="ps-ymyl-icon" aria-hidden="true">🚫</span>
+          <span>不登校・登校拒否の解決法</span>
+        </div>
+        <div class="ps-ymyl-item ps-ymyl-ng">
+          <span class="ps-ymyl-icon" aria-hidden="true">🚫</span>
+          <span>発達障害・学習障害の判定</span>
+        </div>
+        <div class="ps-ymyl-item ps-ymyl-ng">
+          <span class="ps-ymyl-icon" aria-hidden="true">🚫</span>
+          <span>「このタイプになる」等の予言的断定</span>
+        </div>
+      </div>
+      <p class="ps-ymyl-body">
+        子どもの発達・行動・メンタルヘルスに関する深刻な悩みは、
+        <strong>学校のスクールカウンセラー・子育て支援センター・小児科医・発達支援センター</strong>
+        にご相談ください。本ページはその代替ではありません。
+      </p>
+    </div>
+
+    {/* ========== ScienceNote ========== */}
+    <ScienceNote
+      basisText="Howard Gardner（1983）「Frames of Mind: The Theory of Multiple Intelligences」（Basic Books）。多重知能理論は「得意な知能の組み合わせが人によって異なる」という考え方で、ハーバード大学 Project Zero が継続研究。MBTI: Myers & Briggs Foundation の枠組みに基づく（CPP Inc., 1998）。"
+      basisUrl="https://www.pz.harvard.edu/projects/multiple-intelligences"
+      basisLabel="Project Zero 公式（2026-05-21確認）"
+      notMedical={true}
+      updatedAt={UPDATED_AT}
+      additionalNote="本ページの情報は子ども理解の参考ツールです。医学的・心理学的評価の代替にはなりません。"
+    />
+
+    {/* ========== MBTI 4グループ × 子どもサポート ========== */}
+    <section class="ps-section" aria-labelledby="ps-mbti-h2">
+      <h2 id="ps-mbti-h2" class="ps-h2">MBTI 4グループ別：子どもへの関わり方ヒント</h2>
+      <p class="ps-lead">
+        MBTIの4グループ（NT・NF・SJ・SP）は子どもの行動傾向を理解する参考になります。
+        子どもの行動を観察し、「このグループに近い傾向かも？」という視点から関わり方を考えるヒントとして活用してください。
+        断定的に分類する必要はありません。
+      </p>
+      <div class="ps-mbti-list">
+        {mbtiChildGroups.map((group) => (
+          <article class="ps-mbti-card" style={`--group-color: ${group.color}`}>
+            <div class="ps-mbti-header">
+              <div class="ps-mbti-icon" aria-hidden="true">{group.icon}</div>
+              <div>
+                <h3 class="ps-mbti-name">{group.group}</h3>
+                <div class="ps-mbti-types">
+                  {group.types.map((t) => <span class="ps-mbti-type">{t}</span>)}
+                </div>
+                <p class="ps-mbti-trait">{group.childTrait}</p>
+              </div>
+            </div>
+
+            <div class="ps-mbti-body">
+              <div class="ps-mbti-col">
+                <h4 class="ps-mbti-col-title">保護者の関わり方（4つのヒント）</h4>
+                <ul class="ps-tip-list">
+                  {group.parentTips.map((tip) => (
+                    <li class="ps-tip-item">{tip}</li>
+                  ))}
+                </ul>
+              </div>
+              <div class="ps-mbti-col">
+                <h4 class="ps-mbti-col-title">環境作りのヒント</h4>
+                <ul class="ps-tip-list">
+                  {group.environmentTips.map((tip) => (
+                    <li class="ps-tip-item">{tip}</li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+
+            <p class="ps-mbti-note">注意: {group.note}</p>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    {/* ========== 多重知能 × 強みサイン&環境 ========== */}
+    <section class="ps-section" aria-labelledby="ps-mi-h2">
+      <h2 id="ps-mi-h2" class="ps-h2">多重知能タイプ別：強みが見えるサインと環境作り</h2>
+      <p class="ps-lead">
+        子どもの日常行動を観察することで、どの知能が発達しやすいかの傾向が見えることがあります。
+        以下の「強みが見えるサイン」を参考に、「この知能に興味を持っているかも？」と観察してみてください。
+        サインが一致しなくても問題ありません。
+      </p>
+      <div class="ps-mi-table-wrap">
+        <table class="ps-mi-table">
+          <caption class="ps-table-caption">多重知能タイプ × 強みのサインと環境作り（2026-05-21確認）</caption>
+          <thead>
+            <tr>
+              <th scope="col">知能タイプ</th>
+              <th scope="col">強みが見えるサイン（行動の傾向例）</th>
+              <th scope="col">強みを伸ばす環境・活動の例</th>
+            </tr>
+          </thead>
+          <tbody>
+            {miEnvironments.map((row) => (
+              <tr>
+                <th scope="row">
+                  <span aria-hidden="true">{row.icon}</span> {row.intel}
+                </th>
+                <td class="ps-mi-signs">{row.signs}</td>
+                <td>{row.activities}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p class="ps-mi-note">
+        ※ 上記のサインが当てはまらなくても、その知能が低いわけではありません。
+        多重知能は環境・経験によって発達するため（Gardner 1983）、体験の機会を増やすことが大切です。
+      </p>
+    </section>
+
+    {/* ========== 強みを伸ばす接し方の基本 ========== */}
+    <section class="ps-section" aria-labelledby="ps-basic-h2">
+      <h2 id="ps-basic-h2" class="ps-h2">タイプに関わらず大切にしたい：子どもの強みを伸ばす接し方の基本</h2>
+      <div class="ps-basic-grid">
+        <div class="ps-basic-card">
+          <div class="ps-basic-icon" aria-hidden="true">💬</div>
+          <h3 class="ps-basic-title">「どうだった？」より「どう感じた？」</h3>
+          <p class="ps-basic-desc">
+            結果・成果だけでなく、プロセス・感情・発見を引き出す問いかけが子どもの内省力を育てます。
+          </p>
+        </div>
+        <div class="ps-basic-card">
+          <div class="ps-basic-icon" aria-hidden="true">🌱</div>
+          <h3 class="ps-basic-title">「失敗」を学びとして捉える言葉を使う</h3>
+          <p class="ps-basic-desc">
+            「なぜ失敗したと思う？次はどうしたい？」という問いかけが、成長マインドセット（Carol Dweck のGrowth Mindset理論参照）を育てます。
+          </p>
+        </div>
+        <div class="ps-basic-card">
+          <div class="ps-basic-icon" aria-hidden="true">🔍</div>
+          <h3 class="ps-basic-title">子どもが「のめり込む瞬間」を観察する</h3>
+          <p class="ps-basic-desc">
+            子どもが時間を忘れて熱中しているとき、強い知能が発動している可能性があります。
+            その活動を記録し、同じ種類の体験を増やすことが強みを伸ばすヒントになります。
+          </p>
+        </div>
+        <div class="ps-basic-card">
+          <div class="ps-basic-icon" aria-hidden="true">🤝</div>
+          <h3 class="ps-basic-title">「子どもが決める」機会を作る</h3>
+          <p class="ps-basic-desc">
+            習い事・遊び・休日の過ごし方を子どもが選ぶ場面を積極的に作ることで、
+            自己決定力と「自分の好み・強みへの気づき」が育ちます。
+          </p>
+        </div>
+        <div class="ps-basic-card">
+          <div class="ps-basic-icon" aria-hidden="true">📖</div>
+          <h3 class="ps-basic-title">比較より「個人の成長」を評価する</h3>
+          <p class="ps-basic-desc">
+            他の子どもや兄弟との比較は、強みを生かす意欲を削ぐことがあります。
+            「先週より上手になったね」「この前できなかったことができたね」という個人の成長への言及が効果的です。
+          </p>
+        </div>
+        <div class="ps-basic-card">
+          <div class="ps-basic-icon" aria-hidden="true">🌟</div>
+          <h3 class="ps-basic-title">強みを「道具として」使えるよう支援する</h3>
+          <p class="ps-basic-desc">
+            強い知能は「その分野だけで使うもの」ではありません。
+            例えば「音楽的知能の強さを英語学習に応用する」など、強みを他の学習・活動に転用できることを教えてあげましょう。
+          </p>
+        </div>
+      </div>
+    </section>
+
+    {/* ========== 関連ページ ========== */}
+    <section class="ps-section" aria-labelledby="ps-related-h2">
+      <h2 id="ps-related-h2" class="ps-h2">関連ページ</h2>
+      <div class="ps-related-grid">
+        <a href="/aisei/gakkou/" class="ps-related-card">
+          <span aria-hidden="true">🏫</span>
+          <span class="ps-related-title">学校軸トップ</span>
+          <span class="ps-related-desc">学習・進路・親子サポートの総合ガイド</span>
+        </a>
+        <a href="/diagnosis/multi-int/" class="ps-related-card">
+          <span aria-hidden="true">🧠</span>
+          <span class="ps-related-title">多重知能テスト</span>
+          <span class="ps-related-desc">中学生以上が自分で受けられる64問の無料診断</span>
+        </a>
+        <a href="/aisei/gakkou/multi-int-learning/" class="ps-related-card">
+          <span aria-hidden="true">📚</span>
+          <span class="ps-related-title">多重知能 × 学習法</span>
+          <span class="ps-related-desc">8知能タイプ別勉強法40選・子ども向けサポートも収録</span>
+        </a>
+        <a href="/aisei/gakkou/learning-style/" class="ps-related-card">
+          <span aria-hidden="true">📖</span>
+          <span class="ps-related-title">学習スタイル診断</span>
+          <span class="ps-related-desc">VARKモデルで視覚・聴覚など8タイプを診断</span>
+        </a>
+        <a href="/aisei/gakkou/shinro/" class="ps-related-card">
+          <span aria-hidden="true">🎯</span>
+          <span class="ps-related-title">進路選択と性格タイプ</span>
+          <span class="ps-related-desc">MBTIと多重知能で文理選択・学部選びを考える</span>
+        </a>
+        <a href="/aisei/kazoku/oyako/" class="ps-related-card">
+          <span aria-hidden="true">👪</span>
+          <span class="ps-related-title">親子相性診断</span>
+          <span class="ps-related-desc">親子の性格タイプ別相互理解ガイド</span>
+        </a>
+      </div>
+    </section>
+
+    {/* ========== FAQ ========== */}
+    <section class="ps-section" aria-labelledby="ps-faq-h2">
+      <h2 id="ps-faq-h2" class="ps-h2">よくある質問（Q&A）</h2>
+      <dl class="ps-faq-list">
+        {faqs.map(({ question, answer }) => (
+          <div class="ps-faq-item">
+            <dt class="ps-faq-q">{question}</dt>
+            <dd class="ps-faq-a">{answer}</dd>
+          </div>
+        ))}
+      </dl>
+    </section>
+
+    {/* ========== 参考文献 ========== */}
+    <ReferenceList references={references} confirmedAt={UPDATED_AT} />
+  </Container>
+</BaseLayout>
+
+<style>
+/* ========== ヒーロー ========== */
+.ps-hero {
+  background: linear-gradient(135deg, #065f46 0%, #059669 100%);
+  color: #fff;
+  padding-block: 3rem 3.5rem;
+  text-align: center;
+}
+.ps-hero-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.875rem;
+}
+.ps-badge {
+  display: inline-block;
+  background: rgba(255 255 255 / 0.2);
+  border: 1px solid rgba(255 255 255 / 0.4);
+  border-radius: 2rem;
+  padding: 0.25rem 1rem;
+  font-size: 0.75rem;
+}
+.ps-hero-h1 {
+  font-size: clamp(1.75rem, 5vw, 2.5rem);
+  font-family: var(--sn-font-rounded, sans-serif);
+  font-weight: 700;
+  margin: 0;
+}
+.ps-hero-catch {
+  font-size: clamp(0.9rem, 2.5vw, 1.05rem);
+  opacity: 0.9;
+  line-height: 1.7;
+  margin: 0;
+}
+.ps-hero-disclaimer {
+  font-size: 0.8rem;
+  opacity: 0.8;
+  background: rgba(255 255 255 / 0.15);
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+  max-width: 560px;
+  line-height: 1.6;
+  text-align: left;
+  margin: 0;
+}
+
+/* ========== YMYL注意 ========== */
+.ps-ymyl-note {
+  background: #f0fdf4;
+  border: 1px solid #a7f3d0;
+  border-left: 4px solid #059669;
+  border-radius: 0 0.75rem 0.75rem 0;
+  padding: 1.25rem 1.5rem;
+  margin-block: 2rem;
+}
+.ps-ymyl-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #065f46;
+  margin: 0 0 0.875rem;
+}
+.ps-ymyl-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 0.5rem;
+  margin-bottom: 0.875rem;
+}
+.ps-ymyl-item {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+  color: #374151;
+  background: #fff;
+  border: 1px solid #d1fae5;
+  border-radius: 0.5rem;
+  padding: 0.4rem 0.75rem;
+}
+.ps-ymyl-ng { color: #991b1b; background: #fef2f2; border-color: #fecaca; }
+.ps-ymyl-icon { font-size: 1rem; flex-shrink: 0; }
+.ps-ymyl-body {
+  font-size: 0.875rem;
+  color: #374151;
+  line-height: 1.7;
+  margin: 0;
+}
+
+/* ========== セクション共通 ========== */
+.ps-section { margin-block: 3rem; }
+.ps-h2 {
+  font-size: clamp(1.3rem, 4vw, 1.75rem);
+  font-family: var(--sn-font-rounded, sans-serif);
+  font-weight: 700;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--sn-primary);
+}
+.ps-lead { font-size: 1rem; line-height: 1.8; margin-bottom: 1.25rem; color: #374151; }
+
+/* ========== MBTIリスト ========== */
+.ps-mbti-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+.ps-mbti-card {
+  border: 1px solid #e5e7eb;
+  border-left: 4px solid var(--group-color, #059669);
+  border-radius: 0.75rem;
+  overflow: hidden;
+  background: #fff;
+}
+.ps-mbti-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1.25rem;
+  background: #f9fafb;
+  border-bottom: 1px solid #e5e7eb;
+}
+.ps-mbti-icon { font-size: 2rem; flex-shrink: 0; }
+.ps-mbti-name {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--group-color, #059669);
+  margin: 0 0 0.35rem;
+}
+.ps-mbti-types {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-bottom: 0.4rem;
+}
+.ps-mbti-type {
+  font-size: 0.72rem;
+  font-weight: 700;
+  background: color-mix(in srgb, var(--group-color, #059669) 12%, transparent);
+  color: var(--group-color, #059669);
+  padding: 0.15rem 0.45rem;
+  border-radius: 0.25rem;
+}
+.ps-mbti-trait { font-size: 0.85rem; color: #4b5563; margin: 0; }
+.ps-mbti-body {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+}
+.ps-mbti-col {
+  padding: 1.25rem;
+  border-right: 1px solid #e5e7eb;
+}
+.ps-mbti-col:last-child { border-right: none; }
+.ps-mbti-col-title {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #374151;
+  margin: 0 0 0.75rem;
+}
+.ps-tip-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.ps-tip-item {
+  font-size: 0.85rem;
+  line-height: 1.6;
+  color: #374151;
+  padding-left: 1rem;
+  position: relative;
+}
+.ps-tip-item::before {
+  content: '→';
+  position: absolute;
+  left: 0;
+  color: var(--group-color, #059669);
+  font-size: 0.8rem;
+}
+.ps-mbti-note {
+  padding: 0.875rem 1.25rem;
+  background: #fffbeb;
+  border-top: 1px solid #fde68a;
+  font-size: 0.8rem;
+  color: #92400e;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* ========== 多重知能テーブル ========== */
+.ps-mi-table-wrap { overflow-x: auto; margin-top: 1.5rem; }
+.ps-mi-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  min-width: 560px;
+}
+.ps-mi-table th,
+.ps-mi-table td {
+  padding: 0.6rem 0.8rem;
+  border: 1px solid #e5e7eb;
+  text-align: left;
+  line-height: 1.5;
+}
+.ps-mi-table thead th {
+  background: var(--sn-primary, #059669);
+  color: #fff;
+  font-weight: 600;
+}
+.ps-mi-table tbody tr:nth-child(even) { background: #f9fafb; }
+.ps-mi-table tbody th { font-weight: 600; white-space: nowrap; }
+.ps-table-caption {
+  font-size: 0.8rem;
+  color: #6b7280;
+  text-align: left;
+  padding: 0.25rem 0 0.5rem;
+}
+.ps-mi-signs { color: #4b5563; font-size: 0.83rem; }
+.ps-mi-note { font-size: 0.875rem; color: #4b5563; margin-top: 0.75rem; line-height: 1.6; }
+
+/* ========== 基本接し方グリッド ========== */
+.ps-basic-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+.ps-basic-card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  transition: box-shadow 0.15s;
+}
+.ps-basic-card:hover { box-shadow: 0 4px 12px rgba(0 0 0 / 0.06); }
+.ps-basic-icon { font-size: 1.75rem; margin-bottom: 0.5rem; }
+.ps-basic-title { font-size: 0.95rem; font-weight: 700; color: #1f2937; margin: 0 0 0.5rem; }
+.ps-basic-desc { font-size: 0.85rem; color: #4b5563; line-height: 1.6; margin: 0; }
+
+/* ========== 関連ページ ========== */
+.ps-related-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+}
+.ps-related-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  padding: 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  text-decoration: none;
+  color: inherit;
+  font-size: 1.5rem;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.ps-related-card:hover {
+  border-color: var(--sn-primary, #059669);
+  box-shadow: 0 2px 8px rgba(5 150 105 / 0.1);
+}
+.ps-related-title { font-weight: 700; font-size: 0.9rem; color: var(--sn-primary, #059669); }
+.ps-related-desc { font-size: 0.78rem; color: #6b7280; line-height: 1.5; }
+
+/* ========== FAQ ========== */
+.ps-faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+.ps-faq-item {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+.ps-faq-q {
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 1rem 1.25rem;
+  background: #f9fafb;
+  margin: 0;
+  display: block;
+}
+.ps-faq-q::before { content: 'Q. '; color: var(--sn-primary, #059669); }
+.ps-faq-a {
+  font-size: 0.9rem;
+  line-height: 1.7;
+  padding: 1rem 1.25rem;
+  margin: 0;
+  color: #4b5563;
+}
+.ps-faq-a::before { content: 'A. '; font-weight: 700; color: #16a34a; }
+
+/* ========== レスポンシブ ========== */
+@media (max-width: 768px) {
+  .ps-mbti-body { grid-template-columns: 1fr; }
+  .ps-mbti-col { border-right: none; border-bottom: 1px solid #e5e7eb; }
+  .ps-mbti-col:last-child { border-bottom: none; }
+}
+@media (max-width: 640px) {
+  .ps-basic-grid { grid-template-columns: 1fr; }
+  .ps-related-grid { grid-template-columns: 1fr 1fr; }
+  .ps-ymyl-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 480px) {
+  .ps-related-grid { grid-template-columns: 1fr; }
+}
+</style>

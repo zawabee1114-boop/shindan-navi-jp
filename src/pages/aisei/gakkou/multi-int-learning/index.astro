@@ -1,0 +1,875 @@
+---
+/**
+ * /aisei/gakkou/multi-int-learning/ - 多重知能 × 効果的な学習法
+ * ターゲットKW: 多重知能 学習スタイル / 多重知能 子供 / 強みを伸ばす学び方
+ * 理論: Gardner (1983/1999) + Harvard Project Zero
+ * 確認日: 2026-05-21
+ *
+ * 絶対NG: 学習障害・発達障害判定 / YMYL違反 / ストレングスファインダー名称
+ */
+import BaseLayout from '../../../../layouts/BaseLayout.astro';
+import Container from '../../../../components/Container.astro';
+import TldrBlock from '../../../../components/TldrBlock.astro';
+import ReferenceList from '../../../../components/ReferenceList.astro';
+import ScienceNote from '../../../../components/ScienceNote.astro';
+
+const SITE_URL = 'https://shindan-navi.jp';
+const PAGE_URL = `${SITE_URL}/aisei/gakkou/multi-int-learning/`;
+const UPDATED_AT = '2026-05-21';
+
+// 8知能タイプ × 学習法マトリクスデータ
+const intelligenceTypes = [
+  {
+    id: 'linguistic',
+    name: '言語的知能',
+    icon: '🦉',
+    color: '#4f46e5',
+    summary: '言語・文章・語彙の扱いが得意。読む・書く・話すで学習が定着する。',
+    studentTips: [
+      '声に出して読む音読学習を取り入れる',
+      '要約文・読書感想文を書いて思考を整理する',
+      '新しい単語・概念を例文・物語に組み込んで覚える',
+      'ディスカッション・プレゼンでアウトプットする',
+      '日記・ジャーナリングで毎日の学びを言語化する',
+    ],
+    parentTips: [
+      '本・絵本の読み聞かせを日常に組み込む',
+      '「なぜ？どう思った？」と言語化を促す問いかけをする',
+      '子どもが作った文章・物語を褒めて記録する',
+      '図書館利用・読書習慣を楽しい体験として作る',
+    ],
+    subjects: ['国語', '英語', '小論文', '外国語', '社会（論述系）'],
+    career: '文学・法学・教育学・外国語学・ジャーナリズム系学部',
+  },
+  {
+    id: 'logical',
+    name: '論理数学的知能',
+    icon: '♟️',
+    color: '#0891b2',
+    summary: '論理・数学・パターン認識が得意。「なぜそうなるか」の原理から理解する。',
+    studentTips: [
+      '公式・法則は「なぜ成立するか」の論理から理解してから暗記する',
+      'フローチャート・論理図で概念の構造を可視化する',
+      '過去問を解いてパターンを発見する',
+      'コーディング・シミュレーションで実践的に検証する',
+      '教師役学習で自分の論理的理解の穴を発見する',
+    ],
+    parentTips: [
+      'パズル・ボードゲーム・論理ゲームを日常に取り入れる',
+      '「どう思う？なぜそう考えた？」と論理的思考を引き出す',
+      '家計・家事の中に数字・順序・分類を一緒に体験させる',
+      '興味のある分野の「仕組み」を一緒に調べる',
+    ],
+    subjects: ['数学', '物理', '化学', '情報', '経済'],
+    career: '数学・物理・情報工学・医薬・コンピューターサイエンス系学部',
+  },
+  {
+    id: 'spatial',
+    name: '視空間的知能',
+    icon: '🦎',
+    color: '#7c3aed',
+    summary: '空間・色・形の認識が得意。図解・映像・マップで理解が深まる。',
+    studentTips: [
+      'マインドマップで知識をビジュアルにつなげる',
+      'ノートは図・絵・カラーコーディングを多用する',
+      '動画・図解が豊富な教材を優先的に選ぶ',
+      '模型・立体物を使った実体験学習を取り入れる',
+      'フラッシュカードにイラストを加えて視覚的に暗記する',
+    ],
+    parentTips: [
+      '地図・積み木・ブロック遊びを積極的に取り入れる',
+      '美術・工作・デザインの機会を作る',
+      '子どもの絵・作品を大切に飾って褒める',
+      '博物館・科学館・美術館へ連れて行く',
+    ],
+    subjects: ['美術', '理科（実験・観察）', '地理', '技術', '数学（図形）'],
+    career: '建築・デザイン・映像・ゲーム・アート系学部',
+  },
+  {
+    id: 'kinesthetic',
+    name: '身体運動的知能',
+    icon: '🐆',
+    color: '#16a34a',
+    summary: '体を動かす・手を使う体験で理解が深まる。実験・実践で記憶が定着する。',
+    studentTips: [
+      '実験・実習・フィールドワークを積極的に活用する',
+      '立ちながら・歩きながら音声学習を取り入れる',
+      '学習内容をジェスチャー・動作・ロールプレイで再現する',
+      '手を動かしながら（書く・作る・触れる）学ぶ',
+      '運動後のすっきりした状態で集中的に勉強する',
+    ],
+    parentTips: [
+      '外遊び・スポーツ・工作を積極的に一緒に楽しむ',
+      '料理・ガーデニング・ものづくりで手を動かす体験を作る',
+      '「じっとしている」ことを過度に強いない',
+      '体を動かす習慣（スポーツ・ダンス）を日常に組み込む',
+    ],
+    subjects: ['体育', '技術・家庭科', '理科（実験）', '美術（制作）', '農業・実習系'],
+    career: '医療系（医学・看護・理学療法）・スポーツ科学・農学・食品系学部',
+  },
+  {
+    id: 'musical',
+    name: '音楽的知能',
+    icon: '🎵',
+    color: '#db2777',
+    summary: '音・リズム・メロディーへの感受性が高い。音楽と結びつけた学習が効果的。',
+    studentTips: [
+      '覚えたいことをリズムに乗せてメロディー化する（替え歌暗記）',
+      'クラシック・環境音楽をBGMに使った集中学習を試す',
+      '英単語・歴史年号を歌詞に組み込んで覚える',
+      '音読・詠唱で記憶を定着させる',
+      '学習後に好きな音楽で気分転換→再集中のサイクルを作る',
+    ],
+    parentTips: [
+      '音楽・楽器・リズム遊びを日常に取り入れる',
+      '子どもが鼻歌・リズムを刻んでいたら肯定的に受け止める',
+      '音楽教育（楽器・歌）の機会を作る',
+      '子どもの感情を音楽で表現することを受け入れる',
+    ],
+    subjects: ['音楽', '外国語（リスニング）', '国語（詩・短歌）', '体育（リズム系）'],
+    career: '音楽・芸術系学部、音楽療法・サウンドエンジニアリング・映像音楽',
+  },
+  {
+    id: 'interpersonal',
+    name: '対人的知能',
+    icon: '🐬',
+    color: '#0f766e',
+    summary: '他者との対話・協力で学ぶ力が強い。グループ学習・教え合いで理解が深まる。',
+    studentTips: [
+      'グループ学習・勉強会を積極的に活用する',
+      '「友達に説明する」教師役学習でアウトプットする',
+      '先生・チューターへの質問を積極的に行う',
+      'ペア学習でお互いに採点・フィードバックをする',
+      'ディスカッション・ロールプレイで学習内容を体験する',
+    ],
+    parentTips: [
+      '子どもの話を積極的に聞き、感情を言語化できる対話の場を作る',
+      '友達との遊び・グループ活動の機会を大切にする',
+      '感謝・謝罪を自然に行う家族の文化を作る',
+      '子どもが仲間と共同作業する機会を設ける',
+    ],
+    subjects: ['道徳', '社会（公民）', '国語（コミュニケーション）', '部活・委員会活動'],
+    career: '教育学・心理学・社会福祉・看護学・経営（人事系）学部',
+  },
+  {
+    id: 'intrapersonal',
+    name: '内省的知能',
+    icon: '🐱',
+    color: '#6366f1',
+    summary: '自己認識・内面探求の力が強い。一人でじっくり考えて深める学習が得意。',
+    studentTips: [
+      '自分専用のノートに思考プロセス・疑問を書き出す',
+      '日記・ジャーナリングで学習内容と自分の考えを統合する',
+      '興味のある分野を自分で深く調査・研究する習慣を作る',
+      '「今日学んだことで何が一番大事か」を毎日自問する',
+      '読書・独学での深い探求に時間を確保する',
+    ],
+    parentTips: [
+      '子どもの「一人時間」を尊重して邪魔しない',
+      '「どう思った？どう感じた？」と内面を引き出す問いかけをする',
+      '日記・スケッチブックなど内面を表現するツールを与える',
+      '子どものペースを尊重し、集団に合わせることを過度に求めない',
+    ],
+    subjects: ['哲学・倫理', '現代文（思想系）', '歴史（思想史）', '心理学（選択可能な場合）'],
+    career: '哲学・心理学・社会学・文学・宗教学・独立系専門職系学部',
+  },
+  {
+    id: 'naturalist',
+    name: '博物的知能',
+    icon: '🌿',
+    color: '#059669',
+    summary: '自然・生き物・分類への鋭い観察力を持つ。フィールドワーク・実物体験で記憶が定着する。',
+    studentTips: [
+      '実地観察・フィールドワーク・自然調査を積極活用する',
+      '標本・コレクション・実物資料での学習を優先する',
+      '観察日誌をつけて長期的な変化を記録する習慣をつける',
+      '生き物の飼育・植物栽培を通じた学習を取り入れる',
+      '博物館・水族館・植物園でのインプットを活用する',
+    ],
+    parentTips: [
+      '自然体験（虫捕り・植物観察・キャンプ）を一緒に楽しむ',
+      '子どもが興味を持った生き物・自然現象を一緒に調べる',
+      '観葉植物・家庭菜園で「育てる体験」を作る',
+      '図鑑・自然系の本を手が届く場所に置く',
+    ],
+    subjects: ['理科（生物・地学）', '社会（地理）', '農業・家庭科（食と栄養）', '環境学'],
+    career: '農学・環境科学・生物学・獣医学・食品科学・地球科学系学部',
+  },
+];
+
+// JSON-LD
+const jsonLdArticle = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  '@id': `${PAGE_URL}#article`,
+  headline: '多重知能 × 効果的な学習法｜8タイプ別勉強法40選（子供・学生・親向け）',
+  url: PAGE_URL,
+  datePublished: UPDATED_AT,
+  dateModified: UPDATED_AT,
+  inLanguage: 'ja',
+  publisher: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+  },
+  mentions: [
+    { '@type': 'Person', name: 'Howard Gardner', sameAs: 'https://www.pz.harvard.edu/' },
+    { '@type': 'Organization', name: 'Harvard Project Zero', sameAs: 'https://www.pz.harvard.edu/' },
+  ],
+};
+
+const faqs = [
+  {
+    question: '多重知能と学習スタイルは同じものですか？',
+    answer:
+      '異なる概念です。多重知能（Gardner 1983）は「どの知能領域が得意か」という才能の方向性を測定します。学習スタイル（VARKなど）は「どの感覚チャンネルで情報を受け取るのが得意か」という学習入力形式の好みを分類します。本ページでは多重知能の強みを活かした学習法を紹介しています。',
+  },
+  {
+    question: '子供の多重知能の強みはどう見つけますか？',
+    answer:
+      '日常の行動観察が最も有効です。言語的知能が強い子は「物語を作る・言葉遊びを好む」、論理数学的知能が強い子は「数やパターンに熱中する」、身体運動的知能が強い子は「体を使う活動で輝く」といった特徴があります。ただし、これらはあくまで傾向の観察であり、医学的評価ではありません。多重知能テスト（/diagnosis/multi-int/）は中学生以上を想定しています。',
+  },
+  {
+    question: '多重知能の強みを知ることで学習成績は上がりますか？',
+    answer:
+      '直接的な成績向上を保証するものではありませんが、「自分に合った学習方法を選ぶ」ことで学習効率が高まり、学習への興味・継続が促されるという教育現場での報告があります（Project Zero, 2024参照）。本理論はあくまで参考枠組みとして活用することが推奨されます。',
+  },
+  {
+    question: '8知能すべてが重要なのですか？',
+    answer:
+      'Gardner（1983）の多重知能理論では「全ての人が8つの知能を持ち、得意な組み合わせが異なる」と考えます。特定の知能が「高い・低い」ではなく、それぞれが異なる形の才能です（出典: https://www.pz.harvard.edu/projects/multiple-intelligences 2026-05-21確認）。強い知能を伸ばすことと、苦手な部分を補う戦略の両方が有効です。',
+  },
+  {
+    question: '内省的知能が強い子供は内向的ということですか？',
+    answer:
+      '内省的知能（自己認識の深さ）と内向性・外向性は別の概念です。内省的知能が強くても社交的な場面でリーダーシップを発揮する子もいます。内省的知能は「自分の感情・価値観・強みを深く理解する力」であり、性格の外向・内向とは独立しています。',
+  },
+  {
+    question: '多重知能 × 学習法の研究は信頼できますか？',
+    answer:
+      'Gardner（1983）の多重知能理論は教育分野で広く参照されていますが、「知能を8種類に分類することの妥当性」については議論もあります。ハーバード大学 Project Zero が継続的に研究・実践を行っており（https://www.pz.harvard.edu/ 2026-05-21確認）、世界の教育機関で活用されています。本ページは参考情報として提供しており、固定的な能力分類ではありません。',
+  },
+  {
+    question: '対人的知能が強い子供は集団生活が向いていますか？',
+    answer:
+      '対人的知能が強い子は他者の感情を読み取り協力する力に優れる傾向がありますが、これは「集団でないと学べない」という意味ではありません。一人学習でも教師役学習・想像上の対話を使えば効果的に学べます。また、人間関係に疲れやすい面もあるため、一人の休息時間も大切にしてください。',
+  },
+  {
+    question: '博物的知能が強い子供に向く習い事はありますか？',
+    answer:
+      '博物的知能の強みを活かせる習い事の例としては、自然観察・植物栽培・昆虫採集・料理教室・農業体験・動物飼育などが挙げられます。博物館・水族館・科学館へ定期的に出かけることも、この知能を伸ばす有効な体験です（ただし特定の習い事を推奨するものではありません）。',
+  },
+  {
+    question: '音楽的知能が強い子供は音楽系の進路しかないですか？',
+    answer:
+      '音楽的知能の強みは音楽系以外の多くの分野でも活かせます。リズム感・パターン認識・感情表現力は、言語学習（リスニング）・数学（規則性の把握）・プレゼンテーション（感情を乗せた話し方）など幅広い場面で応用できます。進路の選択肢は多様にあります。',
+  },
+  {
+    question: '多重知能テストを子供に受けさせる前に知っておくべきことは？',
+    answer:
+      '本テストは中学生以上を想定しています（vark-learn.com等の公式も同様）。小学生以下のお子さんには親御さんが子どもの行動を観察しながら記入する方法をお試しください。結果は「固定された才能の証明」ではなく「今の傾向の参考」として伝えることが大切です。結果を根拠に「この子は〇〇が向いていない」と制限しないよう注意してください。',
+  },
+];
+
+const jsonLdFAQ = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map(({ question, answer }) => ({
+    '@type': 'Question',
+    name: question,
+    acceptedAnswer: { '@type': 'Answer', text: answer },
+  })),
+};
+
+const jsonLdBreadcrumb = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'ホーム', item: SITE_URL },
+    { '@type': 'ListItem', position: 2, name: '学校軸', item: `${SITE_URL}/aisei/gakkou/` },
+    { '@type': 'ListItem', position: 3, name: '多重知能 × 学習法', item: PAGE_URL },
+  ],
+};
+
+const jsonLdAll = [jsonLdArticle, jsonLdFAQ, jsonLdBreadcrumb];
+
+const references = [
+  {
+    title: 'Frames of Mind: The Theory of Multiple Intelligences',
+    author: 'Gardner, H.',
+    year: 1983,
+    publisher: 'Basic Books',
+    url: 'https://www.basicbooks.com/titles/howard-gardner/frames-of-mind/9780465024339/',
+  },
+  {
+    title: 'Intelligence Reframed: Multiple Intelligences for the 21st Century',
+    author: 'Gardner, H.',
+    year: 1999,
+    publisher: 'Basic Books',
+    url: 'https://www.basicbooks.com/titles/howard-gardner/intelligence-reframed/9780465026104/',
+  },
+  {
+    title: 'Multiple Intelligences（Project Zero 公式）',
+    author: 'Harvard Project Zero',
+    year: 2024,
+    url: 'https://www.pz.harvard.edu/projects/multiple-intelligences',
+  },
+];
+---
+
+<BaseLayout
+  title="多重知能 × 効果的な学習法｜8タイプ別勉強法40選（子供・学生・親向け）"
+  description="Gardner多重知能理論に基づく8タイプ別学習法40選。視覚・言語・論理など知能の強みを活かした勉強法を子供・学生・保護者向けに解説。多重知能診断との連動ガイド。2026-05-21確認。"
+  canonical={PAGE_URL}
+  jsonLd={jsonLdAll}
+  ogType="article"
+  publishDate={UPDATED_AT}
+  lastUpdated={UPDATED_AT}
+  breadcrumbs={[
+    { name: '学校軸', url: '/aisei/gakkou/' },
+    { name: '多重知能 × 学習法', url: '/aisei/gakkou/multi-int-learning/' },
+  ]}
+>
+  {/* ========== ヒーロー ========== */}
+  <section class="mil-hero" aria-labelledby="mil-h1">
+    <Container>
+      <div class="mil-hero-inner">
+        <div class="mil-badge">Gardner 多重知能理論（1983/1999）</div>
+        <h1 id="mil-h1" class="mil-hero-h1">
+          多重知能 × 効果的な学習法
+        </h1>
+        <p class="mil-hero-catch">
+          8知能タイプ別の具体的な勉強法40選。<br />
+          強みを活かした学習戦略で効率を最大化しよう
+        </p>
+        <div class="mil-hero-stats">
+          <span>8知能タイプ</span>
+          <span class="mil-sep">×</span>
+          <span>勉強法5つ×8 = 40項目</span>
+          <span class="mil-sep">＋</span>
+          <span>親向け4サポート×8</span>
+        </div>
+        <a href="/diagnosis/multi-int/" class="mil-cta-btn">
+          まず多重知能テストを受ける（無料・64問）→
+        </a>
+      </div>
+    </Container>
+  </section>
+
+  <Container>
+    {/* ========== TL;DRブロック ========== */}
+    <TldrBlock
+      title="このページでわかること"
+      points={[
+        "多重知能8タイプそれぞれの強みを活かした学習法を5つずつ計40項目で紹介（Gardner 1983/1999、Harvard Project Zero 参照 2026-05-21確認）",
+        "学生向け「自分の強みを使った学習戦略」と保護者向け「子どもの強い知能を見つける観察ポイント・サポート法」の2視点で構成",
+        "多重知能診断（/diagnosis/multi-int/）と連動して活用することで、具体的な学習改善策がすぐ実践できます"
+      ]}
+      updatedAt={UPDATED_AT}
+      sourceLabel="Harvard Project Zero（多重知能理論・2026-05-21確認）"
+      sourceUrl="https://www.pz.harvard.edu/projects/multiple-intelligences"
+    />
+
+    {/* ========== はじめに ========== */}
+    <section class="mil-section" aria-labelledby="mil-intro-h2">
+      <h2 id="mil-intro-h2" class="mil-h2">多重知能を学習に活かすとは？</h2>
+      <p class="mil-lead">
+        Howard Gardner（1983）の多重知能理論は「全ての人が8つの知能を持ち、得意な組み合わせが異なる」という考え方です。
+        ハーバード大学 Project Zero が継続的に研究・普及を行っており（<a href="https://www.pz.harvard.edu/projects/multiple-intelligences" target="_blank" rel="noopener noreferrer">公式</a>、2026-05-21確認）、世界の教育機関で活用されています。
+      </p>
+      <p class="mil-body">
+        強い知能を学習に活かす具体的なアプローチとして、本ページでは次の2軸で整理します。
+      </p>
+      <div class="mil-intro-boxes">
+        <div class="mil-intro-box mil-intro-box--student">
+          <div class="mil-intro-icon" aria-hidden="true">🎓</div>
+          <h3 class="mil-intro-title">学生向け：自分の強みを使った学習戦略</h3>
+          <p class="mil-intro-desc">
+            多重知能テストで判明した強い知能タイプに合わせた具体的な勉強法を選ぶ。
+            得意な知能をフル活用して学習効率を高める。
+          </p>
+        </div>
+        <div class="mil-intro-box mil-intro-box--parent">
+          <div class="mil-intro-icon" aria-hidden="true">👨‍👩‍👧</div>
+          <h3 class="mil-intro-title">保護者向け：子どもの強い知能を見つける観察ポイント</h3>
+          <p class="mil-intro-desc">
+            日常行動の観察から子どもの強い知能を推測するヒント。
+            強みを伸ばす環境作り・関わり方を知る。
+          </p>
+        </div>
+      </div>
+      <p class="mil-note">
+        ※ 本ページの内容は自己理解・学習サポートの参考情報です。学習障害・発達障害等の医学的評価ではありません。
+        心身の状態や学習に著しい困難がある場合は専門家にご相談ください。
+      </p>
+    </section>
+
+    {/* ========== ScienceNote ========== */}
+    <ScienceNote
+      basisText="Howard Gardner（1983）「Frames of Mind: The Theory of Multiple Intelligences」（Basic Books）。Gardner（1999）「Intelligence Reframed」で更新版を発表。ハーバード大学 Project Zero が継続研究中。"
+      basisUrl="https://www.pz.harvard.edu/projects/multiple-intelligences"
+      basisLabel="Project Zero 公式（2026-05-21確認）"
+      notMedical={true}
+      updatedAt={UPDATED_AT}
+    />
+
+    {/* ========== 8知能タイプ × 学習法マトリクス ========== */}
+    <section class="mil-section" aria-labelledby="mil-matrix-h2">
+      <h2 id="mil-matrix-h2" class="mil-h2">8知能タイプ別 学習法マトリクス</h2>
+      <p class="mil-lead">
+        8つの知能タイプそれぞれについて、学生向け5つの勉強法・保護者向け4つのサポート法・向く教科・進路ヒントを整理しました。
+        多重知能テストで強い知能を確認してから読むと最も役立ちます。
+      </p>
+      <div class="mil-type-list">
+        {intelligenceTypes.map((type) => (
+          <article class="mil-type-card" id={`type-${type.id}`} style={`--type-color: ${type.color}`}>
+            <div class="mil-type-header">
+              <div class="mil-type-icon" aria-hidden="true">{type.icon}</div>
+              <div>
+                <h3 class="mil-type-name">{type.name}</h3>
+                <p class="mil-type-summary">{type.summary}</p>
+              </div>
+            </div>
+
+            <div class="mil-type-body">
+              <div class="mil-type-col">
+                <h4 class="mil-type-col-title">
+                  <span aria-hidden="true">🎓</span> 学生向け勉強法（5選）
+                </h4>
+                <ol class="mil-tip-list">
+                  {type.studentTips.map((tip) => (
+                    <li class="mil-tip-item">{tip}</li>
+                  ))}
+                </ol>
+              </div>
+              <div class="mil-type-col">
+                <h4 class="mil-type-col-title">
+                  <span aria-hidden="true">👨‍👩‍👧</span> 保護者向けサポート（4選）
+                </h4>
+                <ol class="mil-tip-list">
+                  {type.parentTips.map((tip) => (
+                    <li class="mil-tip-item">{tip}</li>
+                  ))}
+                </ol>
+              </div>
+            </div>
+
+            <div class="mil-type-footer">
+              <div class="mil-type-meta">
+                <span class="mil-type-meta-label">向く教科:</span>
+                <span>{type.subjects.join('・')}</span>
+              </div>
+              <div class="mil-type-meta">
+                <span class="mil-type-meta-label">進路ヒント:</span>
+                <span>{type.career}</span>
+              </div>
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    {/* ========== 活用法 ========== */}
+    <section class="mil-section" aria-labelledby="mil-how-h2">
+      <h2 id="mil-how-h2" class="mil-h2">多重知能 × 学習法を活用するステップ</h2>
+      <ol class="mil-steps">
+        <li class="mil-step">
+          <div class="mil-step-num" aria-hidden="true">1</div>
+          <div class="mil-step-body">
+            <h3 class="mil-step-title">多重知能テストで強い知能を確認する</h3>
+            <p class="mil-step-desc">
+              <a href="/diagnosis/multi-int/">多重知能テスト（64問・無料）</a>で8知能プロファイルを把握する。
+              スコアが高い上位2〜3知能を「強い知能」として確認する。
+            </p>
+          </div>
+        </li>
+        <li class="mil-step">
+          <div class="mil-step-num" aria-hidden="true">2</div>
+          <div class="mil-step-body">
+            <h3 class="mil-step-title">強い知能タイプの学習法を試してみる</h3>
+            <p class="mil-step-desc">
+              上記マトリクスで強い知能タイプの勉強法5つを確認し、「まず1つ」を今週の学習に取り入れてみる。
+              全て試す必要はない。1つずつ試して効果を確認する。
+            </p>
+          </div>
+        </li>
+        <li class="mil-step">
+          <div class="mil-step-num" aria-hidden="true">3</div>
+          <div class="mil-step-body">
+            <h3 class="mil-step-title">2〜3週間試してから自己評価する</h3>
+            <p class="mil-step-desc">
+              「集中が続いたか」「記憶に残りやすかったか」「楽しかったか」を自分で評価する。
+              効果があれば継続し、合わなければ別の方法に変える。
+            </p>
+          </div>
+        </li>
+        <li class="mil-step">
+          <div class="mil-step-num" aria-hidden="true">4</div>
+          <div class="mil-step-body">
+            <h3 class="mil-step-title">苦手教科に強みを応用する</h3>
+            <p class="mil-step-desc">
+              強い知能の学習法を、苦手な教科にも応用する。
+              例: 「音楽的知能が強い → 英単語を歌で覚える → 苦手な英語をリズム暗記で攻略」。
+            </p>
+          </div>
+        </li>
+      </ol>
+    </section>
+
+    {/* ========== 関連ページ ========== */}
+    <section class="mil-section" aria-labelledby="mil-related-h2">
+      <h2 id="mil-related-h2" class="mil-h2">関連ページ</h2>
+      <div class="mil-related-grid">
+        <a href="/diagnosis/multi-int/" class="mil-related-card">
+          <span class="mil-related-icon" aria-hidden="true">🧠</span>
+          <span class="mil-related-title">多重知能テスト（64問）</span>
+          <span class="mil-related-desc">あなたの8知能プロファイルを無料で測定。このページを最大活用するための必須診断。</span>
+        </a>
+        <a href="/aisei/gakkou/learning-style/" class="mil-related-card">
+          <span class="mil-related-icon" aria-hidden="true">📖</span>
+          <span class="mil-related-title">学習スタイル診断（10問）</span>
+          <span class="mil-related-desc">VARKモデルで視覚・聴覚・読み書き・運動感覚の学習傾向を診断。</span>
+        </a>
+        <a href="/aisei/gakkou/shinro/" class="mil-related-card">
+          <span class="mil-related-icon" aria-hidden="true">🎯</span>
+          <span class="mil-related-title">進路選択と性格タイプ</span>
+          <span class="mil-related-desc">多重知能×MBTIで文理選択・学部選びの適性を考える。</span>
+        </a>
+        <a href="/aisei/gakkou/parent-support/" class="mil-related-card">
+          <span class="mil-related-icon" aria-hidden="true">👨‍👩‍👧</span>
+          <span class="mil-related-title">子どもタイプ別サポート法</span>
+          <span class="mil-related-desc">性格・知能タイプ別の関わり方・強みを伸ばす環境作り。</span>
+        </a>
+      </div>
+    </section>
+
+    {/* ========== FAQ ========== */}
+    <section class="mil-section" aria-labelledby="mil-faq-h2">
+      <h2 id="mil-faq-h2" class="mil-h2">よくある質問（Q&A）</h2>
+      <dl class="mil-faq-list">
+        {faqs.map(({ question, answer }) => (
+          <div class="mil-faq-item">
+            <dt class="mil-faq-q">{question}</dt>
+            <dd class="mil-faq-a">{answer}</dd>
+          </div>
+        ))}
+      </dl>
+    </section>
+
+    {/* ========== 参考文献 ========== */}
+    <ReferenceList references={references} confirmedAt={UPDATED_AT} />
+  </Container>
+</BaseLayout>
+
+<style>
+/* ========== ヒーロー ========== */
+.mil-hero {
+  background: linear-gradient(135deg, #1e1b4b 0%, #4338ca 100%);
+  color: #fff;
+  padding-block: 3.5rem 4rem;
+  text-align: center;
+}
+.mil-hero-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+.mil-badge {
+  display: inline-block;
+  background: rgba(255 255 255 / 0.2);
+  border: 1px solid rgba(255 255 255 / 0.4);
+  border-radius: 2rem;
+  padding: 0.25rem 1rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+}
+.mil-hero-h1 {
+  font-size: clamp(1.75rem, 5vw, 2.5rem);
+  font-family: var(--sn-font-rounded, sans-serif);
+  font-weight: 700;
+  margin: 0;
+}
+.mil-hero-catch {
+  font-size: clamp(0.9rem, 2.5vw, 1.05rem);
+  opacity: 0.9;
+  line-height: 1.7;
+  margin: 0;
+}
+.mil-hero-stats {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  font-size: 0.9rem;
+  opacity: 0.8;
+  background: rgba(255 255 255 / 0.1);
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+}
+.mil-sep { color: rgba(255 255 255 / 0.5); }
+.mil-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  background: #fff;
+  color: #4338ca;
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 0.75rem 2rem;
+  border-radius: 3rem;
+  text-decoration: none;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.mil-cta-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0 0 0 / 0.2);
+}
+
+/* ========== セクション ========== */
+.mil-section { margin-block: 3rem; }
+.mil-h2 {
+  font-size: clamp(1.3rem, 4vw, 1.75rem);
+  font-family: var(--sn-font-rounded, sans-serif);
+  font-weight: 700;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--sn-primary);
+}
+.mil-lead {
+  font-size: 1rem;
+  line-height: 1.8;
+  margin-bottom: 1.25rem;
+  color: #374151;
+}
+.mil-body {
+  font-size: 0.95rem;
+  line-height: 1.8;
+  color: #374151;
+  margin-bottom: 1rem;
+}
+
+/* ========== イントロボックス ========== */
+.mil-intro-boxes {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-block: 1.25rem;
+}
+.mil-intro-box {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  background: #fff;
+}
+.mil-intro-box--student { border-left: 4px solid #4338ca; }
+.mil-intro-box--parent { border-left: 4px solid #059669; }
+.mil-intro-icon { font-size: 1.75rem; margin-bottom: 0.5rem; }
+.mil-intro-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0 0 0.5rem;
+}
+.mil-intro-desc { font-size: 0.85rem; color: #4b5563; line-height: 1.6; margin: 0; }
+.mil-note {
+  font-size: 0.8rem;
+  color: #6b7280;
+  background: #f9fafb;
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+  margin-top: 1rem;
+  line-height: 1.6;
+}
+
+/* ========== タイプカード ========== */
+.mil-type-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+.mil-type-card {
+  border: 1px solid #e5e7eb;
+  border-left: 4px solid var(--type-color, #4338ca);
+  border-radius: 0.75rem;
+  overflow: hidden;
+  background: #fff;
+}
+.mil-type-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1.25rem;
+  background: #f9fafb;
+  border-bottom: 1px solid #e5e7eb;
+}
+.mil-type-icon { font-size: 2rem; flex-shrink: 0; }
+.mil-type-name {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--type-color, #4338ca);
+  margin: 0 0 0.25rem;
+}
+.mil-type-summary { font-size: 0.875rem; color: #4b5563; margin: 0; line-height: 1.6; }
+.mil-type-body {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+}
+.mil-type-col {
+  padding: 1.25rem;
+  border-right: 1px solid #e5e7eb;
+}
+.mil-type-col:last-child { border-right: none; }
+.mil-type-col-title {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #374151;
+  margin: 0 0 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.mil-tip-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  counter-reset: tip-counter;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.mil-tip-item {
+  counter-increment: tip-counter;
+  font-size: 0.85rem;
+  line-height: 1.6;
+  color: #374151;
+  padding-left: 1.5rem;
+  position: relative;
+}
+.mil-tip-item::before {
+  content: counter(tip-counter) '.';
+  position: absolute;
+  left: 0;
+  font-weight: 700;
+  color: var(--type-color, #4338ca);
+  font-size: 0.8rem;
+}
+.mil-type-footer {
+  padding: 0.875rem 1.25rem;
+  background: #f9fafb;
+  border-top: 1px solid #e5e7eb;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+.mil-type-meta {
+  font-size: 0.8rem;
+  color: #6b7280;
+  display: flex;
+  gap: 0.4rem;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+.mil-type-meta-label { font-weight: 700; color: #374151; white-space: nowrap; }
+
+/* ========== ステップ ========== */
+.mil-steps {
+  list-style: none;
+  padding: 0;
+  margin: 1.5rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+.mil-step {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+.mil-step-num {
+  flex-shrink: 0;
+  width: 2.5rem;
+  height: 2.5rem;
+  background: var(--sn-primary, #4338ca);
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+.mil-step-title { font-size: 1rem; font-weight: 700; margin: 0 0 0.25rem; }
+.mil-step-desc { font-size: 0.9rem; color: #4b5563; margin: 0; line-height: 1.6; }
+
+/* ========== 関連ページ ========== */
+.mil-related-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+}
+.mil-related-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  padding: 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.mil-related-card:hover {
+  border-color: var(--sn-primary, #4338ca);
+  box-shadow: 0 2px 8px rgba(67 56 202 / 0.1);
+}
+.mil-related-icon { font-size: 1.5rem; }
+.mil-related-title { font-weight: 700; font-size: 0.9rem; color: var(--sn-primary, #4338ca); }
+.mil-related-desc { font-size: 0.78rem; color: #6b7280; line-height: 1.5; }
+
+/* ========== FAQ ========== */
+.mil-faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+.mil-faq-item {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+.mil-faq-q {
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 1rem 1.25rem;
+  background: #f9fafb;
+  margin: 0;
+  display: block;
+}
+.mil-faq-q::before { content: 'Q. '; color: var(--sn-primary, #4338ca); }
+.mil-faq-a {
+  font-size: 0.9rem;
+  line-height: 1.7;
+  padding: 1rem 1.25rem;
+  margin: 0;
+  color: #4b5563;
+}
+.mil-faq-a::before { content: 'A. '; font-weight: 700; color: #16a34a; }
+
+/* ========== レスポンシブ ========== */
+@media (max-width: 768px) {
+  .mil-type-body { grid-template-columns: 1fr; }
+  .mil-type-col { border-right: none; border-bottom: 1px solid #e5e7eb; }
+  .mil-type-col:last-child { border-bottom: none; }
+  .mil-intro-boxes { grid-template-columns: 1fr; }
+}
+@media (max-width: 640px) {
+  .mil-related-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 480px) {
+  .mil-related-grid { grid-template-columns: 1fr; }
+}
+</style>

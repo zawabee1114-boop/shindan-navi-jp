@@ -1,0 +1,839 @@
+---
+/**
+ * /aisei/gakkou/ - 学校軸ハブページ
+ * ターゲットKW: 学校 性格相性 / 学習 タイプ / 性格 学校
+ * 確認日: 2026-05-21
+ *
+ * 役割: 学校軸4サブページへの包括ハブ
+ * 対象: 学生 / 保護者 / 教員 の3視点
+ */
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Container from '../../../components/Container.astro';
+import TldrBlock from '../../../components/TldrBlock.astro';
+import ReferenceList from '../../../components/ReferenceList.astro';
+import ScienceNote from '../../../components/ScienceNote.astro';
+
+const SITE_URL = 'https://shindan-navi.jp';
+const PAGE_URL = `${SITE_URL}/aisei/gakkou/`;
+const UPDATED_AT = '2026-05-21';
+
+// 4サブページのデータ
+const subPages = [
+  {
+    href: '/aisei/gakkou/learning-style/',
+    icon: '📖',
+    title: '学習スタイル診断',
+    badge: '穴場KW・VOL210',
+    desc: 'VARKモデルと多重知能の融合。10問・3分で視覚・聴覚・読み書き・運動感覚など8タイプを診断。効果的な勉強法をすぐに確認できます。',
+    target: '学生・保護者',
+    color: '#7c3aed',
+  },
+  {
+    href: '/aisei/gakkou/multi-int-learning/',
+    icon: '🧠',
+    title: '多重知能 × 効果的な学習法',
+    badge: '40項目・詳細ガイド',
+    desc: 'Gardner多重知能8タイプ別の勉強法を5つずつ・計40項目で整理。学生向け学習戦略と保護者向けサポート法を同時収録。',
+    target: '学生・保護者',
+    color: '#4338ca',
+  },
+  {
+    href: '/aisei/gakkou/shinro/',
+    icon: '🎯',
+    title: '進路選択と性格タイプ',
+    badge: 'MBTI×多重知能×DiSC',
+    desc: '文理選択・学部選び・キャリアパスをMBTI/多重知能/DiSCの観点から整理。断定ではなく「傾向の参考」として高校生・大学生・保護者向けに提供。',
+    target: '高校生・大学生・保護者',
+    color: '#1e40af',
+  },
+  {
+    href: '/aisei/gakkou/parent-support/',
+    icon: '👨‍👩‍👧',
+    title: '子どもタイプ別サポート法',
+    badge: '保護者向け詳細ガイド',
+    desc: 'MBTIと多重知能で子どもの傾向を理解し、強みを伸ばす環境作りを提案。「正しい育て方」の断定でなく、子ども理解を深める視点を提供。',
+    target: '保護者',
+    color: '#059669',
+  },
+];
+
+// 3視点の整理
+const perspectives = [
+  {
+    icon: '🎓',
+    title: '学生の視点',
+    color: '#4338ca',
+    points: [
+      '自分の学習スタイルを把握して効率的な勉強法を見つける',
+      '多重知能の強みを活かした学習戦略を設計する',
+      '文理選択・学部選びの参考に性格タイプを活用する',
+      '多重知能テストと診断ナビの統合プロファイルを活用する',
+    ],
+    startPage: { href: '/aisei/gakkou/learning-style/', label: '学習スタイル診断から始める' },
+  },
+  {
+    icon: '👨‍👩‍👧',
+    title: '保護者の視点',
+    color: '#059669',
+    points: [
+      '子どもの行動から強い知能・性格傾向を観察する',
+      '性格タイプ別の関わり方・対話の工夫を知る',
+      '強みを伸ばす環境・習い事・活動を選ぶヒントを得る',
+      '子どもとの進路対話のきっかけとして活用する',
+    ],
+    startPage: { href: '/aisei/gakkou/parent-support/', label: '子どもサポート法から始める' },
+  },
+  {
+    icon: '🏫',
+    title: '教員の視点（参考）',
+    color: '#0891b2',
+    points: [
+      '多重知能理論を授業設計の参考枠組みとして活用する',
+      '学習スタイルの多様性を認識した指導方法を探る',
+      '学習に困難を感じる生徒への多角的なアプローチのヒント',
+      '（医学的評価・診断は専門機関への連携が必要）',
+    ],
+    startPage: { href: '/aisei/gakkou/multi-int-learning/', label: '多重知能 × 学習法を確認する' },
+  },
+];
+
+// 診断との連動フロー
+const diagnosisFlow = [
+  {
+    step: 1,
+    icon: '🧠',
+    title: '多重知能テスト（64問）を受ける',
+    desc: '8つの知能プロファイルを把握。仕事・学習・進路のベース診断。',
+    href: '/diagnosis/multi-int/',
+    color: '#4338ca',
+  },
+  {
+    step: 2,
+    icon: '📖',
+    title: '学習スタイル診断（10問）を受ける',
+    desc: 'VARKの学習傾向（視覚・聴覚・読み書き・運動感覚）を把握。',
+    href: '/aisei/gakkou/learning-style/',
+    color: '#7c3aed',
+  },
+  {
+    step: 3,
+    icon: '📚',
+    title: '多重知能 × 学習法で勉強法を選ぶ',
+    desc: '強い知能タイプに合った勉強法5つを今週の学習に取り入れる。',
+    href: '/aisei/gakkou/multi-int-learning/',
+    color: '#0891b2',
+  },
+  {
+    step: 4,
+    icon: '🎯',
+    title: '進路選択の参考に活用する',
+    desc: 'MBTI・多重知能・DiSCの組み合わせで文理選択・学部選びを考える。',
+    href: '/aisei/gakkou/shinro/',
+    color: '#1e40af',
+  },
+];
+
+const faqs = [
+  {
+    question: '学校軸とは何ですか？',
+    answer:
+      '「学校軸」とは、診断ナビが提供する「学習・進路・親子関係」にフォーカスしたコンテンツ群の総称です。学習スタイル診断・多重知能×学習法・進路選択ガイド・子どもサポート法の4つのサブページで構成されています。学生・保護者・教員の3つの視点から活用できます。',
+  },
+  {
+    question: '学校軸のページはどれから始めると効果的ですか？',
+    answer:
+      '学生の方には、まず「多重知能テスト（64問・/diagnosis/multi-int/）」か「学習スタイル診断（10問・/aisei/gakkou/learning-style/）」から始めることをお勧めします。保護者の方には「子どもタイプ別サポート法（/aisei/gakkou/parent-support/）」から始め、気になったタイプをさらに「多重知能×学習法」で深掘りする使い方が効果的です。',
+  },
+  {
+    question: '学習スタイル診断と多重知能テストは両方受ける必要がありますか？',
+    answer:
+      '必須ではありませんが、両方受けることをお勧めします。多重知能テスト（64問）は「どの知能が得意か」という才能軸、学習スタイル診断（10問）は「どの感覚チャンネルで学ぶのが得意か」という学習インプット軸を測定します。2つを組み合わせることで、より精度の高い学習戦略が設計できます。',
+  },
+  {
+    question: '学校軸の情報は小学生の子どもにも使えますか？',
+    answer:
+      '各診断テストは中学生以上を対象としています。小学生以下の場合は保護者が観察しながら参照することができます。特に「子どもタイプ別サポート法」と「多重知能 × 学習法」の「保護者向けサポート」セクションは小学生の保護者にも参考になる情報を含んでいます。',
+  },
+  {
+    question: '診断結果は進路選択の「決め手」にして良いですか？',
+    answer:
+      'できません。本ページの全ての診断・情報は「傾向の参考」として活用するものであり、進路・学部選択の最終決断は本人の意思・学力・具体的な職業調査・保護者や学校の先生との相談を通じて行うことをお勧めします。',
+  },
+  {
+    question: 'このページの情報は医療的・教育的なアドバイスですか？',
+    answer:
+      'いいえ。本ページのすべての情報は自己理解・学習サポートの参考情報です。学習障害・発達障害等の医学的評価、または特別支援教育の適性判断には専門機関（発達支援センター・小児科医・臨床心理士・特別支援教育コーディネーター等）にご相談ください。',
+  },
+  {
+    question: '学校軸と相性診断（aisei）との関係は何ですか？',
+    answer:
+      '学校軸（/aisei/gakkou/）は診断ナビの「相性・学習ハブ（/aisei/）」の一部です。相性ハブには恋愛・友人・職場・家族・学校の5軸があり、学校軸は学習・進路・子ども理解に特化したコンテンツ群です。他の軸（恋愛相性・職場相性等）と組み合わせることで、性格の総合的な自己理解が深められます。',
+  },
+  {
+    question: '多重知能理論に批判はありますか？',
+    answer:
+      '多重知能理論については「8知能への分類の妥当性」「測定可能性」に関する学術的な議論があります。また学習スタイル全般に対しては Pashler et al.（2008）による批判的な研究も存在します。本サイトでは科学的批判を明記した上で「自己理解の参考ツール」として提供しています。詳細は学習スタイル診断ページをご参照ください。',
+  },
+  {
+    question: 'このページの内容は定期的に更新されますか？',
+    answer:
+      '本ページの理論的根拠（多重知能・MBTI・VARKモデル）は比較的安定していますが、診断ツールの機能・UI・価格は更新されることがあります。最終確認日は2026-05-21です。疑問や情報の誤りがあればお問い合わせ（/contact/）からご連絡ください。',
+  },
+  {
+    question: 'この学校軸は教員・学校向けのリソースとして使えますか？',
+    answer:
+      '参考情報として活用いただけますが、学校での正式な教育・評価ツールとして使用することは想定していません。Gardner の多重知能理論を授業設計の参考枠組みとして使いたい教員の方には、Harvard Project Zero の公式資料（https://www.pz.harvard.edu/ 2026-05-21確認）も参照することをお勧めします。',
+  },
+];
+
+const jsonLdArticle = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  '@id': `${PAGE_URL}#webpage`,
+  url: PAGE_URL,
+  name: '学校軸 - 学習・進路・親子サポートの総合ハブ | 診断ナビ',
+  description:
+    '学習スタイル診断・多重知能×学習法・進路選択ガイド・子どもサポート法の4サブページを統合した学校軸ハブ。学生・保護者・教員の3視点で活用できます。',
+  inLanguage: 'ja',
+  dateModified: UPDATED_AT,
+  publisher: { '@type': 'Organization', '@id': `${SITE_URL}/#organization` },
+};
+
+const jsonLdFAQ = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map(({ question, answer }) => ({
+    '@type': 'Question',
+    name: question,
+    acceptedAnswer: { '@type': 'Answer', text: answer },
+  })),
+};
+
+const jsonLdBreadcrumb = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'ホーム', item: SITE_URL },
+    { '@type': 'ListItem', position: 2, name: '相性・学習ハブ', item: `${SITE_URL}/aisei/` },
+    { '@type': 'ListItem', position: 3, name: '学校軸', item: PAGE_URL },
+  ],
+};
+
+const jsonLdAll = [jsonLdArticle, jsonLdFAQ, jsonLdBreadcrumb];
+
+const references = [
+  {
+    title: 'Frames of Mind: The Theory of Multiple Intelligences',
+    author: 'Gardner, H.',
+    year: 1983,
+    publisher: 'Basic Books',
+    url: 'https://www.basicbooks.com/titles/howard-gardner/frames-of-mind/9780465024339/',
+  },
+  {
+    title: 'Multiple Intelligences（Project Zero 公式）',
+    author: 'Harvard Project Zero',
+    year: 2024,
+    url: 'https://www.pz.harvard.edu/projects/multiple-intelligences',
+  },
+  {
+    title: 'I\'m different; not dumb. Modes of presentation (VARK)',
+    author: 'Fleming, N.D.',
+    year: 1995,
+    journal: 'Annual Conference HERDSA',
+    url: 'https://vark-learn.com/',
+  },
+];
+---
+
+<BaseLayout
+  title="学校軸 - 学習スタイル・進路・親子サポート総合ガイド | 診断ナビ"
+  description="学習スタイル診断（VARK・10問）・多重知能×学習法（40項目）・進路選択と性格タイプ・子どもサポート法。学生・保護者・教員の3視点で学習と進路を深く考えるための総合ハブ。2026-05-21確認。"
+  canonical={PAGE_URL}
+  jsonLd={jsonLdAll}
+  ogType="website"
+  publishDate={UPDATED_AT}
+  lastUpdated={UPDATED_AT}
+  breadcrumbs={[
+    { name: '相性・学習ハブ', url: '/aisei/' },
+    { name: '学校軸', url: '/aisei/gakkou/' },
+  ]}
+>
+  {/* ========== ヒーロー ========== */}
+  <section class="gk-hero" aria-labelledby="gk-h1">
+    <Container>
+      <div class="gk-hero-inner">
+        <div class="gk-badge">学生 × 保護者 両視点・Phase 2 新設</div>
+        <h1 id="gk-h1" class="gk-hero-h1">学校軸</h1>
+        <p class="gk-hero-catch">
+          学習・進路・親子サポートを性格と知能から考える<br />
+          総合ガイドハブ
+        </p>
+        <div class="gk-hero-tags">
+          <span class="gk-tag">学習スタイル診断</span>
+          <span class="gk-tag">多重知能 × 勉強法</span>
+          <span class="gk-tag">進路選択</span>
+          <span class="gk-tag">子どもサポート</span>
+        </div>
+        <div class="gk-hero-targets">
+          <span class="gk-target">🎓 学生</span>
+          <span class="gk-target">👨‍👩‍👧 保護者</span>
+          <span class="gk-target">🏫 教員（参考）</span>
+        </div>
+      </div>
+    </Container>
+  </section>
+
+  <Container>
+    {/* ========== TL;DRブロック ========== */}
+    <TldrBlock
+      title="このページでわかること"
+      points={[
+        "学校軸は「学習スタイル診断（VARK/10問）・多重知能×学習法（40項目）・進路選択ガイド・子どもサポート法」の4サブページで構成される学習・進路の総合ガイドです",
+        "学生向け「自分の強みを使った学習戦略」と保護者向け「子どもの傾向を理解して強みを伸ばす接し方」の両視点で設計されています（Gardner 1983、Fleming 1995参照 2026-05-21確認）",
+        "すべての情報は「傾向の参考」であり、学習障害・発達障害の判定や育て方の断定は行いません"
+      ]}
+      updatedAt={UPDATED_AT}
+      sourceLabel="Harvard Project Zero（多重知能理論・2026-05-21確認）"
+      sourceUrl="https://www.pz.harvard.edu/projects/multiple-intelligences"
+    />
+
+    {/* ========== 4サブページ一覧 ========== */}
+    <section class="gk-section" aria-labelledby="gk-sub-h2">
+      <h2 id="gk-sub-h2" class="gk-h2">学校軸の4つのコンテンツ</h2>
+      <p class="gk-lead">
+        学習・進路・子育ての3つのテーマを4ページで網羅しています。
+        目的に応じて直接アクセスするか、以下の推奨フローで順に読み進めてください。
+      </p>
+      <div class="gk-sub-grid">
+        {subPages.map((page) => (
+          <a href={page.href} class="gk-sub-card" style={`--card-color: ${page.color}`}>
+            <div class="gk-sub-header">
+              <div class="gk-sub-icon" aria-hidden="true">{page.icon}</div>
+              <div>
+                <div class="gk-sub-header-top">
+                  <h3 class="gk-sub-title">{page.title}</h3>
+                  <span class="gk-sub-badge">{page.badge}</span>
+                </div>
+                <span class="gk-sub-target">対象: {page.target}</span>
+              </div>
+            </div>
+            <p class="gk-sub-desc">{page.desc}</p>
+            <span class="gk-sub-arrow" aria-hidden="true">→</span>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    {/* ========== 3視点の整理 ========== */}
+    <section class="gk-section" aria-labelledby="gk-perspectives-h2">
+      <h2 id="gk-perspectives-h2" class="gk-h2">3つの視点からの活用ガイド</h2>
+      <p class="gk-lead">
+        学校軸は「学生」「保護者」「教員」の3視点で活用できます。
+        あなたの立場に合った使い方のガイドです。
+      </p>
+      <div class="gk-perspectives-grid">
+        {perspectives.map((p) => (
+          <div class="gk-perspective" style={`--p-color: ${p.color}`}>
+            <div class="gk-perspective-header">
+              <span class="gk-perspective-icon" aria-hidden="true">{p.icon}</span>
+              <h3 class="gk-perspective-title">{p.title}</h3>
+            </div>
+            <ul class="gk-perspective-list">
+              {p.points.map((point) => (
+                <li class="gk-perspective-item">{point}</li>
+              ))}
+            </ul>
+            <a href={p.startPage.href} class="gk-perspective-cta">
+              {p.startPage.label} →
+            </a>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    {/* ========== ScienceNote ========== */}
+    <ScienceNote
+      basisText="多重知能理論: Howard Gardner（1983）「Frames of Mind」（Basic Books）。VARKモデル: Fleming, N.D.（1995）（vark-learn.com参照）。いずれも自己理解・学習参考ツールとして活用し、医学的評価・能力の断定には使用しない。"
+      basisUrl="https://www.pz.harvard.edu/projects/multiple-intelligences"
+      basisLabel="Harvard Project Zero 公式（2026-05-21確認）"
+      notMedical={true}
+      updatedAt={UPDATED_AT}
+      additionalNote="本ページの全情報は傾向の参考情報です。学習障害・発達障害等の医学的評価、育て方・進路の断定には使用できません。"
+    />
+
+    {/* ========== 推奨フロー ========== */}
+    <section class="gk-section" aria-labelledby="gk-flow-h2">
+      <h2 id="gk-flow-h2" class="gk-h2">推奨の活用フロー（4ステップ）</h2>
+      <p class="gk-lead">
+        学校軸を最大限に活用するには、以下のフローで順に読み進めることをお勧めします。
+        各ページは独立して読むこともできます。
+      </p>
+      <ol class="gk-flow-steps">
+        {diagnosisFlow.map((step) => (
+          <li class="gk-flow-step" style={`--step-color: ${step.color}`}>
+            <div class="gk-flow-num" aria-hidden="true">{step.step}</div>
+            <div class="gk-flow-body">
+              <div class="gk-flow-icon" aria-hidden="true">{step.icon}</div>
+              <div>
+                <h3 class="gk-flow-title">{step.title}</h3>
+                <p class="gk-flow-desc">{step.desc}</p>
+                <a href={step.href} class="gk-flow-link">ページへ →</a>
+              </div>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </section>
+
+    {/* ========== 学校軸 × 他診断との関係 ========== */}
+    <section class="gk-section" aria-labelledby="gk-relation-h2">
+      <h2 id="gk-relation-h2" class="gk-h2">学校軸と他の診断との関係</h2>
+      <p class="gk-lead">
+        学校軸は以下の診断と連動して活用することで、より立体的な自己理解が得られます。
+      </p>
+      <div class="gk-relation-table-wrap">
+        <table class="gk-relation-table">
+          <caption class="gk-table-caption">学校軸との関連診断（2026-05-21時点）</caption>
+          <thead>
+            <tr>
+              <th scope="col">診断</th>
+              <th scope="col">測定するもの</th>
+              <th scope="col">学校軸での活用方法</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row"><a href="/diagnosis/multi-int/">多重知能テスト</a></th>
+              <td>8つの知能領域の得意・不得意</td>
+              <td>強みを活かした学習法選択・進路適性の参考軸</td>
+            </tr>
+            <tr>
+              <th scope="row"><a href="/aisei/gakkou/learning-style/">学習スタイル診断</a></th>
+              <td>視覚・聴覚・読み書き・運動感覚の学習傾向</td>
+              <td>具体的な勉強法・教材選択の参考軸</td>
+            </tr>
+            <tr>
+              <th scope="row"><a href="/diagnosis/mbti/">MBTI診断</a></th>
+              <td>16タイプの性格傾向</td>
+              <td>進路選択・コミュニケーション傾向の参考軸</td>
+            </tr>
+            <tr>
+              <th scope="row"><a href="/diagnosis/disc/">DiSC診断</a></th>
+              <td>D/I/S/C型の行動スタイル</td>
+              <td>進路・職業傾向・学習スタイルのヒント</td>
+            </tr>
+            <tr>
+              <th scope="row"><a href="/aisei/kazoku/oyako/">親子相性診断</a></th>
+              <td>親子の性格タイプ別相互理解</td>
+              <td>保護者が子どもとの関係改善に活用</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    {/* ========== FAQ ========== */}
+    <section class="gk-section" aria-labelledby="gk-faq-h2">
+      <h2 id="gk-faq-h2" class="gk-h2">よくある質問（Q&A）</h2>
+      <dl class="gk-faq-list">
+        {faqs.map(({ question, answer }) => (
+          <div class="gk-faq-item">
+            <dt class="gk-faq-q">{question}</dt>
+            <dd class="gk-faq-a">{answer}</dd>
+          </div>
+        ))}
+      </dl>
+    </section>
+
+    {/* ========== 他軸へのリンク ========== */}
+    <section class="gk-section" aria-labelledby="gk-other-h2">
+      <h2 id="gk-other-h2" class="gk-h2">他の相性軸も見る</h2>
+      <div class="gk-other-grid">
+        <a href="/aisei/renai/" class="gk-other-card">
+          <span aria-hidden="true">💕</span>
+          <span class="gk-other-title">恋愛相性診断</span>
+        </a>
+        <a href="/aisei/yujin/" class="gk-other-card">
+          <span aria-hidden="true">👥</span>
+          <span class="gk-other-title">友達相性診断</span>
+        </a>
+        <a href="/aisei/shokuba/" class="gk-other-card">
+          <span aria-hidden="true">💼</span>
+          <span class="gk-other-title">職場相性診断</span>
+        </a>
+        <a href="/aisei/kazoku/fufu/" class="gk-other-card">
+          <span aria-hidden="true">👫</span>
+          <span class="gk-other-title">夫婦相性診断</span>
+        </a>
+        <a href="/aisei/kazoku/oyako/" class="gk-other-card">
+          <span aria-hidden="true">👪</span>
+          <span class="gk-other-title">親子相性診断</span>
+        </a>
+        <a href="/diagnosis/" class="gk-other-card">
+          <span aria-hidden="true">📊</span>
+          <span class="gk-other-title">診断一覧</span>
+        </a>
+      </div>
+    </section>
+
+    {/* ========== 参考文献 ========== */}
+    <ReferenceList references={references} confirmedAt={UPDATED_AT} />
+  </Container>
+</BaseLayout>
+
+<style>
+/* ========== ヒーロー ========== */
+.gk-hero {
+  background: linear-gradient(135deg, #1e3a5f 0%, #4338ca 50%, #059669 100%);
+  color: #fff;
+  padding-block: 3.5rem 4rem;
+  text-align: center;
+}
+.gk-hero-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+.gk-badge {
+  display: inline-block;
+  background: rgba(255 255 255 / 0.2);
+  border: 1px solid rgba(255 255 255 / 0.4);
+  border-radius: 2rem;
+  padding: 0.25rem 1rem;
+  font-size: 0.75rem;
+}
+.gk-hero-h1 {
+  font-size: clamp(2rem, 6vw, 3rem);
+  font-family: var(--sn-font-rounded, sans-serif);
+  font-weight: 700;
+  margin: 0;
+  line-height: 1.2;
+}
+.gk-hero-catch {
+  font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+  opacity: 0.9;
+  line-height: 1.7;
+  margin: 0;
+}
+.gk-hero-tags {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.gk-tag {
+  background: rgba(255 255 255 / 0.15);
+  border: 1px solid rgba(255 255 255 / 0.3);
+  border-radius: 1rem;
+  padding: 0.2rem 0.75rem;
+  font-size: 0.78rem;
+}
+.gk-hero-targets {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  background: rgba(255 255 255 / 0.1);
+  border-radius: 0.75rem;
+  padding: 0.5rem 1rem;
+}
+.gk-target { font-size: 0.9rem; opacity: 0.9; }
+
+/* ========== セクション共通 ========== */
+.gk-section { margin-block: 3rem; }
+.gk-h2 {
+  font-size: clamp(1.3rem, 4vw, 1.75rem);
+  font-family: var(--sn-font-rounded, sans-serif);
+  font-weight: 700;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--sn-primary);
+}
+.gk-lead { font-size: 1rem; line-height: 1.8; margin-bottom: 1.25rem; color: #374151; }
+
+/* ========== 4サブページグリッド ========== */
+.gk-sub-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+.gk-sub-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1.25rem;
+  border: 1px solid #e5e7eb;
+  border-top: 4px solid var(--card-color, #4338ca);
+  border-radius: 0.75rem;
+  text-decoration: none;
+  color: inherit;
+  background: #fff;
+  transition: transform 0.15s, box-shadow 0.15s;
+  position: relative;
+}
+.gk-sub-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0 0 0 / 0.08);
+}
+.gk-sub-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+.gk-sub-icon { font-size: 1.75rem; flex-shrink: 0; }
+.gk-sub-header-top {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.25rem;
+}
+.gk-sub-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--card-color, #4338ca);
+  margin: 0;
+}
+.gk-sub-badge {
+  font-size: 0.68rem;
+  font-weight: 700;
+  background: color-mix(in srgb, var(--card-color, #4338ca) 12%, transparent);
+  color: var(--card-color, #4338ca);
+  padding: 0.15rem 0.5rem;
+  border-radius: 0.25rem;
+  white-space: nowrap;
+}
+.gk-sub-target {
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+.gk-sub-desc { font-size: 0.875rem; color: #4b5563; line-height: 1.6; margin: 0; flex: 1; }
+.gk-sub-arrow {
+  position: absolute;
+  bottom: 1.25rem;
+  right: 1.25rem;
+  color: var(--card-color, #4338ca);
+  font-size: 1.2rem;
+  font-weight: 700;
+  transition: transform 0.15s;
+}
+.gk-sub-card:hover .gk-sub-arrow { transform: translateX(4px); }
+
+/* ========== 3視点グリッド ========== */
+.gk-perspectives-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+.gk-perspective {
+  border: 1px solid #e5e7eb;
+  border-left: 4px solid var(--p-color, #4338ca);
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+}
+.gk-perspective-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.gk-perspective-icon { font-size: 1.5rem; }
+.gk-perspective-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--p-color, #4338ca);
+  margin: 0;
+}
+.gk-perspective-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  flex: 1;
+}
+.gk-perspective-item {
+  font-size: 0.85rem;
+  color: #374151;
+  line-height: 1.5;
+  padding-left: 1rem;
+  position: relative;
+}
+.gk-perspective-item::before {
+  content: '→';
+  position: absolute;
+  left: 0;
+  color: var(--p-color, #4338ca);
+  font-size: 0.8rem;
+}
+.gk-perspective-cta {
+  display: inline-block;
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--p-color, #4338ca);
+  text-decoration: none;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--p-color, #4338ca);
+  border-radius: 0.5rem;
+  transition: background 0.15s;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+}
+.gk-perspective-cta:hover {
+  background: color-mix(in srgb, var(--p-color, #4338ca) 8%, transparent);
+}
+
+/* ========== フローステップ ========== */
+.gk-flow-steps {
+  list-style: none;
+  padding: 0;
+  margin: 1.5rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.gk-flow-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1.25rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  background: #fff;
+  border-left: 4px solid var(--step-color, #4338ca);
+}
+.gk-flow-num {
+  flex-shrink: 0;
+  width: 2rem;
+  height: 2rem;
+  background: var(--step-color, #4338ca);
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.875rem;
+}
+.gk-flow-body {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  flex: 1;
+}
+.gk-flow-icon { font-size: 1.5rem; flex-shrink: 0; }
+.gk-flow-title { font-size: 0.95rem; font-weight: 700; color: #1f2937; margin: 0 0 0.25rem; }
+.gk-flow-desc { font-size: 0.875rem; color: #4b5563; margin: 0 0 0.5rem; line-height: 1.5; }
+.gk-flow-link {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--step-color, #4338ca);
+  text-decoration: none;
+}
+.gk-flow-link:hover { text-decoration: underline; }
+
+/* ========== 関連テーブル ========== */
+.gk-relation-table-wrap { overflow-x: auto; margin-top: 1.5rem; }
+.gk-relation-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  min-width: 480px;
+}
+.gk-relation-table th,
+.gk-relation-table td {
+  padding: 0.6rem 0.8rem;
+  border: 1px solid #e5e7eb;
+  text-align: left;
+  line-height: 1.5;
+}
+.gk-relation-table thead th {
+  background: var(--sn-primary, #4338ca);
+  color: #fff;
+  font-weight: 600;
+}
+.gk-relation-table tbody tr:nth-child(even) { background: #f9fafb; }
+.gk-relation-table tbody th { font-weight: 600; white-space: nowrap; }
+.gk-table-caption {
+  font-size: 0.8rem;
+  color: #6b7280;
+  text-align: left;
+  padding: 0.25rem 0 0.5rem;
+}
+
+/* ========== FAQ ========== */
+.gk-faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+.gk-faq-item {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+.gk-faq-q {
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 1rem 1.25rem;
+  background: #f9fafb;
+  margin: 0;
+  display: block;
+}
+.gk-faq-q::before { content: 'Q. '; color: var(--sn-primary, #4338ca); }
+.gk-faq-a {
+  font-size: 0.9rem;
+  line-height: 1.7;
+  padding: 1rem 1.25rem;
+  margin: 0;
+  color: #4b5563;
+}
+.gk-faq-a::before { content: 'A. '; font-weight: 700; color: #16a34a; }
+
+/* ========== 他軸グリッド ========== */
+.gk-other-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+}
+.gk-other-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.875rem 0.75rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  text-decoration: none;
+  color: inherit;
+  text-align: center;
+  font-size: 1.5rem;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.gk-other-card:hover {
+  border-color: var(--sn-primary, #4338ca);
+  box-shadow: 0 2px 8px rgba(67 56 202 / 0.1);
+}
+.gk-other-title { font-size: 0.78rem; font-weight: 700; color: #374151; }
+
+/* ========== レスポンシブ ========== */
+@media (max-width: 640px) {
+  .gk-sub-grid { grid-template-columns: 1fr; }
+  .gk-perspectives-grid { grid-template-columns: 1fr; }
+  .gk-other-grid { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 480px) {
+  .gk-flow-body { flex-direction: column; }
+  .gk-other-grid { grid-template-columns: repeat(2, 1fr); }
+}
+</style>

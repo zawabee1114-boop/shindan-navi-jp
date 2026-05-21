@@ -1,0 +1,865 @@
+---
+/**
+ * /aisei/gakkou/shinro/ - 進路選択と性格タイプ
+ * ターゲットKW: 進路選択 性格 / 進路 タイプ別 / 文理選択 性格
+ * 理論: MBTI 16タイプ × 進路傾向 / 多重知能 × 学問分野 / DiSC × キャリアパス
+ * 確認日: 2026-05-21
+ *
+ * 絶対NG: 学習障害・発達障害判定 / YMYL違反 / 「INFJの子は文系に向いている」等の断定
+ * 注意: すべて「傾向あり」表現に留める
+ */
+import BaseLayout from '../../../../layouts/BaseLayout.astro';
+import Container from '../../../../components/Container.astro';
+import TldrBlock from '../../../../components/TldrBlock.astro';
+import ReferenceList from '../../../../components/ReferenceList.astro';
+import ScienceNote from '../../../../components/ScienceNote.astro';
+
+const SITE_URL = 'https://shindan-navi.jp';
+const PAGE_URL = `${SITE_URL}/aisei/gakkou/shinro/`;
+const UPDATED_AT = '2026-05-21';
+
+// MBTI × 進路傾向データ（「傾向あり」表現に限定）
+const mbtiGroups = [
+  {
+    group: 'NT型（直観×思考）',
+    types: ['INTJ', 'INTP', 'ENTJ', 'ENTP'],
+    icon: '♟️',
+    color: '#0891b2',
+    tendency: '理系・理論系への傾向が見られる',
+    description:
+      'システム的・論理的思考が得意な傾向があります。抽象的な概念を扱い、仮説→検証のサイクルを好む傾向があります。',
+    subjectHint: '数学・物理・プログラミング・哲学・経済学',
+    careerHint: 'エンジニア・研究者・経営コンサルタント・建築家など論理・戦略系',
+    note: 'あくまで傾向の参考。理系以外の分野で活躍するNT型も多数います。',
+  },
+  {
+    group: 'NF型（直観×感情）',
+    types: ['INFJ', 'INFP', 'ENFJ', 'ENFP'],
+    icon: '🌟',
+    color: '#7c3aed',
+    tendency: '人文・芸術・支援系への傾向が見られる',
+    description:
+      '価値観・感情・人間の本質への関心が強い傾向があります。物語・芸術・教育・支援の分野で意義を見つけやすい傾向があります。',
+    subjectHint: '文学・心理学・芸術・社会学・教育学',
+    careerHint: 'カウンセラー・作家・教師・社会福祉・人事・アート系',
+    note: '感情を大切にしつつも、理系分野で活躍するNF型も多くいます。',
+  },
+  {
+    group: 'SJ型（感覚×判断）',
+    types: ['ISTJ', 'ISFJ', 'ESTJ', 'ESFJ'],
+    icon: '🏛️',
+    color: '#16a34a',
+    tendency: '実務・組織・安定系への傾向が見られる',
+    description:
+      '現実的・実務的な作業に強みがある傾向があります。規則・手順・管理を大切にし、組織・行政・資格系の仕事で力を発揮しやすい傾向があります。',
+    subjectHint: '法律・会計・行政・医療・経営管理',
+    careerHint: '公務員・会計士・看護師・行政管理・経営管理・銀行・保険',
+    note: '組織適応力が高いのが特徴。変化の速い環境でも適応力を発揮するケースも多いです。',
+  },
+  {
+    group: 'SP型（感覚×知覚）',
+    types: ['ISTP', 'ISFP', 'ESTP', 'ESFP'],
+    icon: '🔧',
+    color: '#ea580c',
+    tendency: '実践・技術・体験系への傾向が見られる',
+    description:
+      '体を動かす・手を使う実践的な活動に強みがある傾向があります。現場対応・即時的な問題解決が得意で、実技系・職人系・パフォーマンス系に向く傾向があります。',
+    subjectHint: '技術・実技系・スポーツ・美術・職人技術',
+    careerHint: '大工・料理人・ダンサー・消防士・現場系エンジニア・アスリート',
+    note: 'SP型が文系学問・研究系で活躍するケースも多くあります。傾向は参考程度に。',
+  },
+];
+
+// 多重知能 × 学問分野マッチング（傾向値）
+const miFieldMatrix = [
+  { intel: '言語的知能', icon: '🦉', fields: ['文学・言語学', '法学', '教育学', 'ジャーナリズム', '外国語'] },
+  { intel: '論理数学的知能', icon: '♟️', fields: ['数学・統計', '物理・化学', 'コンピューターサイエンス', '経済学', '医学'] },
+  { intel: '視空間的知能', icon: '🦎', fields: ['建築・都市計画', 'グラフィックデザイン', '映像・映画', '美術', 'ゲームデザイン'] },
+  { intel: '身体運動的知能', icon: '🐆', fields: ['スポーツ科学', '医療系（外科・看護）', '農学・食品科学', '職人技術', 'ダンス・演劇'] },
+  { intel: '音楽的知能', icon: '🎵', fields: ['音楽学', '音楽療法', 'サウンドエンジニアリング', '音声学', 'エンターテイメント'] },
+  { intel: '対人的知能', icon: '🐬', fields: ['心理学・社会学', '経営・人事', '教育学', '社会福祉', '政治学'] },
+  { intel: '内省的知能', icon: '🐱', fields: ['哲学・倫理学', '心理学', '宗教学', '文学', '独立系起業'] },
+  { intel: '博物的知能', icon: '🌿', fields: ['生物学・環境科学', '農学・獣医学', '地球科学', '食品科学', '自然教育'] },
+];
+
+// DiSC × キャリアパス
+const discCareer = [
+  {
+    type: 'D型（主導型）',
+    icon: '🦁',
+    color: '#dc2626',
+    trait: '決断力・競争心・結果重視',
+    careers: ['起業家・CEO', '外科医', '投資家・トレーダー', '軍人・警察官', '弁護士（訴訟系）'],
+    learningTip: '目標を明確にして競争要素を取り入れると集中力UP。締め切り設定が有効。',
+  },
+  {
+    type: 'I型（感化型）',
+    icon: '🌟',
+    color: '#d97706',
+    trait: '楽観性・コミュニケーション・影響力',
+    careers: ['営業・マーケター', '俳優・タレント', 'PR・広報担当', 'コーチ・ファシリテーター', 'イベントプランナー'],
+    learningTip: 'グループ学習・発表の機会を作ると意欲UP。単調な暗記より体験型が向く。',
+  },
+  {
+    type: 'S型（安定型）',
+    icon: '🌳',
+    color: '#16a34a',
+    trait: '協調性・一貫性・信頼性',
+    careers: ['看護師・介護士', '行政・公務員', '教師・保育士', 'カウンセラー', '人事・総務担当'],
+    learningTip: '継続的なルーティン学習が合っている。仲間と一緒にペースを守る勉強法が効果的。',
+  },
+  {
+    type: 'C型（慎重型）',
+    icon: '🔬',
+    color: '#4f46e5',
+    trait: '分析力・正確性・品質へのこだわり',
+    careers: ['研究者・科学者', '会計士・税理士', 'システムエンジニア', '品質管理・QA', 'デザイナー（精密系）'],
+    learningTip: '根拠と仕組みを理解してから先に進む学習スタイルが合っている。詳細なノート作りが得意。',
+  },
+];
+
+// FAQ
+const faqs = [
+  {
+    question: '文理選択は性格で決めて良いですか？',
+    answer:
+      '性格タイプは「傾向の参考」として活用できますが、文理選択の決定要因にするのは避けることをお勧めします。文理選択では「どの科目が好きか・得意か」「将来興味ある職業・領域は何か」「入試の有利不利」など複数要素を総合的に検討することが重要です。性格タイプはあくまで自己理解の補助ツールとして活用してください。',
+  },
+  {
+    question: '多重知能と学部選びはどう連動させますか？',
+    answer:
+      '多重知能テストで強い知能領域を確認し、上記マトリクスで「向く学問分野」を参照することができます。ただし「言語的知能が高い → 文学部一択」ではなく、「言語的知能 × 論理数学的知能が両方高い → 法学・言語学・認知科学など幅広い選択肢がある」というように複数の知能の組み合わせで考えると視野が広がります。',
+  },
+  {
+    question: 'MBTI 16タイプと進路には科学的な根拠がありますか？',
+    answer:
+      'MBTIと職業・進路の相関を示す研究は存在しますが（CPP Inc.の職業調査など）、「このMBTIタイプだからこの職業に向いている」という強固な因果関係は確立されていません。本ページのMBTI × 進路情報は傾向の参考として提供しており、個人の実際の適性・能力とは異なる場合があります。',
+  },
+  {
+    question: '理系が苦手でも理工系学部に進めますか？',
+    answer:
+      'はい。入試に向けた努力と大学入学後の学習次第で、初期の苦手を克服することは多くのケースで可能です。性格タイプや知能傾向はあくまで「現在の傾向」であり、「将来の可能性の制限」ではありません。本当にやりたいことがある場合は、まずそれを優先することをお勧めします。',
+  },
+  {
+    question: '子供の進路を親が誘導しすぎるのは問題ですか？',
+    answer:
+      '子どもの意思・興味を尊重することが最も重要です。親が性格タイプや適性テストを根拠に進路を強く誘導することは、子どもの主体性を損なうリスクがあります。本ページの情報はあくまで「子どもとの対話のきっかけ」として活用し、最終的な進路選択は子ども自身が主体的に行えるよう支援することを推奨します。',
+  },
+  {
+    question: 'DiSCタイプと学習スタイルには関係がありますか？',
+    answer:
+      'DiSCは職場の行動スタイルを測定するモデルで、学習スタイルとの直接的な研究は限られています。ただし、「D型は競争要素・締め切りで動くことが多い」「S型は継続的なルーティン学習が合うことが多い」といった行動傾向から、学習法のヒントを引き出すことはできます。診断ナビのDiSC診断は /diagnosis/disc/ で受けられます。',
+  },
+  {
+    question: '社会人が入り直す学部選びにも使えますか？',
+    answer:
+      'はい。社会人入学・学び直しを検討している方にも本ページの情報は参考になります。特に「現在の職業でのDiSCタイプ」と「学びたい学問分野」を照合することで、社会人入学先の学部・大学院の方向性を考えるヒントになります。ただし入試要件・費用・在学期間なども重要な検討要素です。',
+  },
+  {
+    question: '文系か理系か決められない場合はどうすれば良いですか？',
+    answer:
+      '「文系でも理系でも活かせる学問分野」を選ぶことも有効な選択肢です。例えば心理学（理系的実験手法 × 文系的理論）・環境学（自然科学 × 社会科学）・情報学（プログラミング × 人文）などは文理の境界領域です。また、多重知能テストとMBTI診断を組み合わせて「強みの方向性」を確認することが意思決定の参考になります。',
+  },
+  {
+    question: '進路を決めるタイミングはいつが適切ですか？',
+    answer:
+      '文理選択は日本では高校1〜2年生が多いですが、「適切なタイミング」は個人によって異なります。重要なのは「なんとなく決める」ではなく「自分の好き・得意・将来興味あることを整理してから決める」ことです。本ページの性格タイプ情報を対話のきっかけとして使いながら、学校の先生・保護者・進路相談センターも積極的に活用してください。',
+  },
+  {
+    question: '性格診断で進路を完全に決めることはできますか？',
+    answer:
+      'できません。性格診断・多重知能テスト・DiSCなどはあくまで「自己理解の参考ツール」です。進路を最終的に決めるのは、自分の実際の経験・好み・環境・機会・経済的状況など複合的な要素です。診断結果は「視野を広げ、選択肢を考えるためのヒント」として活用してください。',
+  },
+  {
+    question: '向いていない進路に進んだ場合、転部・転学はできますか？',
+    answer:
+      '日本の大学では転部・転学・学部編入・転職など、進路変更の選択肢はあります。「性格タイプに合っていない進路を選んでしまった」と感じた場合でも、その経験から得たものは多いはずです。進路変更の手続き・費用・条件は各大学・機関によって異なるため、直接確認することをお勧めします。',
+  },
+  {
+    question: 'このページの情報は定期的に更新されますか？',
+    answer:
+      '本ページの理論的根拠（MBTI・多重知能・DiSC）の基本情報は変化が少ないですが、職業市場・進路傾向は変化します。最終確認日は2026-05-21です。就職・進学の最新情報は厚生労働省・文部科学省・各大学の公式情報を参照してください。',
+  },
+];
+
+const jsonLdArticle = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  '@id': `${PAGE_URL}#article`,
+  headline: '進路選択と性格タイプ｜MBTI×多重知能×DiSCで文理選択・学部選びを考える',
+  url: PAGE_URL,
+  datePublished: UPDATED_AT,
+  dateModified: UPDATED_AT,
+  inLanguage: 'ja',
+  publisher: { '@type': 'Organization', '@id': `${SITE_URL}/#organization` },
+};
+
+const jsonLdFAQ = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map(({ question, answer }) => ({
+    '@type': 'Question',
+    name: question,
+    acceptedAnswer: { '@type': 'Answer', text: answer },
+  })),
+};
+
+const jsonLdBreadcrumb = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'ホーム', item: SITE_URL },
+    { '@type': 'ListItem', position: 2, name: '学校軸', item: `${SITE_URL}/aisei/gakkou/` },
+    { '@type': 'ListItem', position: 3, name: '進路選択と性格タイプ', item: PAGE_URL },
+  ],
+};
+
+const jsonLdAll = [jsonLdArticle, jsonLdFAQ, jsonLdBreadcrumb];
+
+const references = [
+  {
+    title: 'Frames of Mind: The Theory of Multiple Intelligences',
+    author: 'Gardner, H.',
+    year: 1983,
+    publisher: 'Basic Books',
+    url: 'https://www.basicbooks.com/titles/howard-gardner/frames-of-mind/9780465024339/',
+  },
+  {
+    title: 'MBTI Manual: A Guide to the Development and Use of the Myers-Briggs Type Indicator (3rd ed.)',
+    author: 'Myers, I.B., McCaulley, M.H., Quenk, N.L., & Hammer, A.L.',
+    year: 1998,
+    publisher: 'CPP Inc.',
+  },
+  {
+    title: 'DiSC Classic: Understanding Yourself and Others',
+    author: 'Inscape Publishing',
+    year: 2001,
+    publisher: 'Inscape Publishing',
+    url: 'https://www.discprofile.com/',
+  },
+  {
+    title: 'Multiple Intelligences（Project Zero 公式）',
+    author: 'Harvard Project Zero',
+    year: 2024,
+    url: 'https://www.pz.harvard.edu/projects/multiple-intelligences',
+  },
+];
+---
+
+<BaseLayout
+  title="進路選択と性格タイプ｜MBTI×多重知能で文理選択・学部選びを考える"
+  description="MBTI 16タイプ・多重知能・DiSCを活用した進路選択の考え方。文理選択・学部選び・キャリアパスの参考ガイド。断定ではなく傾向の参考として高校生・大学生・保護者向けに解説。2026-05-21確認。"
+  canonical={PAGE_URL}
+  jsonLd={jsonLdAll}
+  ogType="article"
+  publishDate={UPDATED_AT}
+  lastUpdated={UPDATED_AT}
+  breadcrumbs={[
+    { name: '学校軸', url: '/aisei/gakkou/' },
+    { name: '進路選択と性格タイプ', url: '/aisei/gakkou/shinro/' },
+  ]}
+>
+  {/* ========== ヒーロー ========== */}
+  <section class="sr-hero" aria-labelledby="sr-h1">
+    <Container>
+      <div class="sr-hero-inner">
+        <div class="sr-badge">MBTI × 多重知能 × DiSC 統合ガイド</div>
+        <h1 id="sr-h1" class="sr-hero-h1">進路選択と性格タイプ</h1>
+        <p class="sr-hero-catch">
+          文理選択・学部選び・キャリアパスを<br />
+          性格タイプの観点から考えるガイド
+        </p>
+        <p class="sr-hero-note">
+          ※ 本ページの情報は「傾向の参考」であり、進路を断定するものではありません。
+          最終的な進路選択はご自身・保護者・先生と相談して決めてください。
+        </p>
+        <div class="sr-hero-tags">
+          <span class="sr-tag">高校生</span>
+          <span class="sr-tag">大学生</span>
+          <span class="sr-tag">保護者</span>
+          <span class="sr-tag">社会人入学</span>
+        </div>
+      </div>
+    </Container>
+  </section>
+
+  <Container>
+    {/* ========== TL;DRブロック ========== */}
+    <TldrBlock
+      title="このページでわかること"
+      points={[
+        "MBTI 16タイプ（4グループ）と進路傾向の関係：NT型/NF型/SJ型/SP型それぞれの学問・職業傾向を「傾向あり」表現で整理（CPP Inc. 参照）",
+        "多重知能8タイプ × 学問分野マッチング：言語・論理・視空間など8知能とマッチしやすい学部・専攻の対照表（Gardner 1983 参照 2026-05-21確認）",
+        "DiSC 4タイプ × キャリアパス：D/I/S/C型それぞれの職業傾向と学習スタイルヒント。高校生・大学生・保護者・社会人入学者向け"
+      ]}
+      updatedAt={UPDATED_AT}
+      sourceLabel="Harvard Project Zero（多重知能・2026-05-21確認）"
+      sourceUrl="https://www.pz.harvard.edu/projects/multiple-intelligences"
+    />
+
+    {/* ========== 注意書き ========== */}
+    <div class="sr-caution" role="note" aria-label="重要な注意事項">
+      <div class="sr-caution-icon" aria-hidden="true">⚠️</div>
+      <div>
+        <h2 class="sr-caution-title">このページを使う際の大切な前提</h2>
+        <ul class="sr-caution-list">
+          <li>性格診断・多重知能は「現在の傾向の参考」であり、「向いている・向いていない」を断定するものではありません</li>
+          <li>「INFJの子は文系向き」「論理数学的知能が低いから理系NG」等の決定論的な読み方をしないでください</li>
+          <li>進路選択の最終決定は、本人の意思・学力・経済状況・具体的な職業研究・学校の進路指導を総合して行うものです</li>
+          <li>本ページは自己理解の「視野を広げるヒント」として活用してください</li>
+        </ul>
+      </div>
+    </div>
+
+    {/* ========== MBTI × 進路傾向 ========== */}
+    <section class="sr-section" aria-labelledby="sr-mbti-h2">
+      <h2 id="sr-mbti-h2" class="sr-h2">MBTI 16タイプ × 進路傾向（4グループ別）</h2>
+      <p class="sr-lead">
+        MBTI（Myers-Briggs Type Indicator）は性格の傾向を16タイプで分類するフレームワークです。
+        4つのグループ（NT・NF・SJ・SP）に分けると、進路・職業傾向の大まかな方向性が見えやすくなります。
+        いずれも「傾向の参考」であり、各タイプが他のグループの分野で活躍するケースも多数あります。
+      </p>
+      <div class="sr-mbti-grid">
+        {mbtiGroups.map((group) => (
+          <article class="sr-mbti-card" style={`--group-color: ${group.color}`}>
+            <div class="sr-mbti-header">
+              <div class="sr-mbti-icon" aria-hidden="true">{group.icon}</div>
+              <div>
+                <h3 class="sr-mbti-name">{group.group}</h3>
+                <div class="sr-mbti-types">
+                  {group.types.map((t) => <span class="sr-mbti-type">{t}</span>)}
+                </div>
+              </div>
+            </div>
+            <p class="sr-mbti-tendency">{group.tendency}</p>
+            <p class="sr-mbti-desc">{group.description}</p>
+            <div class="sr-mbti-metas">
+              <div class="sr-mbti-meta">
+                <span class="sr-mbti-meta-label">向く教科（傾向）:</span>
+                <span>{group.subjectHint}</span>
+              </div>
+              <div class="sr-mbti-meta">
+                <span class="sr-mbti-meta-label">職業傾向の例:</span>
+                <span>{group.careerHint}</span>
+              </div>
+            </div>
+            <p class="sr-mbti-note">※ {group.note}</p>
+          </article>
+        ))}
+      </div>
+      <p class="sr-mbti-link-note">
+        MBTI診断は <a href="/diagnosis/mbti/">MBTI相性診断・タイプ診断</a> で受けられます。
+      </p>
+    </section>
+
+    {/* ========== ScienceNote ========== */}
+    <ScienceNote
+      basisText="MBTI: Myers & Briggs Foundation の理論的枠組みに基づく（CPP Inc., 1998参照）。多重知能: Gardner, H.（1983）「Frames of Mind」Basic Books。DiSC: Inscape Publishing（2001）。いずれも「傾向の把握ツール」であり、進路の断定には使用しない。"
+      basisUrl="https://www.pz.harvard.edu/projects/multiple-intelligences"
+      basisLabel="Project Zero 公式（2026-05-21確認）"
+      notMedical={true}
+      updatedAt={UPDATED_AT}
+      additionalNote="本ページは進路選択の参考情報であり、進路を断定するものではありません。学習障害・発達障害等の医学的評価は行いません。"
+    />
+
+    {/* ========== 多重知能 × 学問分野マッチング ========== */}
+    <section class="sr-section" aria-labelledby="sr-mi-h2">
+      <h2 id="sr-mi-h2" class="sr-h2">多重知能 × 学問分野マッチング表</h2>
+      <p class="sr-lead">
+        多重知能テストで強い知能を確認し、以下の対照表で「向く学問分野の傾向」を参考にしてください。
+        「この知能が高い → この学部しかない」ではなく、「この知能が高い人がよく選ぶ傾向の分野」として読んでください。
+      </p>
+      <div class="sr-mi-table-wrap">
+        <table class="sr-mi-table">
+          <caption class="sr-table-caption">多重知能 × 向く学問分野（傾向値・2026-05-21時点）</caption>
+          <thead>
+            <tr>
+              <th scope="col">知能タイプ</th>
+              <th scope="col">向く学問・専攻（傾向例）</th>
+            </tr>
+          </thead>
+          <tbody>
+            {miFieldMatrix.map((row) => (
+              <tr>
+                <th scope="row">
+                  <span aria-hidden="true">{row.icon}</span> {row.intel}
+                </th>
+                <td>{row.fields.join('・')}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p class="sr-mi-note">
+        ※ 上記はあくまで「傾向の対照表」です。複数の知能が高い場合、複数の学問分野に適性がある傾向があります。
+        <a href="/diagnosis/multi-int/">多重知能テスト（無料・64問）</a>で自分の知能プロファイルを確認してから参照すると最も効果的です。
+      </p>
+    </section>
+
+    {/* ========== DiSC × キャリアパス ========== */}
+    <section class="sr-section" aria-labelledby="sr-disc-h2">
+      <h2 id="sr-disc-h2" class="sr-h2">DiSC タイプ × キャリアパス（傾向）</h2>
+      <p class="sr-lead">
+        DiSCは職場での行動スタイルを D（主導）・I（感化）・S（安定）・C（慎重）の4タイプで分類するモデルです。
+        各タイプの傾向から、向く職種・学習スタイルのヒントが得られます。
+      </p>
+      <div class="sr-disc-grid">
+        {discCareer.map((d) => (
+          <article class="sr-disc-card" style={`--disc-color: ${d.color}`}>
+            <div class="sr-disc-header">
+              <span class="sr-disc-icon" aria-hidden="true">{d.icon}</span>
+              <div>
+                <h3 class="sr-disc-name">{d.type}</h3>
+                <p class="sr-disc-trait">{d.trait}</p>
+              </div>
+            </div>
+            <div class="sr-disc-careers">
+              <p class="sr-disc-careers-label">職業傾向（例）:</p>
+              <ul class="sr-disc-list">
+                {d.careers.map((c) => <li>{c}</li>)}
+              </ul>
+            </div>
+            <div class="sr-disc-tip">
+              <span class="sr-disc-tip-label">学習スタイルヒント:</span>
+              <span>{d.learningTip}</span>
+            </div>
+          </article>
+        ))}
+      </div>
+      <p class="sr-disc-note">
+        DiSC診断は <a href="/diagnosis/disc/">DiSC診断（無料）</a> で受けられます。
+      </p>
+    </section>
+
+    {/* ========== 3診断の組み合わせ ========== */}
+    <section class="sr-section" aria-labelledby="sr-combo-h2">
+      <h2 id="sr-combo-h2" class="sr-h2">3診断を組み合わせた進路のヒント</h2>
+      <p class="sr-lead">
+        MBTI・多重知能・DiSCの3診断を組み合わせることで、より立体的な自己理解と進路の方向性が見えてきます。
+      </p>
+      <div class="sr-combo-box">
+        <div class="sr-combo-example">
+          <h3 class="sr-combo-example-title">例1: INTJ × 論理数学的知能 × C型</h3>
+          <p class="sr-combo-example-body">
+            論理的・分析的・精度重視の傾向が重なっています。理系研究・データサイエンス・エンジニアリング・コンサルティングなどの分野に向く傾向が見られる組み合わせです。
+          </p>
+        </div>
+        <div class="sr-combo-example">
+          <h3 class="sr-combo-example-title">例2: ENFJ × 対人的知能 × I型</h3>
+          <p class="sr-combo-example-body">
+            人との関わり・感情コミュニケーション・影響力の傾向が重なっています。教育・HR・コーチング・マーケティング・カウンセリングなどに向く傾向の組み合わせです。
+          </p>
+        </div>
+        <div class="sr-combo-example">
+          <h3 class="sr-combo-example-title">例3: ISTP × 身体運動的知能 × D型</h3>
+          <p class="sr-combo-example-body">
+            実践的・結果重視・体で動く傾向が重なっています。医療系（外科・救急）・エンジニア（機械・建設）・スポーツ系・職人系に向く傾向の組み合わせです。
+          </p>
+        </div>
+      </div>
+      <p class="sr-combo-note">
+        ※ 上記はあくまで「傾向の例示」です。実際の進路選択は多くの変数が絡みます。
+        <a href="/diagnosis/">診断ナビの統合プロファイル</a>で3診断を組み合わせた自己理解が深められます。
+      </p>
+    </section>
+
+    {/* ========== 関連ページ ========== */}
+    <section class="sr-section" aria-labelledby="sr-related-h2">
+      <h2 id="sr-related-h2" class="sr-h2">関連ページ</h2>
+      <div class="sr-related-grid">
+        <a href="/aisei/gakkou/" class="sr-related-card">
+          <span aria-hidden="true">🏫</span>
+          <span class="sr-related-title">学校軸トップ</span>
+        </a>
+        <a href="/diagnosis/multi-int/" class="sr-related-card">
+          <span aria-hidden="true">🧠</span>
+          <span class="sr-related-title">多重知能テスト</span>
+        </a>
+        <a href="/diagnosis/mbti/" class="sr-related-card">
+          <span aria-hidden="true">🔮</span>
+          <span class="sr-related-title">MBTI診断</span>
+        </a>
+        <a href="/diagnosis/disc/" class="sr-related-card">
+          <span aria-hidden="true">💼</span>
+          <span class="sr-related-title">DiSC診断</span>
+        </a>
+        <a href="/aisei/gakkou/learning-style/" class="sr-related-card">
+          <span aria-hidden="true">📖</span>
+          <span class="sr-related-title">学習スタイル診断</span>
+        </a>
+        <a href="/aisei/gakkou/parent-support/" class="sr-related-card">
+          <span aria-hidden="true">👨‍👩‍👧</span>
+          <span class="sr-related-title">子どもサポート法</span>
+        </a>
+      </div>
+    </section>
+
+    {/* ========== FAQ ========== */}
+    <section class="sr-section" aria-labelledby="sr-faq-h2">
+      <h2 id="sr-faq-h2" class="sr-h2">よくある質問（Q&A）</h2>
+      <dl class="sr-faq-list">
+        {faqs.map(({ question, answer }) => (
+          <div class="sr-faq-item">
+            <dt class="sr-faq-q">{question}</dt>
+            <dd class="sr-faq-a">{answer}</dd>
+          </div>
+        ))}
+      </dl>
+    </section>
+
+    {/* ========== 参考文献 ========== */}
+    <ReferenceList references={references} confirmedAt={UPDATED_AT} />
+  </Container>
+</BaseLayout>
+
+<style>
+/* ========== ヒーロー ========== */
+.sr-hero {
+  background: linear-gradient(135deg, #1e3a5f 0%, #1e40af 100%);
+  color: #fff;
+  padding-block: 3rem 3.5rem;
+  text-align: center;
+}
+.sr-hero-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.875rem;
+}
+.sr-badge {
+  display: inline-block;
+  background: rgba(255 255 255 / 0.2);
+  border: 1px solid rgba(255 255 255 / 0.4);
+  border-radius: 2rem;
+  padding: 0.25rem 1rem;
+  font-size: 0.75rem;
+}
+.sr-hero-h1 {
+  font-size: clamp(1.75rem, 5vw, 2.5rem);
+  font-family: var(--sn-font-rounded, sans-serif);
+  font-weight: 700;
+  margin: 0;
+}
+.sr-hero-catch {
+  font-size: clamp(0.9rem, 2.5vw, 1.05rem);
+  opacity: 0.9;
+  line-height: 1.7;
+  margin: 0;
+}
+.sr-hero-note {
+  font-size: 0.8rem;
+  opacity: 0.75;
+  background: rgba(255 255 255 / 0.15);
+  border-radius: 0.5rem;
+  padding: 0.5rem 1rem;
+  max-width: 520px;
+  line-height: 1.5;
+  margin: 0;
+}
+.sr-hero-tags {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.sr-tag {
+  background: rgba(255 255 255 / 0.2);
+  border: 1px solid rgba(255 255 255 / 0.3);
+  border-radius: 1rem;
+  padding: 0.2rem 0.75rem;
+  font-size: 0.78rem;
+}
+
+/* ========== 注意書き ========== */
+.sr-caution {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-left: 4px solid #ef4444;
+  border-radius: 0 0.75rem 0.75rem 0;
+  padding: 1.25rem 1.5rem;
+  margin-block: 2rem;
+}
+.sr-caution-icon { font-size: 1.5rem; flex-shrink: 0; }
+.sr-caution-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #991b1b;
+  margin: 0 0 0.5rem;
+}
+.sr-caution-list {
+  margin: 0;
+  padding-left: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+.sr-caution-list li { font-size: 0.875rem; color: #374151; line-height: 1.6; }
+
+/* ========== セクション共通 ========== */
+.sr-section { margin-block: 3rem; }
+.sr-h2 {
+  font-size: clamp(1.3rem, 4vw, 1.75rem);
+  font-family: var(--sn-font-rounded, sans-serif);
+  font-weight: 700;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--sn-primary);
+}
+.sr-lead {
+  font-size: 1rem;
+  line-height: 1.8;
+  margin-bottom: 1.25rem;
+  color: #374151;
+}
+
+/* ========== MBTIグリッド ========== */
+.sr-mbti-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+  margin-block: 1.5rem;
+}
+.sr-mbti-card {
+  border: 1px solid #e5e7eb;
+  border-top: 4px solid var(--group-color, #4338ca);
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  background: #fff;
+}
+.sr-mbti-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+.sr-mbti-icon { font-size: 1.75rem; flex-shrink: 0; }
+.sr-mbti-name {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--group-color, #4338ca);
+  margin: 0 0 0.35rem;
+}
+.sr-mbti-types {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+.sr-mbti-type {
+  font-size: 0.75rem;
+  font-weight: 700;
+  background: color-mix(in srgb, var(--group-color, #4338ca) 12%, transparent);
+  color: var(--group-color, #4338ca);
+  padding: 0.15rem 0.5rem;
+  border-radius: 0.25rem;
+}
+.sr-mbti-tendency {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #374151;
+  background: #f9fafb;
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  margin: 0 0 0.75rem;
+}
+.sr-mbti-desc { font-size: 0.875rem; color: #4b5563; line-height: 1.6; margin: 0 0 0.75rem; }
+.sr-mbti-metas {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-bottom: 0.75rem;
+}
+.sr-mbti-meta { font-size: 0.8rem; color: #374151; line-height: 1.5; }
+.sr-mbti-meta-label { font-weight: 700; color: #1f2937; }
+.sr-mbti-note {
+  font-size: 0.75rem;
+  color: #6b7280;
+  border-top: 1px solid #f3f4f6;
+  padding-top: 0.75rem;
+  margin: 0;
+  line-height: 1.5;
+}
+.sr-mbti-link-note { font-size: 0.875rem; color: #4b5563; margin-top: 0.75rem; }
+
+/* ========== 多重知能テーブル ========== */
+.sr-mi-table-wrap { overflow-x: auto; margin-top: 1.5rem; }
+.sr-mi-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  min-width: 480px;
+}
+.sr-mi-table th,
+.sr-mi-table td {
+  padding: 0.6rem 0.8rem;
+  border: 1px solid #e5e7eb;
+  text-align: left;
+  line-height: 1.5;
+}
+.sr-mi-table thead th {
+  background: var(--sn-primary, #1e40af);
+  color: #fff;
+  font-weight: 600;
+}
+.sr-mi-table tbody tr:nth-child(even) { background: #f9fafb; }
+.sr-mi-table tbody th { font-weight: 600; white-space: nowrap; }
+.sr-table-caption {
+  font-size: 0.8rem;
+  color: #6b7280;
+  text-align: left;
+  padding: 0.25rem 0 0.5rem;
+}
+.sr-mi-note { font-size: 0.875rem; color: #4b5563; margin-top: 0.75rem; line-height: 1.6; }
+
+/* ========== DiSCグリッド ========== */
+.sr-disc-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1rem;
+  margin-block: 1.5rem;
+}
+.sr-disc-card {
+  border: 1px solid #e5e7eb;
+  border-top: 4px solid var(--disc-color, #4338ca);
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  background: #fff;
+}
+.sr-disc-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin-bottom: 0.875rem;
+}
+.sr-disc-icon { font-size: 1.75rem; flex-shrink: 0; }
+.sr-disc-name {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--disc-color, #4338ca);
+  margin: 0 0 0.2rem;
+}
+.sr-disc-trait { font-size: 0.8rem; color: #6b7280; margin: 0; }
+.sr-disc-careers-label { font-size: 0.8rem; font-weight: 700; color: #374151; margin: 0 0 0.35rem; }
+.sr-disc-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 0.875rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+.sr-disc-list li {
+  font-size: 0.83rem;
+  color: #374151;
+  padding-left: 0.875rem;
+  position: relative;
+}
+.sr-disc-list li::before {
+  content: '・';
+  position: absolute;
+  left: 0;
+  color: var(--disc-color, #4338ca);
+}
+.sr-disc-tip {
+  font-size: 0.8rem;
+  background: #f9fafb;
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  color: #374151;
+  line-height: 1.5;
+}
+.sr-disc-tip-label { font-weight: 700; }
+.sr-disc-note { font-size: 0.875rem; color: #4b5563; margin-top: 0.75rem; }
+
+/* ========== 組み合わせ ========== */
+.sr-combo-box {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-block: 1.25rem;
+}
+.sr-combo-example {
+  background: #f8f7ff;
+  border: 1px solid #e5e7eb;
+  border-left: 4px solid var(--sn-primary, #1e40af);
+  border-radius: 0 0.75rem 0.75rem 0;
+  padding: 1rem 1.25rem;
+}
+.sr-combo-example-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0 0 0.5rem;
+}
+.sr-combo-example-body { font-size: 0.875rem; color: #4b5563; line-height: 1.7; margin: 0; }
+.sr-combo-note { font-size: 0.875rem; color: #4b5563; margin-top: 0.75rem; line-height: 1.6; }
+
+/* ========== 関連ページ ========== */
+.sr-related-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+}
+.sr-related-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 1rem 0.75rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  text-decoration: none;
+  color: inherit;
+  text-align: center;
+  font-size: 1.5rem;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.sr-related-card:hover {
+  border-color: var(--sn-primary, #1e40af);
+  box-shadow: 0 2px 8px rgba(30 64 175 / 0.1);
+}
+.sr-related-title { font-size: 0.8rem; font-weight: 700; color: #374151; }
+
+/* ========== FAQ ========== */
+.sr-faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+.sr-faq-item {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+.sr-faq-q {
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 1rem 1.25rem;
+  background: #f9fafb;
+  margin: 0;
+  display: block;
+}
+.sr-faq-q::before { content: 'Q. '; color: var(--sn-primary, #1e40af); }
+.sr-faq-a {
+  font-size: 0.9rem;
+  line-height: 1.7;
+  padding: 1rem 1.25rem;
+  margin: 0;
+  color: #4b5563;
+}
+.sr-faq-a::before { content: 'A. '; font-weight: 700; color: #16a34a; }
+
+/* ========== レスポンシブ ========== */
+@media (max-width: 640px) {
+  .sr-mbti-grid { grid-template-columns: 1fr; }
+  .sr-disc-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 480px) {
+  .sr-disc-grid { grid-template-columns: 1fr; }
+  .sr-related-grid { grid-template-columns: repeat(3, 1fr); }
+}
+</style>
