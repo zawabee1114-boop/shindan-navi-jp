@@ -1,0 +1,849 @@
+---
+/**
+ * 血液型×恋愛ページ
+ * KW: 血液型 恋愛 / 血液型 恋愛傾向
+ *
+ * 学術根拠:
+ * - 古川竹二 (1927) 「血液型による気質の研究」心理学研究
+ *   https://www.jstage.jst.go.jp/browse/psycholres
+ * - 能見正比古 (1971) 『血液型でわかる相性』青春出版社
+ *   https://www.seishun.co.jp/
+ * - Sakamoto A, Yamazaki K (2004) International Journal of Psychology 39(4)
+ *   https://doi.org/10.1080/00207590344000248
+ * - 日本心理学会 公式見解 (2014)
+ *   https://psych.or.jp/opinion/bl-personality/
+ *
+ * 禁止事項:
+ * - 「血液型で結婚を決めなさい」等の断定
+ * - 心理的決定論（「この血液型とは絶対うまくいかない」）
+ * - YMYL: 医療・精神疾患言及
+ *
+ * 確認日: 2026-05-21
+ */
+import BaseLayout from '../../../../layouts/BaseLayout.astro';
+import Container from '../../../../components/Container.astro';
+import { meta as bcMeta, BLOOD_TYPES } from '../../../../data/diagnoses/blood-compat/meta';
+import { typesDetail } from '../../../../data/diagnoses/blood-compat/types-detail';
+import { getCompatibility, getCategoryLabel, getBestMatches } from '../../../../data/diagnoses/blood-compat/results';
+import TldrBlock from '../../../../components/TldrBlock.astro';
+import ReferenceList from '../../../../components/ReferenceList.astro';
+import ScienceNote from '../../../../components/ScienceNote.astro';
+
+const SITE_URL = 'https://shindan-navi.jp';
+const PAGE_URL = `${SITE_URL}/diagnosis/blood-type/love/`;
+const UPDATED_AT = '2026-05-21';
+
+const pageTitle = '血液型と恋愛傾向【A・B・O・AB型の恋愛スタイルと4×4相性マトリクス】｜診断ナビ';
+const pageDesc = '血液型と恋愛の関係を徹底解説。A型・B型・O型・AB型の恋愛傾向・強み・気をつけたい点と4×4全16パターンの恋愛相性マトリクスを掲載。「血液型で結婚決めない」明示付き。古川（1927）・能見（1971）・日本心理学会（2014）見解を踏まえた解説。';
+
+// 恋愛傾向の詳細データ
+const loveData = [
+  {
+    type: 'A' as const,
+    loveStyle: typesDetail['A'].loveStyle,
+    loveStrengths: [
+      '誠実さと一途さで深い信頼関係を築ける',
+      '相手の気持ちを細やかに配慮する思いやり',
+      '約束や記念日を大切にするロマンチックな面',
+      'ゆっくりと時間をかけて関係を深めていく安心感',
+    ],
+    loveCautions: [
+      '完璧主義が出て、相手や自分に過度な期待をしてしまう面',
+      '心配や不安を抱え込んで伝えられないことがある',
+      '変化や急な展開への適応に時間がかかる場合がある',
+    ],
+    loveStyle2: 'まず相手を観察し、信頼できると感じてから徐々に心を開いていきます。交際に発展するまでに時間がかかる傾向がありますが、一度始まった関係は誠実に継続します。記念日やイベントを大切にし、相手への配慮を細部で示します。',
+    NGPattern: '「なんとなく」「いい加減」な関係は長続きしにくいです。誠実さを大切にする傾向があるため、約束を守らない・気まぐれな対応が続くと距離を置くことがあります。',
+  },
+  {
+    type: 'B' as const,
+    loveStyle: typesDetail['B'].loveStyle,
+    loveStrengths: [
+      '好きになったら一直線の純粋な情熱',
+      '相手の個性・自由を尊重する関係を作れる',
+      '一緒にいると楽しい時間を自然に生み出せる',
+      '束縛しない、されたくない関係で相手を解放できる',
+    ],
+    loveCautions: [
+      '気ままな行動が相手に不安を与える場合がある',
+      '感情表現が直接的すぎて相手を驚かせることがある',
+      '関係の継続に必要な「日常の安定感」の構築が課題になる面',
+    ],
+    loveStyle2: '好きになった相手には積極的にアプローチします。束縛を嫌い、お互いの自由を大切にした関係を求めます。「一緒にいて楽しい」を最重視し、毎日の生活より非日常の体験を共有することに喜びを感じます。',
+    NGPattern: '「重い束縛」「細かいルール」「マイペースを認めない関係」は長続きしにくいです。自分のペースを尊重してくれる相手との関係が自然に長続きします。',
+  },
+  {
+    type: 'O' as const,
+    loveStyle: typesDetail['O'].loveStyle,
+    loveStrengths: [
+      '積極的なアプローチで関係を素早く発展させられる',
+      '相手を大切にする強い気持ちと行動力',
+      '一緒に目標に向かって進める伴走者としての強さ',
+      '明るく前向きな雰囲気が関係に活気をもたらす',
+    ],
+    loveCautions: [
+      '競争心が恋愛に持ち込まれ「勝ち負け」の意識が出ることがある',
+      '大雑把すぎて相手の細やかな気持ちを見落とす場面がある',
+      '自分のペースを優先しすぎて相手のニーズを後回しにする場合がある',
+    ],
+    loveStyle2: '気になった相手には迷わずアプローチします。エネルギーと行動力で関係を積極的に進めていく傾向があります。相手と一緒に目標を持って進む関係を理想とし、「二人で一緒に成長する」ことに喜びを感じます。',
+    NGPattern: '「モヤモヤを引っ張る曖昧な関係」「受け身すぎる展開」は長続きしにくいです。積極的な相手との関係が自然に活発になります。',
+  },
+  {
+    type: 'AB' as const,
+    loveStyle: typesDetail['AB'].loveStyle,
+    loveStrengths: [
+      '心を開いた相手には深く誠実に向き合う一途さ',
+      '知的な会話や内面のつながりを大切にする深さ',
+      '相手の個性と独自性を尊重できる理解力',
+      '感情より対話で関係を深める合理的な姿勢',
+    ],
+    loveCautions: [
+      '内面を言葉にするのに時間がかかり、相手が不安に感じることがある',
+      '気分による態度の変化（A面とB面の切り替え）が誤解を招く場合がある',
+      '「好き」という気持ちを言葉で伝えるのが後回しになりやすい面',
+    ],
+    loveStyle2: '「友達と恋人」の線引きが内面にはっきりあります。交際に至るまでじっくりと相手を見極める傾向があり、一度心を開いた相手とは誠実で深い関係を築きます。知的なつながりと相互理解を関係の核にしたいと思っています。',
+    NGPattern: '「中身のない関係」「根拠のない感情的な言い合い」は長続きしにくいです。論理的な対話ができ、お互いの独自性を尊重し合える相手との関係が続きます。',
+  },
+];
+
+// 4×4 恋愛相性マトリクス
+const loveMatrixData = BLOOD_TYPES.map((rowType) =>
+  BLOOD_TYPES.map((colType) => {
+    const compat = getCompatibility(rowType, colType);
+    return {
+      type1: rowType,
+      type2: colType,
+      score: compat.score,
+      category: compat.category,
+      loveCompat: compat.loveCompat,
+      oneLineSummary: compat.oneLineSummary,
+    };
+  })
+);
+
+// FAQ 10問
+const faqs = [
+  {
+    question: '血液型で結婚相手を選んでいいですか？',
+    answer:
+      '推奨しません。日本心理学会（2014年）は「血液型と性格の間に科学的に明確な統計的相関は認められない」と明言しています（https://psych.or.jp/opinion/bl-personality/）。血液型スコアで結婚相手を選ぶことは、科学的根拠のない基準で重要な人生の決断を行うリスクがあります。実際の対話・価値観の一致・生活観の共有を基準にしてください。',
+  },
+  {
+    question: 'A型と相性がいい血液型は恋愛でどれですか？',
+    answer:
+      '本サイトの恋愛相性スコアでは、A型のベストマッチはA型（86点）、次いでAB型（78点）、O型（75点）の順です。ただしこれは日本の血液型文化に基づく傾向値であり、科学的な恋愛相性の測定ではありません（日本心理学会 2014）。個人の性格・価値観・コミュニケーションスタイルによって実際の相性は大きく変わります。',
+  },
+  {
+    question: 'B型は恋愛で束縛されるのが嫌いですか？',
+    answer:
+      '日本の血液型性格分類（能見 1971）ではB型は「自由を大切にしマイペース」とされており、束縛を嫌うイメージがあります。ただしこれは文化的イメージであり、科学的根拠は限定的です（日本心理学会 2014）。実際にB型の全員が束縛を嫌うわけではなく、個人差が非常に大きいです。',
+  },
+  {
+    question: 'O型は恋愛でリーダーシップを発揮しますか？',
+    answer:
+      '日本の血液型性格分類（能見 1971）ではO型は「積極的・社交的・リーダーシップ」とされており、恋愛でも積極的にアプローチするイメージがあります。ただしこれは文化的イメージであり、科学的根拠は限定的です（日本心理学会 2014）。実際の恋愛スタイルは個人の経験・環境によって異なります。',
+  },
+  {
+    question: 'AB型は恋愛で冷たいと言われるのはなぜですか？',
+    answer:
+      '日本の血液型性格分類（能見 1971）ではAB型は「知的・合理的・二面性」とされており、感情より理性を優先するイメージが「冷たい」という印象につながることがあります。ただしこれは文化的イメージであり、科学的根拠は限定的です（日本心理学会 2014）。AB型の方が「冷たい」という事実はなく、血液型でキャラクターを決めつけることはブラハラにつながります。',
+  },
+  {
+    question: '血液型で恋愛相性を判断する正しい方法は？',
+    answer:
+      '血液型相性は「恋愛の話題のきっかけ・自己理解のヒント」として楽しむことを推奨します。スコアが高いからといって必ずうまくいくわけでも、低いからといって恋愛が続かないわけでもありません。実際の相性は対話・共通の価値観・コミュニケーションの積み重ねで形成されます。',
+  },
+  {
+    question: '血液型相性が低い相手とでも長続きする恋愛はできますか？',
+    answer:
+      'できます。本サイトのスコアが低い組み合わせでも、深い絆を築いているカップルは多数います。本サイトでは「相性が低い」という表現は使わず、「学び合いペア」として位置づけています。違うスタイルを持つ相手との恋愛は、互いの視野を広げ成長につながることがあります。',
+  },
+  {
+    question: '血液型ハラスメントを恋愛で受けた場合どうすればいいですか？',
+    answer:
+      '「B型は嫌い」「AB型とは付き合えない」と血液型を理由に恋愛を断られることや、交際中に血液型を持ち出して性格を決めつけられることはブラハラ的な言動です。日本心理学会（2014年）は「血液型と性格の科学的相関は認められない」と明言しています。血液型で人格を否定するような言動は相手に伝え、改善されなければ関係を見直すことを検討してください。',
+  },
+  {
+    question: '血液型と恋愛に関する科学的研究はありますか？',
+    answer:
+      'Sakamoto & Yamazaki（2004年、International Journal of Psychology 39(4)、https://doi.org/10.1080/00207590344000248）は、血液型ステレオタイプの影響を「自己成就予言」の観点から検討し、血液型と性格の相関は限定的と結論しています。日本心理学会（2014年）も同様の公式見解を示しています。',
+  },
+  {
+    question: '血液型占いと血液型相性診断の違いは何ですか？',
+    answer:
+      '本サイトは「占い」ではなく、日本の血液型性格分類文化（古川 1927・能見 1971）に基づく傾向値を参考情報として提示しています。「運命」「必然」「逃れられない相性」という占い的な解釈は行っていません。血液型は「性格を決める要素」ではなく「会話のきっかけ・自己理解のヒント」として活用することを推奨します。',
+  },
+];
+
+// JSON-LD
+const jsonLdArticle = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  '@id': `${PAGE_URL}#article`,
+  mainEntityOfPage: { '@type': 'WebPage', '@id': PAGE_URL },
+  headline: '血液型と恋愛傾向【A・B・O・AB型の恋愛スタイルと4×4相性マトリクス】',
+  description: pageDesc,
+  url: PAGE_URL,
+  datePublished: UPDATED_AT,
+  dateModified: UPDATED_AT,
+  inLanguage: 'ja',
+  author: { '@type': 'Organization', '@id': `${SITE_URL}/#organization`, name: '診断ナビ' },
+  publisher: { '@type': 'Organization', '@id': `${SITE_URL}/#organization`, name: '診断ナビ' },
+  citation: bcMeta.references.map((ref) => ({
+    '@type': ref.url.includes('doi.org') ? 'ScholarlyArticle' : 'Book',
+    name: ref.title,
+    author: ref.author,
+    datePublished: String(ref.year),
+    publisher: ref.publisher,
+    url: ref.url,
+  })),
+};
+
+const jsonLdFAQ = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  '@id': `${PAGE_URL}#faq`,
+  mainEntity: faqs.map(({ question, answer }) => ({
+    '@type': 'Question',
+    name: question,
+    acceptedAnswer: { '@type': 'Answer', text: answer },
+  })),
+};
+
+const jsonLdBreadcrumb = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  '@id': `${PAGE_URL}#breadcrumb`,
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'ホーム', item: SITE_URL },
+    { '@type': 'ListItem', position: 2, name: '診断一覧', item: `${SITE_URL}/diagnosis/` },
+    { '@type': 'ListItem', position: 3, name: '血液型相性診断', item: `${SITE_URL}/diagnosis/blood-compat/` },
+    { '@type': 'ListItem', position: 4, name: '血液型と恋愛', item: PAGE_URL },
+  ],
+};
+
+const jsonLdAll = [jsonLdArticle, jsonLdFAQ, jsonLdBreadcrumb];
+
+const catColors: Record<string, string> = {
+  soulmate: '#8B5CF6',
+  good: '#10B981',
+  neutral: '#3B82F6',
+  growth: '#F59E0B',
+  challenge: '#EF4444',
+};
+const catBgs: Record<string, string> = {
+  soulmate: '#f3e8ff',
+  good: '#d1fae5',
+  neutral: '#dbeafe',
+  growth: '#fef3c7',
+  challenge: '#fee2e2',
+};
+
+const typeLabels: Record<string, string> = { A: 'A型', B: 'B型', O: 'O型', AB: 'AB型' };
+---
+
+<BaseLayout
+  title={pageTitle}
+  description={pageDesc}
+  canonical={PAGE_URL}
+  jsonLd={jsonLdAll}
+  ogType="article"
+  publishDate={UPDATED_AT}
+  lastUpdated={UPDATED_AT}
+  breadcrumbs={[
+    { name: '診断一覧', url: '/diagnosis/' },
+    { name: '血液型相性診断', url: '/diagnosis/blood-compat/' },
+    { name: '血液型と恋愛', url: '/diagnosis/blood-type/love/' },
+  ]}
+>
+  {/* ========== ヒーロー ========== */}
+  <section class="bl-hero" aria-labelledby="bl-hero-h1">
+    <Container>
+      <div class="bl-hero-inner">
+        <div class="bl-hero-badge">古川竹二（1927）・能見正比古（1971）研究 + 日本心理学会見解</div>
+        <h1 id="bl-hero-h1" class="bl-hero-h1">
+          血液型と恋愛傾向<br />
+          <span class="bl-hero-meta">【A・B・O・AB型の恋愛スタイルと4×4相性マトリクス】</span>
+        </h1>
+        <p class="bl-hero-catch">
+          血液型で恋愛のスタイルはどう違う？<br />
+          4タイプの恋愛傾向・強み・相性を全16パターンで徹底解説
+        </p>
+        <div class="bl-hero-notice" role="note">
+          <p>
+            「血液型で結婚を決めない」「血液型で恋人を断らない」を前提に、
+            話題のきっかけ・自己理解のヒントとしてお楽しみください。
+          </p>
+        </div>
+        <p class="bl-hero-sub">
+          <time datetime={UPDATED_AT}>{UPDATED_AT}</time> 時点の情報
+        </p>
+      </div>
+    </Container>
+  </section>
+
+  <Container>
+    {/* ========== このページでわかること ========== */}
+    <div class="bl-aio-block" role="note" aria-label="このページでわかること">
+      <p class="bl-aio-title">このページでわかること</p>
+      <ul class="bl-aio-list">
+        <li>A・B・O・AB型 4タイプの恋愛傾向・強み・気をつけたい傾向の詳細</li>
+        <li>4×4全16パターンの恋愛相性スコアとコメント（マトリクス形式）</li>
+        <li>各タイプの「恋愛での強み」「続きやすい関係のパターン」</li>
+        <li>「血液型で結婚を決めない」明示と日本心理学会（2014）の公式見解</li>
+      </ul>
+      <p class="bl-aio-updated">
+        参照元:
+        <a href="https://psych.or.jp/opinion/bl-personality/" target="_blank" rel="noopener noreferrer">日本心理学会（2014）</a>・
+        <a href="https://www.jstage.jst.go.jp/browse/psycholres" target="_blank" rel="noopener noreferrer">古川（1927）</a>・
+        <a href="https://doi.org/10.1080/00207590344000248" target="_blank" rel="noopener noreferrer">Sakamoto &amp; Yamazaki（2004）</a>
+        を確認済。
+      </p>
+    </div>
+
+    {/* ========== TldrBlock ========== */}
+    <TldrBlock
+      title="血液型と恋愛 ポイントまとめ"
+      points={[
+        'A型恋愛傾向: 誠実・一途・丁寧。信頼を積み重ねる安定した関係を好む傾向',
+        'B型恋愛傾向: 積極的・自由・束縛なし。一緒にいて楽しい時間を重視する傾向',
+        'O型恋愛傾向: 行動力・情熱・伴走者。相手と一緒に目標に向かって進む関係を好む傾向',
+        'AB型恋愛傾向: 知的つながり・一途・深さ。心を開いた相手とは深く誠実に向き合う傾向',
+        '【重要】血液型で結婚・交際を決めることは推奨しない。日本心理学会（2014）「血液型と性格の科学的相関は認められない」。実際の相性は対話・価値観で形成される',
+      ]}
+      updatedAt={UPDATED_AT}
+      sourceLabel="日本心理学会 公式見解（2014）"
+      sourceUrl="https://psych.or.jp/opinion/bl-personality/"
+    />
+
+    {/* ========== 免責・科学的位置付け ========== */}
+    <section class="bl-section" aria-labelledby="bl-science-h2">
+      <h2 id="bl-science-h2" class="bl-h2">血液型と恋愛——文化的・科学的位置付け</h2>
+      <div class="bl-science-card">
+        <p class="bl-lead">
+          血液型性格分類は古川竹二（1927）の研究を端緒とし、
+          能見正比古（1971）が一般に広めた<strong>日本独自の文化的現象</strong>です。
+          恋愛における血液型の話題も、この文化的背景から生まれています。
+        </p>
+        <p class="bl-lead">
+          一方で、日本心理学会は2014年の
+          <a href="https://psych.or.jp/opinion/bl-personality/" target="_blank" rel="noopener noreferrer">公式見解</a>で
+          「血液型と性格の間に科学的に明確な統計的相関は認められない」と明言しています。
+          Sakamoto &amp; Yamazaki（2004）も同様に「血液型と性格の相関は限定的」と結論しています。
+        </p>
+        <div class="bl-notice-grid">
+          <div class="bl-notice-ok">
+            <p class="bl-notice-label">推奨する活用法</p>
+            <p>恋愛の話題・自己理解・コミュニケーションのきっかけとして楽しむ</p>
+          </div>
+          <div class="bl-notice-ng">
+            <p class="bl-notice-label">推奨しない活用法</p>
+            <p>血液型だけで恋人・結婚相手を選ぶ・断る。血液型で相手を決めつける</p>
+          </div>
+        </div>
+        <div class="bl-disclaimer-box" role="note">
+          <p class="bl-disclaimer-text">{bcMeta.disclaimer}</p>
+        </div>
+      </div>
+    </section>
+
+    {/* ========== 4タイプの恋愛傾向 ========== */}
+    <section class="bl-section" aria-labelledby="bl-types-h2">
+      <h2 id="bl-types-h2" class="bl-h2">4タイプ別 恋愛傾向の詳細</h2>
+      <p class="bl-lead">
+        日本の血液型性格分類（古川 1927・能見 1971）に基づく恋愛傾向のイメージです。
+        「文化的傾向」として参考にし、個人差が大きいことを前提にお読みください。
+      </p>
+
+      {loveData.map((item) => (
+        <div class="bl-type-card" id={`love-type-${item.type}`}>
+          <div class="bl-type-header">
+            <div class="bl-type-badge">{typeLabels[item.type]}</div>
+            <div class="bl-type-title-block">
+              <h3 class="bl-type-name">{typesDetail[item.type].name}の恋愛傾向</h3>
+              <p class="bl-type-nickname">「{typesDetail[item.type].nickname}」</p>
+            </div>
+          </div>
+
+          {/* 恋愛スタイル基本 */}
+          <div class="bl-love-style-body">
+            <p class="bl-love-style-text">{item.loveStyle}</p>
+          </div>
+
+          {/* 恋愛での強み・気をつけたい傾向 */}
+          <div class="bl-type-grid">
+            <div class="bl-type-col">
+              <h4 class="bl-type-col-title bl-col-good">恋愛での強みの傾向</h4>
+              <ul class="bl-type-list">
+                {item.loveStrengths.map((s) => <li>{s}</li>)}
+              </ul>
+            </div>
+            <div class="bl-type-col">
+              <h4 class="bl-type-col-title bl-col-care">気をつけたい傾向</h4>
+              <ul class="bl-type-list">
+                {item.loveCautions.map((c) => <li>{c}</li>)}
+              </ul>
+            </div>
+          </div>
+
+          {/* 恋愛スタイル詳細 */}
+          <div class="bl-love-detail">
+            <h4 class="bl-love-detail-title">恋愛の進め方・重視すること</h4>
+            <p class="bl-love-detail-text">{item.loveStyle2}</p>
+          </div>
+
+          {/* 全タイプとの恋愛相性 */}
+          <h4 class="bl-pair-title">
+            {typeLabels[item.type]}と全4タイプとの恋愛相性
+          </h4>
+          <div class="bl-pair-list">
+            {BLOOD_TYPES.map((partner) => {
+              const compat = getCompatibility(item.type, partner);
+              const color = catColors[compat.category] ?? '#6b7280';
+              const bg = catBgs[compat.category] ?? '#f9fafb';
+              return (
+                <div class="bl-pair-item" style={`border-left: 4px solid ${color}; background: ${bg};`}>
+                  <div class="bl-pair-header">
+                    <span class="bl-pair-types" style={`color: ${color};`}>
+                      {typeLabels[item.type]} × {typeLabels[partner]}
+                    </span>
+                    <span class="bl-pair-score" style={`color: ${color};`}>{compat.score}点</span>
+                    <span class="bl-pair-cat">{getCategoryLabel(compat.category)}</span>
+                  </div>
+                  <p class="bl-pair-love-text">{compat.loveCompat}</p>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* NGパターン */}
+          <div class="bl-ng-box" role="note">
+            <span class="bl-ng-label">続きにくいパターンの傾向（参考）</span>
+            <p class="bl-ng-text">{item.NGPattern}</p>
+          </div>
+        </div>
+      ))}
+    </section>
+
+    {/* ========== 4×4 恋愛相性マトリクス ========== */}
+    <section class="bl-section" aria-labelledby="bl-matrix-h2">
+      <h2 id="bl-matrix-h2" class="bl-h2">恋愛相性マトリクス（4×4 全16パターン）</h2>
+      <p class="bl-lead">
+        A・B・O・AB型の全16組み合わせを恋愛の観点でまとめます。
+        スコアは日本の血液型文化に基づく傾向値であり、科学的測定値ではありません。
+      </p>
+      <div class="bl-matrix-wrap" role="region" aria-label="恋愛血液型相性マトリクス" tabindex="0">
+        <table class="bl-matrix-table" aria-label="恋愛血液型相性スコア表">
+          <caption class="bl-matrix-caption">
+            恋愛相性スコア（0〜100点・傾向値）
+          </caption>
+          <thead>
+            <tr>
+              <th class="bl-matrix-corner" scope="col" aria-label="タイプ1とタイプ2">型 ↓ × →</th>
+              {BLOOD_TYPES.map((t) => (
+                <th scope="col" class="bl-matrix-th">{typeLabels[t]}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {loveMatrixData.map((row, ri) => (
+              <tr>
+                <th scope="row" class="bl-matrix-th-row">{typeLabels[BLOOD_TYPES[ri]]}</th>
+                {row.map((cell, ci) => {
+                  const bg = catBgs[cell.category] ?? '#f9fafb';
+                  const color = catColors[cell.category] ?? '#6b7280';
+                  return (
+                    <td class="bl-matrix-cell">
+                      <div
+                        class="bl-matrix-cell-inner"
+                        style={`background: ${bg}; color: ${color};`}
+                        title={cell.oneLineSummary}
+                        aria-label={`${typeLabels[BLOOD_TYPES[ri]]}×${typeLabels[BLOOD_TYPES[ci]]} 恋愛スコア ${cell.score}点`}
+                      >
+                        <span class="bl-matrix-score">{cell.score}</span>
+                        <span class="bl-matrix-pt" aria-hidden="true">点</span>
+                      </div>
+                    </td>
+                  );
+                })}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p class="bl-matrix-note">
+        ※ スコアは日本の血液型性格分類文化に基づく傾向値です。科学的に厳密な相関は限定的です（日本心理学会 2014）。
+        血液型だけで恋愛・結婚の判断をしないことを推奨します。
+      </p>
+    </section>
+
+    {/* ========== ブラハラ警告 ========== */}
+    <section class="bl-section" aria-labelledby="bl-harassment-h2">
+      <h2 id="bl-harassment-h2" class="bl-h2">恋愛での血液型ハラスメント（ブラハラ）に注意</h2>
+      <div class="bl-harassment-box" role="alert" aria-label="血液型ハラスメント警告">
+        <p class="bl-harassment-lead">
+          恋愛において血液型を理由に人を傷つける言動はブラハラに該当する可能性があります。
+        </p>
+        <ul class="bl-harassment-list">
+          <li>「B型は付き合いたくない」と血液型だけで交際を断る</li>
+          <li>「AB型は冷たいから」と交際相手を決めつけて傷つける</li>
+          <li>交際中に「A型だから細かい」と血液型を持ち出して相手を批判する</li>
+          <li>結婚相談所・マッチングアプリで血液型を絶対条件にして相手を排除する</li>
+        </ul>
+        <p class="bl-harassment-note">
+          本サイトは「血液型を恋愛の話題・自己理解のきっかけとして楽しむ」ことを推奨します。
+          血液型で恋愛相手を選別・断定・排除することを勧めるものではありません。
+        </p>
+      </div>
+    </section>
+
+    {/* ========== 関連ページ ========== */}
+    <section class="bl-section" aria-labelledby="bl-related-h2">
+      <h2 id="bl-related-h2" class="bl-h2">関連ページ・もっと詳しく調べる</h2>
+      <div class="bl-related-grid">
+        <a href="/diagnosis/blood-compat/" class="bl-related-card">
+          <h3 class="bl-related-title">血液型相性診断【完全版】</h3>
+          <p class="bl-related-desc">全10ペアのスコア・仕事・恋愛・友人相性を完全収録</p>
+          <span class="bl-related-link">詳しく見る →</span>
+        </a>
+        <a href="/diagnosis/blood-compat/best-match/" class="bl-related-card">
+          <h3 class="bl-related-title">相性のいい血液型ランキング</h3>
+          <p class="bl-related-desc">TOP5・WORST5・シーン別ベストマッチ</p>
+          <span class="bl-related-link">ランキングを見る →</span>
+        </a>
+        <a href="/diagnosis/blood-compat/friend/" class="bl-related-card">
+          <h3 class="bl-related-title">血液型相性【友達編】</h3>
+          <p class="bl-related-desc">友人関係での付き合い方と全16ペアの友情相性</p>
+          <span class="bl-related-link">友達相性を見る →</span>
+        </a>
+        <a href="/diagnosis/blood-type/work/" class="bl-related-card">
+          <h3 class="bl-related-title">血液型×仕事スタイル</h3>
+          <p class="bl-related-desc">4タイプの仕事傾向・職種イメージ・職場での付き合い方</p>
+          <span class="bl-related-link">仕事傾向を見る →</span>
+        </a>
+        <a href="/diagnosis/blood-compat/tool/" class="bl-related-card">
+          <h3 class="bl-related-title">血液型相性診断ツール</h3>
+          <p class="bl-related-desc">2タイプを選んで即表示。無料・登録不要</p>
+          <span class="bl-related-link">ツールを使う →</span>
+        </a>
+        <a href="/diagnosis/mbti-compat/" class="bl-related-card">
+          <h3 class="bl-related-title">MBTI相性一覧</h3>
+          <p class="bl-related-desc">心理学的根拠に基づく16タイプ相性分析</p>
+          <span class="bl-related-link">MBTI相性を見る →</span>
+        </a>
+      </div>
+    </section>
+
+    {/* ========== FAQ ========== */}
+    <section class="bl-section" aria-labelledby="bl-faq-h2">
+      <h2 id="bl-faq-h2" class="bl-h2">よくある質問（FAQ）</h2>
+      <dl class="bl-faq-list">
+        {faqs.map(({ question, answer }) => (
+          <div class="bl-faq-item">
+            <dt class="bl-faq-q">
+              <span class="bl-faq-q-icon" aria-hidden="true">Q</span>
+              {question}
+            </dt>
+            <dd class="bl-faq-a">
+              <span class="bl-faq-a-icon" aria-hidden="true">A</span>
+              <span set:html={answer.replace(
+                /(https?:\/\/[^\s）]+)/g,
+                '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>'
+              )} />
+            </dd>
+          </div>
+        ))}
+      </dl>
+    </section>
+
+    {/* ========== ScienceNote ========== */}
+    <ScienceNote
+      basisText="古川竹二（1927）「血液型による気質の研究」・能見正比古（1971）の文化的研究・日本心理学会（2014）公式見解・Sakamoto & Yamazaki（2004）International Journal of Psychology 39(4)を参照"
+      basisUrl="https://psych.or.jp/opinion/bl-personality/"
+      basisLabel="日本心理学会 公式見解（2014）"
+      notMedical={true}
+      updatedAt={UPDATED_AT}
+      additionalNote="血液型と恋愛・結婚相性の科学的相関は認められていません（日本心理学会 2014・Sakamoto & Yamazaki 2004）。本ページは日本固有の文化的現象として傾向を参考情報として提示しています。血液型による交際・結婚の判断は推奨しません。"
+    />
+
+    {/* ========== ReferenceList ========== */}
+    <ReferenceList references={bcMeta.references} confirmedAt={UPDATED_AT} />
+  </Container>
+</BaseLayout>
+
+<style>
+  :root {
+    --bl-primary: #e84393;
+    --bl-text: var(--sn-text, #1f2937);
+    --bl-muted: var(--sn-muted, #6b7280);
+    --bl-border: var(--sn-border, #e5e7eb);
+    --bl-surface: var(--sn-surface, #f9fafb);
+    --bl-radius: 12px;
+  }
+
+  .bl-hero {
+    background: linear-gradient(135deg, #fdf2f8 0%, #fce7f3 50%, #f9fafb 100%);
+    padding: 3rem 0 2rem;
+    border-bottom: 1px solid var(--bl-border);
+  }
+  .bl-hero-inner { text-align: center; }
+  .bl-hero-badge {
+    display: inline-block;
+    background: rgba(232, 67, 147, 0.1);
+    color: var(--bl-primary);
+    border: 1px solid rgba(232, 67, 147, 0.3);
+    border-radius: 999px;
+    padding: 0.3rem 1rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+  }
+  .bl-hero-h1 {
+    font-size: clamp(1.35rem, 4vw, 2rem);
+    font-weight: 800;
+    line-height: 1.3;
+    color: var(--bl-text);
+    margin: 0 0 0.8rem;
+  }
+  .bl-hero-meta {
+    display: block;
+    font-size: clamp(0.82rem, 2.5vw, 0.97rem);
+    font-weight: 600;
+    color: var(--bl-primary);
+  }
+  .bl-hero-catch { font-size: 0.97rem; color: var(--bl-muted); line-height: 1.8; margin: 0 0 0.8rem; }
+  .bl-hero-notice {
+    display: inline-block;
+    background: #f0fdf4;
+    border: 1px solid #a7f3d0;
+    border-radius: 8px;
+    padding: 0.6rem 1rem;
+    font-size: 0.85rem;
+    line-height: 1.7;
+    color: #065f46;
+    max-width: 560px;
+    text-align: left;
+    margin-bottom: 1rem;
+  }
+  .bl-hero-notice p { margin: 0; }
+  .bl-hero-sub { font-size: 0.8rem; color: var(--bl-muted); margin: 0; }
+
+  .bl-section { margin: 3rem 0; }
+  .bl-h2 {
+    font-size: clamp(1.15rem, 3vw, 1.45rem);
+    font-weight: 800;
+    color: var(--bl-text);
+    margin: 0 0 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--bl-primary);
+  }
+  .bl-lead { font-size: 0.97rem; line-height: 1.8; color: var(--bl-text); margin: 0 0 1.2rem; }
+
+  .bl-aio-block {
+    background: #fdf2f8;
+    border: 1px solid rgba(232, 67, 147, 0.2);
+    border-radius: var(--bl-radius);
+    padding: 1.2rem 1.5rem;
+    margin: 1.5rem 0 2rem;
+  }
+  .bl-aio-title { font-weight: 700; font-size: 0.95rem; color: var(--bl-primary); margin: 0 0 0.6rem; }
+  .bl-aio-list { margin: 0 0 0.8rem; padding-left: 1.4rem; font-size: 0.92rem; line-height: 1.7; color: var(--bl-text); }
+  .bl-aio-updated { font-size: 0.8rem; color: var(--bl-muted); margin: 0; }
+  .bl-aio-updated a { color: var(--bl-primary); }
+
+  /* 科学的位置付け */
+  .bl-science-card { background: #fff; border: 1px solid var(--bl-border); border-radius: var(--bl-radius); padding: 1.5rem; }
+  .bl-notice-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1rem 0; }
+  .bl-notice-ok {
+    background: #d1fae5;
+    border-radius: 8px;
+    padding: 0.8rem;
+    font-size: 0.88rem;
+    line-height: 1.65;
+    color: #065f46;
+  }
+  .bl-notice-ng {
+    background: #fee2e2;
+    border-radius: 8px;
+    padding: 0.8rem;
+    font-size: 0.88rem;
+    line-height: 1.65;
+    color: #991b1b;
+  }
+  .bl-notice-label { font-weight: 700; display: block; margin-bottom: 0.3rem; font-size: 0.82rem; }
+  .bl-notice-ok p, .bl-notice-ng p { margin: 0; }
+  .bl-disclaimer-box { background: #fefce8; border: 1px solid #fde68a; border-radius: 8px; padding: 0.8rem 1rem; margin-top: 1rem; }
+  .bl-disclaimer-text { font-size: 0.83rem; color: #92400e; line-height: 1.7; margin: 0; }
+
+  /* タイプカード */
+  .bl-type-card {
+    background: #fff;
+    border: 1px solid var(--bl-border);
+    border-radius: var(--bl-radius);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  .bl-type-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; }
+  .bl-type-badge {
+    width: 56px;
+    height: 56px;
+    background: var(--bl-primary);
+    color: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    font-weight: 800;
+    flex-shrink: 0;
+  }
+  .bl-type-name { font-size: 1.1rem; font-weight: 800; color: var(--bl-text); margin: 0; }
+  .bl-type-nickname { font-size: 0.87rem; color: var(--bl-muted); margin: 0; }
+
+  .bl-love-style-body {
+    background: #fdf2f8;
+    border-left: 3px solid var(--bl-primary);
+    border-radius: 0 8px 8px 0;
+    padding: 0.9rem 1.1rem;
+    margin-bottom: 1rem;
+  }
+  .bl-love-style-text { font-size: 0.95rem; line-height: 1.8; color: var(--bl-text); margin: 0; white-space: pre-line; }
+  .bl-type-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.2rem; }
+  .bl-type-col-title { font-size: 0.82rem; font-weight: 700; margin: 0 0 0.5rem; padding: 0.2rem 0.5rem; border-radius: 4px; }
+  .bl-col-good { background: #d1fae5; color: #065f46; }
+  .bl-col-care { background: #fef3c7; color: #92400e; }
+  .bl-type-list { margin: 0; padding-left: 1.2rem; font-size: 0.87rem; line-height: 1.7; color: var(--bl-text); }
+
+  .bl-love-detail {
+    background: #f8fafc;
+    border: 1px solid var(--bl-border);
+    border-radius: 8px;
+    padding: 0.9rem 1.1rem;
+    margin-bottom: 1.2rem;
+  }
+  .bl-love-detail-title { font-size: 0.87rem; font-weight: 700; color: var(--bl-muted); margin: 0 0 0.5rem; }
+  .bl-love-detail-text { font-size: 0.9rem; line-height: 1.75; color: var(--bl-text); margin: 0; }
+
+  .bl-pair-title { font-size: 0.9rem; font-weight: 700; color: var(--bl-muted); margin: 0 0 0.8rem; padding-top: 0.5rem; border-top: 1px solid var(--bl-border); }
+  .bl-pair-list { display: flex; flex-direction: column; gap: 0.6rem; margin-bottom: 1rem; }
+  .bl-pair-item { padding: 0.8rem 1rem; border-radius: 0 8px 8px 0; }
+  .bl-pair-header { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 0.3rem; }
+  .bl-pair-types { font-size: 0.9rem; font-weight: 700; }
+  .bl-pair-score { font-size: 0.85rem; font-weight: 700; }
+  .bl-pair-cat { font-size: 0.78rem; color: var(--bl-muted); }
+  .bl-pair-love-text { font-size: 0.87rem; line-height: 1.7; color: var(--bl-text); margin: 0; white-space: pre-line; }
+
+  .bl-ng-box {
+    background: #fef9ec;
+    border: 1px solid #fde68a;
+    border-radius: 8px;
+    padding: 0.8rem 1rem;
+  }
+  .bl-ng-label { font-size: 0.77rem; font-weight: 700; color: #92400e; display: block; margin-bottom: 0.3rem; }
+  .bl-ng-text { font-size: 0.87rem; line-height: 1.65; color: var(--bl-text); margin: 0; }
+
+  /* マトリクス */
+  .bl-matrix-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; margin-bottom: 0.8rem; }
+  .bl-matrix-table { border-collapse: collapse; min-width: 380px; font-size: 0.87rem; }
+  .bl-matrix-caption { caption-side: bottom; font-size: 0.75rem; color: var(--bl-muted); margin-top: 0.4rem; text-align: left; }
+  .bl-matrix-corner, .bl-matrix-th {
+    background: var(--bl-surface);
+    padding: 0.5rem 0.7rem;
+    font-size: 0.82rem;
+    border: 1px solid var(--bl-border);
+    text-align: center;
+    white-space: nowrap;
+  }
+  .bl-matrix-th-row { background: var(--bl-surface); padding: 0.5rem 0.7rem; font-weight: 700; border: 1px solid var(--bl-border); white-space: nowrap; }
+  .bl-matrix-cell { border: 1px solid var(--bl-border); padding: 0; }
+  .bl-matrix-cell-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem 0.6rem;
+    font-weight: 700;
+    min-width: 56px;
+    min-height: 44px;
+  }
+  .bl-matrix-score { font-size: 1.05rem; line-height: 1; }
+  .bl-matrix-pt { font-size: 0.68rem; font-weight: 400; }
+  .bl-matrix-note { font-size: 0.78rem; color: var(--bl-muted); margin: 0 0 0.8rem; }
+
+  /* ブラハラ警告 */
+  .bl-harassment-box { background: #fff7ed; border: 1.5px solid #f59e0b; border-radius: var(--bl-radius); padding: 1.2rem 1.5rem; }
+  .bl-harassment-lead { font-size: 0.95rem; line-height: 1.75; margin: 0 0 0.8rem; color: var(--bl-text); font-weight: 600; }
+  .bl-harassment-list { margin: 0 0 0.8rem; padding-left: 1.4rem; font-size: 0.9rem; line-height: 1.8; color: var(--bl-text); }
+  .bl-harassment-note { font-size: 0.85rem; color: #92400e; margin: 0; }
+
+  /* 関連ページ */
+  .bl-related-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 1rem; }
+  .bl-related-card {
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    border: 1.5px solid var(--bl-border);
+    border-radius: var(--bl-radius);
+    padding: 1.1rem;
+    text-decoration: none;
+    color: var(--bl-text);
+    transition: border-color 0.15s;
+  }
+  .bl-related-card:hover { border-color: var(--bl-primary); }
+  .bl-related-title { font-size: 0.95rem; font-weight: 700; margin: 0 0 0.4rem; }
+  .bl-related-desc { font-size: 0.83rem; line-height: 1.6; color: var(--bl-muted); margin: 0 0 0.6rem; flex: 1; }
+  .bl-related-link { font-size: 0.83rem; font-weight: 700; color: var(--bl-primary); }
+
+  /* FAQ */
+  .bl-faq-list { display: flex; flex-direction: column; gap: 1rem; }
+  .bl-faq-item { background: #fff; border: 1px solid var(--bl-border); border-radius: var(--bl-radius); padding: 1.2rem; }
+  .bl-faq-q {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    font-weight: 700;
+    font-size: 0.97rem;
+    margin-bottom: 0.6rem;
+  }
+  .bl-faq-q-icon {
+    background: var(--bl-primary);
+    color: #fff;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.78rem;
+    font-weight: 800;
+    flex-shrink: 0;
+  }
+  .bl-faq-a {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    font-size: 0.92rem;
+    line-height: 1.75;
+    margin: 0;
+  }
+  .bl-faq-a-icon {
+    background: #d1fae5;
+    color: #065f46;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.78rem;
+    font-weight: 800;
+    flex-shrink: 0;
+  }
+
+  @media (max-width: 640px) {
+    .bl-type-grid { grid-template-columns: 1fr; }
+    .bl-notice-grid { grid-template-columns: 1fr; }
+  }
+</style>
