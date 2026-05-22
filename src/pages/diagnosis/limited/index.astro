@@ -1,0 +1,933 @@
+---
+/**
+ * /diagnosis/limited/ - 月1限定診断ハブページ
+ * KW: 限定診断 / 月替わり診断 / 今月の診断
+ *
+ * PRO最上位特典。毎月1日に新しい限定診断が公開される。
+ * PRO会員（¥590/月）のみフルアクセス。
+ * 無料/PASS会員は「今月のテーマ」プレビュー + PRO誘導CTA。
+ *
+ * SEO/AIO対応:
+ * - JSON-LD: WebApplication + FAQPage + BreadcrumbList
+ * - TldrBlock / ScienceNote / ReferenceList
+ * - YMYL回避: 「対処スタイル」表現。医学的診断表記ゼロ
+ *
+ * 確認日: 2026-05-22
+ */
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Container from '../../../components/Container.astro';
+import TldrBlock from '../../../components/TldrBlock.astro';
+import ProUpgradeCta from '../../../components/ProUpgradeCta.astro';
+import {
+  getCurrentLimited,
+  getPastLimited,
+  getMonthLabel,
+} from '../../../data/diagnoses/limited/registry';
+
+const SITE_URL = 'https://shindan-navi.jp';
+const PAGE_URL = `${SITE_URL}/diagnosis/limited/`;
+
+const currentLimited = getCurrentLimited();
+const pastLimited = getPastLimited();
+
+// JSON-LD: WebApplication
+const jsonLdWebApp = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  '@id': `${PAGE_URL}#webapp`,
+  name: '月1限定診断【PRO限定】',
+  url: PAGE_URL,
+  applicationCategory: 'EducationalApplication',
+  operatingSystem: 'Web',
+  description:
+    '毎月1日に新しい限定診断を公開。PRO会員（¥590/月）のみフルアクセス可能な最高特典。過去の限定診断アーカイブにも遡って受診できます。',
+  offers: {
+    '@type': 'Offer',
+    price: '590',
+    priceCurrency: 'JPY',
+    availability: 'https://schema.org/InStock',
+    description: 'PRO会員（¥590/月）限定',
+  },
+  author: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+    name: '診断ナビ',
+    url: SITE_URL,
+  },
+};
+
+// FAQ
+const faqs = [
+  {
+    question: '月1限定診断とはどんな機能ですか？',
+    answer:
+      '月1限定診断は、PRO会員（¥590/月）限定で毎月1日に公開される特別診断です。コア8診断とは異なる「深掘り・統合的・季節性」のテーマで設計されており、PRO会員の継続特典として位置づけられています。過去の限定診断はアーカイブとして遡って受診できます。',
+  },
+  {
+    question: '無料・PASS会員はどこまで見られますか？',
+    answer:
+      '無料・PASS会員は今月の限定診断の「テーマとテーマ説明」のみ表示されます。診断フロー・結果ページへのアクセスにはPRO会員（¥590/月）が必要です。',
+  },
+  {
+    question: '過去の限定診断は遡って受けられますか？',
+    answer:
+      'PRO会員であれば過去の限定診断アーカイブに遡って受診できます。診断期間は毎月1日から月末まで公開されており、過去分もすべてPRO会員にアクセス権があります。',
+  },
+  {
+    question: '月1限定診断はどんな学術根拠に基づいていますか？',
+    answer:
+      '各月の診断は異なる心理学・行動科学の理論に基づいて設計されます。6月（初回）はLazarus & Folkman（1984）のコーピング理論とCarver（1997）のBrief COPEに基づくストレス対処タイプ診断です。すべての診断で学術根拠・参考文献を明示しています。',
+  },
+  {
+    question: 'コア8診断との違いは何ですか？',
+    answer:
+      'コア8診断（MBTI・血液型・多重知能など）は年間を通じて受診できる常設診断です。月1限定診断は季節性・深掘り・統合的なテーマで毎月新しい切り口を提供します。コア8診断の補完として設計されており、2つを合わせることでより立体的な自己理解が深まります。',
+  },
+  {
+    question: 'PRO会員の申し込み方法は？',
+    answer:
+      'PRO会員は¥590/月（税込・いつでも解約可）です。/pro/ ページから申し込み可能です。Stripe経由で安全に決済できます。',
+  },
+];
+
+const jsonLdFAQ = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  '@id': `${PAGE_URL}#faq`,
+  mainEntity: faqs.map(({ question, answer }) => ({
+    '@type': 'Question',
+    name: question,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: answer,
+    },
+  })),
+};
+
+const jsonLdBreadcrumb = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'ホーム', item: SITE_URL },
+    { '@type': 'ListItem', position: 2, name: '診断一覧', item: `${SITE_URL}/diagnosis/` },
+    { '@type': 'ListItem', position: 3, name: '月1限定診断', item: PAGE_URL },
+  ],
+};
+
+const jsonLdAll = [jsonLdWebApp, jsonLdFAQ, jsonLdBreadcrumb];
+---
+
+<BaseLayout
+  title="月1限定診断【PRO限定】毎月テーマが変わる深掘り診断 | 診断ナビ"
+  description="PRO会員（¥590/月）限定。毎月1日に新しい限定診断を公開。Lazarus & Folkman理論などの学術根拠に基づく深掘り・季節性診断。過去のアーカイブにも遡って受診可能。"
+  canonical={PAGE_URL}
+  jsonLd={jsonLdAll}
+  ogType="website"
+  breadcrumbs={[
+    { name: '診断一覧', url: '/diagnosis/' },
+    { name: '月1限定診断', url: '/diagnosis/limited/' },
+  ]}
+>
+  {/* ヒーローセクション */}
+  <section class="limited-hero page-hero page-hero--purple" aria-labelledby="limited-hero-h1">
+    <Container>
+      <div class="limited-hero-inner">
+        <div class="limited-hero-badge">
+          <span class="limited-badge-pro">PRO限定</span>
+          <span class="limited-badge-sep">×</span>
+          <span class="limited-badge-monthly">毎月更新</span>
+        </div>
+        <h1 id="limited-hero-h1" class="limited-hero-h1">
+          月1限定診断
+        </h1>
+        <p class="limited-hero-catch">
+          毎月1日に新しい診断テーマが公開される、PRO最上位特典。<br />
+          季節・状況・深掘りテーマで、コア8診断を超える自己理解へ。
+        </p>
+        <div class="limited-hero-stats">
+          <span class="limited-stat">毎月<strong>1</strong>本</span>
+          <span class="limited-stat-sep">・</span>
+          <span class="limited-stat">約<strong>3</strong>分</span>
+          <span class="limited-stat-sep">・</span>
+          <span class="limited-stat">アーカイブ<strong>遡り</strong>可</span>
+          <span class="limited-stat-sep">・</span>
+          <span class="limited-stat">PRO<strong>¥590</strong>/月</span>
+        </div>
+      </div>
+    </Container>
+  </section>
+
+  <Container>
+    {/* TldrBlock */}
+    <TldrBlock
+      title="このページのポイント（3行まとめ）"
+      points={[
+        'PRO会員（¥590/月）限定で毎月1日に新しい限定診断が公開されます。コア8診断とは異なる「深掘り・統合的・季節性」テーマを毎月提供します',
+        '無料・PASS会員は今月のテーマプレビューのみ表示。フルアクセスにはPROへのアップグレードが必要です',
+        '過去の限定診断はPRO会員が遡って受診できます。Lazarus & Folkman（1984）など各月の診断は学術根拠に基づいて設計されています',
+      ]}
+      updatedAt="2026-05-22"
+      sourceLabel="Lazarus & Folkman (1984) Stress, Appraisal, and Coping"
+      sourceUrl="https://link.springer.com/book/9780826141910"
+    />
+
+    {/* 今月の限定診断セクション */}
+    <section class="limited-section" aria-labelledby="limited-current-h2">
+      <h2 id="limited-current-h2" class="limited-h2">今月の限定診断</h2>
+
+      {currentLimited ? (
+        <div class="limited-current-card">
+          <div class="limited-current-header">
+            <div class="limited-month-badge">
+              {getMonthLabel(currentLimited.year, currentLimited.month)}
+            </div>
+            <div class="limited-current-meta">
+              <span>{currentLimited.questionCount}問</span>
+              <span>約{currentLimited.estimatedMinutes}分</span>
+              <span>{currentLimited.resultTypeCount}タイプ</span>
+            </div>
+          </div>
+          <h3 class="limited-current-title">{currentLimited.theme}</h3>
+          <p class="limited-current-desc">{currentLimited.themeDescription}</p>
+          <p class="limited-current-science">
+            学術根拠: {currentLimited.scientificBasisShort}
+          </p>
+
+          {/* PRO誘導: クライアントサイドでplan判定して切り替え */}
+          <div
+            id="limited-access-block"
+            data-slug={currentLimited.slug}
+            class="limited-access-block"
+          >
+            {/* JSなしの初期表示: PRO誘導を表示（SSR安全側）*/}
+            <div class="limited-pro-gate" id="limited-pro-gate">
+              <p class="limited-gate-label">
+                この診断はPRO会員限定です
+              </p>
+              <a
+                href={`/diagnosis/limited/${currentLimited.slug}/`}
+                class="limited-cta-btn limited-cta-btn--preview"
+              >
+                テーマの詳細を見る
+                <span aria-hidden="true">→</span>
+              </a>
+              <div class="limited-gate-cta">
+                <ProUpgradeCta
+                  headline="月1限定診断でコア8診断を超える自己理解へ"
+                  highlightFeature="月1限定診断"
+                />
+              </div>
+            </div>
+
+            {/* JS有効+PRO: 診断ボタンを表示 */}
+            <div class="limited-pro-access" id="limited-pro-access" hidden>
+              <div class="limited-access-banner">
+                <span class="limited-access-badge">PRO会員特典</span>
+                <span class="limited-access-text">今月の限定診断が受診できます</span>
+              </div>
+              <a
+                href={`/diagnosis/limited/${currentLimited.slug}/`}
+                class="limited-cta-btn limited-cta-btn--start"
+              >
+                今月の診断を始める
+                <span aria-hidden="true">→</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <div class="limited-no-current">
+          <p class="limited-no-current-text">
+            今月の限定診断は6月1日から公開予定です。
+          </p>
+          <p class="limited-no-current-sub">
+            PRO会員になると、公開初日からすぐに受診できます。
+          </p>
+          <ProUpgradeCta
+            headline="月1限定診断のPRO先行アクセスはこちら"
+            highlightFeature="月1限定診断"
+          />
+        </div>
+      )}
+    </section>
+
+    {/* 月1限定診断の特徴 */}
+    <section class="limited-section" aria-labelledby="limited-about-h2">
+      <h2 id="limited-about-h2" class="limited-h2">月1限定診断とは</h2>
+      <p class="limited-lead">
+        月1限定診断はPRO会員の最上位特典です。
+        毎月1日に新しい診断テーマが公開され、コア8診断では扱わない「深掘り・統合的・季節性」の切り口で自己理解を深めます。
+      </p>
+
+      <div class="limited-features-grid">
+        <div class="limited-feature-card">
+          <div class="limited-feature-icon" aria-hidden="true">📅</div>
+          <h3 class="limited-feature-title">毎月1日に新しいテーマ</h3>
+          <p class="limited-feature-desc">
+            季節・社会状況・深掘りテーマから毎月1本を設計します。
+            梅雨・夏休み・年度末など、その時期ならではの視点で自己理解を更新できます。
+          </p>
+        </div>
+        <div class="limited-feature-card">
+          <div class="limited-feature-icon" aria-hidden="true">🔬</div>
+          <h3 class="limited-feature-title">学術根拠を明示</h3>
+          <p class="limited-feature-desc">
+            各診断は心理学・行動科学の一次論文に基づいて設計します。
+            参考文献のDOI付きで提示するため、診断の根拠を確認しながら受診できます。
+          </p>
+        </div>
+        <div class="limited-feature-card">
+          <div class="limited-feature-icon" aria-hidden="true">📚</div>
+          <h3 class="limited-feature-title">アーカイブを遡れる</h3>
+          <p class="limited-feature-desc">
+            過去の限定診断はすべてPRO会員が遡って受診できます。
+            「あのときの自分」と「今の自分」を比較する自己成長の記録になります。
+          </p>
+        </div>
+        <div class="limited-feature-card">
+          <div class="limited-feature-icon" aria-hidden="true">🔗</div>
+          <h3 class="limited-feature-title">統合プロファイルに反映</h3>
+          <p class="limited-feature-desc">
+            限定診断の結果もコア8診断と同様に統合プロファイルに反映されます。
+            複数の診断を組み合わせることで、自己理解がさらに深まります。
+          </p>
+        </div>
+      </div>
+
+      <div class="limited-info-table-wrap">
+        <table class="limited-info-table">
+          <caption class="limited-table-caption">月1限定診断の概要（2026-05-22時点）</caption>
+          <tbody>
+            <tr>
+              <th scope="row">公開頻度</th>
+              <td>毎月1日（JST）に新テーマを公開</td>
+            </tr>
+            <tr>
+              <th scope="row">アクセス権</th>
+              <td>PRO会員（¥590/月）のみフルアクセス</td>
+            </tr>
+            <tr>
+              <th scope="row">プレビュー</th>
+              <td>無料・PASS会員も今月のテーマは表示</td>
+            </tr>
+            <tr>
+              <th scope="row">アーカイブ</th>
+              <td>PRO会員は過去の全診断に遡れる</td>
+            </tr>
+            <tr>
+              <th scope="row">問題数</th>
+              <td>各回 15〜25問（テーマに応じて設定）</td>
+            </tr>
+            <tr>
+              <th scope="row">学術根拠</th>
+              <td>各回 一次論文をDOI付きで明示</td>
+            </tr>
+            <tr>
+              <th scope="row">統合プロファイル</th>
+              <td>コア8診断と統合される</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    {/* 過去のアーカイブ */}
+    {pastLimited.length > 0 && (
+      <section class="limited-section" aria-labelledby="limited-archive-h2">
+        <h2 id="limited-archive-h2" class="limited-h2">過去の限定診断アーカイブ</h2>
+        <p class="limited-lead">
+          PRO会員は過去の全限定診断に遡って受診できます。
+        </p>
+        <ul class="limited-archive-list" role="list">
+          {pastLimited.map((entry) => (
+            <li class="limited-archive-item">
+              <a
+                href={`/diagnosis/limited/${entry.slug}/`}
+                class="limited-archive-link"
+                aria-label={`${getMonthLabel(entry.year, entry.month)} ${entry.theme}`}
+              >
+                <span class="limited-archive-month">{getMonthLabel(entry.year, entry.month)}</span>
+                <span class="limited-archive-body">
+                  <span class="limited-archive-title">{entry.theme}</span>
+                  <span class="limited-archive-desc">{entry.themeDescription}</span>
+                </span>
+                <span class="limited-archive-arrow" aria-hidden="true">→</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )}
+
+    {pastLimited.length === 0 && (
+      <section class="limited-section" aria-labelledby="limited-archive-empty-h2">
+        <h2 id="limited-archive-empty-h2" class="limited-h2">過去のアーカイブ</h2>
+        <div class="limited-archive-empty">
+          <p class="limited-archive-empty-text">
+            6月が初回の限定診断です。毎月1本追加されていきます。
+          </p>
+        </div>
+      </section>
+    )}
+
+    {/* PRO誘導（ページ中盤）*/}
+    <section class="limited-section limited-section--cta" aria-label="PRO会員の案内">
+      <ProUpgradeCta
+        headline="月1限定診断でコア8診断を超える深掘り自己理解へ"
+        highlightFeature="月1限定診断"
+        fullCard={true}
+      />
+    </section>
+
+    {/* FAQ */}
+    <section class="limited-section" aria-labelledby="limited-faq-h2">
+      <h2 id="limited-faq-h2" class="limited-h2">よくある質問</h2>
+      <dl class="limited-faq-list">
+        {faqs.map(({ question, answer }) => (
+          <div class="limited-faq-item">
+            <dt class="limited-faq-q">{question}</dt>
+            <dd class="limited-faq-a">{answer}</dd>
+          </div>
+        ))}
+      </dl>
+    </section>
+
+    {/* 関連診断 */}
+    <section class="limited-section" aria-labelledby="limited-related-h2">
+      <h2 id="limited-related-h2" class="limited-h2">関連する診断</h2>
+      <ul class="limited-related-list">
+        <li class="limited-related-item">
+          <a href="/diagnosis/" class="limited-related-link">
+            <span class="limited-related-icon" aria-hidden="true">🔮</span>
+            <span class="limited-related-body">
+              <span class="limited-related-title">診断一覧（8診断）</span>
+              <span class="limited-related-desc">MBTI・血液型・多重知能など8診断すべてを確認</span>
+            </span>
+          </a>
+        </li>
+        <li class="limited-related-item">
+          <a href="/pro/" class="limited-related-link">
+            <span class="limited-related-icon" aria-hidden="true">✨</span>
+            <span class="limited-related-body">
+              <span class="limited-related-title">PRO会員の機能一覧</span>
+              <span class="limited-related-desc">タイムカプセル・AIプロンプトカード・広告非表示など</span>
+            </span>
+          </a>
+        </li>
+        <li class="limited-related-item">
+          <a href="/diagnosis/perfectionism/" class="limited-related-link">
+            <span class="limited-related-icon" aria-hidden="true">⭐</span>
+            <span class="limited-related-body">
+              <span class="limited-related-title">完璧主義タイプ診断</span>
+              <span class="limited-related-desc">Hewitt & Flett理論に基づく4タイプ無料診断</span>
+            </span>
+          </a>
+        </li>
+      </ul>
+    </section>
+  </Container>
+</BaseLayout>
+
+<script>
+  /**
+   * クライアントサイド: LocalStorageのplansを確認してPROゲートを切り替える
+   */
+  (function () {
+    try {
+      const plan = localStorage.getItem('shindan_user_plan');
+      if (plan === 'pro') {
+        const gate = document.getElementById('limited-pro-gate');
+        const access = document.getElementById('limited-pro-access');
+        if (gate) gate.hidden = true;
+        if (access) access.hidden = false;
+      }
+    } catch {
+      // LocalStorage読み取り失敗時はPROゲート（初期表示）のまま
+    }
+  })();
+</script>
+
+<style>
+/* ========== ヒーロー ========== */
+.limited-hero {
+  padding-block: 3rem 3.5rem;
+  text-align: center;
+}
+.limited-hero-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+.limited-hero-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.limited-badge-pro {
+  display: inline-block;
+  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.25rem 0.75rem;
+  border-radius: 2rem;
+  letter-spacing: 0.05em;
+}
+.limited-badge-sep {
+  color: rgba(255 255 255 / 0.6);
+  font-weight: 700;
+}
+.limited-badge-monthly {
+  display: inline-block;
+  background: rgba(255 255 255 / 0.2);
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.25rem 0.75rem;
+  border-radius: 2rem;
+  border: 1px solid rgba(255 255 255 / 0.4);
+}
+.limited-hero-h1 {
+  font-size: clamp(2rem, 6vw, 3rem);
+  font-family: var(--sn-font-rounded, sans-serif);
+  font-weight: 900;
+  color: #fff;
+  margin: 0;
+  text-shadow: 0 2px 8px rgba(0 0 0 / 0.2);
+}
+.limited-hero-catch {
+  font-size: clamp(0.9rem, 2.5vw, 1.05rem);
+  color: rgba(255 255 255 / 0.9);
+  line-height: 1.8;
+  margin: 0;
+}
+.limited-hero-stats {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  color: rgba(255 255 255 / 0.8);
+  font-size: 0.9rem;
+}
+.limited-stat strong {
+  font-size: 1.3em;
+  font-weight: 700;
+  color: #fff;
+}
+.limited-stat-sep {
+  color: rgba(255 255 255 / 0.4);
+}
+
+/* ========== セクション共通 ========== */
+.limited-section {
+  margin-block: 3rem;
+}
+.limited-section--cta {
+  margin-block: 2rem;
+}
+.limited-h2 {
+  font-size: clamp(1.3rem, 4vw, 1.75rem);
+  font-family: var(--sn-font-rounded, sans-serif);
+  font-weight: 700;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #7c3aed;
+}
+.limited-lead {
+  font-size: 1rem;
+  line-height: 1.8;
+  color: #374151;
+  margin-bottom: 1.5rem;
+}
+
+/* ========== 今月の限定診断カード ========== */
+.limited-current-card {
+  background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%);
+  border: 2px solid #7c3aed;
+  border-radius: 1rem;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.limited-current-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.limited-month-badge {
+  display: inline-block;
+  background: #7c3aed;
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 0.3rem 0.9rem;
+  border-radius: 2rem;
+}
+.limited-current-meta {
+  display: flex;
+  gap: 0.75rem;
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+.limited-current-meta span {
+  background: #fff;
+  padding: 0.15rem 0.6rem;
+  border-radius: 2rem;
+  border: 1px solid #e5e7eb;
+}
+.limited-current-title {
+  font-size: clamp(1.2rem, 3.5vw, 1.5rem);
+  font-weight: 700;
+  color: #3b0764;
+  margin: 0;
+}
+.limited-current-desc {
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: #4b5563;
+  margin: 0;
+}
+.limited-current-science {
+  font-size: 0.8rem;
+  color: #7c3aed;
+  margin: 0;
+  padding: 0.4rem 0.8rem;
+  background: rgba(124 58 237 / 0.08);
+  border-radius: 0.5rem;
+  border-left: 3px solid #7c3aed;
+}
+
+/* ========== アクセスブロック ========== */
+.limited-access-block {
+  margin-top: 0.5rem;
+}
+.limited-pro-gate {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.limited-gate-label {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #7c3aed;
+  text-align: center;
+  margin: 0;
+  padding: 0.6rem;
+  background: rgba(124 58 237 / 0.08);
+  border-radius: 0.5rem;
+  border: 1px dashed #c4b5fd;
+}
+.limited-gate-cta {
+  margin-top: 0.5rem;
+}
+.limited-pro-access {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.limited-access-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+}
+.limited-access-badge {
+  font-size: 0.75rem;
+  font-weight: 700;
+  background: #16a34a;
+  color: #fff;
+  padding: 0.2rem 0.6rem;
+  border-radius: 2rem;
+  white-space: nowrap;
+}
+.limited-access-text {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #15803d;
+}
+.limited-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.9rem 2rem;
+  border-radius: 3rem;
+  font-weight: 700;
+  font-size: 1rem;
+  text-decoration: none;
+  transition: transform 0.15s, box-shadow 0.15s;
+  text-align: center;
+}
+.limited-cta-btn--start {
+  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(79 70 229 / 0.3);
+}
+.limited-cta-btn--start:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(79 70 229 / 0.35);
+  color: #fff;
+  text-decoration: none;
+}
+.limited-cta-btn--preview {
+  background: #fff;
+  color: #7c3aed;
+  border: 2px solid #7c3aed;
+}
+.limited-cta-btn--preview:hover {
+  background: #f5f3ff;
+  transform: translateY(-1px);
+  text-decoration: none;
+}
+
+/* ========== 今月なし */
+.limited-no-current {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 2rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.limited-no-current-text {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #374151;
+  margin: 0;
+}
+.limited-no-current-sub {
+  font-size: 0.9rem;
+  color: #6b7280;
+  margin: 0;
+}
+
+/* ========== 特徴グリッド ========== */
+.limited-features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 1rem;
+  margin-block: 1.5rem;
+}
+.limited-feature-card {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+}
+.limited-feature-icon {
+  font-size: 1.75rem;
+  margin-bottom: 0.5rem;
+}
+.limited-feature-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem;
+  color: #1f2937;
+}
+.limited-feature-desc {
+  font-size: 0.85rem;
+  line-height: 1.7;
+  color: #4b5563;
+  margin: 0;
+}
+
+/* ========== 情報テーブル ========== */
+.limited-info-table-wrap {
+  overflow-x: auto;
+  margin-top: 1.5rem;
+}
+.limited-info-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+.limited-info-table th,
+.limited-info-table td {
+  padding: 0.6rem 1rem;
+  border: 1px solid #e5e7eb;
+  text-align: left;
+  line-height: 1.5;
+}
+.limited-info-table th {
+  background: #f3f4f6;
+  font-weight: 600;
+  white-space: nowrap;
+  width: 9rem;
+}
+.limited-table-caption {
+  font-size: 0.8rem;
+  color: #6b7280;
+  text-align: left;
+  padding: 0.25rem 0 0.5rem;
+}
+
+/* ========== アーカイブ ========== */
+.limited-archive-list {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.limited-archive-link {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.limited-archive-link:hover {
+  border-color: #7c3aed;
+  box-shadow: 0 2px 8px rgba(124 58 237 / 0.1);
+}
+.limited-archive-month {
+  font-size: 0.75rem;
+  font-weight: 700;
+  background: #7c3aed;
+  color: #fff;
+  padding: 0.25rem 0.6rem;
+  border-radius: 2rem;
+  white-space: nowrap;
+}
+.limited-archive-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+.limited-archive-title {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #1f2937;
+}
+.limited-archive-desc {
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+.limited-archive-arrow {
+  color: #7c3aed;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+.limited-archive-empty {
+  background: #f9fafb;
+  border: 1px dashed #d1d5db;
+  border-radius: 0.75rem;
+  padding: 2rem;
+  text-align: center;
+}
+.limited-archive-empty-text {
+  font-size: 0.9rem;
+  color: #6b7280;
+  margin: 0;
+}
+
+/* ========== 関連リンク ========== */
+.limited-related-list {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.limited-related-link {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.limited-related-link:hover {
+  border-color: #7c3aed;
+  box-shadow: 0 2px 8px rgba(124 58 237 / 0.1);
+}
+.limited-related-icon {
+  font-size: 1.75rem;
+  flex-shrink: 0;
+}
+.limited-related-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+.limited-related-title {
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+.limited-related-desc {
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+/* ========== FAQ ========== */
+.limited-faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+.limited-faq-item {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+.limited-faq-q {
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 1rem 1.25rem;
+  background: #f9fafb;
+  margin: 0;
+  display: block;
+}
+.limited-faq-q::before {
+  content: 'Q. ';
+  color: #7c3aed;
+}
+.limited-faq-a {
+  font-size: 0.9rem;
+  line-height: 1.7;
+  padding: 1rem 1.25rem;
+  margin: 0;
+  color: #4b5563;
+}
+.limited-faq-a::before {
+  content: 'A. ';
+  font-weight: 700;
+  color: #16a34a;
+}
+
+/* ========== レスポンシブ ========== */
+@media (max-width: 640px) {
+  .limited-features-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .limited-current-card {
+    padding: 1.5rem;
+  }
+}
+@media (max-width: 480px) {
+  .limited-features-grid {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
