@@ -10,7 +10,7 @@ import cloudflare from '@astrojs/cloudflare';
  * ページ実URLと完全一致させること。
  * 未登録は BUILD_DATE にフォールバック。
  *
- * 最終更新: 2026-05-21（SEO最適化 100ページ一括対応）
+ * 最終更新: 2026-05-22（技術SEO最終確認 A5: 旧URL削除・新規ページ追加・SITEMAP_EXCLUDE更新）
  */
 const PAGE_LAST_MODIFIED = {
   // ===== TOP =====
@@ -41,18 +41,18 @@ const PAGE_LAST_MODIFIED = {
   '/diagnosis/multi-int/result/naturalist/': '2026-05-21',
 
   // ===== 診断結果ページ（perfectionism 4タイプ）=====
-  '/diagnosis/perfectionism/result/adaptive/': '2026-05-21',
-  '/diagnosis/perfectionism/result/maladaptive/': '2026-05-21',
-  '/diagnosis/perfectionism/result/social/': '2026-05-21',
-  '/diagnosis/perfectionism/result/low/': '2026-05-21',
+  '/diagnosis/perfectionism/result/thorough/': '2026-05-22',
+  '/diagnosis/perfectionism/result/particular/': '2026-05-22',
+  '/diagnosis/perfectionism/result/procrastinating/': '2026-05-22',
+  '/diagnosis/perfectionism/result/expecting/': '2026-05-22',
 
   // ===== 診断結果ページ（friend-compat 6タイプ）=====
-  '/diagnosis/friend-compat/result/A/': '2026-05-21',
-  '/diagnosis/friend-compat/result/B/': '2026-05-21',
-  '/diagnosis/friend-compat/result/C/': '2026-05-21',
-  '/diagnosis/friend-compat/result/D/': '2026-05-21',
-  '/diagnosis/friend-compat/result/E/': '2026-05-21',
-  '/diagnosis/friend-compat/result/F/': '2026-05-21',
+  '/diagnosis/friend-compat/result/mood-maker/': '2026-05-22',
+  '/diagnosis/friend-compat/result/listener/': '2026-05-22',
+  '/diagnosis/friend-compat/result/leader/': '2026-05-22',
+  '/diagnosis/friend-compat/result/lone-wolf/': '2026-05-22',
+  '/diagnosis/friend-compat/result/harmonizer/': '2026-05-22',
+  '/diagnosis/friend-compat/result/analyst/': '2026-05-22',
 
   // ===== 診断結果ページ（disc 4タイプ）=====
   '/diagnosis/disc/result/D/': '2026-05-21',
@@ -69,10 +69,10 @@ const PAGE_LAST_MODIFIED = {
   '/diagnosis/love-style/result/agape/': '2026-05-21',
 
   // ===== 診断結果ページ（money-style 4タイプ）=====
-  '/diagnosis/money-style/result/spender/': '2026-05-21',
-  '/diagnosis/money-style/result/saver/': '2026-05-21',
-  '/diagnosis/money-style/result/planner/': '2026-05-21',
-  '/diagnosis/money-style/result/avoider/': '2026-05-21',
+  '/diagnosis/money-style/result/avoidance/': '2026-05-22',
+  '/diagnosis/money-style/result/worship/': '2026-05-22',
+  '/diagnosis/money-style/result/status/': '2026-05-22',
+  '/diagnosis/money-style/result/vigilance/': '2026-05-22',
 
   // ===== 星座ページ（12ページ）=====
   '/diagnosis/zodiac/aries/': '2026-05-21',
@@ -154,6 +154,10 @@ const SITEMAP_EXCLUDE = [
   // noindex の個人データ・準備中ページ
   /^\/profile\/$/,
   /^\/strengths\/$/,
+  // 認証・開発ページ（noindex）
+  /^\/login\//,
+  /^\/signup\//,
+  /^\/dev\//,
   // 相性診断の個人データ統合ページ（noindex）
   /^\/aisei\/renai\/$/,
   /^\/aisei\/yujin\/$/,

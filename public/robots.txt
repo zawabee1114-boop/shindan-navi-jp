@@ -5,10 +5,15 @@
 User-agent: *
 Allow: /
 
-# share/me/favorites は動的個人ページのためサイトマップ除外
+# 個人データ・動的ページ（インデックス不要）
 Disallow: /share/
 Disallow: /me/
 Disallow: /favorites/
+# 認証・開発・APIページ
+Disallow: /login/
+Disallow: /signup/
+Disallow: /dev/
+Disallow: /api/
 
 # 主要AIクローラ（明示許可）
 User-agent: GPTBot
