@@ -1,4 +1,8 @@
 # Cloudflare Pages 301 Redirects
 # 診断ナビ（shindan-navi.jp）
-# 現時点では旧URL→新URLマッピングなし
-# 将来追加時: 長いパスから順に記述する（先頭から評価されるため）
+# 長いパスから順に記述する（先頭から評価されるため）
+
+# 旧URL（Phase 0 スタブ）→ 本実装URL（2026-05-22）
+/diagnosis/seiza/        /diagnosis/zodiac/        301
+/diagnosis/money-sense/  /diagnosis/money-style/   301
+/diagnosis/ketsuekigata/ /diagnosis/blood-compat/  301
