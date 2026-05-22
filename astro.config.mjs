@@ -115,6 +115,9 @@ const PAGE_LAST_MODIFIED = {
 
   // ===== 相性ハブ =====
   '/aisei/': '2026-05-21',
+  '/aisei/renai/': '2026-05-22',
+  '/aisei/shokuba/': '2026-05-22',
+  '/aisei/yujin/': '2026-05-22',
 
   // ===== 信頼・法的ページ =====
   '/about/': '2026-05-21',
@@ -141,7 +144,7 @@ const BUILD_DATE = new Date().toISOString().slice(0, 10);
  * - /favorites/: 個人データページ（noindex）
  * - /profile/ : 統合プロファイル（noindex・個人LocalStorageデータ）
  * - /strengths/: 準備中（noindex）
- * - /aisei/renai/ 等: noindex の個人相性ページ
+ * - /aisei/kazoku/fufu/ など: 個人データ統合ページ（LocalStorage依存）
  *
  * 注意: 診断結果ページ（/result/配下）はSEO対象として含める
  *   旧パターン /result\/[a-z0-9-]+\// は大文字タイプ(D/S/C/i等)を
@@ -158,12 +161,8 @@ const SITEMAP_EXCLUDE = [
   /^\/login\//,
   /^\/signup\//,
   /^\/dev\//,
-  // 相性診断の個人データ統合ページ（noindex）
-  /^\/aisei\/renai\/$/,
-  /^\/aisei\/yujin\/$/,
-  /^\/aisei\/shokuba\/$/,
-  /^\/aisei\/kazoku\/fufu\/$/,
-  /^\/aisei\/kazoku\/oyako\/$/,
+  // 相性診断ハブ（renai/shokuba/yujin は noindex 解除済み・2026-05-22）
+  // kazoku/fufu と kazoku/oyako は個人データ依存のため引き続き除外なし
 ];
 
 export default defineConfig({
