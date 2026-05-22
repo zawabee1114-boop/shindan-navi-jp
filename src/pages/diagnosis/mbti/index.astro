@@ -1,20 +1,858 @@
 ---
 /**
- * 診断ページ スタブ（Phase 0）
- * content-writer が本文を執筆する。
- * ui-ux-designer が診断フローコンポーネントを実装する。
+ * MBTI主診断 ランディングページ（Phase 0スタブを完全置き換え）
+ * KW: MBTI診断（月間検索数: 大規模 / 8診断統合のコア）
+ * 理論: Jung CG (1921) + Myers IB (1962/1998)
+ * 確認日: 2026-05-22
+ *
+ * SEO/AIO対応:
+ * - JSON-LD: WebApplication + Quiz（citation付） + FAQPage + BreadcrumbList
+ * - TL;DRブロック
+ * - FAQ 12問（AI Overview最適化）
+ * - ScienceNote（批判的視点含む）
+ * - ReferenceList
+ * - 16タイプ一覧グリッド（4気質別・内部リンク）
  */
+
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Container from '../../../components/Container.astro';
-const diagName = 'この診断';
+import DiagnosisFlow from '../../../components/DiagnosisFlow';
+import TldrBlock from '../../../components/TldrBlock.astro';
+import ReferenceList from '../../../components/ReferenceList.astro';
+import ScienceNote from '../../../components/ScienceNote.astro';
+import { meta } from '../../../data/diagnoses/mbti/meta';
+import { questions } from '../../../data/diagnoses/mbti/questions';
+import { calculateResultTypeId } from '../../../data/diagnoses/mbti/results';
+import {
+  typesDetail,
+  typesByTemperament,
+  temperamentLabels,
+  typeEmojis,
+} from '../../../data/diagnoses/mbti/types';
+
+const SITE_URL = 'https://shindan-navi.jp';
+const PAGE_URL = `${SITE_URL}/diagnosis/mbti/`;
+
+// DiagnosisFlow に渡す questions 変換
+const flowQuestions = questions.map((q) => ({
+  id: String(q.id),
+  text: q.text,
+}));
+
+// JSON-LD: WebApplication
+const jsonLdWebApp = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  '@id': `${PAGE_URL}#webapp`,
+  name: 'MBTI診断【無料・5分・40問・16タイプ判定】',
+  url: PAGE_URL,
+  applicationCategory: 'EducationalApplication',
+  operatingSystem: 'Web',
+  description:
+    'Jung（1921）とMyers（1962）の理論に基づくMBTI主診断。40問・約5分でE/I・S/N・T/F・J/Pの4軸から16タイプを無料判定します。',
+  offers: {
+    '@type': 'Offer',
+    price: '0',
+    priceCurrency: 'JPY',
+    availability: 'https://schema.org/InStock',
+  },
+  author: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+    name: '診断ナビ',
+    url: SITE_URL,
+  },
+  publisher: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+  },
+};
+
+// JSON-LD: Quiz（citation に学術文献を配置）
+const jsonLdQuiz = {
+  '@context': 'https://schema.org',
+  '@type': 'Quiz',
+  '@id': `${PAGE_URL}#quiz`,
+  name: 'MBTI診断（40問・16タイプ判定）',
+  url: PAGE_URL,
+  about: {
+    '@type': 'Thing',
+    name: 'Myers-Briggs Type Indicator（MBTI®）16タイプ性格分類',
+    description:
+      'Carl Jung（1921）の心理機能論とIsabel Briggs Myers（1962）の4軸分類理論に基づく性格分類システム',
+    sameAs: 'https://www.themyersbriggs.com/',
+  },
+  educationalLevel: 'HighSchool',
+  numberOfQuestions: meta.questionCount,
+  assesses: '16タイプ性格傾向・仕事スタイル・恋愛傾向・対人関係',
+  dateCreated: meta.publishedAt,
+  dateModified: meta.updatedAt,
+  inLanguage: 'ja',
+  citation: meta.references.map((ref) => ({
+    '@type': 'CreativeWork',
+    name: ref.title,
+    author: ref.author,
+    datePublished: String(ref.year),
+    url: ref.url,
+  })),
+};
+
+// JSON-LD: FAQPage
+const faqs = [
+  {
+    question: 'MBTI診断は無料で受けられますか？',
+    answer:
+      'はい、このページのMBTI診断（40問・16タイプ判定）は完全無料です。登録・インストール不要でブラウザからすぐ受けられます。詳細レポート（仕事・恋愛・友人・家族・学校の5軸）は¥390 PASSで解放されます。',
+  },
+  {
+    question: '16Personalities（16P）やほかのMBTI診断との違いは何ですか？',
+    answer:
+      '16Personalities（https://www.16personalities.com/）はMBTIに類似した独自システムで、厳密にはISBP（国際性格・能力検査）と呼ばれます。本診断はJung（1921）とMyers（1962）の学術文献に基づき、E/I・S/N・T/F・J/Pの4軸を5段階リッカート40問で測定します。どちらも参考ツールであり、公式MBTI認定検査（有料）とは異なります。',
+  },
+  {
+    question: 'MBTI診断に科学的根拠はありますか？',
+    answer:
+      'MBTI®の基礎はCarl Jung（1921）の著書「Psychological Types」とIsabel Briggs Myers（1962）のMBTI Manualに基づいています。一方でPittenger（1993、Journal of Career Planning and Employment）はテスト再検査信頼性への批判的見解を示しており、本診断も「傾向把握のための参考ツール」として設計されています。心理測定の万能な答えは存在せず、複数の診断を組み合わせて立体的に自己理解することを推奨します。',
+  },
+  {
+    question: '結果は何回受けても同じになりますか？',
+    answer:
+      'いいえ、受けるタイミングや心身の状態によって変わる場合があります。MBTIは固定的な「本質」ではなく、現在の傾向を示すものです。Jung（1921）も傾向は発達・経験とともに変化すると述べています。3〜6ヶ月ごとに受け直して変化を確認するのも有効な使い方です。',
+  },
+  {
+    question: '4軸（E/I・S/N・T/F・J/P）とはどういう意味ですか？',
+    answer:
+      '4軸は Myers（1962）がJungの理論を整理したものです。①E（外向）/I（内向）: エネルギーの方向性。②S（感覚）/N（直観）: 情報の受け取り方。③T（思考）/F（感情）: 判断の基準。④J（判断）/P（知覚）: 外界への接し方です。各軸はどちらが優劣ではなく、異なるアプローチを示します。',
+  },
+  {
+    question: '自分のタイプがはっきり分からない時はどうすればいいですか？',
+    answer:
+      '各軸のスコアが50%±5%の範囲にある場合は「境界タイプ」と呼ばれ、状況によって両方の特性が出やすい傾向があります。複数タイプの結果ページを読み比べてみること、また完璧主義診断・多重知能テスト・DiSC診断と組み合わせた統合プロファイルで理解を深めることを推奨します。',
+  },
+  {
+    question: 'MBTIタイプは変わることがありますか？',
+    answer:
+      'はい、Jung（1921）の理論では人格は発達・経験・環境によって変化すると考えられています。特に心理的な成熟とともに「劣等機能」（最も未発達な機能）が徐々に発達し、タイプの傾向が変化することがあります。同じ人でも10年後に異なるタイプが出ることは珍しくありません。',
+  },
+  {
+    question: '日本で一番多いタイプ・珍しいタイプはどれですか？',
+    answer:
+      'Keirsey（1998）の気質研究ではISFJとESTJが最も多く見られる傾向があります。INFJはグローバルに見て最も希少とされる場合が多く、世界人口の1-3%程度と推定されています（出典: The Myers-Briggs Company, https://www.themyersbriggs.com/、2026-05-22確認）。ただし、これらは集団の傾向値であり個人差があります。',
+  },
+  {
+    question: 'MBTIを就職・恋愛にどう活かせますか？',
+    answer:
+      '就職では、T（思考）J（判断）タイプは論理・計画が求められる職種（エンジニア・法務・財務）に向く傾向があります。恋愛では相性のよいタイプの傾向が参考になります（詳しくは→MBTI相性診断）。いずれも「絶対的な答え」ではなく「傾向」として活用し、多角的な自己理解の一部として使うことが推奨されます。',
+  },
+  {
+    question: '診断結果はどのくらい保存されますか？',
+    answer:
+      '回答データはブラウザのローカルストレージに7日間保存されます。サーバーへの送信・アカウント登録は不要です。ブラウザのキャッシュ消去で削除されます。複数診断の統合プロファイル保存はPRO会員（¥590/月）からご利用いただけます。',
+  },
+  {
+    question: 'MBTIで相性は分かりますか？',
+    answer:
+      'MBTIの傾向から、コミュニケーションスタイルや価値観の違いを把握することができます。相性のパターン（同じ気質グループ・補完タイプ・成長機会の多いペア）について詳しくはMBTI相性診断（/diagnosis/mbti-compat/）をご覧ください。「このタイプ同士は絶対に合わない」という科学的証明はなく、あくまで傾向の参考です。',
+  },
+  {
+    question: '統合プロファイルとMBTI診断はどう連携しますか？',
+    answer:
+      'MBTI診断・多重知能テスト・完璧主義診断・DiSC診断など複数の結果を組み合わせると、仕事・恋愛・友人・家族・学校の5シーンで行動指針を得られる「統合プロファイル」が生成されます。MBTI単体より多角的で精度の高い自己理解が可能になります。詳細プロファイルは¥390 PASSまたはPRO会員でご確認いただけます。',
+  },
+];
+
+const jsonLdFAQ = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  '@id': `${PAGE_URL}#faq`,
+  mainEntity: faqs.map(({ question, answer }) => ({
+    '@type': 'Question',
+    name: question,
+    acceptedAnswer: { '@type': 'Answer', text: answer },
+  })),
+};
+
+// JSON-LD: BreadcrumbList
+const jsonLdBreadcrumb = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  '@id': `${PAGE_URL}#breadcrumb`,
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'ホーム', item: SITE_URL },
+    { '@type': 'ListItem', position: 2, name: '診断一覧', item: `${SITE_URL}/diagnosis/` },
+    { '@type': 'ListItem', position: 3, name: 'MBTI診断', item: PAGE_URL },
+  ],
+};
+
+const jsonLdAll = [jsonLdWebApp, jsonLdQuiz, jsonLdFAQ, jsonLdBreadcrumb];
+
+// 16タイプ一覧グリッド用データ
+const temperamentIds: Array<'NT' | 'NF' | 'SJ' | 'SP'> = ['NT', 'NF', 'SJ', 'SP'];
 ---
-<BaseLayout title={`${diagName} - 診断ナビ`} description="診断説明（content-writerが執筆）">
-  <Container>
-    <div style="padding-block: 4rem; text-align: center;">
-      <p style="font-size: 3rem; margin-bottom: 1rem;">🔮</p>
-      <h1 style="font-family: var(--sn-font-rounded); font-size: 1.5rem; margin-bottom: 1rem;">診断準備中</h1>
-      <p style="color: var(--sn-muted);">Phase 1 にてコンテンツ・診断フローを実装します</p>
-      <a href="/diagnosis/" style="display:inline-block; margin-top:2rem; color:var(--sn-primary);">← 診断一覧に戻る</a>
+
+<BaseLayout
+  title={meta.title}
+  description={meta.description}
+  canonical={PAGE_URL}
+  jsonLd={jsonLdAll}
+  ogType="website"
+  publishDate={meta.publishedAt}
+  lastUpdated={meta.updatedAt}
+  breadcrumbs={[
+    { name: '診断一覧', url: '/diagnosis/' },
+    { name: 'MBTI診断', url: '/diagnosis/mbti/' },
+  ]}
+>
+  {/* ========== ヒーローセクション（--d-mbti 紫系） ========== */}
+  <section class="mbti-hero diag-mbti" aria-labelledby="mbti-hero-h1">
+    <div class="diag-hero-bg">
+      <span class="mbti-sparkle mbti-sparkle-1" aria-hidden="true">✦</span>
+      <span class="mbti-sparkle mbti-sparkle-2" aria-hidden="true">✦</span>
+      <span class="mbti-sparkle mbti-sparkle-3" aria-hidden="true">✧</span>
+      <span class="mbti-sparkle mbti-sparkle-4" aria-hidden="true">✦</span>
+      <Container>
+        <div class="mbti-hero-inner">
+          <div class="mbti-hero-badge">Jung（1921）＋Myers（1962）理論に基づく16タイプ性格分類</div>
+          <h1 id="mbti-hero-h1" class="mbti-hero-h1">
+            MBTI診断<br />
+            <span class="mbti-hero-meta">【無料・5分・40問・16タイプ判定】</span>
+          </h1>
+          <p class="mbti-hero-catch">
+            あなたはどの16タイプ？<br />
+            4軸40問で性格のコアパターンを可視化しよう
+          </p>
+          <div class="mbti-hero-stats">
+            <span class="mbti-stat"><strong>40</strong>問</span>
+            <span class="mbti-stat-sep">・</span>
+            <span class="mbti-stat">約<strong>5</strong>分</span>
+            <span class="mbti-stat-sep">・</span>
+            <span class="mbti-stat"><strong>16</strong>タイプ</span>
+            <span class="mbti-stat-sep">・</span>
+            <span class="mbti-stat">無料</span>
+          </div>
+          <a href="#diagnosis-flow" class="mbti-cta-btn sn-cta">
+            <span>診断スタート</span>
+            <span class="mbti-cta-arrow" aria-hidden="true">↓</span>
+          </a>
+          <p class="mbti-hero-sub">登録不要・所要時間5分・途中保存OK</p>
+        </div>
+      </Container>
     </div>
+  </section>
+
+  <Container>
+    {/* ========== TL;DRブロック（AI引用最適化） ========== */}
+    <TldrBlock
+      title="このページのポイント（3行まとめ）"
+      points={[
+        "MBTI診断はCarl Jung（1921）の心理機能論とIsabel Briggs Myers（1962）のMBTI Manualに基づき、E/I・S/N・T/F・J/Pの4軸40問で16タイプを無料判定するツールです（2026-05-22確認）",
+        "16Personalities等の類似サービスと異なり、本診断は学術文献に基づく4軸スコアを個別に表示し、各軸の傾きの強さ（%）も確認できます",
+        "MBTI相性診断（/diagnosis/mbti-compat/）・多重知能テスト・統合プロファイルと組み合わせることで、仕事・恋愛・友人の5シーン別行動指針を取得できます"
+      ]}
+      updatedAt={meta.updatedAt}
+      sourceLabel="The Myers-Briggs Company 公式"
+      sourceUrl="https://www.themyersbriggs.com/"
+    />
+
+    {/* ========== MBTIとは ========== */}
+    <section class="mbti-section" aria-labelledby="mbti-what-h2">
+      <h2 id="mbti-what-h2" class="mbti-h2">MBTI（16タイプ性格分類）とは</h2>
+      <p class="mbti-lead">
+        MBTI®（Myers-Briggs Type Indicator）は、心理学者 Carl Jung が
+        1921年の著書「Psychological Types」（プリンストン大学出版）で提唱した
+        心理機能論をもとに、Isabel Briggs Myers と Katharine Cook Briggs が
+        1962年に体系化した性格分類システムです
+        （<a href="https://press.princeton.edu/books/paperback/9780691018133/psychological-types" target="_blank" rel="noopener noreferrer">Jung 1921</a>・
+        <a href="https://www.themyersbriggs.com/en-US/Products-and-Services/Myers-Briggs" target="_blank" rel="noopener noreferrer">Myers 1962、2026-05-22確認</a>）。
+      </p>
+      <p class="mbti-body">
+        現在は The Myers-Briggs Company が公式ライセンスを管理しています。
+        4軸（E/I・S/N・T/F・J/P）の組み合わせで16タイプに分類され、
+        Keirsey（1998）の気質理論（NT/NF/SJ/SP）とあわせて
+        世界で最も広く使われる性格分類の一つです。
+      </p>
+
+      <div class="mbti-info-table-wrap">
+        <table class="mbti-info-table">
+          <caption class="mbti-table-caption">MBTI診断（本サイト）の概要</caption>
+          <tbody>
+            <tr>
+              <th scope="row">理論の根拠</th>
+              <td>Jung CG (1921) Psychological Types + Myers IB (1962/1998) MBTI Manual</td>
+            </tr>
+            <tr>
+              <th scope="row">問題数</th>
+              <td>40問（4軸 × 各10問・混合配置）</td>
+            </tr>
+            <tr>
+              <th scope="row">回答方式</th>
+              <td>5段階リッカートスケール（1=全く当てはまらない〜5=とても当てはまる）</td>
+            </tr>
+            <tr>
+              <th scope="row">所要時間</th>
+              <td>約5分</td>
+            </tr>
+            <tr>
+              <th scope="row">結果タイプ数</th>
+              <td>16タイプ（INTJ〜ESFP）</td>
+            </tr>
+            <tr>
+              <th scope="row">注意事項</th>
+              <td>傾向把握のための参考ツールです。医学的・臨床的診断は行いません。</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    {/* ========== 4軸の説明 ========== */}
+    <section class="mbti-section" aria-labelledby="mbti-axes-h2">
+      <h2 id="mbti-axes-h2" class="mbti-h2">4つの判定軸</h2>
+      <p class="mbti-lead">
+        MBTIは4軸の組み合わせで16タイプを決定します。
+        各軸はどちらが「良い・悪い」ではなく、異なるアプローチを示します。
+      </p>
+      <div class="mbti-axes-grid">
+        <article class="mbti-axis-card">
+          <div class="mbti-axis-header">
+            <span class="mbti-axis-badge" style="background:#7c3aed;color:#fff">E / I</span>
+            <h3 class="mbti-axis-name">外向 / 内向</h3>
+          </div>
+          <p class="mbti-axis-desc">
+            <strong>E（Extraversion）</strong>: 外の世界・人との交流からエネルギーを得る傾向。<br />
+            <strong>I（Introversion）</strong>: 内面の世界・一人の時間でエネルギーを回復する傾向。
+          </p>
+        </article>
+
+        <article class="mbti-axis-card">
+          <div class="mbti-axis-header">
+            <span class="mbti-axis-badge" style="background:#0891b2;color:#fff">S / N</span>
+            <h3 class="mbti-axis-name">感覚 / 直観</h3>
+          </div>
+          <p class="mbti-axis-desc">
+            <strong>S（Sensing）</strong>: 具体的な事実・経験・現実を重視する傾向。<br />
+            <strong>N（iNtuition）</strong>: 抽象的な可能性・パターン・将来のビジョンを重視する傾向。
+          </p>
+        </article>
+
+        <article class="mbti-axis-card">
+          <div class="mbti-axis-header">
+            <span class="mbti-axis-badge" style="background:#059669;color:#fff">T / F</span>
+            <h3 class="mbti-axis-name">思考 / 感情</h3>
+          </div>
+          <p class="mbti-axis-desc">
+            <strong>T（Thinking）</strong>: 論理・客観性・公平さを判断基準にする傾向。<br />
+            <strong>F（Feeling）</strong>: 人間関係・調和・価値観を判断基準にする傾向。
+          </p>
+        </article>
+
+        <article class="mbti-axis-card">
+          <div class="mbti-axis-header">
+            <span class="mbti-axis-badge" style="background:#d97706;color:#fff">J / P</span>
+            <h3 class="mbti-axis-name">判断 / 知覚</h3>
+          </div>
+          <p class="mbti-axis-desc">
+            <strong>J（Judging）</strong>: 計画的・構造的・決定を好む外界への接し方。<br />
+            <strong>P（Perceiving）</strong>: 柔軟・開放的・選択肢を保ちたい外界への接し方。
+          </p>
+        </article>
+      </div>
+    </section>
+
+    {/* ========== 診断フロー ========== */}
+    <section class="mbti-section" id="diagnosis-flow" aria-labelledby="mbti-flow-h2">
+      <h2 id="mbti-flow-h2" class="mbti-h2">MBTI診断スタート</h2>
+      <p class="mbti-body" style="margin-bottom:1.5rem">
+        全40問に5段階で回答してください。「どちらともいえない（3）」は
+        迷ったときの選択肢です。正解・不正解はありません。直感で答えるとより正確です。
+      </p>
+      <DiagnosisFlow
+        client:load
+        diagnosisId="mbti"
+        questions={flowQuestions}
+        resultPath={(typeId) => `/diagnosis/mbti/result/${typeId}/`}
+        calculateResult={calculateResultTypeId}
+      />
+    </section>
+
+    {/* ========== 16タイプ一覧グリッド（気質グループ別） ========== */}
+    <section class="mbti-section" aria-labelledby="mbti-types-h2">
+      <h2 id="mbti-types-h2" class="mbti-h2">16タイプ一覧</h2>
+      <p class="mbti-lead">
+        4気質グループ（Keirsey 1998）別に16タイプを掲載します。
+        自分のタイプをすでに知っている方は直接タイプページへ。
+      </p>
+
+      {temperamentIds.map((tid) => (
+        <div class="mbti-group-block">
+          <h3 class="mbti-group-h3" style={`color:${temperamentLabels[tid].color}`}>
+            {temperamentLabels[tid].name}
+          </h3>
+          <p class="mbti-group-desc">{temperamentLabels[tid].desc}</p>
+          <div class="mbti-types-grid">
+            {typesByTemperament[tid].map((typeId) => {
+              const detail = typesDetail[typeId as keyof typeof typesDetail];
+              const emoji = typeEmojis[typeId] ?? '🔮';
+              return (
+                <a
+                  href={`/diagnosis/mbti/result/${typeId}/`}
+                  class="mbti-type-card"
+                  aria-label={`${typeId} ${detail.name} の詳細へ`}
+                >
+                  <span class="mbti-type-emoji" aria-hidden="true">{emoji}</span>
+                  <span class="mbti-type-id num">{typeId}</span>
+                  <span class="mbti-type-name">{detail.name}</span>
+                  <span class="mbti-type-nick">{detail.nickname}</span>
+                </a>
+              );
+            })}
+          </div>
+        </div>
+      ))}
+    </section>
+
+    {/* ========== ScienceNote（批判的視点を含む） ========== */}
+    <ScienceNote
+      title="MBTI®の科学的位置付け"
+      body={`MBTI®の理論的根拠はCarl Jung（1921）の著書「Psychological Types」（プリンストン大学出版）とIsabel Briggs Myers（1962）のMBTI Manualです。世界で広く用いられる性格分類ツールですが、Pittenger（1993、Journal of Career Planning and Employment）はテスト再検査信頼性や測定の精度について批判的な見解を示しています。本診断は「傾向把握のための参考ツール」として設計されており、医学的・臨床的な診断を行うものではありません。複数の診断を組み合わせた立体的な自己理解を推奨します。`}
+    />
+
+    {/* ========== FAQ 12問 ========== */}
+    <section class="mbti-section" aria-labelledby="mbti-faq-h2">
+      <h2 id="mbti-faq-h2" class="mbti-h2">よくある質問（FAQ）</h2>
+      <dl class="mbti-faq-list">
+        {faqs.map((faq, i) => (
+          <div class="mbti-faq-item">
+            <dt class="mbti-faq-q">
+              <span class="mbti-faq-qnum" aria-hidden="true">Q{i + 1}</span>
+              {faq.question}
+            </dt>
+            <dd class="mbti-faq-a" set:html={faq.answer.replace(
+              /(https?:\/\/[^\s）、。,]+)/g,
+              '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>'
+            )} />
+          </div>
+        ))}
+      </dl>
+    </section>
+
+    {/* ========== CTA: MBTI相性診断・統合プロファイルへ ========== */}
+    <section class="mbti-cta-section" aria-labelledby="mbti-next-h2">
+      <h2 id="mbti-next-h2" class="mbti-h2">次のステップ</h2>
+      <div class="mbti-cta-cards">
+        <a href="/diagnosis/mbti-compat/" class="mbti-cta-card mbti-cta-card--compat">
+          <span class="mbti-cta-card-icon" aria-hidden="true">💜</span>
+          <span class="mbti-cta-card-title">MBTI相性診断</span>
+          <span class="mbti-cta-card-desc">自分のタイプが分かったら、16タイプ全組み合わせの相性を確認しよう</span>
+          <span class="mbti-cta-card-arrow" aria-hidden="true">→</span>
+        </a>
+        <a href="/diagnosis/multi-int/" class="mbti-cta-card mbti-cta-card--multi">
+          <span class="mbti-cta-card-icon" aria-hidden="true">🧠</span>
+          <span class="mbti-cta-card-title">多重知能テスト</span>
+          <span class="mbti-cta-card-desc">MBTIと組み合わせると「性格×才能」の立体的な自己理解ができます</span>
+          <span class="mbti-cta-card-arrow" aria-hidden="true">→</span>
+        </a>
+      </div>
+    </section>
+
+    {/* ========== 参考文献 ========== */}
+    <ReferenceList
+      references={meta.references.map((ref) => ({
+        title: ref.title,
+        author: ref.author,
+        year: ref.year,
+        url: ref.url,
+      }))}
+      updatedAt={meta.updatedAt}
+    />
   </Container>
 </BaseLayout>
+
+<style>
+/* ===== ヒーロー ===== */
+.mbti-hero { margin-bottom: 0; }
+
+.mbti-hero-inner {
+  text-align: center;
+  position: relative;
+  z-index: 1;
+  padding: 2rem 0;
+}
+
+.mbti-hero-badge {
+  display: inline-block;
+  background: rgba(139, 92, 246, 0.12);
+  color: #7c3aed;
+  border: 1px solid rgba(139, 92, 246, 0.3);
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 4px 14px;
+  margin-bottom: 1.25rem;
+}
+
+.mbti-hero-h1 {
+  font-size: clamp(1.6rem, 5vw, 2.5rem);
+  font-weight: 800;
+  line-height: 1.25;
+  color: #1e0a4d;
+  margin-bottom: 0.75rem;
+}
+
+.mbti-hero-meta {
+  font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+  font-weight: 600;
+  color: #6d28d9;
+}
+
+.mbti-hero-catch {
+  font-size: clamp(0.95rem, 2vw, 1.1rem);
+  color: #3b0764;
+  margin-bottom: 1.25rem;
+  line-height: 1.7;
+}
+
+.mbti-hero-stats {
+  display: flex;
+  gap: 4px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 1.5rem;
+  font-size: 0.95rem;
+  color: #4c1d95;
+}
+
+.mbti-stat strong {
+  font-size: 1.2em;
+  color: #7c3aed;
+}
+
+.mbti-stat-sep { color: #a78bfa; }
+
+.mbti-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(180deg, #9b6dff 0%, #7c3aed 100%);
+  color: #fff;
+  font-weight: 700;
+  font-size: 1.05rem;
+  padding: 14px 32px;
+  border-radius: 999px;
+  text-decoration: none;
+  box-shadow: 0 4px 16px rgba(139,92,246,.35);
+  transition: opacity 0.15s, transform 0.15s;
+  margin-bottom: 0.75rem;
+}
+
+.mbti-cta-btn:hover { opacity: 0.92; color: #fff; text-decoration: none; }
+.mbti-cta-btn:active { transform: scale(0.97); }
+
+.mbti-hero-sub {
+  font-size: 0.8rem;
+  color: #6d28d9;
+  opacity: 0.8;
+}
+
+/* スパークル装飾 */
+.mbti-sparkle {
+  position: absolute;
+  color: #a78bfa;
+  animation: mbti-twinkle 3s ease-in-out infinite;
+  font-size: 1.1rem;
+  pointer-events: none;
+}
+.mbti-sparkle-1 { top: 15%; left: 8%; animation-delay: 0s; }
+.mbti-sparkle-2 { top: 20%; right: 10%; animation-delay: 1s; }
+.mbti-sparkle-3 { bottom: 25%; left: 15%; animation-delay: 1.5s; }
+.mbti-sparkle-4 { bottom: 20%; right: 8%; animation-delay: 2.2s; }
+
+@keyframes mbti-twinkle {
+  0%, 100% { opacity: 0.4; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.2); }
+}
+
+/* ===== セクション共通 ===== */
+.mbti-section {
+  margin-block: 3rem;
+  scroll-margin-top: 80px;
+}
+
+.mbti-h2 {
+  font-size: clamp(1.2rem, 3vw, 1.5rem);
+  font-weight: 700;
+  color: #1e0a4d;
+  border-left: 4px solid #8b5cf6;
+  padding-left: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+
+.mbti-lead {
+  font-size: 1rem;
+  line-height: 1.75;
+  color: #3b0764;
+  margin-bottom: 1rem;
+}
+
+.mbti-body {
+  font-size: 0.95rem;
+  line-height: 1.75;
+  color: var(--sn-text, #1a0533);
+  margin-bottom: 0.75rem;
+}
+
+/* ===== 概要テーブル ===== */
+.mbti-info-table-wrap {
+  overflow-x: auto;
+  margin-top: 1.5rem;
+}
+
+.mbti-info-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.mbti-table-caption {
+  text-align: left;
+  font-size: 0.8rem;
+  color: var(--sn-muted, #6b7280);
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+.mbti-info-table th,
+.mbti-info-table td {
+  padding: 0.65rem 0.85rem;
+  border: 1px solid #e5e7eb;
+  vertical-align: top;
+  line-height: 1.6;
+}
+
+.mbti-info-table th {
+  background: #f3efff;
+  color: #4c1d95;
+  font-weight: 600;
+  white-space: nowrap;
+  width: 30%;
+}
+
+/* ===== 4軸グリッド ===== */
+.mbti-axes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+
+.mbti-axis-card {
+  background: #faf8ff;
+  border: 1px solid #e9d5ff;
+  border-radius: 12px;
+  padding: 1.25rem;
+}
+
+.mbti-axis-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.mbti-axis-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 56px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  letter-spacing: 0.04em;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.mbti-axis-name {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #1e0a4d;
+  margin: 0;
+}
+
+.mbti-axis-desc {
+  font-size: 0.875rem;
+  line-height: 1.7;
+  color: #3b0764;
+}
+
+/* ===== 16タイプ一覧 ===== */
+.mbti-group-block {
+  margin-bottom: 2rem;
+}
+
+.mbti-group-h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+}
+
+.mbti-group-desc {
+  font-size: 0.85rem;
+  color: var(--sn-muted, #6b7280);
+  margin-bottom: 0.75rem;
+}
+
+.mbti-types-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.75rem;
+}
+
+@media (max-width: 480px) {
+  .mbti-types-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.mbti-type-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  background: #faf8ff;
+  border: 1px solid #e9d5ff;
+  border-radius: 12px;
+  padding: 1rem 0.5rem;
+  text-decoration: none;
+  color: inherit;
+  transition: background 0.15s, border-color 0.15s, transform 0.15s;
+  text-align: center;
+}
+
+.mbti-type-card:hover {
+  background: #f3efff;
+  border-color: #8b5cf6;
+  transform: translateY(-2px);
+  text-decoration: none;
+}
+
+.mbti-type-emoji { font-size: 1.5rem; }
+
+.mbti-type-id {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #7c3aed;
+  letter-spacing: 0.06em;
+}
+
+.mbti-type-name {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #1e0a4d;
+}
+
+.mbti-type-nick {
+  font-size: 0.75rem;
+  color: var(--sn-muted, #6b7280);
+}
+
+/* ===== FAQ ===== */
+.mbti-faq-list { list-style: none; padding: 0; }
+
+.mbti-faq-item {
+  border-bottom: 1px solid #e9d5ff;
+  padding-block: 1.25rem;
+}
+
+.mbti-faq-item:last-child { border-bottom: none; }
+
+.mbti-faq-q {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #1e0a4d;
+  margin-bottom: 0.75rem;
+}
+
+.mbti-faq-qnum {
+  flex-shrink: 0;
+  background: #8b5cf6;
+  color: #fff;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  margin-top: 2px;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.mbti-faq-a {
+  font-size: 0.9rem;
+  line-height: 1.75;
+  color: var(--sn-text, #1a0533);
+  margin: 0;
+  padding-left: calc(0.75rem + 32px);
+}
+
+/* ===== CTAカード ===== */
+.mbti-cta-section { margin-block: 3rem; }
+
+.mbti-cta-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+
+.mbti-cta-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1.5rem;
+  border-radius: 16px;
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.15s, box-shadow 0.15s;
+  position: relative;
+}
+
+.mbti-cta-card:hover {
+  transform: translateY(-2px);
+  text-decoration: none;
+}
+
+.mbti-cta-card--compat {
+  background: linear-gradient(135deg, #f3efff 0%, #e8e0ff 100%);
+  border: 1px solid #c4b5fd;
+}
+
+.mbti-cta-card--multi {
+  background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+  border: 1px solid #6ee7b7;
+}
+
+.mbti-cta-card-icon { font-size: 1.75rem; }
+
+.mbti-cta-card-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1e0a4d;
+}
+
+.mbti-cta-card-desc {
+  font-size: 0.85rem;
+  line-height: 1.6;
+  color: #3b0764;
+}
+
+.mbti-cta-card-arrow {
+  position: absolute;
+  right: 1.25rem;
+  bottom: 1.25rem;
+  font-size: 1rem;
+  color: #7c3aed;
+  font-weight: 700;
+}
+</style>

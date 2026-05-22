@@ -1,0 +1,701 @@
+---
+/**
+ * MBTI主診断 結果ページ（動的ルート）
+ * 16タイプ分の結果ページを静的生成する
+ *
+ * URL: /diagnosis/mbti/result/{typeId}/
+ * 例: /diagnosis/mbti/result/INTJ/
+ *
+ * データ: mbti-compat/types-detail.ts を流用（16タイプ詳細は重複作成しない）
+ *
+ * SEO/AIO:
+ * - JSON-LD: WebApplication + Article + BreadcrumbList
+ * - タイプ別メタタイトル・ディスクリプション（16種）
+ * - 機能スタック・強み・注意点・仕事/恋愛/友人スタイル
+ * - 相性ベスト3（mbti-compat 流用・mbti-compat への動線）
+ *
+ * 確認日: 2026-05-22
+ */
+
+import ResultLayout from '../../../../layouts/ResultLayout.astro';
+import Container from '../../../../components/Container.astro';
+import { typesDetail } from '../../../../data/diagnoses/mbti-compat/types-detail';
+import { getBestMatches } from '../../../../data/diagnoses/mbti-compat/results';
+import { meta } from '../../../../data/diagnoses/mbti/meta';
+import { typeEmojis, typesByTemperament, temperamentLabels } from '../../../../data/diagnoses/mbti/types';
+import type { MBTIType } from '../../../../data/diagnoses/mbti-compat/meta';
+import { MBTI_TYPES } from '../../../../data/diagnoses/mbti-compat/meta';
+
+export function getStaticPaths() {
+  return MBTI_TYPES.map((typeId) => ({
+    params: { type: typeId },
+    props: {
+      typeId,
+      typeData: typesDetail[typeId],
+    },
+  }));
+}
+
+const { typeId, typeData } = Astro.props;
+const typedTypeId = typeId as MBTIType;
+
+const SITE_URL = 'https://shindan-navi.jp';
+const PAGE_URL = `${SITE_URL}/diagnosis/mbti/result/${typeId}/`;
+
+// 相性ベスト3（mbti-compat の getBestMatches 流用）
+const bestMatches = getBestMatches(typedTypeId, 3);
+
+// 気質グループ取得
+const temperamentId = typeData.temperament as 'NT' | 'NF' | 'SJ' | 'SP';
+const temperamentInfo = temperamentLabels[temperamentId];
+
+// 同じ気質グループの他タイプ
+const sameTemperamentTypes = typesByTemperament[temperamentId].filter((t) => t !== typeId);
+
+// タイプ絵文字
+const emoji = typeEmojis[typeId] ?? '🔮';
+
+// FAQ（タイプ別）
+const faqs = [
+  {
+    question: `${typeId}（${typeData.name}）はどんな性格ですか？`,
+    answer: typeData.description.replace(/\n/g, ' '),
+  },
+  {
+    question: `${typeId}の強みは何ですか？`,
+    answer: `${typeId}（${typeData.name}）の主な強みは「${typeData.strengths.join('・')}」などが挙げられます。機能スタックでは${typeData.functionStack.dominant}が主機能で、これが最も得意な領域を形成しています（出典: Beebe J 2017, Energies and Patterns in Psychological Type, https://www.routledge.com/9781138859760）。`,
+  },
+  {
+    question: `${typeId}が向いている仕事は何ですか？`,
+    answer: typeData.workStyle.replace(/\n/g, ' '),
+  },
+  {
+    question: `${typeId}の恋愛の特徴は？`,
+    answer: typeData.loveStyle.replace(/\n/g, ' '),
+  },
+  {
+    question: `${typeId}と相性のよいタイプは？`,
+    answer: `相性スコア上位は「${bestMatches.map((m) => {
+      const partnerId = m.type1 === typedTypeId ? m.type2 : m.type1;
+      return `${partnerId}（${typesDetail[partnerId].name}）`;
+    }).join('・')}」などです（Keirsey 1998, Please Understand Me II）。詳細な全16タイプ相性データはMBTI相性診断（/diagnosis/mbti-compat/）でご確認ください。`,
+  },
+];
+
+// JSON-LD: WebApplication
+const jsonLdWebApp = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  '@id': `${PAGE_URL}#webapp`,
+  name: `MBTI ${typeId}（${typeData.name}）診断結果`,
+  url: PAGE_URL,
+  applicationCategory: 'EducationalApplication',
+  operatingSystem: 'Web',
+  offers: {
+    '@type': 'Offer',
+    price: '0',
+    priceCurrency: 'JPY',
+    availability: 'https://schema.org/InStock',
+  },
+};
+
+// JSON-LD: Article
+const jsonLdArticle = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  '@id': `${PAGE_URL}#article`,
+  headline: `${typeId}（${typeData.name}）の特徴・強み・仕事・恋愛傾向【MBTI診断結果】`,
+  url: PAGE_URL,
+  description: `${typeData.description.slice(0, 100).replace(/\n/g, '')}...`,
+  datePublished: meta.publishedAt,
+  dateModified: meta.updatedAt,
+  inLanguage: 'ja',
+  author: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+    name: '診断ナビ',
+    url: SITE_URL,
+  },
+  publisher: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+  },
+  about: {
+    '@type': 'Thing',
+    name: `${typeId} ${typeData.name}（16タイプ性格分類）`,
+    sameAs: 'https://www.themyersbriggs.com/',
+  },
+  mentions: [
+    {
+      '@type': 'Person',
+      name: 'Carl Jung',
+      sameAs: 'https://ja.wikipedia.org/wiki/%E3%82%AB%E3%83%BC%E3%83%AB%E3%83%BB%E3%82%B0%E3%82%B9%E3%82%BF%E3%83%95%E3%83%BB%E3%83%A6%E3%83%B3%E3%82%B0',
+    },
+    {
+      '@type': 'Person',
+      name: 'Isabel Briggs Myers',
+      sameAs: 'https://ja.wikipedia.org/wiki/%E3%82%A4%E3%82%B6%E3%83%99%E3%83%AB%E3%83%BB%E3%83%96%E3%83%AA%E3%83%83%E3%82%B0%E3%82%B9%E3%83%BB%E3%83%9E%E3%82%A4%E3%83%A4%E3%83%BC%E3%82%BA',
+    },
+  ],
+};
+
+// JSON-LD: FAQPage
+const jsonLdFAQ = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  '@id': `${PAGE_URL}#faq`,
+  mainEntity: faqs.map(({ question, answer }) => ({
+    '@type': 'Question',
+    name: question,
+    acceptedAnswer: { '@type': 'Answer', text: answer },
+  })),
+};
+
+// JSON-LD: BreadcrumbList
+const jsonLdBreadcrumb = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  '@id': `${PAGE_URL}#breadcrumb`,
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'ホーム', item: SITE_URL },
+    { '@type': 'ListItem', position: 2, name: '診断一覧', item: `${SITE_URL}/diagnosis/` },
+    { '@type': 'ListItem', position: 3, name: 'MBTI診断', item: `${SITE_URL}/diagnosis/mbti/` },
+    { '@type': 'ListItem', position: 4, name: `${typeId} ${typeData.name}`, item: PAGE_URL },
+  ],
+};
+
+const jsonLdAll = [jsonLdWebApp, jsonLdArticle, jsonLdFAQ, jsonLdBreadcrumb];
+
+// 関連診断
+const relatedDiagnoses = [
+  { title: 'MBTI相性診断', href: '/diagnosis/mbti-compat/', icon: '💜', badge: 'おすすめ' },
+  { title: '多重知能テスト', href: '/diagnosis/multi-int/', icon: '🧠' },
+  { title: '完璧主義診断', href: '/diagnosis/perfectionism/', icon: '⭐' },
+  { title: 'DiSC診断', href: '/diagnosis/disc/', icon: '💼' },
+];
+---
+
+<ResultLayout
+  diagnosisId="mbti"
+  diagnosisClass="diag-mbti"
+  typeId={typeId}
+  typeName={typeData.name}
+  diagnosisName="MBTI診断"
+  characterEmoji={emoji}
+  tagline={typeData.nickname + 'タイプ'}
+  shareUrl={PAGE_URL}
+  pageTitle={`${typeId}（${typeData.name}）の特徴・強み・仕事・恋愛傾向【MBTI診断結果】| 診断ナビ`}
+  pageDescription={`MBTI ${typeId}（${typeData.name}）の特徴を詳しく解説。機能スタック・強み・注意点・仕事傾向・恋愛傾向・友人関係を網羅。Jung（1921）・Myers（1962）・Keirsey（1998）の理論に基づいています。`}
+  relatedDiagnoses={relatedDiagnoses}
+  jsonLd={jsonLdAll}
+>
+  {/* ========== 概要タブ ========== */}
+  <Fragment slot="overview">
+    <div class="rt-overview">
+      <div class="rt-aio-block">
+        <p class="rt-aio-title">このページでわかること</p>
+        <ul class="rt-aio-list">
+          <li>{typeId}（{typeData.name}）の機能スタック・気質グループ・特性の概要</li>
+          <li>強み4項目・注意点4項目・仕事/恋愛/友人スタイル</li>
+          <li>相性ベスト3タイプと、MBTI相性診断への詳細導線</li>
+        </ul>
+      </div>
+
+      {/* 気質グループ */}
+      <div class="mbti-result-temperament">
+        <span class="mbti-result-temp-badge" style={`background:${temperamentInfo.color}22;color:${temperamentInfo.color};border:1px solid ${temperamentInfo.color}55`}>
+          {temperamentId} グループ
+        </span>
+        <span class="mbti-result-temp-label">{temperamentInfo.name}</span>
+      </div>
+
+      {/* 機能スタック */}
+      <div class="mbti-func-stack">
+        <h3 class="mbti-result-h3">認知機能スタック</h3>
+        <p class="mbti-result-source">
+          Beebe（2017）「Energies and Patterns in Psychological Type」に基づく
+          （<a href="https://www.routledge.com/9781138859760" target="_blank" rel="noopener noreferrer">出典</a>、2026-05-22確認）
+        </p>
+        <dl class="mbti-func-list">
+          <div class="mbti-func-item mbti-func-dominant">
+            <dt class="mbti-func-label">主機能（Dominant）</dt>
+            <dd class="mbti-func-val">{typeData.functionStack.dominant}</dd>
+          </div>
+          <div class="mbti-func-item mbti-func-auxiliary">
+            <dt class="mbti-func-label">補助機能（Auxiliary）</dt>
+            <dd class="mbti-func-val">{typeData.functionStack.auxiliary}</dd>
+          </div>
+          <div class="mbti-func-item mbti-func-tertiary">
+            <dt class="mbti-func-label">三次機能（Tertiary）</dt>
+            <dd class="mbti-func-val">{typeData.functionStack.tertiary}</dd>
+          </div>
+          <div class="mbti-func-item mbti-func-inferior">
+            <dt class="mbti-func-label">劣等機能（Inferior）</dt>
+            <dd class="mbti-func-val">{typeData.functionStack.inferior}</dd>
+          </div>
+        </dl>
+      </div>
+
+      {/* 説明 */}
+      <div class="mbti-result-desc">
+        {typeData.description.split('\n\n').map((para) => (
+          <p class="rt-body">{para.replace(/\n/g, '')}</p>
+        ))}
+      </div>
+
+      <div class="rt-theory-note">
+        <p>
+          この診断結果はCarl Jung（1921）「Psychological Types」
+          （<a href="https://press.princeton.edu/books/paperback/9780691018133/psychological-types" target="_blank" rel="noopener noreferrer">Princeton University Press</a>）と
+          Isabel Briggs Myers（1962/1998）「MBTI Manual」
+          （<a href="https://www.themyersbriggs.com/en-US/Products-and-Services/Myers-Briggs" target="_blank" rel="noopener noreferrer">The Myers-Briggs Company</a>、2026-05-22確認）に基づいています。
+          傾向把握のための参考情報です。
+        </p>
+      </div>
+    </div>
+  </Fragment>
+
+  {/* ========== 強みタブ ========== */}
+  <Fragment slot="strengths">
+    <div class="rt-strengths">
+      <h3 class="rt-section-h3">{typeData.name}（{typeId}）の4つの強み</h3>
+      <ul class="rt-strength-list">
+        {typeData.strengths.map((s) => (
+          <li class="rt-strength-item">
+            <span class="rt-strength-icon" aria-hidden="true">✅</span>
+            <span>{s}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </Fragment>
+
+  {/* ========== 注意点タブ ========== */}
+  <Fragment slot="weaknesses">
+    <div class="rt-weaknesses">
+      <h3 class="rt-section-h3">成長のヒントになる4つの傾向</h3>
+      <ul class="rt-weakness-list">
+        {typeData.weaknesses.map((w) => (
+          <li class="rt-weakness-item">
+            <span class="rt-weakness-icon" aria-hidden="true">⚡</span>
+            <span>{w}</span>
+          </li>
+        ))}
+      </ul>
+      <div class="rt-weakness-note">
+        注意点は「欠点」ではなく「強みと表裏一体の傾向」です。
+        自己理解の参考として活用してください。
+      </div>
+    </div>
+  </Fragment>
+
+  {/* ========== 仕事タブ（PASS） ========== */}
+  <Fragment slot="work">
+    <div class="rt-work">
+      <div class="rt-pass-preview">
+        <h3 class="rt-section-h3">{typeData.name}の仕事スタイル</h3>
+        <div class="mbti-work-free">
+          {typeData.workStyle.split('\n').map((line) => (
+            <p class="rt-body">{line}</p>
+          ))}
+        </div>
+        <div class="rt-pass-cta">
+          <p class="rt-pass-desc">
+            向いている職種10選・職場での強み詳細・マネジメントスタイルは¥390 PASSで確認できます。
+          </p>
+          <a href="/pass/" class="rt-pass-btn">
+            <span>¥390 PASSで仕事レポートを読む</span>
+            <span aria-hidden="true">→</span>
+          </a>
+          <p class="rt-pass-sub">買切 / 全8診断のレポートに使用可 / 登録不要</p>
+        </div>
+      </div>
+    </div>
+  </Fragment>
+
+  {/* ========== 恋愛タブ（PASS） ========== */}
+  <Fragment slot="love">
+    <div class="rt-love">
+      <div class="rt-pass-preview">
+        <h3 class="rt-section-h3">{typeData.name}の恋愛スタイル</h3>
+        <div class="mbti-love-free">
+          {typeData.loveStyle.split('\n').map((line) => (
+            <p class="rt-body">{line}</p>
+          ))}
+        </div>
+
+        {/* 相性ベスト3 */}
+        <div class="mbti-compat-preview">
+          <h4 class="mbti-compat-h4">相性スコア上位タイプ（ベスト3）</h4>
+          <div class="mbti-compat-cards">
+            {bestMatches.map((match, i) => {
+              const partnerId = match.type1 === typedTypeId ? match.type2 : match.type1;
+              const partnerDetail = typesDetail[partnerId];
+              const partnerEmoji = typeEmojis[partnerId] ?? '🔮';
+              return (
+                <a
+                  href={`/diagnosis/mbti/result/${partnerId}/`}
+                  class="mbti-compat-card"
+                  aria-label={`${partnerId} ${partnerDetail.name} の詳細へ`}
+                >
+                  <span class="mbti-compat-rank" aria-label={`${i + 1}位`}>#{i + 1}</span>
+                  <span class="mbti-compat-emoji" aria-hidden="true">{partnerEmoji}</span>
+                  <span class="mbti-compat-id num">{partnerId}</span>
+                  <span class="mbti-compat-name">{partnerDetail.name}</span>
+                </a>
+              );
+            })}
+          </div>
+          <p class="mbti-compat-note">
+            全16タイプの詳細相性は
+            <a href="/diagnosis/mbti-compat/" class="mbti-compat-link">MBTI相性診断</a>
+            でご確認ください。
+          </p>
+        </div>
+
+        <div class="rt-pass-cta">
+          <p class="rt-pass-desc">
+            アプローチ法・相性の詳細分析・恋愛での注意点は¥390 PASSで確認できます。
+          </p>
+          <a href="/pass/" class="rt-pass-btn">
+            <span>¥390 PASSで恋愛レポートを読む</span>
+            <span aria-hidden="true">→</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </Fragment>
+
+  {/* ========== 友人タブ（PASS） ========== */}
+  <Fragment slot="friend">
+    <div class="rt-friend">
+      <div class="rt-pass-preview">
+        <h3 class="rt-section-h3">{typeData.name}の友人関係スタイル</h3>
+        <div class="mbti-friend-free">
+          {typeData.friendStyle.split('\n').map((line) => (
+            <p class="rt-body">{line}</p>
+          ))}
+        </div>
+
+        {/* 同気質グループのタイプ */}
+        <div class="mbti-same-temp">
+          <h4 class="mbti-compat-h4">同じ{temperamentInfo.name}のタイプ</h4>
+          <div class="mbti-same-temp-list">
+            {sameTemperamentTypes.map((t) => (
+              <a
+                href={`/diagnosis/mbti/result/${t}/`}
+                class="mbti-same-temp-item"
+                aria-label={`${t} ${typesDetail[t as MBTIType].name} の詳細へ`}
+              >
+                <span class="mbti-same-temp-id num">{t}</span>
+                <span class="mbti-same-temp-name">{typesDetail[t as MBTIType].name}</span>
+              </a>
+            ))}
+          </div>
+        </div>
+
+        <div class="rt-pass-cta">
+          <p class="rt-pass-desc">
+            友人関係での詳細アドバイス・相性タイプの組み合わせは¥390 PASSで確認できます。
+          </p>
+          <a href="/pass/" class="rt-pass-btn">
+            <span>¥390 PASSで友人レポートを読む</span>
+            <span aria-hidden="true">→</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </Fragment>
+
+  {/* ========== 家族タブ（PASS） ========== */}
+  <Fragment slot="family">
+    <div class="rt-family">
+      <div class="rt-pass-preview">
+        <h3 class="rt-section-h3">{typeData.name}の家族関係スタイル</h3>
+        <div class="rt-pass-cta">
+          <p class="rt-pass-desc">
+            家族関係での行動傾向・親子/パートナーとの向き合い方は¥390 PASSで確認できます。
+          </p>
+          <a href="/pass/" class="rt-pass-btn">
+            <span>¥390 PASSで家族レポートを読む</span>
+            <span aria-hidden="true">→</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </Fragment>
+
+  {/* ========== 学校タブ（PASS） ========== */}
+  <Fragment slot="school">
+    <div class="rt-school">
+      <div class="rt-pass-preview">
+        <h3 class="rt-section-h3">{typeData.name}の学習スタイル</h3>
+        <div class="rt-pass-cta">
+          <p class="rt-pass-desc">
+            得意な学習スタイル・向いている教科・学校での注意点は¥390 PASSで確認できます。
+          </p>
+          <a href="/pass/" class="rt-pass-btn">
+            <span>¥390 PASSで学習レポートを読む</span>
+            <span aria-hidden="true">→</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </Fragment>
+
+  {/* ========== 有名人タブ ========== */}
+  <Fragment slot="celebrity">
+    <div class="rt-celebrity">
+      <h3 class="rt-section-h3">{typeId}タイプの有名人・キャラクター傾向</h3>
+      <p class="rt-body">
+        {typeData.name}（{typeId}）は
+        {typeData.functionStack.dominant}を主機能とするタイプです。
+        歴史的・著名な人物への{typeId}推定の分類は複数の出典で行われていますが、
+        本人確認が取れない場合もあるため、本サイトでは掲載を控えています。
+      </p>
+      <p class="rt-body">
+        同じ{temperamentInfo.name}（{temperamentId}グループ）のタイプと
+        共通の気質的特徴を持つ傾向があります。
+      </p>
+    </div>
+  </Fragment>
+
+  {/* ========== 成長タブ（PASS） ========== */}
+  <Fragment slot="growth">
+    <div class="rt-growth">
+      <div class="rt-pass-preview">
+        <h3 class="rt-section-h3">{typeData.name}の成長のヒント</h3>
+        <p class="rt-body">
+          Jungの個性化（Individuation）の観点では、
+          劣等機能である{typeData.functionStack.inferior}を意識的に発達させることが
+          心理的成熟への鍵とされています
+          （Jung 1921, Psychological Types）。
+        </p>
+        <div class="rt-pass-cta">
+          <p class="rt-pass-desc">
+            具体的な成長アクション・劣等機能の育て方・他タイプとの協力方法は¥390 PASSで確認できます。
+          </p>
+          <a href="/pass/" class="rt-pass-btn">
+            <span>¥390 PASSで成長レポートを読む</span>
+            <span aria-hidden="true">→</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </Fragment>
+</ResultLayout>
+
+<style>
+/* ===== 概要タブ内スタイル ===== */
+.mbti-result-temperament {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.mbti-result-temp-badge {
+  display: inline-block;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 3px 12px;
+  font-family: 'Inter', system-ui, sans-serif;
+  letter-spacing: 0.04em;
+}
+
+.mbti-result-temp-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--sn-muted, #6b7280);
+}
+
+/* ===== 機能スタック ===== */
+.mbti-func-stack {
+  background: #faf8ff;
+  border: 1px solid #e9d5ff;
+  border-radius: 12px;
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.mbti-result-h3 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #4c1d95;
+  margin-bottom: 0.25rem;
+}
+
+.mbti-result-source {
+  font-size: 0.75rem;
+  color: var(--sn-muted, #6b7280);
+  margin-bottom: 1rem;
+}
+
+.mbti-func-list {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.mbti-func-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.mbti-func-label {
+  flex-shrink: 0;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--sn-muted, #6b7280);
+  min-width: 160px;
+}
+
+.mbti-func-val {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #1e0a4d;
+}
+
+.mbti-func-dominant .mbti-func-val { color: #7c3aed; }
+.mbti-func-auxiliary .mbti-func-val { color: #0891b2; }
+.mbti-func-tertiary .mbti-func-val { color: #059669; }
+.mbti-func-inferior .mbti-func-val { color: #6b7280; }
+
+/* ===== タイプ説明 ===== */
+.mbti-result-desc {
+  margin-bottom: 1.25rem;
+}
+
+/* ===== 相性プレビュー ===== */
+.mbti-compat-h4 {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #1e0a4d;
+  margin-bottom: 0.75rem;
+}
+
+.mbti-compat-cards {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.75rem;
+}
+
+.mbti-compat-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  background: #f3efff;
+  border: 1px solid #c4b5fd;
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+  text-decoration: none;
+  color: inherit;
+  min-width: 88px;
+  transition: background 0.15s, transform 0.15s;
+  position: relative;
+}
+
+.mbti-compat-card:hover {
+  background: #e8e0ff;
+  transform: translateY(-2px);
+  text-decoration: none;
+}
+
+.mbti-compat-rank {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #7c3aed;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.mbti-compat-emoji { font-size: 1.25rem; }
+
+.mbti-compat-id {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #7c3aed;
+  letter-spacing: 0.04em;
+}
+
+.mbti-compat-name {
+  font-size: 0.75rem;
+  color: #1e0a4d;
+  font-weight: 600;
+}
+
+.mbti-compat-note {
+  font-size: 0.8rem;
+  color: var(--sn-muted, #6b7280);
+  margin-top: 0.5rem;
+}
+
+.mbti-compat-link {
+  color: #7c3aed;
+  font-weight: 600;
+  text-decoration: underline;
+}
+
+/* ===== 同気質グループ ===== */
+.mbti-compat-preview,
+.mbti-same-temp {
+  background: #faf8ff;
+  border: 1px solid #e9d5ff;
+  border-radius: 12px;
+  padding: 1.25rem;
+  margin-block: 1.25rem;
+}
+
+.mbti-same-temp-list {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-top: 0.75rem;
+}
+
+.mbti-same-temp-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: #ede9fe;
+  border: 1px solid #c4b5fd;
+  border-radius: 8px;
+  padding: 6px 12px;
+  text-decoration: none;
+  color: inherit;
+  transition: background 0.15s;
+}
+
+.mbti-same-temp-item:hover {
+  background: #ddd6fe;
+  text-decoration: none;
+}
+
+.mbti-same-temp-id {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #7c3aed;
+}
+
+.mbti-same-temp-name {
+  font-size: 0.8rem;
+  color: #4c1d95;
+}
+
+/* ===== 仕事/恋愛/友人フリーエリア ===== */
+.mbti-work-free,
+.mbti-love-free,
+.mbti-friend-free {
+  background: #faf8ff;
+  border: 1px solid #e9d5ff;
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.25rem;
+}
+</style>
