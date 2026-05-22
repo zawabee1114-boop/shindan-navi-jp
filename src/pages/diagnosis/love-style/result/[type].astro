@@ -23,6 +23,9 @@ import { types, getOtherTypes } from '../../../../data/diagnoses/love-style/type
 import { meta } from '../../../../data/diagnoses/love-style/meta';
 import { getAllPairsForType } from '../../../../data/diagnoses/love-style/compatibility';
 import type { LoveStyleType } from '../../../../data/diagnoses/love-style/questions';
+import TldrBlock from '../../../../components/TldrBlock.astro';
+import ScienceNote from '../../../../components/ScienceNote.astro';
+import ReferenceList from '../../../../components/ReferenceList.astro';
 
 export function getStaticPaths() {
   return Object.keys(types).map((typeId) => ({
@@ -142,21 +145,13 @@ const jsonLdArticle = {
     name: `${typeData.japaneseName} 恋愛スタイル`,
     sameAs: 'https://doi.org/10.1037/0022-3514.50.2.392',
   },
-  citation: [
-    {
-      '@type': 'CreativeWork',
-      name: 'Colours of Love',
-      author: 'Lee JA',
-      datePublished: '1973',
-    },
-    {
-      '@type': 'CreativeWork',
-      name: 'A Theory and Method of Love',
-      author: 'Hendrick C, Hendrick S',
-      datePublished: '1986',
-      url: 'https://doi.org/10.1037/0022-3514.50.2.392',
-    },
-  ],
+  citation: meta.references.map((r) => ({
+    '@type': 'CreativeWork',
+    name: r.title,
+    ...(r.author ? { author: r.author } : {}),
+    datePublished: String(r.year),
+    ...(r.url ? { url: r.url } : {}),
+  })),
 };
 
 // JSON-LD: BreadcrumbList
@@ -203,14 +198,17 @@ const descriptionClean = typeData.description.replace(/\n+/g, ' ').trim();
   {/* ========== 概要タブ ========== */}
   <Fragment slot="overview">
     <div class="lsr-overview">
-      <div class="lsr-aio-block">
-        <p class="lsr-aio-title">このページでわかること</p>
-        <ul class="lsr-aio-list">
-          <li>{typeData.japaneseName}（{typeData.nameEn}）の恋愛傾向・特徴・強み・気をつけたい点</li>
-          <li>他5タイプとの相性ランキング（スコア順・J.A.Lee理論に基づく）</li>
-          <li>友情関係への応用方法・このタイプが恋愛で大切にすべきこと（self-care）</li>
-        </ul>
-      </div>
+      <TldrBlock
+        title="このページでわかること"
+        points={[
+          `${typeData.japaneseName}(${typeData.nameEn})の恋愛スタイル・特徴・強み・気をつけたい点`,
+          `他5タイプとの相性ランキング（スコア順）`,
+          `パートナーシップでの相性傾向・実践ヒント（Lee 1973 理論に基づく）`,
+        ]}
+        updatedAt={meta.updatedAt}
+        sourceLabel="APA Dictionary of Psychology - Love Styles"
+        sourceUrl="https://dictionary.apa.org/love-style"
+      />
 
       <div class="lsr-description">
         {descriptionClean.split('。').filter(s => s.trim()).map((sentence) => (
@@ -230,19 +228,14 @@ const descriptionClean = typeData.description.replace(/\n+/g, ' ').trim();
         </ul>
       </div>
 
-      <div class="lsr-theory-note">
-        <p>
-          この診断結果はJ.A.Lee（1973）「Colours of Love」およびHendrick & Hendrick（1986）Love Attitudes Scale
-          （<a href="https://doi.org/10.1037/0022-3514.50.2.392" target="_blank" rel="noopener noreferrer">DOI確認済</a>）
-          に基づく恋愛傾向把握のための参考情報です。
-          医学的・臨床的な診断ではありません。
-        </p>
-      </div>
-
-      <div class="lsr-freshness">
-        <time datetime={meta.updatedAt}>{meta.updatedAt}</time> 時点の情報。
-        月1回以上の鮮度確認を実施しています。
-      </div>
+      <ScienceNote
+        basisText={meta.scientificBasis}
+        basisUrl="https://dictionary.apa.org/love-style"
+        basisLabel="APA Dictionary of Psychology - Love Styles"
+        notMedical={true}
+        updatedAt={meta.updatedAt}
+      />
+      <ReferenceList references={meta.references} confirmedAt={meta.updatedAt} />
     </div>
   </Fragment>
 

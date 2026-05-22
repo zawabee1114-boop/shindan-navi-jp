@@ -21,6 +21,9 @@ import Container from '../../../../components/Container.astro';
 import { types } from '../../../../data/diagnoses/perfectionism/types';
 import { meta } from '../../../../data/diagnoses/perfectionism/meta';
 import type { PerfectionismType } from '../../../../data/diagnoses/perfectionism/questions';
+import TldrBlock from '../../../../components/TldrBlock.astro';
+import ScienceNote from '../../../../components/ScienceNote.astro';
+import ReferenceList from '../../../../components/ReferenceList.astro';
 
 export function getStaticPaths() {
   return Object.keys(types).map((typeId) => ({
@@ -103,6 +106,13 @@ const jsonLdArticle = {
     name: '完璧主義（Perfectionism）心理学',
     sameAs: 'https://doi.org/10.1037/0022-3514.60.3.456',
   },
+  citation: meta.references.map((r) => ({
+    '@type': 'CreativeWork',
+    name: r.title,
+    ...(r.author ? { author: r.author } : {}),
+    datePublished: String(r.year),
+    ...(r.url ? { url: r.url } : {}),
+  })),
 };
 
 // JSON-LD: FAQPage
@@ -161,14 +171,17 @@ const descriptionClean = typeData.description.replace(/\n+/g, ' ').trim();
   {/* ========== 概要タブ ========== */}
   <Fragment slot="overview">
     <div class="pfr-overview">
-      <div class="pfr-aio-block">
-        <p class="pfr-aio-title">このページでわかること</p>
-        <ul class="pfr-aio-list">
-          <li>{typeData.name}（{typeData.nameEn}）の傾向・特徴・強み・注意点</li>
-          <li>仕事スタイル・恋愛傾向・CBTセルフケアTips 5選</li>
-          <li>他タイプとの関係・統合プロファイルへの連携</li>
-        </ul>
-      </div>
+      <TldrBlock
+        title="このページでわかること"
+        points={[
+          `${typeData.name}(${typeData.nameEn})の傾向・強み・弱み・注意点`,
+          `仕事スタイル・健康への影響・コーピング傾向`,
+          `完璧主義の適応的側面と不適応的側面（Hewitt & Flett 1991 理論に基づく）`,
+        ]}
+        updatedAt={meta.updatedAt}
+        sourceLabel="Hewitt & Flett (1991) - Journal of Personality and Social Psychology"
+        sourceUrl="https://doi.org/10.1037/0022-3514.60.3.456"
+      />
 
       <div class="pfr-description">
         {descriptionClean.split('。').filter(s => s.trim()).map((sentence) => (
@@ -188,19 +201,14 @@ const descriptionClean = typeData.description.replace(/\n+/g, ' ').trim();
         </ul>
       </div>
 
-      <div class="pfr-theory-note">
-        <p>
-          この診断結果は Hewitt &amp; Flett (1991)「多次元完璧主義尺度」
-          （<a href="https://doi.org/10.1037/0022-3514.60.3.456" target="_blank" rel="noopener noreferrer">doi:10.1037/0022-3514.60.3.456</a>、2026-05-20確認）
-          に基づく傾向把握のための参考情報です。
-          医学的・臨床的な診断ではありません。
-        </p>
-      </div>
-
-      <div class="pfr-freshness">
-        <time datetime={meta.updatedAt}>{meta.updatedAt}</time> 時点の情報。
-        月1回以上の鮮度確認を実施しています。
-      </div>
+      <ScienceNote
+        basisText={meta.scientificBasis}
+        basisUrl="https://doi.org/10.1037/0022-3514.60.3.456"
+        basisLabel="Hewitt & Flett (1991) - Journal of Personality and Social Psychology"
+        notMedical={true}
+        updatedAt={meta.updatedAt}
+      />
+      <ReferenceList references={meta.references} confirmedAt={meta.updatedAt} />
     </div>
   </Fragment>
 

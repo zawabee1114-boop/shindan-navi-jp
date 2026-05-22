@@ -26,6 +26,9 @@ import { types, getOtherTypes } from '../../../../data/diagnoses/money-style/typ
 import { meta } from '../../../../data/diagnoses/money-style/meta';
 import { getAllPairsForType } from '../../../../data/diagnoses/money-style/compatibility';
 import type { MoneyType } from '../../../../data/diagnoses/money-style/questions';
+import TldrBlock from '../../../../components/TldrBlock.astro';
+import ScienceNote from '../../../../components/ScienceNote.astro';
+import ReferenceList from '../../../../components/ReferenceList.astro';
 
 export function getStaticPaths() {
   return Object.keys(types).map((typeId) => ({
@@ -138,21 +141,13 @@ const jsonLdArticle = {
     name: `${typeData.japaneseName} マネースクリプト`,
     sameAs: 'https://doi.org/10.4148/jft.v2i1.451',
   },
-  citation: [
-    {
-      '@type': 'CreativeWork',
-      name: 'Money beliefs and financial behaviors: Development of the Klontz Money Script Inventory',
-      author: 'Klontz BT, Britt SL, Mentzer J, Klontz T',
-      datePublished: '2011',
-      url: 'https://doi.org/10.4148/jft.v2i1.451',
-    },
-    {
-      '@type': 'CreativeWork',
-      name: 'Many sides of the coin: The psychology of money usage',
-      author: 'Furnham A',
-      datePublished: '1984',
-    },
-  ],
+  citation: meta.references.map((r) => ({
+    '@type': 'CreativeWork',
+    name: r.title,
+    ...(r.author ? { author: r.author } : {}),
+    datePublished: String(r.year),
+    ...(r.url ? { url: r.url } : {}),
+  })),
 };
 
 // JSON-LD: BreadcrumbList
@@ -214,14 +209,17 @@ const descriptionClean = typeData.description.replace(/\n+/g, ' ').trim();
   {/* ========== 概要タブ ========== */}
   <Fragment slot="overview">
     <div class="msr-overview">
-      <div class="msr-aio-block">
-        <p class="msr-aio-title">このページでわかること</p>
-        <ul class="msr-aio-list">
-          <li>{typeData.japaneseName}（{typeData.nameEn}）の金銭感覚・消費傾向・貯蓄パターン・特徴・強み・気をつけたい点</li>
-          <li>他3タイプとの相性ランキング（スコア順・Klontz et al. 2011年理論に基づく）</li>
-          <li>パートナーシップでの相性傾向・キャリアへの影響・このタイプが大切にすべきこと（self-care）</li>
-        </ul>
-      </div>
+      <TldrBlock
+        title="このページでわかること"
+        points={[
+          `${typeData.japaneseName}(${typeData.nameEn})の金銭感覚・消費傾向・貯蓄パターン・特徴・強み・気をつけたい点`,
+          `他3タイプとの相性ランキング（スコア順・Klontz et al. 2011年理論に基づく）`,
+          `パートナーシップでの相性傾向・キャリアへの影響・self-care`,
+        ]}
+        updatedAt={meta.updatedAt}
+        sourceLabel="Klontz et al. 2011 - Journal of Financial Therapy"
+        sourceUrl="https://doi.org/10.4148/jft.v2i1.451"
+      />
 
       <div class="msr-description">
         {descriptionClean.split('。').filter(s => s.trim()).map((sentence) => (
@@ -241,19 +239,15 @@ const descriptionClean = typeData.description.replace(/\n+/g, ' ').trim();
         </ul>
       </div>
 
-      <div class="msr-theory-note">
-        <p>
-          この診断結果はKlontz BT et al.（2011）「Money beliefs and financial behaviors: Development of the Klontz Money Script Inventory」
-          （<a href="https://doi.org/10.4148/jft.v2i1.451" target="_blank" rel="noopener noreferrer">Journal of Financial Therapy, DOI確認済</a>）
-          に基づく金銭感覚傾向把握のための参考情報です。
-          医学的・臨床的な診断ではありません。投資推奨・金融商品比較・税務助言は含みません。
-        </p>
-      </div>
-
-      <div class="msr-freshness">
-        <time datetime={meta.updatedAt}>{meta.updatedAt}</time> 時点の情報。
-        月1回以上の鮮度確認を実施しています。
-      </div>
+      <ScienceNote
+        basisText={meta.scientificBasis}
+        basisUrl="https://doi.org/10.4148/jft.v2i1.451"
+        basisLabel="Klontz et al. 2011 - Journal of Financial Therapy"
+        notMedical={true}
+        updatedAt={meta.updatedAt}
+        additionalNote="本診断は投資推奨・金融商品比較・税務助言を含みません。具体的な資産形成については必ず専門家（FP等）にご相談ください。"
+      />
+      <ReferenceList references={meta.references} confirmedAt={meta.updatedAt} />
     </div>
   </Fragment>
 

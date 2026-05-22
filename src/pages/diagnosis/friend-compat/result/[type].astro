@@ -25,6 +25,9 @@ import {
   CATEGORY_COLORS,
 } from '../../../../data/diagnoses/friend-compat/compatibility';
 import type { FriendType } from '../../../../data/diagnoses/friend-compat/questions';
+import TldrBlock from '../../../../components/TldrBlock.astro';
+import ScienceNote from '../../../../components/ScienceNote.astro';
+import ReferenceList from '../../../../components/ReferenceList.astro';
 
 export function getStaticPaths() {
   return Object.keys(types).map((typeId) => ({
@@ -127,6 +130,13 @@ const jsonLdArticle = {
     name: '友情・対人関係 心理学',
     sameAs: 'https://doi.org/10.2307/1131834',
   },
+  citation: meta.references.map((r) => ({
+    '@type': 'CreativeWork',
+    name: r.title,
+    ...(r.author ? { author: r.author } : {}),
+    datePublished: String(r.year),
+    ...(r.url ? { url: r.url } : {}),
+  })),
 };
 
 // JSON-LD: BreadcrumbList
@@ -173,14 +183,17 @@ const inviteBaseUrl = `${SITE_URL}/invite/friend-compat/?from=${typeId}`;
   {/* ========== 概要タブ ========== */}
   <Fragment slot="overview">
     <div class="fcr-overview">
-      <div class="fcr-aio-block">
-        <p class="fcr-aio-title">このページでわかること</p>
-        <ul class="fcr-aio-list">
-          <li>{typeData.japaneseName}（{typeData.nameEn}）の傾向・グループでの役割・友情エピソード</li>
-          <li>友達としての強み4項目・気をつけたい傾向4項目</li>
-          <li>6タイプ別相性スコアと招待機能の使い方（完全無料・無制限）</li>
-        </ul>
-      </div>
+      <TldrBlock
+        title="このページでわかること"
+        points={[
+          `${typeData.japaneseName}(${typeData.nameEn})の傾向・グループでの振る舞い・友人エピソード`,
+          `5タイプとの友人相性ランキング（スコア順）`,
+          `職場・学校での対人傾向（Hartup 1996 + Costa & McCrae 1992 理論に基づく）`,
+        ]}
+        updatedAt={meta.updatedAt}
+        sourceLabel="Hartup WW (1996) - Psychological Science"
+        sourceUrl="https://doi.org/10.2307/1131834"
+      />
 
       <div class="fcr-description">
         {typeData.description.split('\n').filter((s: string) => s.trim()).map((para: string) => (
@@ -197,20 +210,14 @@ const inviteBaseUrl = `${SITE_URL}/invite/friend-compat/?from=${typeId}`;
         </div>
       </div>
 
-      <div class="fcr-theory-note">
-        <p>
-          この診断結果はBig Five特性理論（Costa &amp; McCrae 1992）・FIRO-B（Schutz 1958）・
-          Hartup（1996）友情研究
-          （<a href="https://doi.org/10.2307/1131834" target="_blank" rel="noopener noreferrer">doi:10.2307/1131834</a>、2026-05-20確認）
-          に基づく傾向把握のための参考情報です。
-          医学的・臨床的な診断ではありません。
-        </p>
-      </div>
-
-      <div class="fcr-freshness">
-        <time datetime={meta.updatedAt}>{meta.updatedAt}</time> 時点の情報。
-        月1回以上の鮮度確認を実施しています。
-      </div>
+      <ScienceNote
+        basisText={meta.scientificBasis}
+        basisUrl="https://doi.org/10.2307/1131834"
+        basisLabel="Hartup WW (1996) - Psychological Science"
+        notMedical={true}
+        updatedAt={meta.updatedAt}
+      />
+      <ReferenceList references={meta.references} confirmedAt={meta.updatedAt} />
     </div>
   </Fragment>
 

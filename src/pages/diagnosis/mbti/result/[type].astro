@@ -25,6 +25,9 @@ import { meta } from '../../../../data/diagnoses/mbti/meta';
 import { typeEmojis, typesByTemperament, temperamentLabels } from '../../../../data/diagnoses/mbti/types';
 import type { MBTIType } from '../../../../data/diagnoses/mbti-compat/meta';
 import { MBTI_TYPES } from '../../../../data/diagnoses/mbti-compat/meta';
+import TldrBlock from '../../../../components/TldrBlock.astro';
+import ScienceNote from '../../../../components/ScienceNote.astro';
+import ReferenceList from '../../../../components/ReferenceList.astro';
 
 export function getStaticPaths() {
   return MBTI_TYPES.map((typeId) => ({
@@ -137,6 +140,13 @@ const jsonLdArticle = {
       sameAs: 'https://ja.wikipedia.org/wiki/%E3%82%A4%E3%82%B6%E3%83%99%E3%83%AB%E3%83%BB%E3%83%96%E3%83%AA%E3%83%83%E3%82%B0%E3%82%B9%E3%83%BB%E3%83%9E%E3%82%A4%E3%83%A4%E3%83%BC%E3%82%BA',
     },
   ],
+  citation: meta.references.map((r) => ({
+    '@type': 'CreativeWork',
+    name: r.title,
+    ...(r.author ? { author: r.author } : {}),
+    datePublished: String(r.year),
+    ...(r.url ? { url: r.url } : {}),
+  })),
 };
 
 // JSON-LD: FAQPage
@@ -192,14 +202,17 @@ const relatedDiagnoses = [
   {/* ========== 概要タブ ========== */}
   <Fragment slot="overview">
     <div class="rt-overview">
-      <div class="rt-aio-block">
-        <p class="rt-aio-title">このページでわかること</p>
-        <ul class="rt-aio-list">
-          <li>{typeId}（{typeData.name}）の機能スタック・気質グループ・特性の概要</li>
-          <li>強み4項目・注意点4項目・仕事/恋愛/友人スタイル</li>
-          <li>相性ベスト3タイプと、MBTI相性診断への詳細導線</li>
-        </ul>
-      </div>
+      <TldrBlock
+        title="このページでわかること"
+        points={[
+          `${typeId}(${typeData.name})の機能スタック・イングループ・特性の概要`,
+          `強み4項目・弱み4項目・仕事/恋愛/友人/家族/学校の5シーン別傾向`,
+          `他15タイプとの相性ランキング（Jung 1921 + Myers 1998 理論に基づく）`,
+        ]}
+        updatedAt={meta.updatedAt}
+        sourceLabel="The Myers-Briggs Company 公式"
+        sourceUrl="https://www.themyersbriggs.com/"
+      />
 
       {/* 気質グループ */}
       <div class="mbti-result-temperament">
@@ -243,15 +256,14 @@ const relatedDiagnoses = [
         ))}
       </div>
 
-      <div class="rt-theory-note">
-        <p>
-          この診断結果はCarl Jung（1921）「Psychological Types」
-          （<a href="https://press.princeton.edu/books/paperback/9780691018133/psychological-types" target="_blank" rel="noopener noreferrer">Princeton University Press</a>）と
-          Isabel Briggs Myers（1962/1998）「MBTI Manual」
-          （<a href="https://www.themyersbriggs.com/en-US/Products-and-Services/Myers-Briggs" target="_blank" rel="noopener noreferrer">The Myers-Briggs Company</a>、2026-05-22確認）に基づいています。
-          傾向把握のための参考情報です。
-        </p>
-      </div>
+      <ScienceNote
+        basisText={meta.scientificBasis}
+        basisUrl="https://www.themyersbriggs.com/"
+        basisLabel="The Myers-Briggs Company 公式"
+        notMedical={true}
+        updatedAt={meta.updatedAt}
+      />
+      <ReferenceList references={meta.references} confirmedAt={meta.updatedAt} />
     </div>
   </Fragment>
 

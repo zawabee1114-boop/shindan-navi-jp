@@ -20,6 +20,9 @@ import { types } from '../../../../data/diagnoses/multi-int/types';
 import { meta } from '../../../../data/diagnoses/multi-int/meta';
 
 import type { IntelligenceType } from '../../../../data/diagnoses/multi-int/questions';
+import TldrBlock from '../../../../components/TldrBlock.astro';
+import ScienceNote from '../../../../components/ScienceNote.astro';
+import ReferenceList from '../../../../components/ReferenceList.astro';
 
 export function getStaticPaths() {
   return Object.keys(types).map((typeId) => ({
@@ -61,6 +64,7 @@ const faqs = [
 const jsonLdArticle = {
   '@context': 'https://schema.org',
   '@type': 'Article',
+  '@id': `${PAGE_URL}#article`,
   headline: `${typeData.name}の特徴・仕事・恋愛・学習スタイル完全ガイド`,
   url: PAGE_URL,
   description: `${typeData.summary.slice(0, 100)}`,
@@ -81,6 +85,13 @@ const jsonLdArticle = {
     name: '多重知能理論',
     sameAs: 'https://www.pz.harvard.edu/projects/multiple-intelligences',
   },
+  citation: meta.references.map((r) => ({
+    '@type': 'CreativeWork',
+    name: r.title,
+    ...(r.author ? { author: r.author } : {}),
+    datePublished: String(r.year),
+    ...(r.url ? { url: r.url } : {}),
+  })),
 };
 
 // JSON-LD: FAQPage
@@ -135,22 +146,26 @@ const relatedDiagnoses = [
   {/* ========== 概要タブ ========== */}
   <Fragment slot="overview">
     <div class="rt-overview">
-      <div class="rt-aio-block">
-        <p class="rt-aio-title">このページでわかること</p>
-        <ul class="rt-aio-list">
-          <li>{typeData.name}（{typeData.nameEn}）の特徴・強み・注意点</li>
-          <li>向いている職種・学習スタイル・5シーン軸別アドバイス</li>
-          <li>他タイプとの相性・統合プロファイルへの連携</li>
-        </ul>
-      </div>
+      <TldrBlock
+        title="このページでわかること"
+        points={[
+          `${typeData.name}(${typeData.nameEn})の知能タイプ・強み・弱み・注意点`,
+          `仕事・恋愛・友人・家族・学校の5シーン別の傾向`,
+          `他7タイプとの相性（Gardner 1983 多重知能理論に基づく）`,
+        ]}
+        updatedAt={meta.updatedAt}
+        sourceLabel="Harvard Project Zero - Multiple Intelligences"
+        sourceUrl="https://www.pz.harvard.edu/projects/multiple-intelligences"
+      />
       <p class="rt-body">{typeData.summary}</p>
-      <div class="rt-theory-note">
-        <p>
-          この診断結果は Howard Gardner の多重知能理論
-          （<a href="https://www.pz.harvard.edu/projects/multiple-intelligences" target="_blank" rel="noopener noreferrer">Harvard Project Zero</a>、2026-05-20確認）
-          に基づいています。傾向把握のための参考情報です。
-        </p>
-      </div>
+      <ScienceNote
+        basisText={meta.scientificBasis}
+        basisUrl="https://www.pz.harvard.edu/projects/multiple-intelligences"
+        basisLabel="Harvard Project Zero - Multiple Intelligences"
+        notMedical={true}
+        updatedAt={meta.updatedAt}
+      />
+      <ReferenceList references={meta.references} confirmedAt={meta.updatedAt} />
     </div>
   </Fragment>
 

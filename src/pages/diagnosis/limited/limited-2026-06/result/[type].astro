@@ -22,6 +22,9 @@ import ProUpgradeCta from '../../../../../components/ProUpgradeCta.astro';
 import { types } from '../../../../../data/diagnoses/limited/2026-06/types';
 import { meta } from '../../../../../data/diagnoses/limited/2026-06/meta';
 import type { StressCopeType } from '../../../../../data/diagnoses/limited/2026-06/questions';
+import TldrBlock from '../../../../../components/TldrBlock.astro';
+import ScienceNote from '../../../../../components/ScienceNote.astro';
+import ReferenceList from '../../../../../components/ReferenceList.astro';
 
 export function getStaticPaths() {
   return Object.keys(types).map((typeId) => ({
@@ -107,12 +110,12 @@ const jsonLdArticle = {
     name: 'ストレス対処スタイル',
     description: 'Lazarus & Folkman (1984) コーピング理論に基づく4タイプ分類',
   },
-  citation: meta.references.map((ref) => ({
-    '@type': 'ScholarlyArticle',
-    name: ref.title,
-    author: ref.author,
-    datePublished: String(ref.year),
-    url: ref.url,
+  citation: meta.references.map((r) => ({
+    '@type': 'CreativeWork',
+    name: r.title,
+    ...(r.author ? { author: r.author } : {}),
+    datePublished: String(r.year),
+    ...(r.url ? { url: r.url } : {}),
   })),
 };
 
@@ -221,6 +224,27 @@ const otherTypes = Object.values(types).filter((t) => t.id !== typeId);
           <p class="result-blur-text">残りの詳細結果（特徴・注意点・セルフケアTips）はPRO会員で確認できます</p>
         </div>
       </div>
+
+      <TldrBlock
+        title="このページでわかること"
+        points={[
+          `${typeData.name}(${typeData.nameEn})のコーピングスタイル・特徴・強み・注意点`,
+          `仕事・日常生活での傾向とセルフケアTips（Lazarus & Folkman 1984 理論に基づく）`,
+          `他3タイプとの違いと、ストレス対処スタイルを使い分けるヒント`,
+        ]}
+        updatedAt={meta.updatedAt}
+        sourceLabel="Lazarus & Folkman (1984) Stress, Appraisal, and Coping"
+        sourceUrl="https://link.springer.com/book/9780826141910"
+      />
+      <ScienceNote
+        basisText={meta.scientificBasis}
+        basisUrl="https://link.springer.com/book/9780826141910"
+        basisLabel="Lazarus & Folkman (1984) Stress, Appraisal, and Coping"
+        notMedical={true}
+        updatedAt={meta.updatedAt}
+        additionalNote="強いストレス・日常生活への支障がある場合は、医師・臨床心理士・公認心理師等の専門家にご相談ください。"
+      />
+      <ReferenceList references={meta.references} confirmedAt={meta.updatedAt} />
 
       <ProUpgradeCta
         headline={`${typeData.name}の詳細結果 + 月1限定診断をフルに活用する`}

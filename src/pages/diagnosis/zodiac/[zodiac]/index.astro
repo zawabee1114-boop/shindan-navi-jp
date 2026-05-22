@@ -21,6 +21,9 @@ import {
 } from '../../../../data/diagnoses/zodiac/results';
 import { elementsData, modalitiesData } from '../../../../data/diagnoses/zodiac/elements-modality';
 import type { ZodiacType } from '../../../../data/diagnoses/zodiac/meta';
+import TldrBlock from '../../../../components/TldrBlock.astro';
+import ScienceNote from '../../../../components/ScienceNote.astro';
+import ReferenceList from '../../../../components/ReferenceList.astro';
 
 export function getStaticPaths() {
   return ZODIAC_TYPES.map((zodiac) => ({
@@ -101,12 +104,12 @@ const jsonLdArticle = {
     '@type': 'WebPage',
     '@id': PAGE_URL,
   },
-  citation: meta.references.map((ref) => ({
+  citation: meta.references.map((r) => ({
     '@type': 'CreativeWork',
-    name: ref.title,
-    author: ref.author,
-    datePublished: String(ref.year),
-    url: ref.url,
+    name: r.title,
+    ...(r.author ? { author: r.author } : {}),
+    datePublished: String(r.year),
+    ...(r.url ? { url: r.url } : {}),
   })),
 };
 
@@ -192,14 +195,17 @@ const jsonLdBreadcrumb = {
     </p>
 
     <!-- このページでわかること -->
-    <blockquote style="background: var(--sn-surface, #fff); border-left: 4px solid var(--sn-primary, #7C3AED); padding: 1rem 1.25rem; margin: 0 0 2rem; border-radius: 0 0.5rem 0.5rem 0;">
-      <strong>このページでわかること</strong>
-      <ul style="margin: 0.5rem 0 0; padding-left: 1.25rem; line-height: 1.8;">
-        <li>{detail.japaneseName}の伝統的な性格特性・強み・弱み（西洋占星術文化の分類）</li>
-        <li>仕事スタイル・恋愛傾向・友人関係の特性</li>
-        <li>全11星座との相性ランキング（スコア付き）</li>
-      </ul>
-    </blockquote>
+    <TldrBlock
+      title="このページでわかること"
+      points={[
+        `${detail.japaneseName}の伝統的な性格特性・強み・弱み（西洋占星術文化の分類）`,
+        `仕事スタイル・恋愛傾向・友人関係の特性`,
+        `全11星座との相性ランキング（スコア付き）`,
+      ]}
+      updatedAt={meta.updatedAt}
+      sourceLabel="Carlson S (1985) A double-blind test of astrology, Nature"
+      sourceUrl="https://doi.org/10.1038/318419a0"
+    />
 
     <!-- 性格特性説明 -->
     <section style="margin-bottom: 2.5rem;">
@@ -211,6 +217,16 @@ const jsonLdBreadcrumb = {
         <p style="line-height: 1.9; margin-bottom: 1rem; color: var(--sn-text); font-size: 0.95rem;">{para}</p>
       ))}
     </section>
+
+    <ScienceNote
+      basisText={meta.scientificBasis}
+      basisUrl="https://doi.org/10.1038/318419a0"
+      basisLabel="Carlson S (1985) Nature 318, 419-425"
+      notMedical={false}
+      updatedAt={meta.updatedAt}
+      additionalNote={meta.disclaimer}
+    />
+    <ReferenceList references={meta.references} confirmedAt={meta.updatedAt} />
 
     <!-- 特徴・強み・気をつけたい傾向 -->
     <section style="margin-bottom: 2.5rem;">
