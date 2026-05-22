@@ -1,0 +1,394 @@
+---
+/**
+ * /character/ - 16動物キャラ図鑑
+ *
+ * 「あなたはどの動物？」→ 各診断へ誘導
+ * 統合プロファイルで動物が決まる仕組みを紹介し、受診促進する。
+ *
+ * ユーザー向けルール:
+ * - Big5/OCEAN/ビッグファイブ という表記禁止
+ * - 動物名・特性キーワードで表現する
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Container from '../../components/Container.astro';
+import AnimalIcons from '../../components/AnimalIcons.astro';
+import { ANIMAL_CHARACTERS } from '../../data/animals';
+import type { AnimalCharacter } from '../../data/animals';
+
+const pageTitle = '16タイプ動物キャラ図鑑 - あなたはどの動物？ | 診断ナビ';
+const pageDescription = '診断ナビが導き出す16タイプの動物キャラクター。ライオン王・イルカ・フクロウ博士など、あなたの個性ぴったりのキャラが見つかります。診断を受けて自分の動物キャラを解放しよう。';
+
+// JSON-LD: ItemList（16動物の構造化データ）
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  name: '16タイプ動物キャラクター一覧',
+  description: pageDescription,
+  numberOfItems: 16,
+  itemListElement: ANIMAL_CHARACTERS.map((animal, index) => ({
+    '@type': 'ListItem',
+    position: index + 1,
+    name: animal.name,
+    description: animal.tagline,
+  })),
+};
+
+// 動物を4列×4行グリッド用に4グループに分ける
+const animalGroups: [string, AnimalCharacter[]][] = [
+  ['好奇心旺盛・探索型', ANIMAL_CHARACTERS.filter(a => a.id.startsWith('o-high_c-high'))],
+  ['創造的・自由型', ANIMAL_CHARACTERS.filter(a => a.id.startsWith('o-high_c-low'))],
+  ['堅実・誠実型', ANIMAL_CHARACTERS.filter(a => a.id.startsWith('o-low_c-high'))],
+  ['安定・マイペース型', ANIMAL_CHARACTERS.filter(a => a.id.startsWith('o-low_c-low'))],
+];
+---
+
+<BaseLayout
+  title={pageTitle}
+  description={pageDescription}
+  canonical="/character/"
+  jsonLd={jsonLd}
+  breadcrumbs={[
+    { name: 'トップ', url: '/' },
+    { name: '16動物キャラ図鑑', url: '/character/' },
+  ]}
+>
+  <!-- ヒーロー -->
+  <section class="ch-hero">
+    <Container>
+      <div class="ch-hero-inner">
+        <div class="ch-hero-badge">
+          <span aria-hidden="true">🐾</span>
+          16タイプ動物キャラ図鑑
+        </div>
+        <h1 class="ch-hero-title">あなたはどの動物？</h1>
+        <p class="ch-hero-desc">
+          8つの診断で導き出されるあなたの特性から、ぴったりの動物キャラが決まります。
+          ライオン王・イルカ・フクロウ博士など、16種類の個性豊かなキャラが待っています。
+        </p>
+        <a href="/diagnosis/" class="ch-cta-btn">
+          診断を受けてキャラを解放する →
+        </a>
+      </div>
+    </Container>
+  </section>
+
+  <!-- 全16動物グリッド -->
+  <section class="ch-catalog" aria-label="16動物キャラ一覧">
+    <Container>
+      {animalGroups.map(([groupLabel, animals]) => (
+        <div class="ch-group">
+          <h2 class="ch-group-title">
+            <span aria-hidden="true">▸</span>
+            {groupLabel}
+          </h2>
+          <div class="ch-grid">
+            {animals.map((animal) => (
+              <article
+                class="ch-card"
+                style={`--card-color: ${animal.color}; --card-gradient: ${animal.gradient};`}
+                aria-label={`${animal.name}: ${animal.tagline}`}
+              >
+                <div class="ch-card-icon" style={`background: ${animal.gradient};`}>
+                  <AnimalIcons
+                    animal={animal.animal as any}
+                    size={80}
+                    color={animal.color}
+                  />
+                </div>
+                <div class="ch-card-body">
+                  <h3 class="ch-card-name">{animal.name}</h3>
+                  <p class="ch-card-tagline">{animal.tagline}</p>
+                  <div class="ch-card-traits" aria-label="特性キーワード">
+                    {animal.traits.map((trait) => (
+                      <span class="ch-trait-tag">{trait}</span>
+                    ))}
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+      ))}
+    </Container>
+  </section>
+
+  <!-- 解放CTA -->
+  <section class="ch-unlock" aria-label="キャラ解放へのCTA">
+    <Container>
+      <div class="ch-unlock-inner">
+        <p class="ch-unlock-icon" aria-hidden="true">🔓</p>
+        <h2 class="ch-unlock-title">自分のキャラを見つけよう</h2>
+        <p class="ch-unlock-desc">
+          診断を受けるほど、より正確な動物キャラが判明します。
+          最初の診断は無料・1分で完了します。
+        </p>
+        <div class="ch-unlock-actions">
+          <a href="/diagnosis/" class="ch-cta-btn">診断を受ける →</a>
+          <a href="/profile/" class="ch-cta-btn-secondary">自分のプロファイルを見る</a>
+        </div>
+      </div>
+    </Container>
+  </section>
+</BaseLayout>
+
+<style>
+  /* ヒーロー */
+  .ch-hero {
+    background: var(--hero-grad, linear-gradient(135deg, #f5e8ff 0%, #efeaff 50%, #e8f0ff 100%));
+    padding: var(--sn-space-16) 0 var(--sn-space-12);
+    text-align: center;
+  }
+
+  .ch-hero-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--sn-space-5);
+  }
+
+  .ch-hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sn-space-2);
+    padding: var(--sn-space-2) var(--sn-space-5);
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.9);
+    border-radius: var(--sn-radius-pill);
+    font-size: var(--sn-text-sm);
+    font-weight: 700;
+    color: var(--brand-600, #6a47ff);
+  }
+
+  .ch-hero-title {
+    font-family: var(--sn-font-rounded);
+    font-size: clamp(var(--sn-text-3xl), 5vw, var(--sn-text-4xl));
+    font-weight: 900;
+    color: var(--ink-900, #1f2235);
+    line-height: var(--sn-leading-tight);
+    margin: 0;
+  }
+
+  .ch-hero-desc {
+    max-width: 580px;
+    font-size: var(--sn-text-base);
+    color: var(--ink-700, #3b3d56);
+    line-height: var(--sn-leading-base);
+    margin: 0;
+  }
+
+  /* カタログ */
+  .ch-catalog {
+    padding: var(--sn-space-12) 0;
+  }
+
+  .ch-group {
+    margin-bottom: var(--sn-space-12);
+  }
+
+  .ch-group:last-child {
+    margin-bottom: 0;
+  }
+
+  .ch-group-title {
+    display: flex;
+    align-items: center;
+    gap: var(--sn-space-2);
+    font-family: var(--sn-font-rounded);
+    font-size: var(--sn-text-lg);
+    font-weight: 900;
+    color: var(--ink-900, #1f2235);
+    margin: 0 0 var(--sn-space-6);
+    padding-bottom: var(--sn-space-3);
+    border-bottom: 2px solid var(--line, #ece9f5);
+  }
+
+  .ch-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--sn-space-4);
+  }
+
+  @media (min-width: 640px) {
+    .ch-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  /* キャラカード */
+  .ch-card {
+    background: var(--surface, #fff);
+    border-radius: var(--sn-radius-lg);
+    border: 1px solid var(--line, #ece9f5);
+    border-top: 3px solid var(--card-color);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+    transition:
+      transform var(--sn-dur-fast) var(--sn-ease),
+      box-shadow var(--sn-dur-fast) var(--sn-ease);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .ch-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+  }
+
+  .ch-card-icon {
+    width: 100%;
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--sn-space-4);
+    border-radius: 0;
+  }
+
+  .ch-card-body {
+    padding: var(--sn-space-4);
+    display: flex;
+    flex-direction: column;
+    gap: var(--sn-space-2);
+    flex: 1;
+  }
+
+  .ch-card-name {
+    font-family: var(--sn-font-rounded);
+    font-size: var(--sn-text-base);
+    font-weight: 900;
+    color: var(--ink-900, #1f2235);
+    margin: 0;
+    line-height: var(--sn-leading-tight);
+  }
+
+  .ch-card-tagline {
+    font-size: var(--sn-text-xs);
+    color: var(--ink-500, #6e6e89);
+    line-height: var(--sn-leading-base);
+    margin: 0;
+  }
+
+  .ch-card-traits {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sn-space-1);
+    margin-top: auto;
+  }
+
+  .ch-trait-tag {
+    display: inline-block;
+    padding: 2px 8px;
+    background: color-mix(in srgb, var(--card-color) 10%, #fff);
+    color: var(--card-color);
+    border: 1px solid color-mix(in srgb, var(--card-color) 25%, transparent);
+    border-radius: var(--sn-radius-pill);
+    font-size: 0.7rem;
+    font-weight: 700;
+  }
+
+  /* 解放CTA */
+  .ch-unlock {
+    padding: var(--sn-space-16) 0;
+    background: var(--surface-2, #f9f8fd);
+  }
+
+  .ch-unlock-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--sn-space-4);
+    text-align: center;
+    max-width: 560px;
+    margin: 0 auto;
+  }
+
+  .ch-unlock-icon {
+    font-size: 3rem;
+    margin: 0;
+  }
+
+  .ch-unlock-title {
+    font-family: var(--sn-font-rounded);
+    font-size: var(--sn-text-2xl);
+    font-weight: 900;
+    color: var(--ink-900, #1f2235);
+    margin: 0;
+  }
+
+  .ch-unlock-desc {
+    font-size: var(--sn-text-sm);
+    color: var(--ink-700, #3b3d56);
+    line-height: var(--sn-leading-base);
+    margin: 0;
+  }
+
+  .ch-unlock-actions {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sn-space-3);
+    width: 100%;
+    align-items: center;
+  }
+
+  /* ボタン */
+  .ch-cta-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--sn-space-4) var(--sn-space-8);
+    background: var(--brand-500, #7c5cff);
+    color: #fff;
+    border-radius: var(--sn-radius-pill);
+    font-family: var(--sn-font-rounded);
+    font-size: var(--sn-text-base);
+    font-weight: 900;
+    text-decoration: none;
+    min-height: var(--sn-tap-min);
+    box-shadow: var(--shadow-cta, 0 10px 22px rgba(108,71,255,.32));
+    transition:
+      transform var(--sn-dur-fast) var(--sn-ease),
+      box-shadow var(--sn-dur-fast) var(--sn-ease);
+  }
+
+  .ch-cta-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 28px rgba(108, 71, 255, 0.38);
+    text-decoration: none;
+    color: #fff;
+  }
+
+  .ch-cta-btn:focus-visible {
+    outline: 2px solid var(--brand-500, #7c5cff);
+    outline-offset: 3px;
+  }
+
+  .ch-cta-btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--sn-space-3) var(--sn-space-6);
+    background: transparent;
+    color: var(--brand-600, #6a47ff);
+    border: 2px solid var(--brand-300, #c2b3ff);
+    border-radius: var(--sn-radius-pill);
+    font-size: var(--sn-text-sm);
+    font-weight: 700;
+    text-decoration: none;
+    min-height: var(--sn-tap-min);
+    transition:
+      background var(--sn-dur-fast) var(--sn-ease),
+      border-color var(--sn-dur-fast) var(--sn-ease);
+  }
+
+  .ch-cta-btn-secondary:hover {
+    background: var(--brand-50, #f6f3ff);
+    border-color: var(--brand-500, #7c5cff);
+    text-decoration: none;
+  }
+
+  .ch-cta-btn-secondary:focus-visible {
+    outline: 2px solid var(--brand-500, #7c5cff);
+    outline-offset: 3px;
+  }
+</style>
