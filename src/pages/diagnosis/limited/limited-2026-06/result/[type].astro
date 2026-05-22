@@ -1,0 +1,855 @@
+---
+/**
+ * /diagnosis/limited/limited-2026-06/result/[type]/ - ストレス対処タイプ診断 結果ページ
+ * 4タイプ分の結果ページを静的生成する
+ *
+ * URL: /diagnosis/limited/limited-2026-06/result/{typeId}/
+ * タイプID: problem-focused / emotion-focused / avoidance / support-seeking
+ *
+ * PRO限定: 結果閲覧もPRO会員のみ
+ * - PRO: フル結果（特徴・強み・注意点・仕事傾向・セルフケアTips）
+ * - 無料/PASS/ゲスト: サマリーのみ表示 + PRO誘導
+ *
+ * SEO/AIO:
+ * - JSON-LD: Article + FAQPage + BreadcrumbList
+ * - YMYL回避: 「コーピング傾向」「対処スタイル」表現。医学的診断ゼロ
+ *
+ * 確認日: 2026-05-22
+ */
+import ResultLayout from '../../../../../layouts/ResultLayout.astro';
+import Container from '../../../../../components/Container.astro';
+import ProUpgradeCta from '../../../../../components/ProUpgradeCta.astro';
+import { types } from '../../../../../data/diagnoses/limited/2026-06/types';
+import { meta } from '../../../../../data/diagnoses/limited/2026-06/meta';
+import type { StressCopeType } from '../../../../../data/diagnoses/limited/2026-06/questions';
+
+export function getStaticPaths() {
+  return Object.keys(types).map((typeId) => ({
+    params: { type: typeId },
+    props: {
+      typeId: typeId as StressCopeType,
+      typeData: types[typeId as StressCopeType],
+    },
+  }));
+}
+
+const { typeId, typeData } = Astro.props;
+
+const SITE_URL = 'https://shindan-navi.jp';
+const PAGE_URL = `${SITE_URL}/diagnosis/limited/${meta.slug}/result/${typeId}/`;
+
+// タイプ別アイコン
+const typeEmoji: Record<StressCopeType, string> = {
+  'problem-focused': '🔧',
+  'emotion-focused': '🌿',
+  avoidance: '🌊',
+  'support-seeking': '🤝',
+};
+
+// タイプ別カラー
+const typeColor: Record<StressCopeType, string> = {
+  'problem-focused': '#2563eb',
+  'emotion-focused': '#059669',
+  avoidance: '#d97706',
+  'support-seeking': '#7c3aed',
+};
+
+// FAQ（タイプ別）
+const faqs = [
+  {
+    question: `${typeData.name}はどんな仕事に向いていますか？`,
+    answer: typeData.workCompatibility,
+  },
+  {
+    question: `${typeData.name}の強みを活かすには？`,
+    answer: typeData.strengths.slice(0, 3).join('。また、') + '。',
+  },
+  {
+    question: `${typeData.name}のセルフケアのコツは？`,
+    answer: typeData.selfCareTips[0] + ' ' + typeData.selfCareTips[1],
+  },
+  {
+    question: 'ストレス対処スタイルは変えられますか？',
+    answer:
+      `ストレス対処スタイルは固定された性質ではなく、状況・経験・トレーニングによって変化します。Lazarus & Folkman（1984）は、コーピングの有効性は状況との一致が重要と指摘しており、複数のスタイルを使い分けることが理想的とされています。${typeData.name}の方は、特に「変えられること・変えられないこと」の分類を意識することで、他のスタイルを補完的に取り入れやすくなります。`,
+  },
+  {
+    question: '強いストレスを感じているとき、どうすれば良いですか？',
+    answer:
+      '本診断はコーピング傾向の自己理解ツールであり、医療的・臨床的なアドバイスは提供しません。日常生活に大きな支障が出ている場合は、医師・臨床心理士・公認心理師など専門家にご相談ください。厚生労働省「こころの健康相談統一ダイヤル」（0570-064-556）も利用できます。',
+  },
+];
+
+// JSON-LD: Article
+const jsonLdArticle = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  '@id': `${PAGE_URL}#article`,
+  headline: `${typeData.name}（${typeData.nameEn}）の特徴・強み・セルフケアTips完全ガイド`,
+  url: PAGE_URL,
+  description: `${typeData.description.slice(0, 100).replace(/\n/g, '')}`,
+  datePublished: meta.publishedAt,
+  dateModified: meta.updatedAt,
+  author: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+    name: '診断ナビ',
+    url: SITE_URL,
+  },
+  publisher: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+    name: '診断ナビ',
+    url: SITE_URL,
+  },
+  about: {
+    '@type': 'Thing',
+    name: 'ストレス対処スタイル',
+    description: 'Lazarus & Folkman (1984) コーピング理論に基づく4タイプ分類',
+  },
+  citation: meta.references.map((ref) => ({
+    '@type': 'ScholarlyArticle',
+    name: ref.title,
+    author: ref.author,
+    datePublished: String(ref.year),
+    url: ref.url,
+  })),
+};
+
+const jsonLdFAQ = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  '@id': `${PAGE_URL}#faq`,
+  mainEntity: faqs.map(({ question, answer }) => ({
+    '@type': 'Question',
+    name: question,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: answer,
+    },
+  })),
+};
+
+const jsonLdBreadcrumb = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'ホーム', item: SITE_URL },
+    { '@type': 'ListItem', position: 2, name: '診断一覧', item: `${SITE_URL}/diagnosis/` },
+    { '@type': 'ListItem', position: 3, name: '月1限定診断', item: `${SITE_URL}/diagnosis/limited/` },
+    {
+      '@type': 'ListItem',
+      position: 4,
+      name: 'ストレス対処タイプ診断',
+      item: `${SITE_URL}/diagnosis/limited/${meta.slug}/`,
+    },
+    { '@type': 'ListItem', position: 5, name: typeData.name, item: PAGE_URL },
+  ],
+};
+
+const jsonLdAll = [jsonLdArticle, jsonLdFAQ, jsonLdBreadcrumb];
+
+// 他タイプリンク
+const otherTypes = Object.values(types).filter((t) => t.id !== typeId);
+---
+
+<ResultLayout
+  diagnosisId={meta.id}
+  diagnosisClass="diag-limited"
+  typeId={typeId}
+  typeName={typeData.name}
+  diagnosisName="ストレス対処タイプ診断（6月限定）"
+  characterEmoji={typeEmoji[typeId]}
+  tagline={typeData.catchphrase}
+  shareUrl={PAGE_URL}
+  pageTitle={`${typeData.name}（${typeData.nameEn}）｜ストレス対処タイプ診断【PRO限定・6月】 - 診断ナビ`}
+  pageDescription={`あなたのストレス対処タイプは「${typeData.name}」。${typeData.catchphrase}。Lazarus & Folkman (1984) コーピング理論に基づく6月限定診断の詳細結果です。`}
+  jsonLd={jsonLdAll}
+  relatedDiagnoses={[
+    {
+      title: '月1限定診断ハブ',
+      href: '/diagnosis/limited/',
+      icon: '📅',
+      badge: '今月のテーマ',
+    },
+    {
+      title: '完璧主義タイプ診断',
+      href: '/diagnosis/perfectionism/',
+      icon: '⭐',
+      badge: '無料',
+    },
+    {
+      title: 'PRO会員の全機能',
+      href: '/pro/',
+      icon: '✨',
+      badge: '¥590/月',
+    },
+  ]}
+  diagnosisListHref="/diagnosis/"
+>
+  <Container>
+
+    {/* PRO判定ゲート */}
+    <div id="result-pro-gate" class="result-pro-gate">
+      <div class="result-gate-banner">
+        <span class="result-gate-icon" aria-hidden="true">🔒</span>
+        <div>
+          <p class="result-gate-title">詳細結果はPRO会員限定です</p>
+          <p class="result-gate-sub">
+            タイプのサマリーはこのまま確認できます。
+            特徴・強み・注意点・仕事傾向・セルフケアTipsの詳細を読むにはPROへのアップグレードが必要です。
+          </p>
+        </div>
+      </div>
+
+      {/* サマリー（誰でも見える）*/}
+      <div class="result-summary-block">
+        <h2 class="result-summary-h2" style={`color: ${typeColor[typeId]}`}>
+          {typeEmoji[typeId]} {typeData.name}
+        </h2>
+        <p class="result-summary-catch">{typeData.catchphrase}</p>
+        <div class="result-summary-strengths">
+          <h3 class="result-summary-sub">強みのポイント（3つ）</h3>
+          <ul class="result-summary-list">
+            {typeData.strengths.slice(0, 3).map((s) => (
+              <li class="result-summary-item">{s}</li>
+            ))}
+          </ul>
+        </div>
+        <div class="result-gate-blur-notice">
+          <span class="result-blur-icon" aria-hidden="true">↓</span>
+          <p class="result-blur-text">残りの詳細結果（特徴・注意点・セルフケアTips）はPRO会員で確認できます</p>
+        </div>
+      </div>
+
+      <ProUpgradeCta
+        headline={`${typeData.name}の詳細結果 + 月1限定診断をフルに活用する`}
+        highlightFeature="月1限定診断"
+        fullCard={true}
+      />
+    </div>
+
+    {/* PRO会員向け詳細（JSで表示切り替え）*/}
+    <div id="result-pro-detail" hidden class="result-pro-detail">
+
+      {/* PRO会員バナー */}
+      <div class="result-access-banner">
+        <span class="result-access-badge">PRO会員特典</span>
+        <span class="result-access-text">{typeData.name}の詳細結果を表示しています</span>
+      </div>
+
+      {/* タイプ詳細説明 */}
+      <section class="result-section" aria-labelledby="result-desc-h2">
+        <h2 id="result-desc-h2" class="result-h2" style={`border-color: ${typeColor[typeId]}`}>
+          {typeData.name}とは
+        </h2>
+        <div class="result-desc-block">
+          {typeData.description.split('\n\n').map((para) => (
+            <p class="result-desc-para">{para}</p>
+          ))}
+        </div>
+        <div class="result-science-note">
+          <span class="result-science-icon" aria-hidden="true">📚</span>
+          <p class="result-science-text">
+            学術根拠: Lazarus & Folkman (1984) コーピング理論 + Carver (1997) Brief COPE
+            （<a href={meta.references[2].url} target="_blank" rel="noopener noreferrer">
+              DOI: 10.1207/s15327558ijbm0401_6
+            </a>）
+          </p>
+        </div>
+      </section>
+
+      {/* 特徴・強み・注意点 */}
+      <section class="result-section" aria-labelledby="result-traits-h2">
+        <h2 id="result-traits-h2" class="result-h2" style={`border-color: ${typeColor[typeId]}`}>
+          特徴・強み・注意点
+        </h2>
+        <div class="result-traits-grid">
+          <div class="result-trait-card result-trait-card--characteristics">
+            <h3 class="result-trait-title">特徴（5つ）</h3>
+            <ul class="result-trait-list">
+              {typeData.characteristics.map((c) => (
+                <li class="result-trait-item">{c}</li>
+              ))}
+            </ul>
+          </div>
+          <div class="result-trait-card result-trait-card--strengths">
+            <h3 class="result-trait-title">強み（4つ）</h3>
+            <ul class="result-trait-list">
+              {typeData.strengths.map((s) => (
+                <li class="result-trait-item">{s}</li>
+              ))}
+            </ul>
+          </div>
+          <div class="result-trait-card result-trait-card--weaknesses">
+            <h3 class="result-trait-title">注意点（4つ）</h3>
+            <ul class="result-trait-list">
+              {typeData.weaknesses.map((w) => (
+                <li class="result-trait-item">{w}</li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      {/* 仕事での傾向 */}
+      <section class="result-section" aria-labelledby="result-work-h2">
+        <h2 id="result-work-h2" class="result-h2" style={`border-color: ${typeColor[typeId]}`}>
+          仕事での傾向
+        </h2>
+        <div class="result-compat-block">
+          <div class="result-compat-icon" aria-hidden="true">💼</div>
+          <p class="result-compat-text">{typeData.workCompatibility}</p>
+        </div>
+      </section>
+
+      {/* 日常生活での活用ヒント */}
+      <section class="result-section" aria-labelledby="result-daily-h2">
+        <h2 id="result-daily-h2" class="result-h2" style={`border-color: ${typeColor[typeId]}`}>
+          日常生活での活用ヒント
+        </h2>
+        <div class="result-compat-block">
+          <div class="result-compat-icon" aria-hidden="true">🌱</div>
+          <p class="result-compat-text">{typeData.dailyTips}</p>
+        </div>
+      </section>
+
+      {/* セルフケアTips */}
+      <section class="result-section" aria-labelledby="result-tips-h2">
+        <h2 id="result-tips-h2" class="result-h2" style={`border-color: ${typeColor[typeId]}`}>
+          セルフケアTips（5項目）
+        </h2>
+        <p class="result-tips-note">
+          ※これらのTipsは自己理解とセルフケアのための参考情報です。
+          強いストレスの場合は専門家へのご相談を優先してください。
+        </p>
+        <ol class="result-tips-list">
+          {typeData.selfCareTips.map((tip) => (
+            <li class="result-tips-item">{tip}</li>
+          ))}
+        </ol>
+      </section>
+
+      {/* このタイプが見える人物像 */}
+      <section class="result-section" aria-labelledby="result-examples-h2">
+        <h2 id="result-examples-h2" class="result-h2" style={`border-color: ${typeColor[typeId]}`}>
+          このタイプが見える人物像
+        </h2>
+        <p class="result-lead">
+          以下は傾向を分かりやすく示す架空の人物像です。実在の人物とは関係ありません。
+        </p>
+        <ul class="result-examples-list">
+          {typeData.examples.map((ex) => (
+            <li class="result-examples-item">{ex}</li>
+          ))}
+        </ul>
+      </section>
+
+      {/* 他タイプも見てみる */}
+      <section class="result-section" aria-labelledby="result-other-h2">
+        <h2 id="result-other-h2" class="result-h2" style={`border-color: ${typeColor[typeId]}`}>
+          他のコーピングタイプ
+        </h2>
+        <p class="result-lead">
+          他のタイプも確認して、自分のコーピングスタイルをより立体的に理解しましょう。
+        </p>
+        <div class="result-other-grid">
+          {otherTypes.map((t) => (
+            <a
+              href={`/diagnosis/limited/${meta.slug}/result/${t.id}/`}
+              class="result-other-card"
+            >
+              <span class="result-other-icon" aria-hidden="true">{typeEmoji[t.id]}</span>
+              <span class="result-other-name">{t.name}</span>
+              <span class="result-other-desc">{t.catchphrase}</span>
+            </a>
+          ))}
+        </div>
+      </section>
+
+      {/* FAQ */}
+      <section class="result-section" aria-labelledby="result-faq-h2">
+        <h2 id="result-faq-h2" class="result-h2" style={`border-color: ${typeColor[typeId]}`}>
+          よくある質問
+        </h2>
+        <dl class="result-faq-list">
+          {faqs.map(({ question, answer }) => (
+            <div class="result-faq-item">
+              <dt class="result-faq-q">{question}</dt>
+              <dd class="result-faq-a">{answer}</dd>
+            </div>
+          ))}
+        </dl>
+      </section>
+
+      {/* もう一度診断 */}
+      <section class="result-section result-section--retry" aria-label="もう一度診断する">
+        <a
+          href={`/diagnosis/limited/${meta.slug}/`}
+          class="result-retry-btn"
+        >
+          もう一度診断を受ける
+        </a>
+      </section>
+
+    </div>
+  </Container>
+</ResultLayout>
+
+<script>
+  /**
+   * クライアントサイド: LocalStorageのplanを確認してPROゲートと詳細を切り替える
+   */
+  (function () {
+    try {
+      const plan = localStorage.getItem('shindan_user_plan');
+      if (plan === 'pro') {
+        const gate = document.getElementById('result-pro-gate');
+        const detail = document.getElementById('result-pro-detail');
+        if (gate) gate.hidden = true;
+        if (detail) detail.hidden = false;
+      }
+    } catch {
+      // LocalStorage読み取り失敗時はPROゲート（初期表示）のまま
+    }
+  })();
+</script>
+
+<style>
+/* ========== PRO判定ゲート ========== */
+.result-pro-gate {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-block: 2rem;
+}
+.result-gate-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  background: #f5f3ff;
+  border: 2px solid #c4b5fd;
+  border-radius: 0.75rem;
+  padding: 1.25rem 1.5rem;
+}
+.result-gate-icon {
+  font-size: 2rem;
+  flex-shrink: 0;
+}
+.result-gate-title {
+  font-weight: 700;
+  font-size: 1rem;
+  color: #4f46e5;
+  margin: 0 0 0.4rem;
+}
+.result-gate-sub {
+  font-size: 0.9rem;
+  color: #4b5563;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* ========== サマリー ========== */
+.result-summary-block {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.result-summary-h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0;
+  font-family: var(--sn-font-rounded, sans-serif);
+}
+.result-summary-catch {
+  font-size: 0.95rem;
+  color: #374151;
+  line-height: 1.7;
+  margin: 0;
+}
+.result-summary-sub {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #374151;
+  margin: 0 0 0.5rem;
+}
+.result-summary-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.result-summary-item {
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: #374151;
+  padding-left: 1.2em;
+  position: relative;
+}
+.result-summary-item::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  color: #16a34a;
+}
+.result-gate-blur-notice {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #f3f4f6;
+  border: 1px dashed #d1d5db;
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+}
+.result-blur-icon {
+  font-size: 1.25rem;
+  color: #9ca3af;
+}
+.result-blur-text {
+  font-size: 0.85rem;
+  color: #6b7280;
+  margin: 0;
+}
+
+/* ========== PRO詳細 ========== */
+.result-pro-detail {
+  margin-block: 2rem;
+}
+.result-access-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+  margin-bottom: 2rem;
+}
+.result-access-badge {
+  font-size: 0.75rem;
+  font-weight: 700;
+  background: #16a34a;
+  color: #fff;
+  padding: 0.2rem 0.6rem;
+  border-radius: 2rem;
+  white-space: nowrap;
+}
+.result-access-text {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #15803d;
+}
+
+/* ========== セクション共通 ========== */
+.result-section {
+  margin-block: 2.5rem;
+}
+.result-section--retry {
+  text-align: center;
+}
+.result-h2 {
+  font-size: clamp(1.2rem, 3.5vw, 1.5rem);
+  font-family: var(--sn-font-rounded, sans-serif);
+  font-weight: 700;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid;
+}
+.result-lead {
+  font-size: 0.9rem;
+  line-height: 1.7;
+  color: #4b5563;
+  margin-bottom: 1rem;
+}
+
+/* ========== 詳細説明 ========== */
+.result-desc-block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+.result-desc-para {
+  font-size: 0.95rem;
+  line-height: 1.8;
+  color: #374151;
+  margin: 0;
+}
+.result-science-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  background: #f8f7ff;
+  border-left: 3px solid #7c3aed;
+  border-radius: 0 0.5rem 0.5rem 0;
+  padding: 0.75rem 1rem;
+  margin-top: 0.5rem;
+}
+.result-science-icon {
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+.result-science-text {
+  font-size: 0.8rem;
+  color: #6b7280;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* ========== 特徴グリッド ========== */
+.result-traits-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+.result-trait-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+}
+.result-trait-card--characteristics {
+  background: #f0f9ff;
+  border-color: #bae6fd;
+}
+.result-trait-card--strengths {
+  background: #f0fdf4;
+  border-color: #bbf7d0;
+}
+.result-trait-card--weaknesses {
+  background: #fffbeb;
+  border-color: #fde68a;
+}
+.result-trait-title {
+  font-size: 0.9rem;
+  font-weight: 700;
+  margin: 0 0 0.75rem;
+  color: #374151;
+}
+.result-trait-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.result-trait-item {
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: #374151;
+  padding-left: 1.2em;
+  position: relative;
+}
+.result-trait-item::before {
+  content: '・';
+  position: absolute;
+  left: 0;
+  color: #9ca3af;
+}
+
+/* ========== 仕事・日常 ========== */
+.result-compat-block {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 1.25rem 1.5rem;
+}
+.result-compat-icon {
+  font-size: 1.75rem;
+  flex-shrink: 0;
+}
+.result-compat-text {
+  font-size: 0.9rem;
+  line-height: 1.75;
+  color: #374151;
+  margin: 0;
+}
+
+/* ========== セルフケアTips ========== */
+.result-tips-note {
+  font-size: 0.8rem;
+  color: #d97706;
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  margin: 0 0 1rem;
+}
+.result-tips-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  counter-reset: tips-counter;
+}
+.result-tips-item {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  font-size: 0.9rem;
+  line-height: 1.7;
+  color: #374151;
+  padding: 1rem;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  counter-increment: tips-counter;
+}
+.result-tips-item::before {
+  content: counter(tips-counter);
+  flex-shrink: 0;
+  width: 1.75rem;
+  height: 1.75rem;
+  background: #7c3aed;
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+/* ========== 人物像 ========== */
+.result-examples-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.result-examples-item {
+  font-size: 0.9rem;
+  line-height: 1.7;
+  color: #374151;
+  padding: 1rem;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-left: 3px solid #7c3aed;
+  border-radius: 0 0.5rem 0.5rem 0;
+}
+
+/* ========== 他タイプ ========== */
+.result-other-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+.result-other-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  padding: 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.result-other-card:hover {
+  border-color: #7c3aed;
+  box-shadow: 0 2px 8px rgba(124 58 237 / 0.1);
+}
+.result-other-icon {
+  font-size: 1.5rem;
+}
+.result-other-name {
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: #1f2937;
+}
+.result-other-desc {
+  font-size: 0.78rem;
+  color: #6b7280;
+  line-height: 1.5;
+}
+
+/* ========== FAQ ========== */
+.result-faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+.result-faq-item {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+.result-faq-q {
+  font-weight: 700;
+  font-size: 0.9rem;
+  padding: 1rem 1.25rem;
+  background: #f9fafb;
+  margin: 0;
+  display: block;
+}
+.result-faq-q::before {
+  content: 'Q. ';
+  color: #7c3aed;
+}
+.result-faq-a {
+  font-size: 0.875rem;
+  line-height: 1.7;
+  padding: 1rem 1.25rem;
+  margin: 0;
+  color: #4b5563;
+}
+.result-faq-a::before {
+  content: 'A. ';
+  font-weight: 700;
+  color: #16a34a;
+}
+
+/* ========== もう一度 ========== */
+.result-retry-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.9rem 2.5rem;
+  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+  color: #fff;
+  border-radius: 3rem;
+  font-weight: 700;
+  font-size: 1rem;
+  text-decoration: none;
+  box-shadow: 0 4px 12px rgba(79 70 229 / 0.3);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.result-retry-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(79 70 229 / 0.35);
+  color: #fff;
+  text-decoration: none;
+}
+
+/* ========== レスポンシブ ========== */
+@media (max-width: 640px) {
+  .result-traits-grid {
+    grid-template-columns: 1fr;
+  }
+  .result-other-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+@media (max-width: 480px) {
+  .result-other-grid {
+    grid-template-columns: 1fr;
+  }
+}
+</style>

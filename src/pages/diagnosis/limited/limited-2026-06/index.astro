@@ -1,0 +1,1030 @@
+---
+/**
+ * /diagnosis/limited/limited-2026-06/ - ストレス対処タイプ診断（2026年6月限定）
+ *
+ * PRO限定: PRO会員のみ DiagnosisFlow で20問受診可能
+ * 無料/PASS: テーマ説明 + 最初の3問プレビュー + PRO誘導CTA
+ * ゲスト: PRO誘導表示（LocalStorageなし = ゲスト扱い）
+ *
+ * SEO/AIO:
+ * - JSON-LD: WebApplication + Quiz + FAQPage + BreadcrumbList
+ * - YMYL回避: 「コーピング傾向」「対処スタイル」表現。医学的診断ゼロ
+ * - 学術根拠: Lazarus & Folkman (1984) + Carver (1997) DOI付き
+ *
+ * 確認日: 2026-05-22
+ */
+import BaseLayout from '../../../../layouts/BaseLayout.astro';
+import Container from '../../../../components/Container.astro';
+import DiagnosisFlow from '../../../../components/DiagnosisFlow';
+import TldrBlock from '../../../../components/TldrBlock.astro';
+import ReferenceList from '../../../../components/ReferenceList.astro';
+import ScienceNote from '../../../../components/ScienceNote.astro';
+import ProUpgradeCta from '../../../../components/ProUpgradeCta.astro';
+import { meta } from '../../../../data/diagnoses/limited/2026-06/meta';
+import { questions } from '../../../../data/diagnoses/limited/2026-06/questions';
+import { calculateResultTypeId } from '../../../../data/diagnoses/limited/2026-06/results';
+
+const SITE_URL = 'https://shindan-navi.jp';
+const PAGE_URL = `${SITE_URL}/diagnosis/limited/${meta.slug}/`;
+
+// DiagnosisFlow に渡す questions を diagnosis.ts の Question 型に変換
+const flowQuestions = questions.map((q) => ({
+  id: String(q.id),
+  text: q.text,
+}));
+
+// プレビュー用（最初の3問）
+const previewQuestions = questions.slice(0, 3);
+
+// JSON-LD: WebApplication
+const jsonLdWebApp = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  '@id': `${PAGE_URL}#webapp`,
+  name: 'ストレス対処タイプ診断【2026年6月限定・PRO限定】',
+  url: PAGE_URL,
+  applicationCategory: 'EducationalApplication',
+  operatingSystem: 'Web',
+  description: meta.description,
+  offers: {
+    '@type': 'Offer',
+    price: '590',
+    priceCurrency: 'JPY',
+    availability: 'https://schema.org/InStock',
+    description: 'PRO会員（¥590/月）限定',
+  },
+  author: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+    name: '診断ナビ',
+    url: SITE_URL,
+  },
+};
+
+// JSON-LD: Quiz
+const jsonLdQuiz = {
+  '@context': 'https://schema.org',
+  '@type': 'Quiz',
+  '@id': `${PAGE_URL}#quiz`,
+  name: 'ストレス対処タイプ診断（20問）',
+  url: PAGE_URL,
+  about: {
+    '@type': 'Thing',
+    name: 'コーピング（ストレス対処）心理学',
+    description: 'Lazarus & FlokmanおよびCarverが研究したコーピング理論',
+    sameAs: 'https://link.springer.com/book/9780826141910',
+  },
+  educationalLevel: 'HighSchool',
+  numberOfQuestions: meta.questionCount,
+  assesses: 'ストレス対処スタイル・コーピング傾向',
+  dateCreated: meta.publishedAt,
+  dateModified: meta.updatedAt,
+  inLanguage: 'ja',
+  citation: meta.references.map((ref) => ({
+    '@type': 'ScholarlyArticle',
+    name: ref.title,
+    author: ref.author,
+    datePublished: String(ref.year),
+    url: ref.url,
+  })),
+};
+
+// FAQ
+const faqs = [
+  {
+    question: 'ストレス対処タイプ診断とは何ですか？',
+    answer:
+      'ストレス対処タイプ診断は、Lazarus & Folkman（1984）のコーピング理論とCarver（1997）のBrief COPEに基づいて設計した自己診断ツールです。「問題解決型」「感情調整型」「回避型」「サポート希求型」の4タイプでストレス対処スタイルを分類します（出典: Carver 1997, IJBM 4(1), https://doi.org/10.1207/s15327558ijbm0401_6）。',
+  },
+  {
+    question: 'コーピングとは何ですか？',
+    answer:
+      'コーピング（coping）とは、ストレスを感じたときに心理的・行動的にそれに対処しようとするプロセスを指します。Lazarus & Folkman（1984）は「問題焦点型コーピング」と「感情焦点型コーピング」の2つの大分類を提唱しました。本診断ではさらに「回避型」と「サポート希求型」を加えた4タイプで分類しています。',
+  },
+  {
+    question: '4タイプのうちどれが一番良いですか？',
+    answer:
+      'どのタイプが「良い・悪い」ではありません。Lazarus & Folkman（1984）の研究では、コーピングの有効性は状況との一致が重要とされています。解決できる問題には問題解決型、変えられない状況には感情調整型や受容、人とのつながりを活かすにはサポート希求型が有効に機能します。複数のスタイルを状況に応じて使い分けることが長期的なストレスマネジメントのコツです。',
+  },
+  {
+    question: 'ストレスが強い場合はどうすれば良いですか？',
+    answer:
+      '本診断はストレス対処スタイルを把握するための自己理解ツールであり、医療的・臨床的な診断ではありません。強いストレスや日常生活への支障を感じている場合は、医師・臨床心理士・公認心理師などの専門家にご相談ください。厚生労働省「こころの健康相談統一ダイヤル」（0570-064-556）も利用できます。',
+  },
+  {
+    question: 'なぜ梅雨・初夏のテーマなのですか？',
+    answer:
+      '梅雨・初夏は気温・湿度・天候の変化が大きく、心身のストレスが増しやすい時期とされています。季節性のストレス状況を意識してコーピング傾向を確認することで、日常的なセルフケアに活かしやすくなります。ただし、季節だけに限らず、ストレス対処スタイルは年間を通じて活用できます。',
+  },
+  {
+    question: 'この診断はPRO限定ですか？',
+    answer:
+      'はい。月1限定診断はPRO会員（¥590/月）限定の特典です。テーマのプレビューは無料・PASS会員にも表示されますが、診断フロー・結果ページへのアクセスにはPROへのアップグレードが必要です。',
+  },
+];
+
+const jsonLdFAQ = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  '@id': `${PAGE_URL}#faq`,
+  mainEntity: faqs.map(({ question, answer }) => ({
+    '@type': 'Question',
+    name: question,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: answer,
+    },
+  })),
+};
+
+const jsonLdBreadcrumb = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'ホーム', item: SITE_URL },
+    { '@type': 'ListItem', position: 2, name: '診断一覧', item: `${SITE_URL}/diagnosis/` },
+    { '@type': 'ListItem', position: 3, name: '月1限定診断', item: `${SITE_URL}/diagnosis/limited/` },
+    { '@type': 'ListItem', position: 4, name: 'ストレス対処タイプ診断', item: PAGE_URL },
+  ],
+};
+
+const jsonLdAll = [jsonLdWebApp, jsonLdQuiz, jsonLdFAQ, jsonLdBreadcrumb];
+
+// 4タイプカード用
+const typeCards = [
+  {
+    id: 'problem-focused',
+    name: '問題解決型',
+    nameEn: 'Problem-Focused',
+    catchphrase: '原因に向き合い、解決策を探し続ける行動派',
+    icon: '🔧',
+    color: '#2563eb',
+  },
+  {
+    id: 'emotion-focused',
+    name: '感情調整型',
+    nameEn: 'Emotion-Focused',
+    catchphrase: '感情を整えることで、前に進む力を取り戻す',
+    icon: '🌿',
+    color: '#059669',
+  },
+  {
+    id: 'avoidance',
+    name: '回避型',
+    nameEn: 'Avoidance-Oriented',
+    catchphrase: 'いったん距離を置いて回復のスペースを作る',
+    icon: '🌊',
+    color: '#d97706',
+  },
+  {
+    id: 'support-seeking',
+    name: 'サポート希求型',
+    nameEn: 'Support-Seeking',
+    catchphrase: '人とつながることでストレスを乗り越える',
+    icon: '🤝',
+    color: '#7c3aed',
+  },
+];
+---
+
+<BaseLayout
+  title={meta.title}
+  description={meta.description}
+  canonical={PAGE_URL}
+  jsonLd={jsonLdAll}
+  ogType="website"
+  publishDate={meta.publishedAt}
+  lastUpdated={meta.updatedAt}
+  breadcrumbs={[
+    { name: '診断一覧', url: '/diagnosis/' },
+    { name: '月1限定診断', url: '/diagnosis/limited/' },
+    { name: 'ストレス対処タイプ診断', url: `/diagnosis/limited/${meta.slug}/` },
+  ]}
+>
+  {/* ヒーローセクション */}
+  <section class="slimit-hero page-hero page-hero--purple" aria-labelledby="slimit-hero-h1">
+    <Container>
+      <div class="slimit-hero-inner">
+        <div class="slimit-hero-badges">
+          <span class="slimit-badge slimit-badge--pro">PRO限定</span>
+          <span class="slimit-badge slimit-badge--month">2026年6月 限定診断</span>
+        </div>
+        <h1 id="slimit-hero-h1" class="slimit-hero-h1">
+          ストレス対処タイプ診断
+          <span class="slimit-hero-meta">【6月限定 · PRO限定 · 20問】</span>
+        </h1>
+        <p class="slimit-hero-catch">
+          梅雨・初夏のストレスをどう乗り越えているか。<br />
+          あなたのコーピング傾向を Lazarus & Folkman 理論で科学的に分析します。
+        </p>
+        <div class="slimit-hero-stats">
+          <span class="slimit-stat"><strong>20</strong>問</span>
+          <span class="slimit-stat-sep">・</span>
+          <span class="slimit-stat">約<strong>3</strong>分</span>
+          <span class="slimit-stat-sep">・</span>
+          <span class="slimit-stat"><strong>4</strong>タイプ</span>
+          <span class="slimit-stat-sep">・</span>
+          <span class="slimit-stat"><strong>PRO</strong>限定</span>
+        </div>
+        <div class="slimit-hero-ymyl">
+          ※本診断はコーピング傾向の自己理解ツールです。医療的診断は行いません。
+          強いストレスは専門家へご相談ください。
+        </div>
+      </div>
+    </Container>
+  </section>
+
+  <Container>
+    {/* TldrBlock */}
+    <TldrBlock
+      title="このページのポイント（3行まとめ）"
+      points={[
+        'ストレス対処タイプ診断はLazarus & Folkman（1984）のコーピング理論とCarver（1997）のBrief COPEに基づき、20問で「問題解決型」「感情調整型」「回避型」「サポート希求型」の4タイプを判定するPRO限定の6月限定診断です',
+        'どのタイプが良い・悪いはなく、Lazarus & Folkman（1984）はコーピングの有効性は状況との一致が重要と指摘しています。状況に応じた使い分けがポイントです',
+        'PRO会員（¥590/月）のみ診断フロー・結果ページにアクセスできます。過去の限定診断アーカイブも遡って受診できます',
+      ]}
+      updatedAt={meta.updatedAt}
+      sourceLabel="Lazarus & Folkman (1984) Stress, Appraisal, and Coping"
+      sourceUrl="https://link.springer.com/book/9780826141910"
+    />
+
+    {/* 診断概要 */}
+    <section class="slimit-section" aria-labelledby="slimit-about-h2">
+      <h2 id="slimit-about-h2" class="slimit-h2">ストレス対処タイプ診断とは</h2>
+      <p class="slimit-lead">
+        ストレス対処タイプ診断は、心理学者 Richard Lazarus と Susan Folkman が
+        1984年に提唱した「コーピング理論（Stress, Appraisal, and Coping）」と、
+        Carver（1997）の「Brief COPE」を学術的根拠として設計した自己理解ツールです。
+      </p>
+      <p class="slimit-body">
+        コーピング（coping）とは、ストレスを感じたときに心理的・行動的にそれに対処しようとするプロセスです。
+        あなたがどのコーピングスタイルを主に使っているかを知ることで、
+        日常のストレスをより効果的にマネジメントするためのセルフケアが見えてきます。
+      </p>
+      <div class="slimit-info-table-wrap">
+        <table class="slimit-info-table">
+          <caption class="slimit-table-caption">ストレス対処タイプ診断の概要</caption>
+          <tbody>
+            <tr>
+              <th scope="row">理論の根拠</th>
+              <td>Lazarus & Folkman (1984) コーピング理論 + Carver (1997) Brief COPE</td>
+            </tr>
+            <tr>
+              <th scope="row">問題数</th>
+              <td>20問（各タイプ5問 × 4タイプ）</td>
+            </tr>
+            <tr>
+              <th scope="row">回答方式</th>
+              <td>5段階リッカートスケール（1=全くしない〜5=いつもする）</td>
+            </tr>
+            <tr>
+              <th scope="row">所要時間</th>
+              <td>約3分</td>
+            </tr>
+            <tr>
+              <th scope="row">結果タイプ数</th>
+              <td>4タイプ（問題解決型・感情調整型・回避型・サポート希求型）</td>
+            </tr>
+            <tr>
+              <th scope="row">アクセス権</th>
+              <td>PRO会員（¥590/月）限定</td>
+            </tr>
+            <tr>
+              <th scope="row">注意事項</th>
+              <td>対処スタイルの傾向把握ツールです。医学的診断は行いません。</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    {/* 4タイプ紹介 */}
+    <section class="slimit-section" aria-labelledby="slimit-types-h2">
+      <h2 id="slimit-types-h2" class="slimit-h2">4つのコーピングタイプ</h2>
+      <p class="slimit-lead">
+        Lazarus & Folkman（1984）の2大コーピングと、Carver（1997）のBrief COPEサブスケールを統合した4タイプです。
+        どれが「良い・悪い」ではなく、状況に応じた使い分けが重要です。
+      </p>
+      <div class="slimit-types-grid">
+        {typeCards.map((tc) => (
+          <div class="slimit-type-card" style={`--type-color: ${tc.color}`}>
+            <div class="slimit-type-icon" aria-hidden="true">{tc.icon}</div>
+            <h3 class="slimit-type-name">{tc.name}</h3>
+            <p class="slimit-type-name-en">{tc.nameEn}</p>
+            <p class="slimit-type-desc">{tc.catchphrase}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    {/* 診断フロー（PRO判定でクライアント側に切り替え）*/}
+    <section class="slimit-section slimit-section--flow" id="diagnosis-flow" aria-labelledby="slimit-flow-h2">
+      <h2 id="slimit-flow-h2" class="slimit-h2 slimit-h2--center">診断を始める</h2>
+
+      {/* PROゲート（初期表示・SSR安全側）*/}
+      <div id="slimit-pro-gate" class="slimit-pro-gate">
+        <div class="slimit-gate-banner">
+          <span class="slimit-gate-icon" aria-hidden="true">🔒</span>
+          <div class="slimit-gate-body">
+            <p class="slimit-gate-title">この診断はPRO会員限定です</p>
+            <p class="slimit-gate-sub">
+              PRO会員（¥590/月）になると、6月限定診断および今後の月1限定診断すべてが受診できます。
+            </p>
+          </div>
+        </div>
+
+        {/* プレビュー: 最初の3問を体験 */}
+        <div class="slimit-preview-block">
+          <p class="slimit-preview-label">最初の3問をプレビュー（回答は保存されません）</p>
+          <ol class="slimit-preview-questions">
+            {previewQuestions.map((q) => (
+              <li class="slimit-preview-question">
+                <p class="slimit-preview-q-text">Q{q.id}. {q.text}</p>
+                <div class="slimit-preview-scale" aria-hidden="true">
+                  <span>全くしない</span>
+                  {[1, 2, 3, 4, 5].map((v) => (
+                    <button
+                      type="button"
+                      class="slimit-preview-btn"
+                      disabled
+                      aria-label={`${v}`}
+                    >
+                      {v}
+                    </button>
+                  ))}
+                  <span>いつもする</span>
+                </div>
+              </li>
+            ))}
+          </ol>
+          <p class="slimit-preview-note">
+            残り17問もPRO会員でアクセスできます
+          </p>
+        </div>
+
+        <div class="slimit-gate-cta">
+          <ProUpgradeCta
+            headline="月1限定診断 + タイムカプセル + AIプロンプトカードが使えるPROへ"
+            highlightFeature="月1限定診断"
+            fullCard={true}
+          />
+        </div>
+      </div>
+
+      {/* PRO会員向け: DiagnosisFlow（JSで表示切り替え）*/}
+      <div id="slimit-pro-flow" hidden class="slimit-pro-flow-wrapper">
+        <div class="slimit-access-banner">
+          <span class="slimit-access-badge">PRO会員特典</span>
+          <span class="slimit-access-text">6月限定診断を受診しています</span>
+        </div>
+        <p class="slimit-flow-lead">
+          全20問・約3分。今の自分に正直に答えてください。
+        </p>
+        <div class="slimit-flow-wrapper">
+          <DiagnosisFlow
+            client:load
+            diagnosisId={meta.id}
+            questions={flowQuestions}
+            resultPath={(typeId: string) => `/diagnosis/limited/${meta.slug}/result/${typeId}/`}
+            calculateResult={calculateResultTypeId}
+          />
+        </div>
+      </div>
+    </section>
+
+    {/* 学術根拠 */}
+    <section class="slimit-section" aria-labelledby="slimit-science-h2">
+      <h2 id="slimit-science-h2" class="slimit-h2">診断の根拠・学術背景</h2>
+      <p class="slimit-lead">
+        本診断は国際的に広く使用されているコーピング研究の一次論文に基づいています。
+        医学的・臨床的な診断ではなく、傾向把握のための自己理解ツールです。
+      </p>
+
+      <div class="slimit-science-cards">
+        <div class="slimit-science-card">
+          <div class="slimit-science-meta">
+            <span class="slimit-science-badge">理論の柱 ①</span>
+            <span class="slimit-science-year">1984年</span>
+          </div>
+          <h3 class="slimit-science-title">Lazarus & Folkman (1984)「Stress, Appraisal, and Coping」</h3>
+          <p class="slimit-science-body">
+            Richard Lazarusとその共同研究者 Susan Folkman は、ストレスを「評価（appraisal）」と「コーピング（coping）」の相互作用として捉えるトランザクショナルモデルを提唱しました。
+            コーピングの2大分類として「問題焦点型（問題そのものへの対処）」と「感情焦点型（感情の調整）」を定義し、以後のコーピング研究の基盤となっています。
+            本診断の「問題解決型」と「感情調整型」はこの2大分類に直接対応しています。
+          </p>
+          <a
+            href="https://link.springer.com/book/9780826141910"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="slimit-science-link"
+          >Springer (2026-05-22確認)</a>
+        </div>
+
+        <div class="slimit-science-card">
+          <div class="slimit-science-meta">
+            <span class="slimit-science-badge">理論の柱 ②</span>
+            <span class="slimit-science-year">1997年</span>
+          </div>
+          <h3 class="slimit-science-title">Carver CS (1997)「Brief COPE」</h3>
+          <p class="slimit-science-body">
+            Charles Carverが開発した Brief COPE は、14サブスケール・28項目でコーピングスタイルを測定する国際標準的な尺度です。
+            積極的コーピング（Active Coping）・計画立案（Planning）・肯定的再解釈（Positive Reframing）・受容（Acceptance）・行動的撤退（Behavioral Disengagement）・感情的サポート（Emotional Support）・道具的サポート（Instrumental Support）など、
+            本診断の4タイプはBrief COPEの主要サブスケールに基づいて構成されています。
+          </p>
+          <a
+            href="https://doi.org/10.1207/s15327558ijbm0401_6"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="slimit-science-link"
+          >DOI: 10.1207/s15327558ijbm0401_6（2026-05-22確認）</a>
+        </div>
+
+        <div class="slimit-science-card slimit-science-card--ymyl">
+          <div class="slimit-science-meta">
+            <span class="slimit-science-badge slimit-science-badge--ymyl">YMYL注記</span>
+          </div>
+          <h3 class="slimit-science-title">医療的診断ではありません</h3>
+          <p class="slimit-science-body">
+            本診断は自己理解・ストレス対処スタイルの傾向把握のための参考ツールです。
+            ストレス障害・適応障害・うつ等の医学的診断は行いません。
+            日常生活に大きな支障が出ている場合は、医師・臨床心理士・公認心理師など
+            専門家にご相談ください。
+            厚生労働省「こころの健康相談統一ダイヤル」（0570-064-556）も利用できます。
+          </p>
+        </div>
+      </div>
+    </section>
+
+    {/* FAQ */}
+    <section class="slimit-section" aria-labelledby="slimit-faq-h2">
+      <h2 id="slimit-faq-h2" class="slimit-h2">よくある質問</h2>
+      <dl class="slimit-faq-list">
+        {faqs.map(({ question, answer }) => (
+          <div class="slimit-faq-item">
+            <dt class="slimit-faq-q">{question}</dt>
+            <dd class="slimit-faq-a">{answer}</dd>
+          </div>
+        ))}
+      </dl>
+    </section>
+
+    {/* 参考文献 */}
+    <ReferenceList references={meta.references} confirmedAt={meta.updatedAt} />
+
+    {/* 関連ページ */}
+    <section class="slimit-section" aria-labelledby="slimit-related-h2">
+      <h2 id="slimit-related-h2" class="slimit-h2">関連する診断・ページ</h2>
+      <ul class="slimit-related-list">
+        <li class="slimit-related-item">
+          <a href="/diagnosis/limited/" class="slimit-related-link">
+            <span class="slimit-related-icon" aria-hidden="true">📅</span>
+            <span class="slimit-related-body">
+              <span class="slimit-related-title">月1限定診断ハブ</span>
+              <span class="slimit-related-desc">今月・過去の限定診断一覧はこちら</span>
+            </span>
+          </a>
+        </li>
+        <li class="slimit-related-item">
+          <a href="/pro/" class="slimit-related-link">
+            <span class="slimit-related-icon" aria-hidden="true">✨</span>
+            <span class="slimit-related-body">
+              <span class="slimit-related-title">PRO会員の全機能</span>
+              <span class="slimit-related-desc">タイムカプセル・AIプロンプトカード・広告非表示など</span>
+            </span>
+          </a>
+        </li>
+        <li class="slimit-related-item">
+          <a href="/diagnosis/perfectionism/" class="slimit-related-link">
+            <span class="slimit-related-icon" aria-hidden="true">⭐</span>
+            <span class="slimit-related-body">
+              <span class="slimit-related-title">完璧主義タイプ診断</span>
+              <span class="slimit-related-desc">Hewitt & Flett理論。ストレス対処と組み合わせると効果的</span>
+            </span>
+          </a>
+        </li>
+        <li class="slimit-related-item">
+          <a href="/diagnosis/" class="slimit-related-link">
+            <span class="slimit-related-icon" aria-hidden="true">🔮</span>
+            <span class="slimit-related-body">
+              <span class="slimit-related-title">診断一覧（8診断）</span>
+              <span class="slimit-related-desc">MBTI・血液型・多重知能など無料診断をすべて確認</span>
+            </span>
+          </a>
+        </li>
+      </ul>
+    </section>
+  </Container>
+</BaseLayout>
+
+<script>
+  /**
+   * クライアントサイド: LocalStorageのplanを確認してPROゲートと診断フローを切り替える
+   */
+  (function () {
+    try {
+      const plan = localStorage.getItem('shindan_user_plan');
+      if (plan === 'pro') {
+        const gate = document.getElementById('slimit-pro-gate');
+        const flow = document.getElementById('slimit-pro-flow');
+        if (gate) gate.hidden = true;
+        if (flow) flow.hidden = false;
+      }
+    } catch {
+      // LocalStorage読み取り失敗時はPROゲート（初期表示）のまま
+    }
+  })();
+</script>
+
+<style>
+/* ========== ヒーロー ========== */
+.slimit-hero {
+  padding-block: 3rem 3.5rem;
+  text-align: center;
+}
+.slimit-hero-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+.slimit-hero-badges {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.slimit-badge {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.25rem 0.75rem;
+  border-radius: 2rem;
+  letter-spacing: 0.04em;
+}
+.slimit-badge--pro {
+  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+  color: #fff;
+}
+.slimit-badge--month {
+  background: rgba(255 255 255 / 0.2);
+  color: #fff;
+  border: 1px solid rgba(255 255 255 / 0.4);
+}
+.slimit-hero-h1 {
+  font-size: clamp(1.6rem, 5vw, 2.4rem);
+  font-family: var(--sn-font-rounded, sans-serif);
+  font-weight: 700;
+  line-height: 1.3;
+  color: #fff;
+  margin: 0;
+  text-shadow: 0 2px 8px rgba(0 0 0 / 0.2);
+}
+.slimit-hero-meta {
+  display: block;
+  font-size: clamp(0.85rem, 2.5vw, 1.1rem);
+  color: rgba(255 255 255 / 0.8);
+  font-weight: 500;
+}
+.slimit-hero-catch {
+  font-size: clamp(0.9rem, 2.5vw, 1.05rem);
+  color: rgba(255 255 255 / 0.9);
+  line-height: 1.8;
+  margin: 0;
+}
+.slimit-hero-stats {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  font-size: 0.9rem;
+  color: rgba(255 255 255 / 0.8);
+}
+.slimit-stat strong {
+  font-size: 1.3em;
+  font-weight: 700;
+  color: #fff;
+}
+.slimit-stat-sep {
+  color: rgba(255 255 255 / 0.4);
+}
+.slimit-hero-ymyl {
+  font-size: 0.75rem;
+  color: rgba(255 255 255 / 0.65);
+  max-width: 480px;
+  line-height: 1.6;
+}
+
+/* ========== セクション共通 ========== */
+.slimit-section {
+  margin-block: 3rem;
+}
+.slimit-section--flow {
+  background: #f8f7ff;
+  padding: 2rem 1.5rem;
+  border-radius: 1rem;
+  margin-inline: -1rem;
+}
+.slimit-h2 {
+  font-size: clamp(1.3rem, 4vw, 1.75rem);
+  font-family: var(--sn-font-rounded, sans-serif);
+  font-weight: 700;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #7c3aed;
+}
+.slimit-h2--center {
+  text-align: center;
+  border-bottom: none;
+}
+.slimit-lead {
+  font-size: 1rem;
+  line-height: 1.8;
+  color: #374151;
+  margin-bottom: 1rem;
+}
+.slimit-body {
+  font-size: 0.95rem;
+  line-height: 1.8;
+  color: #374151;
+  margin-bottom: 1rem;
+}
+
+/* ========== 情報テーブル ========== */
+.slimit-info-table-wrap {
+  overflow-x: auto;
+  margin-top: 1.5rem;
+}
+.slimit-info-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+.slimit-info-table th,
+.slimit-info-table td {
+  padding: 0.6rem 1rem;
+  border: 1px solid #e5e7eb;
+  text-align: left;
+  line-height: 1.5;
+}
+.slimit-info-table th {
+  background: #f3f4f6;
+  font-weight: 600;
+  white-space: nowrap;
+  width: 9rem;
+}
+.slimit-table-caption {
+  font-size: 0.8rem;
+  color: #6b7280;
+  text-align: left;
+  padding: 0.25rem 0 0.5rem;
+}
+
+/* ========== 4タイプグリッド ========== */
+.slimit-types-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1rem;
+  margin-block: 1.5rem;
+}
+.slimit-type-card {
+  border: 2px solid color-mix(in srgb, var(--type-color) 30%, #e5e7eb);
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  transition: box-shadow 0.15s, transform 0.15s;
+  background: color-mix(in srgb, var(--type-color) 5%, #fff);
+}
+.slimit-type-card:hover {
+  box-shadow: 0 4px 16px rgba(0 0 0 / 0.1);
+  transform: translateY(-2px);
+}
+.slimit-type-icon {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+.slimit-type-name {
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin: 0 0 0.2rem;
+  color: var(--type-color);
+}
+.slimit-type-name-en {
+  font-size: 0.7rem;
+  color: #9ca3af;
+  margin: 0 0 0.5rem;
+}
+.slimit-type-desc {
+  font-size: 0.83rem;
+  line-height: 1.6;
+  color: #4b5563;
+  margin: 0;
+}
+
+/* ========== PROゲート ========== */
+.slimit-pro-gate {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+.slimit-gate-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  background: #f5f3ff;
+  border: 2px solid #c4b5fd;
+  border-radius: 0.75rem;
+  padding: 1.25rem 1.5rem;
+}
+.slimit-gate-icon {
+  font-size: 2rem;
+  flex-shrink: 0;
+}
+.slimit-gate-body {
+  flex: 1;
+}
+.slimit-gate-title {
+  font-weight: 700;
+  font-size: 1rem;
+  color: #4f46e5;
+  margin: 0 0 0.4rem;
+}
+.slimit-gate-sub {
+  font-size: 0.9rem;
+  color: #4b5563;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* ========== プレビュー ========== */
+.slimit-preview-block {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.slimit-preview-label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #6b7280;
+  margin: 0;
+  text-align: center;
+}
+.slimit-preview-questions {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.slimit-preview-question {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.slimit-preview-q-text {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: #1f2937;
+  margin: 0;
+}
+.slimit-preview-scale {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+  font-size: 0.7rem;
+  color: #9ca3af;
+}
+.slimit-preview-btn {
+  width: 2rem;
+  height: 2rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.375rem;
+  background: #f9fafb;
+  color: #9ca3af;
+  font-size: 0.8rem;
+  cursor: not-allowed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.slimit-preview-note {
+  font-size: 0.8rem;
+  color: #9ca3af;
+  text-align: center;
+  margin: 0;
+  font-style: italic;
+}
+.slimit-gate-cta {
+  margin-top: 0.5rem;
+}
+
+/* ========== PRO会員 フロー */
+.slimit-access-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+}
+.slimit-access-badge {
+  font-size: 0.75rem;
+  font-weight: 700;
+  background: #16a34a;
+  color: #fff;
+  padding: 0.2rem 0.6rem;
+  border-radius: 2rem;
+  white-space: nowrap;
+}
+.slimit-access-text {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #15803d;
+}
+.slimit-flow-lead {
+  text-align: center;
+  color: #6b7280;
+  font-size: 0.9rem;
+  margin-bottom: 1.5rem;
+}
+.slimit-flow-wrapper {
+  max-width: 700px;
+  margin: 0 auto;
+}
+.slimit-pro-flow-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ========== 学術根拠 ========== */
+.slimit-science-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+.slimit-science-card {
+  background: #f8f7ff;
+  border: 1px solid #e5e7eb;
+  border-left: 4px solid #7c3aed;
+  border-radius: 0 0.75rem 0.75rem 0;
+  padding: 1.25rem 1.5rem;
+}
+.slimit-science-card--ymyl {
+  background: #fefce8;
+  border-left-color: #d97706;
+}
+.slimit-science-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+.slimit-science-badge {
+  display: inline-block;
+  background: #7c3aed;
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.15rem 0.5rem;
+  border-radius: 2rem;
+}
+.slimit-science-badge--ymyl {
+  background: #d97706;
+}
+.slimit-science-year {
+  font-size: 0.75rem;
+  color: #6b7280;
+  font-weight: 600;
+}
+.slimit-science-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem;
+  color: #1f2937;
+}
+.slimit-science-body {
+  font-size: 0.88rem;
+  line-height: 1.75;
+  color: #374151;
+  margin: 0 0 0.75rem;
+}
+.slimit-science-link {
+  display: inline-block;
+  font-size: 0.78rem;
+  color: #7c3aed;
+  word-break: break-all;
+  text-decoration: none;
+}
+.slimit-science-link:hover {
+  text-decoration: underline;
+}
+
+/* ========== FAQ ========== */
+.slimit-faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+.slimit-faq-item {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+.slimit-faq-q {
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 1rem 1.25rem;
+  background: #f9fafb;
+  margin: 0;
+  display: block;
+}
+.slimit-faq-q::before {
+  content: 'Q. ';
+  color: #7c3aed;
+}
+.slimit-faq-a {
+  font-size: 0.9rem;
+  line-height: 1.7;
+  padding: 1rem 1.25rem;
+  margin: 0;
+  color: #4b5563;
+}
+.slimit-faq-a::before {
+  content: 'A. ';
+  font-weight: 700;
+  color: #16a34a;
+}
+
+/* ========== 関連リンク ========== */
+.slimit-related-list {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.slimit-related-link {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.slimit-related-link:hover {
+  border-color: #7c3aed;
+  box-shadow: 0 2px 8px rgba(124 58 237 / 0.1);
+}
+.slimit-related-icon {
+  font-size: 1.75rem;
+  flex-shrink: 0;
+}
+.slimit-related-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+.slimit-related-title {
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+.slimit-related-desc {
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+/* ========== レスポンシブ ========== */
+@media (max-width: 640px) {
+  .slimit-types-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .slimit-section--flow {
+    margin-inline: -0.5rem;
+    padding: 1.5rem 1rem;
+  }
+  .slimit-gate-banner {
+    flex-direction: column;
+  }
+}
+@media (max-width: 480px) {
+  .slimit-types-grid {
+    grid-template-columns: 1fr;
+  }
+  .slimit-preview-scale {
+    font-size: 0.65rem;
+  }
+}
+</style>

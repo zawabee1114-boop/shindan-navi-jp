@@ -10,6 +10,13 @@ import Container from '../../components/Container.astro';
 
 const features = [
   {
+    icon: '📅',
+    title: '月1限定診断（最上位特典）',
+    desc: '毎月1日に新しい限定診断テーマが公開されます。コア8診断とは異なる深掘り・季節性テーマで自己理解を更新。6月はLazarus & Folkman理論に基づく「ストレス対処タイプ診断」。過去分もアーカイブで遡って受診できます。',
+    isPro: true,
+    isPass: false,
+  },
+  {
     icon: '⏳',
     title: 'タイムカプセル機能',
     desc: '今日の診断結果を「封印」して1年後の自分と比較。自己成長を可視化できます。「1年前の自分はこんな性格だった」がデータで確認できます。',
@@ -81,6 +88,7 @@ const comparisonRows = [
   { feature: 'タイムカプセル機能', free: false, pass: false, pro: true },
   { feature: 'AIプロンプトカード（月次）', free: false, pass: false, pro: true },
   { feature: 'N因子時系列グラフ', free: false, pass: false, pro: true },
+  { feature: '月1限定診断（毎月更新）', free: false, pass: false, pro: true },
   { feature: '優先サポート', free: false, pass: false, pro: true },
 ];
 ---
