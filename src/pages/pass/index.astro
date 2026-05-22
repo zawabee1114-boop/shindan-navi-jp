@@ -1,0 +1,1111 @@
+---
+/**
+ * /pass/ - 診断ナビ PASS ¥390 購入ページ
+ *
+ * 仕様:
+ *   - 価格: ¥390（税込・買い切り・1年間有効）
+ *   - Stripe 未接続時はモック動作（env なし → /pro/ への誘導）
+ *   - 新デザイン: page-hero page-hero--purple
+ *   - JSON-LD: Product + Offer + FAQPage + BreadcrumbList
+ *
+ * 作成: 2026-05-22（Critical バグ修正: 全サイト32リンクの404解消）
+ */
+
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Container from '../../components/Container.astro';
+
+const siteUrl = 'https://shindan-navi.jp';
+const pageUrl = `${siteUrl}/pass/`;
+const LAST_UPDATED = '2026-05-22';
+
+const isStripeConfigured = Boolean(
+  import.meta.env.PUBLIC_STRIPE_PUBLISHABLE_KEY &&
+  import.meta.env.STRIPE_SECRET_KEY
+);
+
+/** PASS 特典リスト */
+const passFeatures = [
+  {
+    icon: '📊',
+    title: '5軸詳細レポート（フル版）',
+    desc: '仕事・恋愛・友人・家族・学校の5シーン軸それぞれの詳細分析。無料版の500字から8,000字フル解説に解放。具体的な行動指針・向く環境・注意点を完全網羅。',
+  },
+  {
+    icon: '🔓',
+    title: '詳細モード完全解放',
+    desc: '全8診断（MBTI・多重知能・DiSC・完璧主義・恋愛スタイル・金銭感覚・友達相性・血液型）の詳細結果を1年間いつでも閲覧できます。',
+  },
+  {
+    icon: '🤖',
+    title: 'AIプロンプトカード（5回分）',
+    desc: 'ChatGPT・Claude・Geminiで自己分析を深める専用プロンプト5枚分。あなたのタイプに合わせたプロンプトをコピペするだけ。',
+  },
+  {
+    icon: '🐾',
+    title: 'Big5キャラ完全解放',
+    desc: '16動物キャラの詳細版・レアリティ・性格解説。SNSシェア用の高画質素材付き。',
+  },
+  {
+    icon: '💕',
+    title: '相性詳細レポート',
+    desc: '5軸（仕事・恋愛・友人・家族・学校）の詳細相性分析。招待相性診断と組み合わせると最大効果を発揮します。',
+  },
+];
+
+/** 無料 vs PASS vs PRO 比較表 */
+const comparisonRows = [
+  { feature: '8診断すべて受ける',              free: true,  pass: true,  pro: true  },
+  { feature: '診断結果の閲覧（基本版）',         free: true,  pass: true,  pro: true  },
+  { feature: '相性診断（こっそりモード）',       free: true,  pass: true,  pro: true  },
+  { feature: 'SNSシェア（基本）',               free: true,  pass: true,  pro: true  },
+  { feature: '招待相性診断（完全無料）',         free: true,  pass: true,  pro: true  },
+  { feature: '統合プロファイル 5軸詳細版',       free: false, pass: true,  pro: true  },
+  { feature: '相性詳細レポート（5軸）',          free: false, pass: true,  pro: true  },
+  { feature: 'Big5キャラ完全解放',              free: false, pass: true,  pro: true  },
+  { feature: 'シェア用SNS素材（高画質）',        free: false, pass: true,  pro: true  },
+  { feature: 'AIプロンプトカード（5回分）',      free: false, pass: true,  pro: true  },
+  { feature: '詳細モード（8,000字）',            free: false, pass: true,  pro: true  },
+  { feature: '広告非表示',                      free: false, pass: false, pro: true  },
+  { feature: 'タイムカプセル機能',              free: false, pass: false, pro: true  },
+  { feature: 'AIプロンプトカード（月次無制限）', free: false, pass: false, pro: true  },
+  { feature: 'N因子時系列グラフ',               free: false, pass: false, pro: true  },
+  { feature: '月1限定診断（毎月更新）',          free: false, pass: false, pro: true  },
+  { feature: '優先サポート',                    free: false, pass: false, pro: true  },
+];
+
+/** FAQ リスト */
+const faqs = [
+  {
+    q: '¥390 PASSとはどのようなサービスですか？',
+    a: '診断ナビ PASSは1回限りの買い切りプランです。¥390（税込）をお支払いいただくと、5軸（仕事・恋愛・友人・家族・学校）の詳細レポート・全8診断の詳細結果・AIプロンプトカード5回分を1年間ご利用いただけます。',
+  },
+  {
+    q: '買い切りとはどういう意味ですか？',
+    a: '一度¥390をお支払いいただくと、その後の追加課金は一切ありません。月額サブスクではなく、1回払いで1年間有効です。',
+  },
+  {
+    q: '1年後はどうなりますか？',
+    a: '有効期限（購入日から1年間）が過ぎると、PASS機能（詳細レポート・詳細モード・AIプロンプトカード）が無料版の状態に戻ります。再度ご利用になる場合は再購入が必要です。',
+  },
+  {
+    q: 'PRO（¥590/月）との違いは何ですか？',
+    a: 'PASSは「買い切り・1年有効」のシンプルプランです。PROは「月額サブスク」で、PASS機能に加えてタイムカプセル機能・AIプロンプトカード月次無制限・広告完全非表示・N因子時系列グラフ・月1限定診断が含まれます。まずPASSでお試しいただき、継続利用したい方はPROへのアップグレードをおすすめします。',
+  },
+  {
+    q: '返金はできますか？',
+    a: 'デジタルコンテンツの性質上、購入完了後の返金は原則承っておりません。ただしシステム障害等による提供不能の場合は全額返金いたします。詳しくは特定商取引法に基づく表記をご確認ください。',
+  },
+  {
+    q: '支払い方法は何に対応していますか？',
+    a: 'クレジットカード（Visa・Mastercard・American Express・JCB）に対応しています。Stripe社の安全な決済システムを使用しています。',
+  },
+  {
+    q: 'PASSを購入するとすぐに使えますか？',
+    a: '決済完了後、即時ご利用いただけます。ページをリロードすると詳細レポートが自動的に解放されます。',
+  },
+  {
+    q: 'すべての診断に使えますか？',
+    a: 'はい。MBTI・多重知能・DiSC・完璧主義・恋愛スタイル・金銭感覚・友達相性・血液型の全8診断の詳細結果に使えます。',
+  },
+];
+
+/** JSON-LD: Product + Offer */
+const productJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Product',
+  '@id': `${pageUrl}#product`,
+  name: '診断ナビ PASS',
+  description: '8診断の詳細レポート・5軸フル解説・AIプロンプトカード5回分を1年間解放する買い切りプラン。¥390（税込）。',
+  url: pageUrl,
+  brand: {
+    '@type': 'Brand',
+    name: '診断ナビ',
+    url: siteUrl,
+  },
+  offers: {
+    '@type': 'Offer',
+    price: '390',
+    priceCurrency: 'JPY',
+    availability: 'https://schema.org/InStock',
+    url: pageUrl,
+    priceValidUntil: '2026-12-31',
+  },
+};
+
+/** JSON-LD: FAQPage */
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  '@id': `${pageUrl}#faq`,
+  mainEntity: faqs.map(({ q, a }) => ({
+    '@type': 'Question',
+    name: q,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: a,
+    },
+  })),
+};
+
+/** JSON-LD: BreadcrumbList */
+const breadcrumbJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  '@id': `${pageUrl}#breadcrumb`,
+  itemListElement: [
+    {
+      '@type': 'ListItem',
+      position: 1,
+      name: 'ホーム',
+      item: siteUrl,
+    },
+    {
+      '@type': 'ListItem',
+      position: 2,
+      name: '診断ナビ PASS',
+      item: pageUrl,
+    },
+  ],
+};
+---
+
+<BaseLayout
+  title="診断ナビ PASS ¥390 - 全8診断の詳細レポートを1年間解放"
+  description="¥390（税込・買い切り・1年有効）。MBTI・多重知能・DiSC など全8診断の詳細レポート・5軸フル解説・AIプロンプトカード5回分が使えます。月額ではなく1回払い。"
+  canonical={pageUrl}
+  publishDate="2026-05-22"
+  lastUpdated={LAST_UPDATED}
+  jsonLd={[productJsonLd, faqJsonLd, breadcrumbJsonLd]}
+  breadcrumbs={[{ name: '診断ナビ PASS', url: '/pass/' }]}
+>
+  <!-- ヒーロー -->
+  <section class="page-hero page-hero--purple" aria-labelledby="pass-h1">
+    <Container>
+      <div class="pass-hero-inner">
+        <span class="pass-hero-badge" aria-label="PASS プラン">PASS</span>
+        <h1 id="pass-h1" class="page-hero-h1">診断ナビ PASS</h1>
+        <p class="page-hero-sub">
+          全8診断の詳細レポート・5軸フル解説・AIプロンプトカード5回分を
+          <strong>¥390の1回払い</strong>で1年間解放します。
+        </p>
+        <div class="pass-hero-price" aria-label="料金 390円 買い切り 1年間有効">
+          <span class="pass-price-amount">¥390</span>
+          <span class="pass-price-unit">買い切り</span>
+          <span class="pass-price-note">税込・1年間有効・追加課金なし</span>
+        </div>
+        <a
+          href="#pass-buy"
+          class="pass-hero-cta"
+          aria-label="¥390 PASSを購入する"
+        >
+          PASSを購入する
+          <span aria-hidden="true">→</span>
+        </a>
+        <p class="page-hero-sub" style="font-size: var(--sn-text-sm); opacity: 0.8;">
+          月額継続が必要な方は
+          <a href="/pro/" class="pass-hero-link">PRO（¥590/月）</a>
+          もご確認ください
+        </p>
+      </div>
+    </Container>
+  </section>
+
+  <!-- PASS で何ができるか -->
+  <section class="pass-features" aria-labelledby="pass-features-title">
+    <Container>
+      <h2 id="pass-features-title" class="pass-section-title">
+        <span aria-hidden="true">🔓</span>
+        PASSで解放できる機能
+      </h2>
+      <div class="pass-features-grid">
+        {passFeatures.map((f) => (
+          <div class="pass-feature-card" role="article" aria-label={f.title}>
+            <div class="pass-feature-icon" aria-hidden="true">{f.icon}</div>
+            <div class="pass-feature-body">
+              <h3 class="pass-feature-title">{f.title}</h3>
+              <p class="pass-feature-desc">{f.desc}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </Container>
+  </section>
+
+  <!-- 安心訴求バナー -->
+  <section class="pass-assurance" aria-label="安心ポイント">
+    <Container>
+      <div class="pass-assurance-grid">
+        <div class="pass-assurance-item">
+          <span class="pass-assurance-icon" aria-hidden="true">💳</span>
+          <div>
+            <p class="pass-assurance-title">1回払い・追加課金なし</p>
+            <p class="pass-assurance-desc">月額サブスクではありません。¥390を1度お支払いいただくだけです。</p>
+          </div>
+        </div>
+        <div class="pass-assurance-item">
+          <span class="pass-assurance-icon" aria-hidden="true">📅</span>
+          <div>
+            <p class="pass-assurance-title">1年間有効</p>
+            <p class="pass-assurance-desc">購入日から1年間、全機能をいつでもご利用いただけます。</p>
+          </div>
+        </div>
+        <div class="pass-assurance-item">
+          <span class="pass-assurance-icon" aria-hidden="true">🔒</span>
+          <div>
+            <p class="pass-assurance-title">Stripe安全決済</p>
+            <p class="pass-assurance-desc">カード情報はStripe社が管理。診断ナビには保存されません。</p>
+          </div>
+        </div>
+        <div class="pass-assurance-item">
+          <span class="pass-assurance-icon" aria-hidden="true">⚡</span>
+          <div>
+            <p class="pass-assurance-title">決済後すぐに使える</p>
+            <p class="pass-assurance-desc">購入完了と同時に詳細レポートが解放されます。</p>
+          </div>
+        </div>
+      </div>
+    </Container>
+  </section>
+
+  <!-- 比較表 -->
+  <section class="pass-comparison" id="comparison" aria-labelledby="pass-compare-title">
+    <Container>
+      <h2 id="pass-compare-title" class="pass-section-title">
+        <span aria-hidden="true">📊</span>
+        無料 / PASS / PRO 比較表
+      </h2>
+      <div class="pass-table-wrap">
+        <table class="pass-table">
+          <caption class="pass-table-caption">無料・PASS・PROの機能比較表</caption>
+          <thead>
+            <tr>
+              <th scope="col" class="pass-th-feature">機能</th>
+              <th scope="col" class="pass-th-free">無料</th>
+              <th scope="col" class="pass-th-pass">
+                PASS<br />
+                <span class="pass-th-price">¥390</span>
+                <br />
+                <span class="pass-th-unit">買切</span>
+              </th>
+              <th scope="col" class="pass-th-pro">
+                PRO<br />
+                <span class="pass-th-price">¥590</span>
+                <br />
+                <span class="pass-th-unit">/月</span>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {comparisonRows.map((row) => (
+              <tr>
+                <td class="pass-td-feature">{row.feature}</td>
+                <td class="pass-td-check" aria-label={row.free ? '利用可' : '利用不可'}>
+                  {row.free
+                    ? <span class="pass-check" aria-hidden="true">○</span>
+                    : <span class="pass-cross" aria-hidden="true">—</span>}
+                </td>
+                <td class="pass-td-check pass-td-pass" aria-label={row.pass ? '利用可' : '利用不可'}>
+                  {row.pass
+                    ? <span class="pass-check" aria-hidden="true">○</span>
+                    : <span class="pass-cross" aria-hidden="true">—</span>}
+                </td>
+                <td class="pass-td-check pass-td-pro" aria-label={row.pro ? '利用可' : '利用不可'}>
+                  {row.pro
+                    ? <span class="pass-check" aria-hidden="true">○</span>
+                    : <span class="pass-cross" aria-hidden="true">—</span>}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </Container>
+  </section>
+
+  <!-- 購入セクション -->
+  <section class="pass-buy" id="pass-buy" aria-labelledby="pass-buy-title">
+    <Container>
+      <div class="pass-buy-inner">
+        <h2 id="pass-buy-title" class="pass-buy-title">PASSを購入する</h2>
+        <div class="pass-buy-card">
+          <div class="pass-buy-card-header">
+            <span class="pass-buy-badge">買い切り</span>
+            <span class="pass-buy-name">診断ナビ PASS</span>
+          </div>
+          <div class="pass-buy-price-wrap" aria-label="料金 390円 税込">
+            <span class="pass-buy-amount">¥390</span>
+            <span class="pass-buy-unit">税込・1年間有効</span>
+          </div>
+          <ul class="pass-buy-features" role="list" aria-label="PASS特典一覧">
+            <li>5軸（仕事/恋愛/友人/家族/学校）詳細レポート完全版</li>
+            <li>詳細モード解放（無料500字 → 8,000字フル解説）</li>
+            <li>AIプロンプトカード（5回分）</li>
+            <li>全8診断の詳細結果閲覧</li>
+            <li>Big5キャラ完全解放 + 高画質シェア素材</li>
+          </ul>
+
+          {isStripeConfigured ? (
+            <button
+              id="pass-checkout-btn"
+              class="pass-buy-cta"
+              type="button"
+              aria-label="¥390 PASSを今すぐ購入する"
+            >
+              ¥390 PASSを今すぐ購入
+            </button>
+          ) : (
+            <>
+              <button
+                class="pass-buy-cta pass-buy-cta--mock"
+                type="button"
+                disabled
+                aria-label="現在準備中です"
+              >
+                Stripe連携後に解放（準備中）
+              </button>
+              <p class="pass-buy-mock-note" role="note">
+                <span aria-hidden="true">ℹ</span>
+                現在は機能プレビュー中です。決済連携後に購入可能になります。
+                今のうちに
+                <a href="/diagnosis/">診断を受けておく</a>
+                と、解放後すぐに詳細レポートをご覧いただけます。
+              </p>
+            </>
+          )}
+
+          <p class="pass-buy-guarantee">
+            <span aria-hidden="true">🛡️</span>
+            月額ではなく1回払い・追加課金なし・1年間有効
+          </p>
+        </div>
+
+        <!-- PRO への誘導 -->
+        <div class="pass-pro-upsell">
+          <p class="pass-pro-upsell-text">
+            継続的な自己理解・タイムカプセル・広告非表示なら
+          </p>
+          <a href="/pro/" class="pass-pro-upsell-link" aria-label="PRO ¥590/月の詳細を見る">
+            PRO（¥590/月）の詳細を見る →
+          </a>
+        </div>
+      </div>
+    </Container>
+  </section>
+
+  <!-- FAQ -->
+  <section class="pass-faq" aria-labelledby="pass-faq-title">
+    <Container>
+      <h2 id="pass-faq-title" class="pass-section-title">
+        <span aria-hidden="true">❓</span>
+        よくある質問
+      </h2>
+      <dl class="pass-faq-list">
+        {faqs.map(({ q, a }) => (
+          <div class="pass-faq-item">
+            <dt class="pass-faq-q">{q}</dt>
+            <dd class="pass-faq-a">{a}</dd>
+          </div>
+        ))}
+      </dl>
+
+      <!-- 特商法リンク -->
+      <p class="pass-tokushoho-note">
+        特定商取引法に基づく表記は
+        <a href="/tokushoho/" class="pass-tokushoho-link">こちら</a>
+        をご確認ください。
+      </p>
+    </Container>
+  </section>
+
+  <!-- TldrBlock 相当: まとめ -->
+  <section class="pass-tldr" aria-label="PASSまとめ">
+    <Container>
+      <div class="pass-tldr-inner">
+        <p class="pass-tldr-label">
+          <span aria-hidden="true">⚡</span>
+          3行でわかる PASS
+        </p>
+        <ul class="pass-tldr-list" role="list">
+          <li>¥390（税込）を1度払うだけ。月額サブスクではありません</li>
+          <li>全8診断の詳細レポート + 5軸フル解説 + AIプロンプトカード5回分を1年間利用可</li>
+          <li>継続課金・定期更新は一切なし。1年後に延長するか選べます</li>
+        </ul>
+      </div>
+    </Container>
+  </section>
+</BaseLayout>
+
+{isStripeConfigured && (
+  <script>
+    async function handlePassCheckout() {
+      const btn = document.getElementById('pass-checkout-btn');
+      if (!btn) return;
+
+      btn.setAttribute('disabled', 'true');
+      btn.textContent = '処理中...';
+
+      try {
+        const res = await fetch('/api/stripe/checkout-session', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ type: 'pass' }),
+        });
+        const data = await res.json();
+
+        if (data.ok && data.url) {
+          window.location.href = data.url;
+        } else if (data.mock) {
+          alert('準備中です。もうしばらくお待ちください。');
+        } else {
+          alert(`エラー: ${data.message ?? '決済に失敗しました'}`);
+        }
+      } catch {
+        alert('通信エラーが発生しました。しばらく後でお試しください。');
+      } finally {
+        btn?.removeAttribute('disabled');
+        if (btn?.textContent === '処理中...') {
+          btn.textContent = '¥390 PASSを今すぐ購入';
+        }
+      }
+    }
+
+    document.getElementById('pass-checkout-btn')
+      ?.addEventListener('click', handlePassCheckout);
+  </script>
+)}
+
+<style>
+/* ===== ヒーロー ===== */
+.pass-hero-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sn-space-4);
+  text-align: center;
+}
+
+.pass-hero-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--sn-space-1) var(--sn-space-5);
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+  border-radius: var(--sn-radius-pill);
+  font-size: var(--sn-text-sm);
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  backdrop-filter: blur(4px);
+}
+
+.pass-hero-price {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: var(--sn-space-2);
+  color: #fff;
+}
+
+.pass-price-amount {
+  font-family: var(--sn-font-rounded);
+  font-size: var(--sn-text-4xl);
+  font-weight: 900;
+  line-height: 1;
+}
+
+.pass-price-unit {
+  font-size: var(--sn-text-xl);
+  font-weight: 700;
+}
+
+.pass-price-note {
+  font-size: var(--sn-text-sm);
+  opacity: 0.75;
+  width: 100%;
+  text-align: center;
+}
+
+.pass-hero-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sn-space-2);
+  padding: var(--sn-space-4) var(--sn-space-10);
+  background: #fff;
+  color: var(--sn-pass-color, #7c3aed);
+  border-radius: var(--sn-radius-pill);
+  font-family: var(--sn-font-rounded);
+  font-size: var(--sn-text-xl);
+  font-weight: 900;
+  text-decoration: none;
+  box-shadow: var(--sn-shadow-lg);
+  min-height: var(--sn-tap-min);
+  transition:
+    transform var(--sn-dur-fast) var(--sn-ease),
+    box-shadow var(--sn-dur-fast) var(--sn-ease);
+}
+
+.pass-hero-cta:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.28);
+  text-decoration: none;
+}
+
+.pass-hero-cta:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 3px;
+}
+
+.pass-hero-link {
+  color: rgba(255, 255, 255, 0.9);
+  text-decoration: underline;
+}
+
+/* ===== セクションタイトル共通 ===== */
+.pass-section-title {
+  display: flex;
+  align-items: center;
+  gap: var(--sn-space-2);
+  font-family: var(--sn-font-rounded);
+  font-size: var(--sn-text-2xl);
+  font-weight: 900;
+  color: var(--sn-text);
+  margin: 0 0 var(--sn-space-8);
+}
+
+/* ===== 機能グリッド ===== */
+.pass-features {
+  padding-block: var(--sn-space-16);
+}
+
+.pass-features-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--sn-space-4);
+}
+
+.pass-feature-card {
+  display: flex;
+  gap: var(--sn-space-4);
+  padding: var(--sn-space-5);
+  background: var(--sn-bg-white);
+  border-radius: var(--sn-radius);
+  border: 1px solid var(--sn-border);
+  box-shadow: var(--sn-shadow-xs);
+}
+
+.pass-feature-icon {
+  font-size: 2rem;
+  line-height: 1;
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--sn-pass-bg, #f5f3ff);
+  border-radius: var(--sn-radius-md);
+}
+
+.pass-feature-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sn-space-1);
+}
+
+.pass-feature-title {
+  font-family: var(--sn-font-rounded);
+  font-size: var(--sn-text-base);
+  font-weight: 700;
+  color: var(--sn-text);
+  margin: 0;
+}
+
+.pass-feature-desc {
+  font-size: var(--sn-text-sm);
+  color: var(--sn-muted);
+  line-height: var(--sn-leading-base);
+  margin: 0;
+}
+
+/* ===== 安心訴求 ===== */
+.pass-assurance {
+  padding-block: var(--sn-space-12);
+  background: var(--sn-bg-soft);
+}
+
+.pass-assurance-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--sn-space-5);
+}
+
+.pass-assurance-item {
+  display: flex;
+  gap: var(--sn-space-3);
+  align-items: flex-start;
+}
+
+.pass-assurance-icon {
+  font-size: 1.75rem;
+  line-height: 1;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.pass-assurance-title {
+  font-family: var(--sn-font-rounded);
+  font-size: var(--sn-text-base);
+  font-weight: 700;
+  color: var(--sn-text);
+  margin: 0 0 var(--sn-space-1);
+}
+
+.pass-assurance-desc {
+  font-size: var(--sn-text-sm);
+  color: var(--sn-muted);
+  line-height: var(--sn-leading-base);
+  margin: 0;
+}
+
+/* ===== 比較表 ===== */
+.pass-comparison {
+  padding-block: var(--sn-space-16);
+}
+
+.pass-table-wrap {
+  overflow-x: auto;
+  border-radius: var(--sn-radius);
+  box-shadow: var(--sn-shadow-sm);
+}
+
+.pass-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--sn-bg-white);
+  min-width: 480px;
+}
+
+.pass-table-caption {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+}
+
+.pass-table thead tr {
+  background: var(--sn-bg-soft);
+  border-bottom: 2px solid var(--sn-border);
+}
+
+.pass-table th,
+.pass-table td {
+  padding: var(--sn-space-3) var(--sn-space-4);
+  text-align: center;
+  border-bottom: 1px solid var(--sn-border-soft);
+}
+
+.pass-th-feature {
+  text-align: left !important;
+  font-size: var(--sn-text-sm);
+  font-weight: 700;
+  color: var(--sn-text-soft);
+  width: 50%;
+}
+
+.pass-th-free,
+.pass-th-pass,
+.pass-th-pro {
+  font-family: var(--sn-font-rounded);
+  font-size: var(--sn-text-sm);
+  font-weight: 900;
+  line-height: 1.4;
+}
+
+.pass-th-pass {
+  background: color-mix(in srgb, var(--sn-pass-color, #7c3aed) 5%, transparent);
+  color: var(--sn-pass-color, #7c3aed);
+}
+
+.pass-th-pro {
+  background: color-mix(in srgb, var(--sn-pro-color, #4f46e5) 8%, transparent);
+  color: var(--sn-pro-color, #4f46e5);
+}
+
+.pass-th-price {
+  font-size: var(--sn-text-lg);
+  display: block;
+}
+
+.pass-th-unit {
+  font-size: var(--sn-text-xs);
+  font-weight: 400;
+  opacity: 0.7;
+  display: block;
+}
+
+.pass-td-feature {
+  text-align: left;
+  font-size: var(--sn-text-sm);
+  color: var(--sn-text-soft);
+}
+
+.pass-td-check {
+  font-size: var(--sn-text-lg);
+}
+
+.pass-td-pass {
+  background: color-mix(in srgb, var(--sn-pass-color, #7c3aed) 3%, transparent);
+}
+
+.pass-td-pro {
+  background: color-mix(in srgb, var(--sn-pro-color, #4f46e5) 3%, transparent);
+}
+
+.pass-check {
+  color: var(--sn-success);
+  font-weight: 700;
+}
+
+.pass-cross {
+  color: var(--sn-muted);
+  font-size: var(--sn-text-sm);
+}
+
+/* ===== 購入カード ===== */
+.pass-buy {
+  padding-block: var(--sn-space-16);
+  background: var(--sn-bg-soft);
+}
+
+.pass-buy-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sn-space-8);
+}
+
+.pass-buy-title {
+  font-family: var(--sn-font-rounded);
+  font-size: var(--sn-text-2xl);
+  font-weight: 900;
+  color: var(--sn-text);
+  margin: 0;
+  text-align: center;
+}
+
+.pass-buy-card {
+  background: var(--sn-bg-white);
+  border-radius: var(--sn-radius-xl);
+  padding: var(--sn-space-8);
+  border: 2px solid var(--sn-pass-color, #7c3aed);
+  box-shadow: var(--sn-shadow-md);
+  max-width: 480px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sn-space-5);
+}
+
+.pass-buy-card-header {
+  display: flex;
+  align-items: center;
+  gap: var(--sn-space-3);
+}
+
+.pass-buy-badge {
+  font-size: var(--sn-text-xs);
+  font-weight: 700;
+  background: var(--sn-pass-bg, #f5f3ff);
+  color: var(--sn-pass-color, #7c3aed);
+  padding: 3px 10px;
+  border-radius: var(--sn-radius-pill);
+  border: 1px solid color-mix(in srgb, var(--sn-pass-color, #7c3aed) 25%, transparent);
+}
+
+.pass-buy-name {
+  font-family: var(--sn-font-rounded);
+  font-size: var(--sn-text-xl);
+  font-weight: 900;
+  color: var(--sn-text);
+}
+
+.pass-buy-price-wrap {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sn-space-2);
+}
+
+.pass-buy-amount {
+  font-family: var(--sn-font-rounded);
+  font-size: var(--sn-text-4xl);
+  font-weight: 900;
+  color: var(--sn-text);
+}
+
+.pass-buy-unit {
+  font-size: var(--sn-text-base);
+  color: var(--sn-muted);
+}
+
+.pass-buy-features {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sn-space-2);
+}
+
+.pass-buy-features li {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sn-space-2);
+  font-size: var(--sn-text-sm);
+  color: var(--sn-text-soft);
+  line-height: var(--sn-leading-base);
+}
+
+.pass-buy-features li::before {
+  content: '✓';
+  color: var(--sn-pass-color, #7c3aed);
+  font-weight: 700;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.pass-buy-cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: var(--sn-space-4) var(--sn-space-5);
+  background: linear-gradient(135deg, #6366f1 0%, #7c3aed 100%);
+  color: #fff;
+  border: none;
+  border-radius: var(--sn-radius-pill);
+  font-family: var(--sn-font-rounded);
+  font-size: var(--sn-text-lg);
+  font-weight: 900;
+  cursor: pointer;
+  min-height: var(--sn-tap-min);
+  text-decoration: none;
+  transition:
+    opacity var(--sn-dur-fast) var(--sn-ease),
+    transform var(--sn-dur-fast) var(--sn-ease);
+  box-shadow: 0 4px 14px rgba(124, 58, 237, 0.35);
+}
+
+.pass-buy-cta:hover:not([disabled]) {
+  opacity: 0.92;
+  transform: translateY(-1px);
+}
+
+.pass-buy-cta:focus-visible {
+  outline: 3px solid var(--sn-pass-color, #7c3aed);
+  outline-offset: 3px;
+}
+
+.pass-buy-cta--mock {
+  background: var(--sn-bg-soft);
+  color: var(--sn-muted);
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+.pass-buy-mock-note {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sn-space-2);
+  padding: var(--sn-space-3) var(--sn-space-4);
+  background: var(--sn-bg-soft);
+  border-radius: var(--sn-radius-md);
+  font-size: var(--sn-text-sm);
+  color: var(--sn-muted);
+  line-height: var(--sn-leading-base);
+  border: 1px solid var(--sn-border);
+}
+
+.pass-buy-mock-note a {
+  color: var(--sn-primary);
+}
+
+.pass-buy-guarantee {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sn-space-2);
+  font-size: var(--sn-text-sm);
+  color: var(--sn-muted);
+  margin: 0;
+  text-align: center;
+}
+
+/* PRO アップセル */
+.pass-pro-upsell {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sn-space-2);
+}
+
+.pass-pro-upsell-text {
+  font-size: var(--sn-text-sm);
+  color: var(--sn-muted);
+  margin: 0;
+}
+
+.pass-pro-upsell-link {
+  font-size: var(--sn-text-base);
+  font-weight: 700;
+  color: var(--sn-pro-color, #4f46e5);
+  text-decoration: underline;
+}
+
+.pass-pro-upsell-link:hover {
+  opacity: 0.8;
+}
+
+/* ===== FAQ ===== */
+.pass-faq {
+  padding-block: var(--sn-space-16);
+}
+
+.pass-faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border: 1px solid var(--sn-border);
+  border-radius: var(--sn-radius-lg);
+  overflow: hidden;
+}
+
+.pass-faq-item {
+  border-bottom: 1px solid var(--sn-border);
+  padding: var(--sn-space-5) var(--sn-space-6);
+}
+
+.pass-faq-item:last-child {
+  border-bottom: none;
+}
+
+.pass-faq-q {
+  font-family: var(--sn-font-rounded);
+  font-size: var(--sn-text-base);
+  font-weight: 700;
+  color: var(--sn-text);
+  margin: 0 0 var(--sn-space-2);
+  display: flex;
+  gap: var(--sn-space-2);
+}
+
+.pass-faq-q::before {
+  content: 'Q.';
+  color: var(--sn-pass-color, #7c3aed);
+  font-weight: 900;
+  flex-shrink: 0;
+}
+
+.pass-faq-a {
+  font-size: var(--sn-text-sm);
+  color: var(--sn-text-soft);
+  line-height: var(--sn-leading-base);
+  margin: 0;
+  padding-left: calc(var(--sn-space-2) + 1.5em);
+}
+
+.pass-tokushoho-note {
+  margin: var(--sn-space-8) 0 0;
+  font-size: var(--sn-text-sm);
+  color: var(--sn-muted);
+  text-align: center;
+}
+
+.pass-tokushoho-link {
+  color: var(--sn-primary);
+  text-decoration: underline;
+}
+
+/* ===== TldrBlock まとめ ===== */
+.pass-tldr {
+  padding-block: var(--sn-space-10);
+  background: var(--sn-bg-soft);
+}
+
+.pass-tldr-inner {
+  border: 1px solid color-mix(in srgb, var(--sn-pass-color, #7c3aed) 20%, transparent);
+  border-radius: var(--sn-radius-lg);
+  padding: var(--sn-space-6);
+  background: var(--sn-bg-white);
+  max-width: 680px;
+  margin-inline: auto;
+}
+
+.pass-tldr-label {
+  display: flex;
+  align-items: center;
+  gap: var(--sn-space-2);
+  font-family: var(--sn-font-rounded);
+  font-size: var(--sn-text-base);
+  font-weight: 700;
+  color: var(--sn-pass-color, #7c3aed);
+  margin: 0 0 var(--sn-space-4);
+}
+
+.pass-tldr-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sn-space-3);
+}
+
+.pass-tldr-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sn-space-2);
+  font-size: var(--sn-text-sm);
+  color: var(--sn-text-soft);
+  line-height: var(--sn-leading-base);
+}
+
+.pass-tldr-list li::before {
+  content: '▸';
+  color: var(--sn-pass-color, #7c3aed);
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+/* ===== レスポンシブ ===== */
+@media (max-width: 768px) {
+  .pass-features-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .pass-assurance-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .pass-hero-cta {
+    font-size: var(--sn-text-lg);
+    padding: var(--sn-space-4) var(--sn-space-6);
+    width: 100%;
+    justify-content: center;
+  }
+
+  .pass-price-amount {
+    font-size: var(--sn-text-3xl);
+  }
+
+  .pass-buy-card {
+    padding: var(--sn-space-5);
+  }
+
+  .pass-faq-item {
+    padding: var(--sn-space-4) var(--sn-space-4);
+  }
+}
+</style>
