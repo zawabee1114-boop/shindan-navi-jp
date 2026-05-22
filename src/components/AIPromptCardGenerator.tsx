@@ -12,6 +12,7 @@
  */
 
 import { useState, useEffect } from 'react';
+import { trackAiPromptGenerate } from '../lib/analytics';
 import type { PromptCard } from '../lib/integrated-profile/ai-prompt-generator';
 import type { IntegratedProfile } from '../lib/integrated-profile/types';
 
@@ -168,6 +169,7 @@ export default function AIPromptCardGenerator({ isPro = false }: AIPromptCardGen
         if (p.completedCount > 0) {
           const generated = promptGen.generateAllPromptCards(p);
           setCards(generated);
+          trackAiPromptGenerate('all', undefined);
         }
       } catch (e) {
         console.error('AIPromptCardGenerator failed:', e);

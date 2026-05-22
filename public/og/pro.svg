@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e1b4b"/>
+      <stop offset="100%" stop-color="#4f46e5"/>
+    </linearGradient>
+    <linearGradient id="circle-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#7c5cff" stop-opacity="0.2"/>
+      <stop offset="100%" stop-color="#7c5cff" stop-opacity="0.05"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bg)"/>
+
+  <!-- Decorative circles -->
+  <circle cx="1020" cy="100" r="220" fill="#7c5cff" fill-opacity="0.08"/>
+  <circle cx="100" cy="580" r="160" fill="#7c5cff" fill-opacity="0.06"/>
+
+  <!-- Top badge -->
+  <rect x="60" y="52" width="160" height="36" rx="18" fill="#7c5cff"/>
+  <text x="140" y="75" font-family="'Noto Sans JP', sans-serif" font-size="15" font-weight="700" fill="white" text-anchor="middle">診断ナビ</text>
+
+  <!-- Big icon -->
+  <circle cx="980" cy="315" r="170" fill="#7c5cff" fill-opacity="0.12"/>
+  <circle cx="980" cy="315" r="120" fill="#7c5cff" fill-opacity="0.1"/>
+  <text x="980" y="350" font-size="110" text-anchor="middle">👑</text>
+
+  <!-- Main headline -->
+  <text x="60" y="220" font-family="'Noto Sans JP', sans-serif" font-size="54" font-weight="900" fill="#ffffff" letter-spacing="-1">PRO会員で無限に深める</text>
+
+  <!-- Subtitle -->
+  <text x="60" y="278" font-family="'Noto Sans JP', sans-serif" font-size="22" font-weight="600" fill="#7c5cff">¥590/月 ｜ いつでも解約可</text>
+
+  <!-- Description -->
+  <text x="60" y="340" font-family="'Noto Sans JP', sans-serif" font-size="26" font-weight="400" fill="rgba(255,255,255,0.8)">タイムカプセル・AIプロンプト・変化グラフ</text>
+
+  <!-- Feature chip: 無料 -->
+  <rect x="60" y="390" width="110" height="38" rx="19" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
+  <text x="115" y="414" font-family="'Noto Sans JP', sans-serif" font-size="15" font-weight="600" fill="#ffffff" text-anchor="middle">完全無料</text>
+
+  <!-- Feature chip: 相性診断 -->
+  <rect x="184" y="390" width="130" height="38" rx="19" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
+  <text x="249" y="414" font-family="'Noto Sans JP', sans-serif" font-size="15" font-weight="600" fill="#ffffff" text-anchor="middle">相性診断あり</text>
+
+  <!-- Feature chip: 統合 -->
+  <rect x="328" y="390" width="160" height="38" rx="19" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
+  <text x="408" y="414" font-family="'Noto Sans JP', sans-serif" font-size="15" font-weight="600" fill="#ffffff" text-anchor="middle">統合プロファイル</text>
+
+  <!-- Bottom bar -->
+  <rect x="0" y="590" width="1200" height="40" fill="#7c5cff" fill-opacity="0.12"/>
+  <text x="600" y="616" font-family="'Inter', sans-serif" font-size="17" font-weight="600" fill="#7c5cff" text-anchor="middle">shindan-navi.jp</text>
+</svg>

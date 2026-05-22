@@ -829,6 +829,15 @@ const tabs = [
   }
 </style>
 
+<script define:vars={{ diagnosisId, typeId }}>
+  try {
+    var gtagFn = window.gtag;
+    if (typeof gtagFn === 'function') {
+      gtagFn('event', 'result_view', { diagnosis_id: diagnosisId, result_type: typeId });
+    }
+  } catch {}
+</script>
+
 <script is:inline>
   (function () {
     var tabs = document.querySelectorAll('[role="tab"]');

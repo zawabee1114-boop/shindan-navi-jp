@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fff0f1"/>
+      <stop offset="100%" stop-color="#ffc9cc"/>
+    </linearGradient>
+    <linearGradient id="circle-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ff6f7a" stop-opacity="0.2"/>
+      <stop offset="100%" stop-color="#ff6f7a" stop-opacity="0.05"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bg)"/>
+
+  <!-- Decorative circles -->
+  <circle cx="1020" cy="100" r="220" fill="#ff6f7a" fill-opacity="0.08"/>
+  <circle cx="100" cy="580" r="160" fill="#ff6f7a" fill-opacity="0.06"/>
+
+  <!-- Top badge -->
+  <rect x="60" y="52" width="160" height="36" rx="18" fill="#ff6f7a"/>
+  <text x="140" y="75" font-family="'Noto Sans JP', sans-serif" font-size="15" font-weight="700" fill="white" text-anchor="middle">診断ナビ</text>
+
+  <!-- Big icon -->
+  <circle cx="980" cy="315" r="170" fill="#ff6f7a" fill-opacity="0.12"/>
+  <circle cx="980" cy="315" r="120" fill="#ff6f7a" fill-opacity="0.1"/>
+  <text x="980" y="350" font-size="110" text-anchor="middle">🩸</text>
+
+  <!-- Main headline -->
+  <text x="60" y="220" font-family="'Noto Sans JP', sans-serif" font-size="62" font-weight="900" fill="#1f2235" letter-spacing="-1">血液型診断</text>
+
+  <!-- Subtitle -->
+  <text x="60" y="278" font-family="'Noto Sans JP', sans-serif" font-size="22" font-weight="600" fill="#ff6f7a">A・B・O・AB型 ｜ 性格・相性</text>
+
+  <!-- Description -->
+  <text x="60" y="340" font-family="'Noto Sans JP', sans-serif" font-size="26" font-weight="400" fill="#3b3d56">血液型から読み解く性格と人間関係</text>
+
+  <!-- Feature chip: 無料 -->
+  <rect x="60" y="390" width="110" height="38" rx="19" fill="none" stroke="#ff6f7a" stroke-width="1.5"/>
+  <text x="115" y="414" font-family="'Noto Sans JP', sans-serif" font-size="15" font-weight="600" fill="#ff6f7a" text-anchor="middle">完全無料</text>
+
+  <!-- Feature chip: 相性診断 -->
+  <rect x="184" y="390" width="130" height="38" rx="19" fill="none" stroke="#ff6f7a" stroke-width="1.5"/>
+  <text x="249" y="414" font-family="'Noto Sans JP', sans-serif" font-size="15" font-weight="600" fill="#ff6f7a" text-anchor="middle">相性診断あり</text>
+
+  <!-- Feature chip: 統合 -->
+  <rect x="328" y="390" width="160" height="38" rx="19" fill="none" stroke="#ff6f7a" stroke-width="1.5"/>
+  <text x="408" y="414" font-family="'Noto Sans JP', sans-serif" font-size="15" font-weight="600" fill="#ff6f7a" text-anchor="middle">統合プロファイル</text>
+
+  <!-- Bottom bar -->
+  <rect x="0" y="590" width="1200" height="40" fill="#ff6f7a" fill-opacity="0.12"/>
+  <text x="600" y="616" font-family="'Inter', sans-serif" font-size="17" font-weight="600" fill="#ff6f7a" text-anchor="middle">shindan-navi.jp</text>
+</svg>

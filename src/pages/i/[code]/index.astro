@@ -401,6 +401,13 @@ const config = modeConfigs[mode as keyof typeof modeConfigs] ?? modeConfigs.secr
       });
     }
 
+    try {
+      if (typeof window.gtag === 'function') {
+        var diagId = diagPath.replace(/^\/diagnosis\//, '').replace(/\/$/, '') || undefined;
+        window.gtag('event', 'invite_accept', { diagnosis_id: diagId });
+      }
+    } catch {}
+
     showContent();
   });
 </script>

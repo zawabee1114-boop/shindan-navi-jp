@@ -12,6 +12,7 @@
  */
 
 import { useState, useCallback, useEffect, useRef } from 'react';
+import { trackInviteCreate, trackShareClick } from '../lib/analytics';
 
 interface InviteViralBlockProps {
   resultId: string;
@@ -175,6 +176,7 @@ export default function InviteViralBlock({
       const url = `https://shindan-navi.jp/i/${code}/?from=${encodeURIComponent(myTypeName)}`;
       setInviteCode(code);
       setInviteUrl(url);
+      trackInviteCreate(selectedMode, resultId);
       setStep('generated');
     } catch (err) {
       console.error('[InviteViralBlock] コード生成失敗:', err);
@@ -192,6 +194,7 @@ export default function InviteViralBlock({
       const url = `https://shindan-navi.jp/i/${code}/?from=${encodeURIComponent(myTypeName)}`;
       setInviteCode(code);
       setInviteUrl(url);
+      trackInviteCreate(selectedMode, resultId);
       setStep('generated');
     } finally {
       setIsGenerating(false);
@@ -203,7 +206,7 @@ export default function InviteViralBlock({
     try {
       await navigator.clipboard.writeText(inviteUrl);
       setCopied(true);
-      // カウントアップ（バイラル追跡）
+      trackShareClick('copy', resultId);
       const newCount = incrementInviteSentCount();
       setInviteSentCount(newCount);
       if (newCount >= 3) setGroupUnlocked(true);
@@ -218,11 +221,12 @@ export default function InviteViralBlock({
   const tweetUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(inviteUrl)}`;
   const threadsUrl = `https://www.threads.net/intent/post?text=${encodeURIComponent(`${shareText}\n${inviteUrl}`)}`;
 
-  const handleShareClick = useCallback(() => {
+  const handleShareClick = useCallback((platform: 'x' | 'line' | 'threads') => {
+    trackShareClick(platform, resultId);
     const newCount = incrementInviteSentCount();
     setInviteSentCount(newCount);
     if (newCount >= 3) setGroupUnlocked(true);
-  }, []);
+  }, [resultId]);
 
   return (
     <div className="ivb-wrapper" role="region" aria-label="友達と相性チェック">
@@ -359,7 +363,7 @@ export default function InviteViralBlock({
               rel="noopener noreferrer"
               className="ivb-btn ivb-btn--line"
               aria-label="LINEで招待リンクを送る"
-              onClick={handleShareClick}
+              onClick={() => handleShareClick('line')}
             >
               <svg width="16" height="16" viewBox="0 0 48 48" fill="currentColor" aria-hidden="true">
                 <path d="M24 4C13 4 4 11.5 4 21c0 5.7 3.2 10.8 8.2 14-.4 2.3-1.4 5.7-1.6 6.5-.3 1.1.4 1.1.9.8l7.3-4.8c1.7.3 3.4.5 5.2.5 11 0 20-7.5 20-17S35 4 24 4z"/>
@@ -372,7 +376,7 @@ export default function InviteViralBlock({
               rel="noopener noreferrer"
               className="ivb-btn ivb-btn--x"
               aria-label="Xで招待リンクを送る"
-              onClick={handleShareClick}
+              onClick={() => handleShareClick('x')}
             >
               <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                 <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
@@ -385,7 +389,7 @@ export default function InviteViralBlock({
               rel="noopener noreferrer"
               className="ivb-btn ivb-btn--threads"
               aria-label="Threadsで招待リンクを送る"
-              onClick={handleShareClick}
+              onClick={() => handleShareClick('threads')}
             >
               Threads
             </a>
