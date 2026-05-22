@@ -1,4 +1,5 @@
 ---
+import BaseLayout from '../../layouts/BaseLayout.astro';
 import Container from '../../components/Container.astro';
 // 診断ナビ お問い合わせページ
 // 2026-05-20 時点の情報・content-writer 執筆
@@ -14,214 +15,42 @@ const inquiryTypes = [
   { icon: "🔒", label: "プライバシー・データに関する問い合わせ", note: "GDPRやデータ削除のご要望もこちら" },
   { icon: "💬", label: "その他のお問い合わせ", note: "上記に当てはまらない場合もご連絡ください" },
 ];
+
+const pageJsonLd = [
+  {
+    "@context": "https://schema.org",
+    "@type": "ContactPage",
+    "@id": "https://shindan-navi.jp/contact/",
+    "url": "https://shindan-navi.jp/contact/",
+    "name": "お問い合わせ | 診断ナビ",
+    "description": "診断ナビへのお問い合わせ・取材依頼・提携ご相談",
+    "isPartOf": { "@type": "WebSite", "url": "https://shindan-navi.jp" },
+    "contactOption": {
+      "@type": "ContactPoint",
+      "contactType": "customer service",
+      "email": "zawalab.info@gmail.com",
+      "availableLanguage": "Japanese"
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "ホーム", "item": "https://shindan-navi.jp/" },
+      { "@type": "ListItem", "position": 2, "name": "お問い合わせ", "item": "https://shindan-navi.jp/contact/" }
+    ]
+  }
+];
 ---
 
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>{title}</title>
-  <meta name="description" content={description} />
-  <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
-  <link rel="canonical" href={canonicalURL} />
-
-  <!-- hreflang（日本語単一言語サイト）-->
-  <link rel="alternate" hreflang="ja" href={canonicalURL} />
-  <link rel="alternate" hreflang="x-default" href={canonicalURL} />
-
-  <!-- OGP -->
-  <meta property="og:type" content="website" />
-  <meta property="og:title" content={title} />
-  <meta property="og:description" content={description} />
-  <meta property="og:url" content={canonicalURL} />
-  <meta property="og:site_name" content="診断ナビ" />
-  <meta property="og:image" content="https://shindan-navi.jp/ogp-default.png" />
-  <meta property="og:image:width" content="1200" />
-  <meta property="og:image:height" content="630" />
-  <meta property="og:locale" content="ja_JP" />
-  <meta name="twitter:card" content="summary" />
-
-  <!-- Google Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=M+PLUS+Rounded+1c:wght@700&display=swap"
-    rel="stylesheet"
-  />
-  <link rel="stylesheet" href="/src/styles/design-tokens.css" />
-
-  <!-- 構造化データ -->
-  <script type="application/ld+json">
-    {JSON.stringify([
-      {
-        "@context": "https://schema.org",
-        "@type": "ContactPage",
-        "@id": "https://shindan-navi.jp/contact/",
-        "url": "https://shindan-navi.jp/contact/",
-        "name": "お問い合わせ | 診断ナビ",
-        "description": "診断ナビへのお問い合わせ・取材依頼・提携ご相談",
-        "isPartOf": { "@type": "WebSite", "url": "https://shindan-navi.jp" },
-        "contactOption": {
-          "@type": "ContactPoint",
-          "contactType": "customer service",
-          "email": "zawalab.info@gmail.com",
-          "availableLanguage": "Japanese"
-        }
-      },
-      {
-        "@context": "https://schema.org",
-        "@type": "BreadcrumbList",
-        "itemListElement": [
-          { "@type": "ListItem", "position": 1, "name": "ホーム", "item": "https://shindan-navi.jp/" },
-          { "@type": "ListItem", "position": 2, "name": "お問い合わせ", "item": "https://shindan-navi.jp/contact/" }
-        ]
-      }
-    ])}
-  </script>
-
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: var(--sn-font-family);
-      background: var(--sn-bg);
-      color: var(--sn-text);
-      line-height: var(--sn-leading-base);
-      font-size: var(--sn-text-base);
-    }
-    .container { max-width: var(--sn-max-w-content); margin: 0 auto; padding: 0 var(--sn-space-4); }
-    /* ヘッダー */
-    .site-header {
-      position: sticky; top: 0; z-index: 100;
-      background: rgba(255,255,255,0.95); backdrop-filter: blur(8px);
-      border-bottom: 1px solid var(--sn-border); height: var(--sn-header-h);
-    }
-    .site-header .inner {
-      max-width: var(--sn-max-w); margin: 0 auto; padding: 0 var(--sn-space-4); height: 100%;
-      display: flex; align-items: center; justify-content: space-between;
-    }
-    .logo { font-family: var(--sn-font-rounded); font-size: var(--sn-text-xl); font-weight: 700; color: var(--sn-primary); text-decoration: none; }
-    .header-cta {
-      display: inline-flex; align-items: center; gap: var(--sn-space-2);
-      background: var(--sn-primary); color: #fff; font-size: var(--sn-text-sm); font-weight: 700;
-      padding: var(--sn-space-2) var(--sn-space-4); border-radius: var(--sn-radius-pill);
-      text-decoration: none; min-height: var(--sn-tap-min);
-    }
-    /* パンくず */
-    .breadcrumb { font-size: var(--sn-text-sm); color: var(--sn-muted); padding: var(--sn-space-4) var(--sn-space-4); }
-    .breadcrumb a { color: var(--sn-muted); text-decoration: none; }
-    .breadcrumb a:hover { color: var(--sn-primary); }
-    /* ページヒーロー */
-    .page-hero {
-      background: linear-gradient(135deg, #ecfdf5 0%, #eef2ff 100%);
-      padding: var(--sn-space-12) 0; text-align: center; margin-bottom: var(--sn-space-10);
-    }
-    .page-hero h1 { font-family: var(--sn-font-rounded); font-size: var(--sn-text-3xl); font-weight: 700; margin-bottom: var(--sn-space-3); }
-    .page-hero p { color: var(--sn-muted); font-size: var(--sn-text-sm); }
-    /* メイン連絡先カード */
-    .contact-main-card {
-      background: linear-gradient(135deg, var(--sn-primary) 0%, #8b5cf6 100%);
-      color: #fff; border-radius: var(--sn-radius-xl); padding: var(--sn-space-10);
-      text-align: center; margin-bottom: var(--sn-space-10);
-      box-shadow: var(--sn-shadow-xl);
-    }
-    .contact-main-card h2 { font-family: var(--sn-font-rounded); font-size: var(--sn-text-2xl); font-weight: 700; margin-bottom: var(--sn-space-3); }
-    .contact-main-card p { opacity: 0.9; font-size: var(--sn-text-sm); margin-bottom: var(--sn-space-6); }
-    .email-link {
-      display: inline-flex; align-items: center; gap: var(--sn-space-2);
-      background: rgba(255,255,255,0.15); border: 2px solid rgba(255,255,255,0.5);
-      color: #fff; font-size: var(--sn-text-lg); font-weight: 700;
-      padding: var(--sn-space-4) var(--sn-space-8); border-radius: var(--sn-radius-pill);
-      text-decoration: none; transition: all 200ms; word-break: break-all;
-    }
-    .email-link:hover { background: rgba(255,255,255,0.25); border-color: #fff; }
-    .response-note {
-      margin-top: var(--sn-space-5); font-size: var(--sn-text-xs); opacity: 0.8;
-    }
-    /* お問い合わせ種別 */
-    .inquiry-grid {
-      display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: var(--sn-space-4); margin-bottom: var(--sn-space-10);
-    }
-    .inquiry-card {
-      background: var(--sn-bg-white); border-radius: var(--sn-radius);
-      padding: var(--sn-space-5); border: 1px solid var(--sn-border);
-      box-shadow: var(--sn-shadow-xs);
-    }
-    .inquiry-header { display: flex; align-items: center; gap: var(--sn-space-2); margin-bottom: var(--sn-space-2); }
-    .inquiry-icon { font-size: 1.25rem; }
-    .inquiry-label { font-weight: 700; font-size: var(--sn-text-sm); }
-    .inquiry-note { font-size: var(--sn-text-xs); color: var(--sn-muted); }
-    /* 注意事項 */
-    .notice-box {
-      background: #fffbeb; border-radius: var(--sn-radius); padding: var(--sn-space-6);
-      border-left: 3px solid var(--sn-warning); margin-bottom: var(--sn-space-8);
-    }
-    .notice-title { font-weight: 700; margin-bottom: var(--sn-space-3); font-size: var(--sn-text-sm); color: var(--sn-accent-dark); }
-    .notice-list { list-style: none; display: flex; flex-direction: column; gap: var(--sn-space-2); }
-    .notice-list li { display: flex; align-items: flex-start; gap: var(--sn-space-2); font-size: var(--sn-text-sm); color: var(--sn-text-soft); }
-    .notice-list li::before { content: "⚠️"; flex-shrink: 0; }
-    /* セクション見出し */
-    .section-heading {
-      font-family: var(--sn-font-rounded); font-size: var(--sn-text-xl); font-weight: 700;
-      margin-bottom: var(--sn-space-5); padding-bottom: var(--sn-space-3);
-      border-bottom: 2px solid var(--sn-primary-bg); display: flex; align-items: center; gap: var(--sn-space-2);
-    }
-    /* SNS */
-    .sns-row { display: flex; flex-wrap: wrap; gap: var(--sn-space-4); margin-bottom: var(--sn-space-10); }
-    .sns-item {
-      background: var(--sn-bg-white); border: 1px solid var(--sn-border);
-      border-radius: var(--sn-radius); padding: var(--sn-space-4) var(--sn-space-5);
-      text-decoration: none; color: var(--sn-text); font-size: var(--sn-text-sm);
-      display: flex; align-items: center; gap: var(--sn-space-3); box-shadow: var(--sn-shadow-xs);
-    }
-    .sns-item:hover { border-color: var(--sn-primary); color: var(--sn-primary); }
-    /* FAQ誘導 */
-    .faq-promo {
-      background: var(--sn-primary-bg); border-radius: var(--sn-radius-lg);
-      padding: var(--sn-space-8); text-align: center; margin-bottom: var(--sn-space-10);
-    }
-    .faq-promo h3 { font-family: var(--sn-font-rounded); font-size: var(--sn-text-xl); font-weight: 700; margin-bottom: var(--sn-space-3); }
-    .faq-promo p { font-size: var(--sn-text-sm); color: var(--sn-muted); margin-bottom: var(--sn-space-5); }
-    .btn-primary {
-      display: inline-flex; align-items: center; gap: var(--sn-space-2);
-      background: var(--sn-primary); color: #fff; font-weight: 700;
-      padding: var(--sn-space-3) var(--sn-space-8); border-radius: var(--sn-radius-pill);
-      text-decoration: none; min-height: var(--sn-tap-min);
-    }
-    /* フッター */
-    .site-footer {
-      background: var(--sn-text); color: rgba(255,255,255,0.7);
-      padding: var(--sn-space-10) 0 var(--sn-space-8); margin-top: var(--sn-space-16);
-    }
-    .footer-inner { max-width: var(--sn-max-w); margin: 0 auto; padding: 0 var(--sn-space-4); }
-    .footer-logo { font-family: var(--sn-font-rounded); font-size: var(--sn-text-xl); color: #fff; font-weight: 700; text-decoration: none; display: block; margin-bottom: var(--sn-space-2); }
-    .footer-links { display: flex; flex-wrap: wrap; gap: var(--sn-space-6); margin: var(--sn-space-6) 0; }
-    .footer-links a { color: rgba(255,255,255,0.6); text-decoration: none; font-size: var(--sn-text-sm); }
-    .footer-links a:hover { color: #fff; }
-    .footer-bottom { font-size: var(--sn-text-xs); border-top: 1px solid rgba(255,255,255,0.1); padding-top: var(--sn-space-6); }
-  </style>
-  <!-- GA4 -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-S4WP0YRDWW"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-S4WP0YRDWW');
-  </script>
-
-  <!-- Google AdSense -->
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3827953973757487" crossorigin="anonymous"></script>
-</head>
-<body>
-
-  <!-- ヘッダー -->
-  <header class="site-header">
-    <div class="inner">
-      <a href="/" class="logo">🧠 診断ナビ</a>
-      <a href="/diagnosis/multi-int/" class="header-cta">✨ 無料で診断スタート</a>
-    </div>
-  </header>
+<BaseLayout
+  title="お問い合わせ"
+  description={description}
+  canonical={canonicalURL}
+  jsonLd={pageJsonLd}
+  ogImage="/ogp-default.png"
+  breadcrumbs={[{ name: "お問い合わせ", url: "/contact/" }]}
+>
 
   <!-- パンくず -->
   <nav class="breadcrumb" aria-label="パンくずリスト">
@@ -239,142 +68,199 @@ const inquiryTypes = [
     </Container>
   </section>
 
-  <main>
-    <div class="container">
+  <div class="container">
 
-      <!-- AIOブロック -->
-      <div style="margin-bottom: var(--sn-space-8);">
-        <blockquote style="
-          background: var(--sn-primary-bg); border-left: 4px solid var(--sn-primary);
-          border-radius: 0 var(--sn-radius-sm) var(--sn-radius-sm) 0;
-          padding: var(--sn-space-5) var(--sn-space-6);
-        ">
-          <p style="font-weight:700; margin-bottom: var(--sn-space-3);">このページでわかること</p>
-          <ul style="list-style:none; display:flex; flex-direction:column; gap:var(--sn-space-2); font-size: var(--sn-text-sm);">
-            <li>✅ 診断ナビへの連絡先メール（zawalab.info@gmail.com）</li>
-            <li>✅ 対応可能なお問い合わせ種別（誤り指摘・取材・提携・プライバシー等）</li>
-            <li>✅ 回答の目安と注意事項</li>
-          </ul>
-        </blockquote>
-      </div>
+    <!-- AIOブロック -->
+    <div style="margin-bottom: var(--sn-space-8);">
+      <blockquote style="
+        background: var(--sn-primary-bg); border-left: 4px solid var(--sn-primary);
+        border-radius: 0 var(--sn-radius-sm) var(--sn-radius-sm) 0;
+        padding: var(--sn-space-5) var(--sn-space-6);
+      ">
+        <p style="font-weight:700; margin-bottom: var(--sn-space-3);">このページでわかること</p>
+        <ul style="list-style:none; display:flex; flex-direction:column; gap:var(--sn-space-2); font-size: var(--sn-text-sm);">
+          <li>✅ 診断ナビへの連絡先メール（zawalab.info@gmail.com）</li>
+          <li>✅ 対応可能なお問い合わせ種別（誤り指摘・取材・提携・プライバシー等）</li>
+          <li>✅ 回答の目安と注意事項</li>
+        </ul>
+      </blockquote>
+    </div>
 
-      <!-- メイン連絡先 -->
-      <div class="contact-main-card">
-        <h2>📧 編集部メール</h2>
-        <p>
-          お問い合わせはメールにてお受けしています。<br />
-          件名に「【診断ナビ】お問い合わせ種別」を記載いただくとスムーズです。
-        </p>
-        <a href="mailto:zawalab.info@gmail.com" class="email-link">
-          ✉️ zawalab.info@gmail.com
-        </a>
-        <p class="response-note">
-          ※ 回答まで3〜5営業日お時間をいただく場合があります<br />
-          ※ お問い合わせ内容によってはご回答できない場合もあります
-        </p>
-      </div>
+    <!-- メイン連絡先 -->
+    <div class="contact-main-card">
+      <h2>📧 編集部メール</h2>
+      <p>
+        お問い合わせはメールにてお受けしています。<br />
+        件名に「【診断ナビ】お問い合わせ種別」を記載いただくとスムーズです。
+      </p>
+      <a href="mailto:zawalab.info@gmail.com" class="email-link">
+        ✉️ zawalab.info@gmail.com
+      </a>
+      <p class="response-note">
+        ※ 回答まで3〜5営業日お時間をいただく場合があります<br />
+        ※ お問い合わせ内容によってはご回答できない場合もあります
+      </p>
+    </div>
 
-      <!-- FAQ確認を促す -->
-      <div class="faq-promo">
-        <h3>❓ まずFAQを確認してみてください</h3>
-        <p>
-          よくあるご質問はFAQページにまとめています。<br />
-          メール送信の前に確認いただくと、素早く解決できる場合があります。
-        </p>
-        <a href="/faq/" class="btn-primary">
-          📋 FAQを見る
-        </a>
-      </div>
+    <!-- FAQ確認を促す -->
+    <div class="faq-promo">
+      <h3>❓ まずFAQを確認してみてください</h3>
+      <p>
+        よくあるご質問はFAQページにまとめています。<br />
+        メール送信の前に確認いただくと、素早く解決できる場合があります。
+      </p>
+      <a href="/faq/" class="btn-primary">
+        📋 FAQを見る
+      </a>
+    </div>
 
-      <!-- お問い合わせ種別 -->
-      <section style="margin-bottom: var(--sn-space-10);">
-        <h2 class="section-heading">📋 対応可能なお問い合わせ種別</h2>
-        <div class="inquiry-grid">
-          {inquiryTypes.map((item) => (
-            <div class="inquiry-card">
-              <div class="inquiry-header">
-                <span class="inquiry-icon">{item.icon}</span>
-                <span class="inquiry-label">{item.label}</span>
-              </div>
-              <p class="inquiry-note">{item.note}</p>
+    <!-- お問い合わせ種別 -->
+    <section style="margin-bottom: var(--sn-space-10);">
+      <h2 class="section-heading">📋 対応可能なお問い合わせ種別</h2>
+      <div class="inquiry-grid">
+        {inquiryTypes.map((item) => (
+          <div class="inquiry-card">
+            <div class="inquiry-header">
+              <span class="inquiry-icon">{item.icon}</span>
+              <span class="inquiry-label">{item.label}</span>
             </div>
-          ))}
-        </div>
-      </section>
-
-      <!-- 注意事項 -->
-      <section style="margin-bottom: var(--sn-space-10);">
-        <h2 class="section-heading">⚠️ お問い合わせ前のご確認</h2>
-        <div class="notice-box">
-          <div class="notice-title">以下についてはご対応できません</div>
-          <ul class="notice-list">
-            <li>診断結果に対する医療的・法的アドバイスの提供（YMYLジャンル非対応）</li>
-            <li>「この診断結果は正しいですか？」という個別の診断結果への判定</li>
-            <li>SNS・掲示板でのトラブル相談・個人間トラブルへの仲裁</li>
-            <li>勧誘・営業目的のメール（迷惑メールとして処理します）</li>
-          </ul>
-        </div>
-        <p style="font-size: var(--sn-text-sm); color: var(--sn-muted); line-height: var(--sn-leading-relaxed);">
-          ご連絡いただいた内容は、返信および本サービスの改善目的のみに使用します。第三者への提供・漏えいはいたしません。詳細は <a href="/privacy/" style="color: var(--sn-primary);">プライバシーポリシー</a> をご確認ください。
-        </p>
-      </section>
-
-      <!-- SNSアカウント -->
-      <section style="margin-bottom: var(--sn-space-10);">
-        <h2 class="section-heading">📱 SNSアカウント</h2>
-        <p style="font-size: var(--sn-text-sm); color: var(--sn-muted); margin-bottom: var(--sn-space-4);">
-          SNSでの最新情報発信・ご質問の受付は準備中です。公開次第こちらでご案内します。
-        </p>
-        <div class="sns-row">
-          <div class="sns-item" style="opacity:0.5; cursor:not-allowed;">
-            <span>🐦</span>
-            <span>
-              <span style="font-weight:700; display:block;">X（旧Twitter）</span>
-              <span style="color: var(--sn-muted);">準備中</span>
-            </span>
+            <p class="inquiry-note">{item.note}</p>
           </div>
-          <div class="sns-item" style="opacity:0.5; cursor:not-allowed;">
-            <span>📸</span>
-            <span>
-              <span style="font-weight:700; display:block;">Instagram</span>
-              <span style="color: var(--sn-muted);">準備中</span>
-            </span>
-          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- 注意事項 -->
+    <section style="margin-bottom: var(--sn-space-10);">
+      <h2 class="section-heading">⚠️ お問い合わせ前のご確認</h2>
+      <div class="notice-box">
+        <div class="notice-title">以下についてはご対応できません</div>
+        <ul class="notice-list">
+          <li>診断結果に対する医療的・法的アドバイスの提供（YMYLジャンル非対応）</li>
+          <li>「この診断結果は正しいですか？」という個別の診断結果への判定</li>
+          <li>SNS・掲示板でのトラブル相談・個人間トラブルへの仲裁</li>
+          <li>勧誘・営業目的のメール（迷惑メールとして処理します）</li>
+        </ul>
+      </div>
+      <p style="font-size: var(--sn-text-sm); color: var(--sn-muted); line-height: var(--sn-leading-relaxed);">
+        ご連絡いただいた内容は、返信および本サービスの改善目的のみに使用します。第三者への提供・漏えいはいたしません。詳細は <a href="/privacy/" style="color: var(--sn-primary);">プライバシーポリシー</a> をご確認ください。
+      </p>
+    </section>
+
+    <!-- SNSアカウント -->
+    <section style="margin-bottom: var(--sn-space-10);">
+      <h2 class="section-heading">📱 SNSアカウント</h2>
+      <p style="font-size: var(--sn-text-sm); color: var(--sn-muted); margin-bottom: var(--sn-space-4);">
+        SNSでの最新情報発信・ご質問の受付は準備中です。公開次第こちらでご案内します。
+      </p>
+      <div class="sns-row">
+        <div class="sns-item" style="opacity:0.5; cursor:not-allowed;">
+          <span>🐦</span>
+          <span>
+            <span style="font-weight:700; display:block;">X（旧Twitter）</span>
+            <span style="color: var(--sn-muted);">準備中</span>
+          </span>
         </div>
-        <p style="font-size: var(--sn-text-xs); color: var(--sn-muted);">
-          ※ 急ぎのお問い合わせはメール（zawalab.info@gmail.com）をご利用ください
-        </p>
-      </section>
-
-      <!-- 関連リンク -->
-      <div style="background: var(--sn-bg-soft); border-radius: var(--sn-radius); padding: var(--sn-space-5) var(--sn-space-6); display: flex; flex-wrap: wrap; gap: var(--sn-space-4);">
-        <a href="/about/" style="color: var(--sn-primary); font-size: var(--sn-text-sm); text-decoration:none;">👤 運営者情報</a>
-        <a href="/editorial-policy/" style="color: var(--sn-primary); font-size: var(--sn-text-sm); text-decoration:none;">📋 編集ポリシー</a>
-        <a href="/faq/" style="color: var(--sn-primary); font-size: var(--sn-text-sm); text-decoration:none;">❓ よくある質問</a>
-        <a href="/privacy/" style="color: var(--sn-primary); font-size: var(--sn-text-sm); text-decoration:none;">🔒 プライバシーポリシー</a>
+        <div class="sns-item" style="opacity:0.5; cursor:not-allowed;">
+          <span>📸</span>
+          <span>
+            <span style="font-weight:700; display:block;">Instagram</span>
+            <span style="color: var(--sn-muted);">準備中</span>
+          </span>
+        </div>
       </div>
+      <p style="font-size: var(--sn-text-xs); color: var(--sn-muted);">
+        ※ 急ぎのお問い合わせはメール（zawalab.info@gmail.com）をご利用ください
+      </p>
+    </section>
 
+    <!-- 関連リンク -->
+    <div style="background: var(--sn-bg-soft); border-radius: var(--sn-radius); padding: var(--sn-space-5) var(--sn-space-6); display: flex; flex-wrap: wrap; gap: var(--sn-space-4);">
+      <a href="/about/" style="color: var(--sn-primary); font-size: var(--sn-text-sm); text-decoration:none;">👤 運営者情報</a>
+      <a href="/editorial-policy/" style="color: var(--sn-primary); font-size: var(--sn-text-sm); text-decoration:none;">📋 編集ポリシー</a>
+      <a href="/faq/" style="color: var(--sn-primary); font-size: var(--sn-text-sm); text-decoration:none;">❓ よくある質問</a>
+      <a href="/privacy/" style="color: var(--sn-primary); font-size: var(--sn-text-sm); text-decoration:none;">🔒 プライバシーポリシー</a>
     </div>
-  </main>
 
-  <!-- フッター -->
-  <footer class="site-footer">
-    <div class="footer-inner">
-      <a href="/" class="footer-logo">🧠 診断ナビ</a>
-      <div class="footer-links">
-        <a href="/about/">運営者情報</a>
-        <a href="/editorial-policy/">編集ポリシー</a>
-        <a href="/contact/">お問い合わせ</a>
-        <a href="/faq/">よくある質問</a>
-        <a href="/privacy/">プライバシーポリシー</a>
-        <a href="/terms/">利用規約</a>
-        <a href="/disclaimer/">免責事項</a>
-      </div>
-      <div class="footer-bottom">
-        <p>© 2026 診断ナビ ｜ zawalab.info@gmail.com ｜ 最終更新: 2026-05-20</p>
-      </div>
-    </div>
-  </footer>
+  </div>
 
-</body>
-</html>
+</BaseLayout>
+
+<style>
+  .container { max-width: var(--sn-max-w-content); margin: 0 auto; padding: 0 var(--sn-space-4); }
+  /* パンくず */
+  .breadcrumb { font-size: var(--sn-text-sm); color: var(--sn-muted); padding: var(--sn-space-4) var(--sn-space-4); }
+  .breadcrumb a { color: var(--sn-muted); text-decoration: none; }
+  .breadcrumb a:hover { color: var(--sn-primary); }
+  /* メイン連絡先カード */
+  .contact-main-card {
+    background: linear-gradient(135deg, var(--sn-primary) 0%, #8b5cf6 100%);
+    color: #fff; border-radius: var(--sn-radius-xl); padding: var(--sn-space-10);
+    text-align: center; margin-bottom: var(--sn-space-10);
+    box-shadow: var(--sn-shadow-xl);
+  }
+  .contact-main-card h2 { font-family: var(--sn-font-rounded); font-size: var(--sn-text-2xl); font-weight: 700; margin-bottom: var(--sn-space-3); }
+  .contact-main-card p { opacity: 0.9; font-size: var(--sn-text-sm); margin-bottom: var(--sn-space-6); }
+  .email-link {
+    display: inline-flex; align-items: center; gap: var(--sn-space-2);
+    background: rgba(255,255,255,0.15); border: 2px solid rgba(255,255,255,0.5);
+    color: #fff; font-size: var(--sn-text-lg); font-weight: 700;
+    padding: var(--sn-space-4) var(--sn-space-8); border-radius: var(--sn-radius-pill);
+    text-decoration: none; transition: all 200ms; word-break: break-all;
+  }
+  .email-link:hover { background: rgba(255,255,255,0.25); border-color: #fff; }
+  .response-note {
+    margin-top: var(--sn-space-5); font-size: var(--sn-text-xs); opacity: 0.8;
+  }
+  /* お問い合わせ種別 */
+  .inquiry-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: var(--sn-space-4); margin-bottom: var(--sn-space-10);
+  }
+  .inquiry-card {
+    background: var(--sn-bg-white); border-radius: var(--sn-radius);
+    padding: var(--sn-space-5); border: 1px solid var(--sn-border);
+    box-shadow: var(--sn-shadow-xs);
+  }
+  .inquiry-header { display: flex; align-items: center; gap: var(--sn-space-2); margin-bottom: var(--sn-space-2); }
+  .inquiry-icon { font-size: 1.25rem; }
+  .inquiry-label { font-weight: 700; font-size: var(--sn-text-sm); }
+  .inquiry-note { font-size: var(--sn-text-xs); color: var(--sn-muted); }
+  /* 注意事項 */
+  .notice-box {
+    background: #fffbeb; border-radius: var(--sn-radius); padding: var(--sn-space-6);
+    border-left: 3px solid var(--sn-warning); margin-bottom: var(--sn-space-8);
+  }
+  .notice-title { font-weight: 700; margin-bottom: var(--sn-space-3); font-size: var(--sn-text-sm); color: var(--sn-accent-dark); }
+  .notice-list { list-style: none; display: flex; flex-direction: column; gap: var(--sn-space-2); }
+  .notice-list li { display: flex; align-items: flex-start; gap: var(--sn-space-2); font-size: var(--sn-text-sm); color: var(--sn-text-soft); }
+  .notice-list li::before { content: "⚠️"; flex-shrink: 0; }
+  /* セクション見出し */
+  .section-heading {
+    font-family: var(--sn-font-rounded); font-size: var(--sn-text-xl); font-weight: 700;
+    margin-bottom: var(--sn-space-5); padding-bottom: var(--sn-space-3);
+    border-bottom: 2px solid var(--sn-primary-bg); display: flex; align-items: center; gap: var(--sn-space-2);
+  }
+  /* SNS */
+  .sns-row { display: flex; flex-wrap: wrap; gap: var(--sn-space-4); margin-bottom: var(--sn-space-10); }
+  .sns-item {
+    background: var(--sn-bg-white); border: 1px solid var(--sn-border);
+    border-radius: var(--sn-radius); padding: var(--sn-space-4) var(--sn-space-5);
+    text-decoration: none; color: var(--sn-text); font-size: var(--sn-text-sm);
+    display: flex; align-items: center; gap: var(--sn-space-3); box-shadow: var(--sn-shadow-xs);
+  }
+  .sns-item:hover { border-color: var(--sn-primary); color: var(--sn-primary); }
+  /* FAQ誘導 */
+  .faq-promo {
+    background: var(--sn-primary-bg); border-radius: var(--sn-radius-lg);
+    padding: var(--sn-space-8); text-align: center; margin-bottom: var(--sn-space-10);
+  }
+  .faq-promo h3 { font-family: var(--sn-font-rounded); font-size: var(--sn-text-xl); font-weight: 700; margin-bottom: var(--sn-space-3); }
+  .faq-promo p { font-size: var(--sn-text-sm); color: var(--sn-muted); margin-bottom: var(--sn-space-5); }
+  .btn-primary {
+    display: inline-flex; align-items: center; gap: var(--sn-space-2);
+    background: var(--sn-primary); color: #fff; font-weight: 700;
+    padding: var(--sn-space-3) var(--sn-space-8); border-radius: var(--sn-radius-pill);
+    text-decoration: none; min-height: var(--sn-tap-min);
+  }
+</style>

@@ -1,6 +1,7 @@
 ---
 // shindan-navi.jp トップページ
 // 2026-05-20 時点の情報・content-writer 執筆
+import BaseLayout from '../layouts/BaseLayout.astro';
 const title = "8診断で、あなたを統合する。| 診断ナビ";
 const description = "MBTI・血液型・多重知能・完璧主義・DiSC・恋愛スタイル・星座・金銭感覚。8つの診断を統合して、仕事・恋愛・友人・家族・学校の5シーンであなたへの具体的アドバイスを提供。無料で診断スタート。";
 const canonicalURL = "https://shindan-navi.jp/";
@@ -229,1144 +230,32 @@ const faqTop = [
     a: "多重知能テストから始めることを推奨しています。3〜5分で受診でき、Howard Gardner博士の理論をベースにした8種類の知能タイプ分類から、シーン別アドバイスと統合プロファイルへの連携が最も充実しています。",
   },
 ];
+
+// ページ別 JSON-LD（FAQPage のみ。Organization/WebSite は BaseLayout が共通出力）
+const pageJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": faqTop.map(item => ({
+    "@type": "Question",
+    "name": item.q,
+    "acceptedAnswer": {
+      "@type": "Answer",
+      "text": item.a
+    }
+  }))
+};
 ---
 
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>{title}</title>
-  <meta name="description" content={description} />
-  <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
-  <link rel="canonical" href={canonicalURL} />
+<BaseLayout
+  title={title}
+  description={description}
+  canonical={canonicalURL}
+  jsonLd={pageJsonLd}
+  ogImage="/og/default.png"
+  ogType="website"
+>
 
-  <!-- hreflang（日本語単一言語サイト）-->
-  <link rel="alternate" hreflang="ja" href={canonicalURL} />
-  <link rel="alternate" hreflang="x-default" href={canonicalURL} />
-
-  <!-- OGP -->
-  <meta property="og:type" content="website" />
-  <meta property="og:title" content={title} />
-  <meta property="og:description" content={description} />
-  <meta property="og:url" content={canonicalURL} />
-  <meta property="og:image" content="https://shindan-navi.jp/og/default.png" />
-  <meta property="og:image:width" content="1200" />
-  <meta property="og:image:height" content="630" />
-  <meta property="og:image:type" content="image/png" />
-  <meta property="og:image:alt" content="診断ナビ - 8診断統合自己理解プラットフォーム" />
-  <meta property="og:site_name" content="診断ナビ" />
-  <meta property="og:locale" content="ja_JP" />
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:site" content="@shindan_navi" />
-  <meta name="twitter:title" content={title} />
-  <meta name="twitter:description" content={description} />
-  <meta name="twitter:image" content="https://shindan-navi.jp/og/default.png" />
-
-  <!-- Resource Hints -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link rel="preconnect" href="https://www.googletagmanager.com" />
-  <link rel="dns-prefetch" href="https://pagead2.googlesyndication.com" />
-
-  <!-- Google Fonts（非ブロッキング: CWV LCP/FCP 改善）-->
-  <link
-    rel="stylesheet"
-    href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=M+PLUS+Rounded+1c:wght@700&display=swap"
-    media="print"
-    onload="this.media='all'"
-  />
-  <noscript>
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=M+PLUS+Rounded+1c:wght@700&display=swap"
-    />
-  </noscript>
-
-  <!-- 構造化データ: Organization（@id連結の基盤・E-E-A-T強化）-->
-  <script type="application/ld+json">
-    {JSON.stringify({
-      "@context": "https://schema.org",
-      "@type": "Organization",
-      "@id": "https://shindan-navi.jp/#organization",
-      "name": "診断ナビ編集部",
-      "alternateName": "診断ナビ",
-      "url": "https://shindan-navi.jp",
-      "logo": {
-        "@type": "ImageObject",
-        "@id": "https://shindan-navi.jp/#logo",
-        "url": "https://shindan-navi.jp/favicon.svg",
-        "width": 32,
-        "height": 32
-      },
-      "foundingDate": "2026",
-      "areaServed": { "@type": "Country", "name": "日本" },
-      "sameAs": []
-    })}
-  </script>
-
-  <!-- 構造化データ: WebSite（@id連結・SearchAction）-->
-  <script type="application/ld+json">
-    {JSON.stringify({
-      "@context": "https://schema.org",
-      "@type": "WebSite",
-      "@id": "https://shindan-navi.jp/#website",
-      "name": "診断ナビ",
-      "url": "https://shindan-navi.jp",
-      "description": "8診断統合で、仕事・恋愛・友人・家族・学校の5シーンの行動指針を提供する自己理解プラットフォーム",
-      "inLanguage": "ja-JP",
-      "potentialAction": {
-        "@type": "SearchAction",
-        "target": {
-          "@type": "EntryPoint",
-          "urlTemplate": "https://shindan-navi.jp/search?q={search_term_string}"
-        },
-        "query-input": "required name=search_term_string"
-      },
-      "publisher": {
-        "@type": "Organization",
-        "@id": "https://shindan-navi.jp/#organization"
-      }
-    })}
-  </script>
-
-  <!-- 構造化データ: FAQPage（10問・AI引用・リッチリザルト対応）-->
-  <script type="application/ld+json">
-    {JSON.stringify({
-      "@context": "https://schema.org",
-      "@type": "FAQPage",
-      "mainEntity": [
-        {
-          "@type": "Question",
-          "name": "診断ナビとは何ですか？",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "診断ナビは、MBTI・血液型・多重知能・完璧主義・DiSC・恋愛スタイル・星座・金銭感覚の8診断を統合し、仕事・恋愛・友人・家族・学校の5シーンで具体的な行動指針を提供する自己理解プラットフォームです。全診断が完全無料・登録不要で受診できます（2026年5月時点）。"
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "8診断統合とはどういう仕組みですか？",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "8つの診断結果を内部の五大性格因子モデルで統合し、統合プロファイルを自動生成します。単体診断では見えない多面的な性格傾向・強み・シーン別行動パターンを可視化します。"
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "占いとは何が違うのですか？",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "占いとは異なります。診断ナビは心理学・行動経済学・Howard Gardner博士の多重知能理論などの学術研究をベースにしています。未来予測・運勢・血液型ハラスメントにつながる表現は一切扱いません。"
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "無料プランでどこまでできますか？",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "8診断すべてを無制限で受診でき、各診断のライト版結果・シーン別アドバイスを確認できます。こっそり相性チェックと招待相性診断も完全無料・無制限です。"
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "個人情報・診断データはどこに保存されますか？",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "診断データはお使いのデバイスのLocalStorage（ブラウザのローカル保存領域）に保存されます。サーバーへは送信しません。アカウント登録した場合はSupabase上の暗号化データベースに保存されます。"
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "診断結果は時間が経っても変わりませんか？",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "性格傾向はライフイベント・環境変化によって変わることがあります。定期的な再診断を推奨しています。PRO会員は時系列変化グラフで過去の自分との比較が可能です。"
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "相性診断はどうやって使うのですか？",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "相性診断は、相手の診断URLを入力するこっそりモードと、招待リンクを共有して一緒に受診する招待モードの2種類があります。どちらも完全無料・無制限で利用できます。"
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "390円PASSと590円/月PROはどこが違いますか？",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "390円PASSは1年有効の買い切りプランで詳細版レポートと統合プロファイル完全版が利用できます。590円/月PROはサブスクリプション型で、毎月更新されるAIプロンプトカード・タイムカプセル機能・広告完全非表示などの追加機能があります。"
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "医療診断・メンタルヘルスの相談はできますか？",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "いいえ、対応していません。診断ナビは性格傾向の参考情報を提供するサービスです。うつ・不安障害などの精神疾患診断・治療・医療アドバイスは一切提供しません。精神的な不調を感じる場合は医療機関へご相談ください。"
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "どの診断から始めればよいですか？",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "多重知能テストから始めることを推奨しています。3〜5分で受診でき、Howard Gardner博士の理論をベースにした8種類の知能タイプ分類から、シーン別アドバイスと統合プロファイルへの連携が最も充実しています。"
-          }
-        }
-      ]
-    })}
-  </script>
-
-  <!-- 構造化データ: FAQPage（10問・AI引用・リッチリザルト対応）-->
-  <script type="application/ld+json">
-    {JSON.stringify({
-      "@context": "https://schema.org",
-      "@type": "FAQPage",
-      "mainEntity": [
-        {
-          "@type": "Question",
-          "name": "診断ナビとは何ですか？",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "診断ナビは、MBTI・血液型・多重知能・完璧主義・DiSC・恋愛スタイル・星座・金銭感覚の8診断を統合し、仕事・恋愛・友人・家族・学校の5シーンで具体的な行動指針を提供する自己理解プラットフォームです。全診断が完全無料・登録不要で受診できます（2026年5月時点）。"
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "8診断統合とはどういう仕組みですか？",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "8つの診断結果を内部の五大性格因子モデルで統合し、統合プロファイルを自動生成します。単体診断では見えない多面的な性格傾向・強み・シーン別行動パターンを可視化します。"
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "占いとは何が違うのですか？",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "占いとは異なります。診断ナビは心理学・行動経済学・Howard Gardner博士の多重知能理論などの学術研究をベースにしています。未来予測・運勢・血液型ハラスメントにつながる表現は一切扱いません。"
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "無料プランでどこまでできますか？",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "8診断すべてを無制限で受診でき、各診断のライト版結果・シーン別アドバイスを確認できます。こっそり相性チェックと招待相性診断も完全無料・無制限です。"
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "個人情報・診断データはどこに保存されますか？",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "診断データはお使いのデバイスのLocalStorage（ブラウザのローカル保存領域）に保存されます。サーバーへは送信しません。アカウント登録した場合はSupabase上の暗号化データベースに保存されます。"
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "診断結果は時間が経っても変わりませんか？",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "性格傾向はライフイベント・環境変化によって変わることがあります。定期的な再診断を推奨しています。PRO会員は時系列変化グラフで過去の自分との比較が可能です。"
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "相性診断はどうやって使うのですか？",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "相性診断は、相手の診断URLを入力するこっそりモードと、招待リンクを共有して一緒に受診する招待モードの2種類があります。どちらも完全無料・無制限で利用できます。"
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "390円PASSと590円/月PROはどこが違いますか？",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "390円PASSは1年有効の買い切りプランで詳細版レポートと統合プロファイル完全版が利用できます。590円/月PROはサブスクリプション型で、毎月更新されるAIプロンプトカード・タイムカプセル機能・広告完全非表示などの追加機能があります。"
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "医療診断・メンタルヘルスの相談はできますか？",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "いいえ、対応していません。診断ナビは性格傾向の参考情報を提供するサービスです。うつ・不安障害などの精神疾患診断・治療・医療アドバイスは一切提供しません。精神的な不調を感じる場合は医療機関へご相談ください。"
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "どの診断から始めればよいですか？",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "多重知能テストから始めることを推奨しています。3〜5分で受診でき、Howard Gardner博士の理論をベースにした8種類の知能タイプ分類から、シーン別アドバイスと統合プロファイルへの連携が最も充実しています。"
-          }
-        }
-      ]
-    })}
-  </script>
-
-  <!-- 構造化データ: FAQPage（10問・AI引用・リッチリザルト対応）-->
-  <script type="application/ld+json">
-    {JSON.stringify({
-      "@context": "https://schema.org",
-      "@type": "FAQPage",
-      "mainEntity": [
-        {
-          "@type": "Question",
-          "name": "診断ナビとは何ですか？",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "診断ナビは、MBTI・血液型・多重知能・完璧主義・DiSC・恋愛スタイル・星座・金銭感覚の8診断を統合し、仕事・恋愛・友人・家族・学校の5シーンで具体的な行動指針を提供する自己理解プラットフォームです。全診断が完全無料・登録不要で受診できます（2026年5月時点）。"
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "8診断統合とはどういう仕組みですか？",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "8つの診断結果を内部の五大性格因子モデルで統合し、統合プロファイルを自動生成します。単体診断では見えない多面的な性格傾向・強み・シーン別行動パターンを可視化します。"
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "占いとは何が違うのですか？",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "占いとは異なります。診断ナビは心理学・行動経済学・Howard Gardner博士の多重知能理論などの学術研究をベースにしています。未来予測・運勢・血液型ハラスメントにつながる表現は一切扱いません。"
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "無料プランでどこまでできますか？",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "8診断すべてを無制限で受診でき、各診断のライト版結果・シーン別アドバイスを確認できます。こっそり相性チェックと招待相性診断も完全無料・無制限です。"
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "個人情報・診断データはどこに保存されますか？",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "診断データはお使いのデバイスのLocalStorage（ブラウザのローカル保存領域）に保存されます。サーバーへは送信しません。アカウント登録した場合はSupabase上の暗号化データベースに保存されます。"
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "診断結果は時間が経っても変わりませんか？",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "性格傾向はライフイベント・環境変化によって変わることがあります。定期的な再診断を推奨しています。PRO会員は時系列変化グラフで過去の自分との比較が可能です。"
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "相性診断はどうやって使うのですか？",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "相性診断は、相手の診断URLを入力するこっそりモードと、招待リンクを共有して一緒に受診する招待モードの2種類があります。どちらも完全無料・無制限で利用できます。"
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "390円PASSと590円/月PROはどこが違いますか？",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "390円PASSは1年有効の買い切りプランで詳細版レポートと統合プロファイル完全版が利用できます。590円/月PROはサブスクリプション型で、毎月更新されるAIプロンプトカード・タイムカプセル機能・広告完全非表示などの追加機能があります。"
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "医療診断・メンタルヘルスの相談はできますか？",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "いいえ、対応していません。診断ナビは性格傾向の参考情報を提供するサービスです。うつ・不安障害などの精神疾患診断・治療・医療アドバイスは一切提供しません。精神的な不調を感じる場合は医療機関へご相談ください。"
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "どの診断から始めればよいですか？",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "多重知能テストから始めることを推奨しています。3〜5分で受診でき、Howard Gardner博士の理論をベースにした8種類の知能タイプ分類から、シーン別アドバイスと統合プロファイルへの連携が最も充実しています。"
-          }
-        }
-      ]
-    })}
-  </script>
-
-  <!-- GA4 -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-S4WP0YRDWW"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-S4WP0YRDWW');
-  </script>
-
-  <!-- Google AdSense -->
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3827953973757487" crossorigin="anonymous"></script>
-
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: var(--sn-font-family);
-      background: var(--sn-bg);
-      color: var(--sn-text);
-      line-height: var(--sn-leading-base);
-      font-size: var(--sn-text-base);
-    }
-    .container {
-      max-width: var(--sn-max-w);
-      margin: 0 auto;
-      padding: 0 var(--sn-space-4);
-    }
-    /* ===== ヘッダー v2.0 ===== */
-    .site-header-v2 {
-      position: sticky; top: 0; z-index: 100;
-      height: var(--sn-header-h);
-      background: rgba(255,255,255,.75);
-      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--line);
-      box-shadow: var(--shadow-sm);
-    }
-    .nav-inner {
-      max-width: var(--sn-max-w); margin: 0 auto; padding: 0 var(--sn-space-4);
-      height: 100%; display: flex; align-items: center; gap: var(--sn-space-4);
-    }
-    @media (min-width: 640px) { .nav-inner { padding: 0 var(--sn-space-6); } }
-    .nav-logo {
-      display: flex; align-items: center; gap: 8px;
-      text-decoration: none; flex-shrink: 0;
-    }
-    .nav-logo-text {
-      font-family: 'Inter', 'Noto Sans JP', system-ui, sans-serif;
-      font-size: var(--sn-text-lg); font-weight: 700; color: var(--ink-900); letter-spacing: -.01em;
-    }
-    .nav-links { display: none; margin-left: var(--sn-space-4); gap: 4px; }
-    @media (min-width: 768px) { .nav-links { display: flex; align-items: center; } }
-    .nav-links a {
-      display: block; padding: 8px 12px; border-radius: var(--radius-sm);
-      font-size: var(--sn-text-sm); font-weight: 500; color: var(--ink-700);
-      text-decoration: none;
-      transition: background var(--sn-dur-fast) var(--sn-ease), color var(--sn-dur-fast) var(--sn-ease);
-    }
-    .nav-links a:hover { background: var(--brand-50); color: var(--brand-600); }
-    .nav-actions { margin-left: auto; display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
-    .nav-btn-login {
-      display: inline-flex; align-items: center;
-      background: var(--brand-100); color: var(--brand-600);
-      padding: 8px 16px; border-radius: var(--radius-pill);
-      font-weight: 700; font-size: 13px; text-decoration: none; min-height: var(--sn-tap-min);
-    }
-    .nav-btn-signup {
-      display: inline-flex; align-items: center;
-      background: linear-gradient(180deg, #8a6dff 0%, #6c47ff 100%);
-      color: #fff; padding: 8px 16px; border-radius: var(--radius-pill);
-      font-weight: 700; font-size: 13px; text-decoration: none; min-height: var(--sn-tap-min);
-      box-shadow: 0 6px 14px rgba(108,71,255,.28);
-    }
-    .nav-btn-signup:hover { opacity: .9; color: #fff; }
-
-    /* ===== ヒーロー v2.0 ===== */
-    .hero-v2 {
-      background: var(--hero-grad);
-      position: relative; overflow: hidden;
-      padding: 48px 16px 56px;
-    }
-    .hero-v2::before {
-      content: ""; position: absolute; inset: 0;
-      background:
-        radial-gradient(40% 30% at 75% 25%, rgba(255,200,235,.4), transparent 60%),
-        radial-gradient(50% 40% at 15% 75%, rgba(195,210,255,.4), transparent 60%);
-      pointer-events: none;
-    }
-    @keyframes sparkle-pulse2 {
-      0%, 100% { opacity: .3; transform: scale(1) rotate(0deg); }
-      50% { opacity: .75; transform: scale(1.15) rotate(20deg); }
-    }
-    .hero-sparkle { position: absolute; pointer-events: none; animation: sparkle-pulse2 3.5s ease-in-out infinite; }
-    .hero-v2-inner {
-      position: relative; max-width: var(--sn-max-w); margin: 0 auto;
-      display: flex; flex-direction: column; gap: 40px; align-items: center;
-    }
-    @media (min-width: 900px) {
-      .hero-v2 { padding: 64px 48px 72px; }
-      .hero-v2-inner { flex-direction: row; gap: 48px; align-items: center; }
-    }
-    .hero-v2-text { flex: 1; text-align: center; }
-    @media (min-width: 900px) { .hero-v2-text { text-align: left; } }
-    .hero-v2-badge {
-      display: inline-flex; align-items: center; gap: 6px;
-      background: var(--brand-100); color: var(--brand-600); border-radius: var(--radius-pill);
-      font-weight: 700; padding: 6px 14px; font-size: 12px; letter-spacing: .06em; margin-bottom: 18px;
-    }
-    .hero-v2-title {
-      font-family: 'Noto Sans JP', system-ui, sans-serif;
-      font-size: clamp(24px, 5vw, 46px);
-      font-weight: 800; line-height: 1.32; color: var(--ink-900); margin-bottom: 20px;
-    }
-    .hero-v2-accent { color: var(--brand-600); }
-    .hero-v2-underline { background: linear-gradient(transparent 65%, #ffd9ec 65%); padding: 0 2px; }
-    .hero-v2-desc {
-      font-size: 14px; color: var(--ink-700); line-height: 1.85;
-      max-width: 460px; margin: 0 auto 24px;
-    }
-    @media (min-width: 900px) { .hero-v2-desc { margin: 0 0 24px; } }
-    .hero-v2-cta-group { display: flex; gap: 12px; align-items: center; justify-content: center; flex-wrap: wrap; margin-bottom: 12px; }
-    @media (min-width: 900px) { .hero-v2-cta-group { justify-content: flex-start; } }
-    .hero-v2-cta {
-      display: inline-flex; align-items: center; gap: 8px;
-      background: linear-gradient(180deg, #8a6dff 0%, #6c47ff 100%);
-      color: #fff; font-weight: 700; letter-spacing: .04em;
-      box-shadow: 0 10px 22px rgba(108,71,255,.32), 0 2px 4px rgba(108,71,255,.18);
-      border-radius: var(--radius-pill); padding: 14px 24px; font-size: 16px;
-      text-decoration: none; min-height: var(--sn-tap-min);
-      transition: opacity var(--sn-dur-fast) var(--sn-ease), transform var(--sn-dur-fast) var(--sn-ease);
-    }
-    .hero-v2-cta:hover { opacity: .92; color: #fff; text-decoration: none; }
-    .hero-v2-cta:active { transform: scale(.97); }
-    .hero-v2-cta-sub {
-      display: inline-flex; align-items: center;
-      color: var(--ink-700); font-weight: 600; font-size: 14px;
-      text-decoration: none; padding: 10px 16px; border-radius: var(--radius-pill);
-      border: 1.5px solid var(--line-2); min-height: var(--sn-tap-min);
-      transition: background var(--sn-dur-fast) var(--sn-ease);
-    }
-    .hero-v2-cta-sub:hover { background: var(--brand-50); color: var(--brand-600); text-decoration: none; }
-    .hero-v2-proof { font-size: 12px; color: var(--ink-400); text-align: center; }
-    @media (min-width: 900px) { .hero-v2-proof { text-align: left; } }
-    /* 8診断タイル */
-    .hero-v2-tiles {
-      display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
-      width: 100%; max-width: 420px;
-    }
-    @media (min-width: 900px) { .hero-v2-tiles { max-width: 360px; gap: 14px; } }
-    .hero-tile-item {
-      display: flex; flex-direction: column; align-items: center; gap: 6px;
-      text-decoration: none; color: var(--ink-700);
-      transition: transform var(--sn-dur-fast) var(--sn-ease-bounce);
-    }
-    .hero-tile-item:hover { transform: translateY(-3px); text-decoration: none; color: var(--ink-700); }
-    .hero-tile-circle {
-      width: 60px; height: 60px; border-radius: 50%;
-      display: flex; align-items: center; justify-content: center; color: #fff;
-      box-shadow: 0 8px 18px rgba(0,0,0,.14);
-    }
-    @media (max-width: 400px) { .hero-tile-circle { width: 48px; height: 48px; } }
-    .hero-tile-label { font-size: 11px; font-weight: 700; text-align: center; white-space: nowrap; }
-
-    /* 3つの理由 */
-
-    .reasons-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: var(--sn-space-6);
-    }
-    .reason-card {
-      background: var(--sn-bg-white);
-      border-radius: var(--sn-radius);
-      padding: var(--sn-space-8);
-      box-shadow: var(--sn-shadow-sm);
-      text-align: center;
-    }
-    .reason-number {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      background: var(--sn-primary);
-      color: #fff;
-      font-family: var(--sn-font-rounded);
-      font-size: var(--sn-text-xl);
-      font-weight: 700;
-      margin-bottom: var(--sn-space-4);
-    }
-    .reason-title {
-      font-size: var(--sn-text-lg);
-      font-weight: 700;
-      margin-bottom: var(--sn-space-3);
-    }
-    .reason-desc {
-      font-size: var(--sn-text-sm);
-      color: var(--sn-muted);
-      line-height: var(--sn-leading-relaxed);
-    }
-
-    /* 8診断グリッド */
-    .diag-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-      gap: var(--sn-space-4);
-    }
-    .diag-card {
-      display: flex;
-      align-items: flex-start;
-      gap: var(--sn-space-3);
-      background: var(--sn-bg-white);
-      border-radius: var(--sn-radius);
-      padding: var(--sn-space-5);
-      text-decoration: none;
-      color: inherit;
-      box-shadow: var(--sn-shadow-sm);
-      border: 1px solid var(--sn-border);
-      transition: all var(--sn-dur-base) var(--sn-ease);
-    }
-    .diag-card:hover {
-      box-shadow: var(--sn-shadow-md);
-      transform: translateY(-2px);
-      border-color: var(--sn-primary-light);
-    }
-    .diag-icon {
-      width: 48px;
-      height: 48px;
-      border-radius: var(--sn-radius-sm);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.5rem;
-      flex-shrink: 0;
-    }
-    .diag-name {
-      font-size: var(--sn-text-base);
-      font-weight: 700;
-      margin-bottom: 4px;
-    }
-    .diag-desc {
-      font-size: var(--sn-text-sm);
-      color: var(--sn-muted);
-    }
-
-    /* 5シーン軸 */
-    .scenes-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: var(--sn-space-4);
-    }
-    .scene-card {
-      border-radius: var(--sn-radius);
-      padding: var(--sn-space-6);
-      text-align: center;
-    }
-    .scene-icon {
-      font-size: 2rem;
-      margin-bottom: var(--sn-space-2);
-    }
-    .scene-label {
-      font-size: var(--sn-text-lg);
-      font-weight: 700;
-      margin-bottom: var(--sn-space-2);
-    }
-    .scene-desc {
-      font-size: var(--sn-text-sm);
-      line-height: var(--sn-leading-relaxed);
-    }
-
-    /* 統合プロファイル訴求 */
-    .profile-flow {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-wrap: wrap;
-      gap: var(--sn-space-4);
-      margin: var(--sn-space-8) 0;
-    }
-    .profile-step {
-      background: var(--sn-bg-white);
-      border-radius: var(--sn-radius);
-      padding: var(--sn-space-5) var(--sn-space-6);
-      text-align: center;
-      box-shadow: var(--sn-shadow-sm);
-      min-width: 160px;
-    }
-    .profile-step-num {
-      font-size: var(--sn-text-sm);
-      color: var(--sn-muted);
-      margin-bottom: var(--sn-space-1);
-    }
-    .profile-step-label {
-      font-size: var(--sn-text-base);
-      font-weight: 700;
-    }
-    .profile-arrow {
-      font-size: 1.5rem;
-      color: var(--sn-primary);
-    }
-
-    /* 料金プラン */
-    .plans-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: var(--sn-space-6);
-      align-items: start;
-    }
-    .plan-card {
-      background: var(--sn-bg-white);
-      border-radius: var(--sn-radius-lg);
-      padding: var(--sn-space-8);
-      box-shadow: var(--sn-shadow-sm);
-      border: 2px solid var(--sn-border);
-      position: relative;
-    }
-    .plan-card.highlight {
-      border-color: var(--sn-pro-color);
-      box-shadow: var(--sn-shadow-lg);
-    }
-    .plan-badge {
-      position: absolute;
-      top: -12px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: var(--sn-pro-gradient);
-      color: #fff;
-      font-size: var(--sn-text-xs);
-      font-weight: 700;
-      padding: 4px 16px;
-      border-radius: var(--sn-radius-pill);
-      white-space: nowrap;
-    }
-    .plan-name {
-      font-family: var(--sn-font-rounded);
-      font-size: var(--sn-text-xl);
-      font-weight: 700;
-      margin-bottom: var(--sn-space-2);
-    }
-    .plan-price {
-      font-size: var(--sn-text-3xl);
-      font-weight: 700;
-      margin-bottom: var(--sn-space-1);
-    }
-    .plan-period {
-      font-size: var(--sn-text-sm);
-      color: var(--sn-muted);
-      margin-bottom: var(--sn-space-5);
-    }
-    .plan-features {
-      list-style: none;
-      margin-bottom: var(--sn-space-6);
-    }
-    .plan-features li {
-      display: flex;
-      align-items: flex-start;
-      gap: var(--sn-space-2);
-      font-size: var(--sn-text-sm);
-      padding: var(--sn-space-2) 0;
-      border-bottom: 1px solid var(--sn-border-soft);
-    }
-    .plan-features li::before {
-      content: "✓";
-      color: var(--sn-success);
-      font-weight: 700;
-      flex-shrink: 0;
-    }
-    .plan-cta {
-      display: block;
-      text-align: center;
-      font-weight: 700;
-      padding: var(--sn-space-3) var(--sn-space-6);
-      border-radius: var(--sn-radius-pill);
-      text-decoration: none;
-      min-height: var(--sn-tap-min);
-      line-height: var(--sn-tap-min);
-      transition: all var(--sn-dur-base) var(--sn-ease);
-    }
-
-    /* バイラル訴求 */
-    .viral-box {
-      background: linear-gradient(135deg, var(--sn-primary) 0%, var(--sn-secondary) 100%);
-      color: #fff;
-      border-radius: var(--sn-radius-xl);
-      padding: var(--sn-space-12) var(--sn-space-8);
-      text-align: center;
-    }
-    .viral-title {
-      font-family: var(--sn-font-rounded);
-      font-size: var(--sn-text-2xl);
-      font-weight: 700;
-      margin-bottom: var(--sn-space-4);
-    }
-    .viral-desc {
-      font-size: var(--sn-text-base);
-      opacity: 0.9;
-      margin-bottom: var(--sn-space-6);
-      max-width: 500px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-    .viral-flow {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-wrap: wrap;
-      gap: var(--sn-space-3);
-      margin-bottom: var(--sn-space-6);
-      font-size: var(--sn-text-sm);
-    }
-    .viral-step {
-      background: rgba(255,255,255,0.2);
-      border-radius: var(--sn-radius-sm);
-      padding: var(--sn-space-2) var(--sn-space-4);
-    }
-    .btn-white {
-      display: inline-flex;
-      align-items: center;
-      gap: var(--sn-space-2);
-      background: #fff;
-      color: var(--sn-primary);
-      font-weight: 700;
-      padding: var(--sn-space-3) var(--sn-space-8);
-      border-radius: var(--sn-radius-pill);
-      text-decoration: none;
-      min-height: var(--sn-tap-min);
-      transition: all var(--sn-dur-base) var(--sn-ease);
-    }
-    .btn-white:hover { opacity: 0.9; transform: translateY(-1px); }
-
-    /* FAQ */
-    .faq-list {
-      display: flex;
-      flex-direction: column;
-      gap: var(--sn-space-4);
-      max-width: 700px;
-      margin: 0 auto;
-    }
-    .faq-item {
-      background: var(--sn-bg-white);
-      border-radius: var(--sn-radius);
-      padding: var(--sn-space-5) var(--sn-space-6);
-      box-shadow: var(--sn-shadow-sm);
-    }
-    .faq-q {
-      font-weight: 700;
-      margin-bottom: var(--sn-space-2);
-      display: flex;
-      align-items: flex-start;
-      gap: var(--sn-space-2);
-    }
-    .faq-q::before {
-      content: "Q";
-      color: var(--sn-primary);
-      font-family: var(--sn-font-rounded);
-      flex-shrink: 0;
-    }
-    .faq-a {
-      font-size: var(--sn-text-sm);
-      color: var(--sn-text-soft);
-      line-height: var(--sn-leading-relaxed);
-      padding-left: calc(var(--sn-text-base) + var(--sn-space-2));
-    }
-
-    /* フッター */
-    .site-footer {
-      background: var(--sn-text);
-      color: rgba(255,255,255,0.7);
-      padding: var(--sn-space-12) 0 var(--sn-space-8);
-      margin-top: var(--sn-space-16);
-    }
-    .footer-inner {
-      max-width: var(--sn-max-w);
-      margin: 0 auto;
-      padding: 0 var(--sn-space-4);
-    }
-    .footer-logo {
-      font-family: var(--sn-font-rounded);
-      font-size: var(--sn-text-xl);
-      color: #fff;
-      font-weight: 700;
-      text-decoration: none;
-      display: block;
-      margin-bottom: var(--sn-space-2);
-    }
-    .footer-tagline {
-      font-size: var(--sn-text-sm);
-      margin-bottom: var(--sn-space-8);
-    }
-    .footer-links {
-      display: flex;
-      flex-wrap: wrap;
-      gap: var(--sn-space-6);
-      margin-bottom: var(--sn-space-8);
-    }
-    .footer-links a {
-      color: rgba(255,255,255,0.6);
-      text-decoration: none;
-      font-size: var(--sn-text-sm);
-      transition: color var(--sn-dur-fast);
-    }
-    .footer-links a:hover { color: #fff; }
-    .footer-bottom {
-      font-size: var(--sn-text-xs);
-      border-top: 1px solid rgba(255,255,255,0.1);
-      padding-top: var(--sn-space-6);
-    }
-
-    /* レスポンシブ */
-    @media (max-width: 600px) {
-      .hero { padding: var(--sn-space-10) 0 var(--sn-space-8); }
-      .hero-cta-group { flex-direction: column; align-items: center; }
-      .plans-grid { grid-template-columns: 1fr; }
-      .scenes-grid { grid-template-columns: repeat(2, 1fr); }
-      .profile-flow { flex-direction: column; }
-      .profile-arrow { transform: rotate(90deg); }
-    }
-      /* ===== ヒーロー v2.0 ===== */
-    .hero-v2 {
-      background: var(--hero-grad);
-      position: relative;
-      overflow: hidden;
-      padding: 48px 16px 56px;
-    }
-    .hero-v2::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background:
-        radial-gradient(40% 30% at 75% 25%, rgba(255,200,235,.4), transparent 60%),
-        radial-gradient(50% 40% at 15% 75%, rgba(195,210,255,.4), transparent 60%);
-      pointer-events: none;
-    }
-    .hero-sparkle {
-      position: absolute;
-      pointer-events: none;
-      animation: sparkle-pulse 3.5s ease-in-out infinite;
-    }
-    @keyframes sparkle-pulse {
-      0%, 100% { opacity: .3; transform: scale(1) rotate(0deg); }
-      50% { opacity: .75; transform: scale(1.15) rotate(20deg); }
-    }
-    .hero-v2-inner {
-      position: relative;
-      max-width: var(--sn-max-w);
-      margin: 0 auto;
-      display: flex;
-      flex-direction: column;
-      gap: 40px;
-      align-items: center;
-    }
-    @media (min-width: 900px) {
-      .hero-v2 { padding: 64px 48px 72px; }
-      .hero-v2-inner { flex-direction: row; gap: 48px; align-items: center; }
-    }
-    .hero-v2-text { flex: 1; text-align: center; }
-    @media (min-width: 900px) { .hero-v2-text { text-align: left; } }
-    .hero-v2-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: var(--brand-100);
-      color: var(--brand-600);
-      border-radius: var(--radius-pill);
-      font-weight: 700;
-      padding: 6px 14px;
-      font-size: 12px;
-      letter-spacing: .06em;
-      margin-bottom: 18px;
-    }
-    .hero-v2-title {
-      font-family: 'Noto Sans JP', 'Inter', system-ui, sans-serif;
-      font-size: clamp(26px, 5vw, 46px);
-      font-weight: 800;
-      line-height: 1.32;
-      color: var(--ink-900);
-      margin-bottom: 20px;
-    }
-    .hero-v2-accent { color: var(--brand-600); }
-    .hero-v2-underline {
-      background: linear-gradient(transparent 65%, #ffd9ec 65%);
-      padding: 0 2px;
-    }
-    .hero-v2-desc {
-      font-size: 14px;
-      color: var(--ink-700);
-      line-height: 1.85;
-      max-width: 460px;
-      margin: 0 auto 24px;
-    }
-    @media (min-width: 900px) { .hero-v2-desc { margin: 0 0 24px; } }
-    .hero-v2-cta-group { display: flex; gap: 12px; align-items: center; justify-content: center; flex-wrap: wrap; margin-bottom: 12px; }
-    @media (min-width: 900px) { .hero-v2-cta-group { justify-content: flex-start; } }
-    .hero-v2-cta {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: linear-gradient(180deg, #8a6dff 0%, #6c47ff 100%);
-      color: #fff;
-      font-weight: 700;
-      letter-spacing: .04em;
-      box-shadow: 0 10px 22px rgba(108,71,255,.32), 0 2px 4px rgba(108,71,255,.18);
-      border-radius: var(--radius-pill);
-      padding: 14px 24px;
-      font-size: 16px;
-      text-decoration: none;
-      min-height: var(--sn-tap-min);
-      transition: opacity var(--sn-dur-fast) var(--sn-ease), transform var(--sn-dur-fast) var(--sn-ease);
-    }
-    .hero-v2-cta:hover { opacity: .92; color: #fff; text-decoration: none; }
-    .hero-v2-cta:active { transform: scale(.97); }
-    .hero-v2-cta-sub {
-      display: inline-flex;
-      align-items: center;
-      color: var(--ink-700);
-      font-weight: 600;
-      font-size: 14px;
-      text-decoration: none;
-      padding: 10px 16px;
-      border-radius: var(--radius-pill);
-      border: 1.5px solid var(--line-2);
-      transition: background var(--sn-dur-fast) var(--sn-ease);
-      min-height: var(--sn-tap-min);
-    }
-    .hero-v2-cta-sub:hover { background: var(--brand-50); color: var(--brand-600); text-decoration: none; }
-    .hero-v2-proof {
-      font-size: 12px;
-      color: var(--ink-400);
-      text-align: center;
-    }
-    @media (min-width: 900px) { .hero-v2-proof { text-align: left; } }
-    /* 8診断リング - 円形配置（Claude Design DiagnosisRing 再現） */
-    .hero-v2-tiles {
-      position: relative;
-      width: 320px;
-      height: 320px;
-      margin: 0 auto;
-      display: block;
-    }
-    /* 中央シルエット円 */
-    .hero-v2-tiles::before {
-      content: '';
-      position: absolute;
-      left: 50%;
-      top: 50%;
-      width: 140px;
-      height: 140px;
-      transform: translate(-50%, -50%);
-      border-radius: 50%;
-      background: radial-gradient(60% 60% at 50% 40%, #ffffff 0%, #efeaff 70%, #d8ccff 100%);
-      box-shadow: 0 10px 30px rgba(124,92,255,.22), inset 0 -4px 8px rgba(124,92,255,.08);
-      pointer-events: none;
-    }
-    /* 中央シルエット人物アイコン */
-    .hero-v2-tiles::after {
-      content: '';
-      position: absolute;
-      left: 50%;
-      top: 50%;
-      width: 100px;
-      height: 100px;
-      transform: translate(-50%, -42%);
-      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 70'><circle cx='30' cy='22' r='11' fill='%23c2b3ff'/><path d='M8 70c0-13 10-22 22-22s22 9 22 22z' fill='%23c2b3ff'/></svg>");
-      background-repeat: no-repeat;
-      background-position: center bottom;
-      background-size: contain;
-      pointer-events: none;
-    }
-    @media (min-width: 900px) {
-      .hero-v2-tiles { width: 380px; height: 380px; }
-    }
-    @media (max-width: 400px) {
-      .hero-v2-tiles { width: 260px; height: 260px; }
-      .hero-v2-tiles::before { width: 110px; height: 110px; }
-      .hero-v2-tiles::after { width: 80px; height: 80px; }
-    }
-    .hero-tile-item {
-      position: absolute;
-      width: 76px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 4px;
-      text-decoration: none;
-      color: var(--ink-700);
-      transition: transform var(--sn-dur-fast) var(--sn-ease-bounce);
-      left: 50%;
-      top: 50%;
-    }
-    /* 8タイルを円周上に配置（PC: radius 140px / mobile-md: radius 110px / mobile-sm: radius 95px） */
-    /* 12時方向から時計回り */
-    .hero-tile-item:nth-child(1) { transform: translate(-50%, -50%) translate(0, -140px); }
-    .hero-tile-item:nth-child(2) { transform: translate(-50%, -50%) translate(99px, -99px); }
-    .hero-tile-item:nth-child(3) { transform: translate(-50%, -50%) translate(140px, 0); }
-    .hero-tile-item:nth-child(4) { transform: translate(-50%, -50%) translate(99px, 99px); }
-    .hero-tile-item:nth-child(5) { transform: translate(-50%, -50%) translate(0, 140px); }
-    .hero-tile-item:nth-child(6) { transform: translate(-50%, -50%) translate(-99px, 99px); }
-    .hero-tile-item:nth-child(7) { transform: translate(-50%, -50%) translate(-140px, 0); }
-    .hero-tile-item:nth-child(8) { transform: translate(-50%, -50%) translate(-99px, -99px); }
-    @media (min-width: 900px) {
-      .hero-tile-item:nth-child(1) { transform: translate(-50%, -50%) translate(0, -160px); }
-      .hero-tile-item:nth-child(2) { transform: translate(-50%, -50%) translate(113px, -113px); }
-      .hero-tile-item:nth-child(3) { transform: translate(-50%, -50%) translate(160px, 0); }
-      .hero-tile-item:nth-child(4) { transform: translate(-50%, -50%) translate(113px, 113px); }
-      .hero-tile-item:nth-child(5) { transform: translate(-50%, -50%) translate(0, 160px); }
-      .hero-tile-item:nth-child(6) { transform: translate(-50%, -50%) translate(-113px, 113px); }
-      .hero-tile-item:nth-child(7) { transform: translate(-50%, -50%) translate(-160px, 0); }
-      .hero-tile-item:nth-child(8) { transform: translate(-50%, -50%) translate(-113px, -113px); }
-    }
-    @media (max-width: 400px) {
-      .hero-tile-item { width: 60px; }
-      .hero-tile-item:nth-child(1) { transform: translate(-50%, -50%) translate(0, -110px); }
-      .hero-tile-item:nth-child(2) { transform: translate(-50%, -50%) translate(78px, -78px); }
-      .hero-tile-item:nth-child(3) { transform: translate(-50%, -50%) translate(110px, 0); }
-      .hero-tile-item:nth-child(4) { transform: translate(-50%, -50%) translate(78px, 78px); }
-      .hero-tile-item:nth-child(5) { transform: translate(-50%, -50%) translate(0, 110px); }
-      .hero-tile-item:nth-child(6) { transform: translate(-50%, -50%) translate(-78px, 78px); }
-      .hero-tile-item:nth-child(7) { transform: translate(-50%, -50%) translate(-110px, 0); }
-      .hero-tile-item:nth-child(8) { transform: translate(-50%, -50%) translate(-78px, -78px); }
-    }
-    /* ホバー時は基本の transform を維持しつつ、translateY で持ち上げる効果 */
-    .hero-tile-item:hover .hero-tile-circle {
-      transform: translateY(-4px) scale(1.08);
-      box-shadow: 0 14px 28px rgba(0,0,0,.20);
-    }
-    .hero-tile-item:hover { text-decoration: none; color: var(--ink-700); }
-    .hero-tile-circle { transition: transform var(--sn-dur-fast) var(--sn-ease-bounce), box-shadow var(--sn-dur-fast) ease; }
-    .hero-tile-circle {
-      width: 60px;
-      height: 60px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #fff;
-      box-shadow: 0 8px 18px rgba(0,0,0,.15);
-    }
-    @media (max-width: 400px) { .hero-tile-circle { width: 48px; height: 48px; } }
-    .hero-tile-label { font-size: 11px; font-weight: 700; text-align: center; white-space: nowrap; }
-    /* 3つの理由 */
-
-    </style>
-</head>
-<body>
-
-  <!-- ヘッダー -->
-  <header class="site-header-v2" role="banner">
-    <div class="nav-inner">
-      <a href="/" class="nav-logo" aria-label="診断ナビ - トップページ">
-        <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <circle cx="14" cy="14" r="14" fill="url(#top-logo-grad)"/>
-          <defs><linearGradient id="top-logo-grad" x1="0" y1="0" x2="28" y2="28" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#9b85ff"/><stop offset="100%" stop-color="#6a47ff"/></linearGradient></defs>
-          <path d="M14 7l1.5 4.2L20 12.5l-4.2 1.8.7 4.3L14 16.4l-2.5 2.2.7-4.3-4.2-1.8 4.5-1.3L14 7z" fill="white"/>
-        </svg>
-        <span class="nav-logo-text">診断ナビ</span>
-      </a>
-      <nav class="nav-links" aria-label="グローバルナビゲーション">
-        <a href="/diagnosis/">診断一覧</a>
-        <a href="/aisei/">相性診断</a>
-        <a href="/strengths/">強み発見</a>
-        <a href="/pro/">PRO機能</a>
-      </nav>
-      <div class="nav-actions">
-        <a href="/login/" class="nav-btn-login">ログイン</a>
-        <a href="/signup/" class="nav-btn-signup">無料登録</a>
-      </div>
-    </div>
-  </header>
+  <!-- ヘッダー（TOPページ独自デザイン：BaseLayout の SiteHeader/MobileHeader はそのまま表示） -->
 
   <!-- ヒーローセクション（v2.0 新デザイン）-->
   <section class="hero-v2" aria-label="ヒーロー">
@@ -1452,7 +341,7 @@ const faqTop = [
     </div>
   </section>
 
-    <!-- このページでわかること（AIO/LLMO最適化・定義段落） -->
+  <!-- このページでわかること（AIO/LLMO最適化・定義段落） -->
   <section class="section">
     <div class="container">
       <!-- 定義段落: AI引用最適化 -->
@@ -1693,8 +582,6 @@ const faqTop = [
     <div class="container">
       <h2 class="section-title">❓ よくある質問</h2>
       <p class="section-sub">診断ナビについてよくいただくご質問にお答えします</p>
-      <p class="section-sub">診断ナビについてよくいただくご質問にお答えします</p>
-      <p class="section-sub">診断ナビについてよくいただくご質問にお答えします</p>
       <div class="faq-list">
         {faqTop.map((item) => (
           <details class="faq-item">
@@ -1730,34 +617,475 @@ const faqTop = [
     </div>
   </section>
 
-  <!-- フッター -->
-  <footer class="site-footer">
-    <div class="footer-inner">
-      <a href="/" class="footer-logo">🧠 診断ナビ</a>
-      <p class="footer-tagline">8診断統合で、あなたを統合する。</p>
-      <div class="footer-links">
-        <a href="/about/">運営者情報</a>
-        <a href="/editorial-policy/">編集ポリシー</a>
-        <a href="/contact/">お問い合わせ</a>
-        <a href="/faq/">よくある質問</a>
-        <a href="/privacy/">プライバシーポリシー</a>
-        <a href="/terms/">利用規約</a>
-        <a href="/disclaimer/">免責事項</a>
-      </div>
-      <div class="footer-links" style="margin-top: calc(var(--sn-space-8) * -0.5);">
-        <span style="font-size: var(--sn-text-sm); color: rgba(255,255,255,0.4);">姉妹サイト:</span>
-        <a href="https://keisan-navi.jp" target="_blank" rel="noopener">計算ナビ</a>
-        <a href="https://template-free.jp" target="_blank" rel="noopener">テンプレート無料</a>
-      </div>
-      <div class="footer-bottom">
-        <p>© 2026 診断ナビ ｜ 運営: zawalab.info@gmail.com</p>
-        <p style="margin-top: var(--sn-space-2);">
-          本サービスは性格分類の参考情報を提供するものです。占い・医療・法的アドバイスは一切提供しません。<br />
-          最終更新: 2026-05-20
-        </p>
-      </div>
-    </div>
-  </footer>
+</BaseLayout>
 
-</body>
-</html>
+<style>
+  /* CSS カスタムプロパティ（TOPページ独自）*/
+  :root {
+    --hero-grad: linear-gradient(135deg, #f5f0ff 0%, #ffe8f5 40%, #e8f0ff 100%);
+    --brand-50: #f5f0ff;
+    --brand-100: #ede5ff;
+    --brand-500: #7c5cfc;
+    --brand-600: #6c47ff;
+    --ink-900: #0f0e1a;
+    --ink-700: #3d3b54;
+    --ink-400: #9896ae;
+    --radius-sm: 8px;
+    --radius-pill: 999px;
+    --line: rgba(0,0,0,.08);
+    --line-2: rgba(0,0,0,.12);
+    --shadow-sm: 0 1px 4px rgba(0,0,0,.06);
+  }
+
+  .container {
+    max-width: var(--sn-max-w);
+    margin: 0 auto;
+    padding: 0 var(--sn-space-4);
+  }
+
+  /* ===== セクション共通 ===== */
+  .section {
+    padding: var(--sn-space-16) 0;
+  }
+  .section-alt {
+    background: var(--sn-bg-soft);
+  }
+  .section-title {
+    font-family: var(--sn-font-rounded);
+    font-size: var(--sn-text-2xl);
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: var(--sn-space-3);
+  }
+  .section-sub {
+    text-align: center;
+    color: var(--sn-muted);
+    font-size: var(--sn-text-sm);
+    margin-bottom: var(--sn-space-8);
+  }
+
+  /* ===== ヒーロー v2.0 ===== */
+  .hero-v2 {
+    background: var(--hero-grad);
+    position: relative; overflow: hidden;
+    padding: 48px 16px 56px;
+  }
+  .hero-v2::before {
+    content: ""; position: absolute; inset: 0;
+    background:
+      radial-gradient(40% 30% at 75% 25%, rgba(255,200,235,.4), transparent 60%),
+      radial-gradient(50% 40% at 15% 75%, rgba(195,210,255,.4), transparent 60%);
+    pointer-events: none;
+  }
+  @keyframes sparkle-pulse {
+    0%, 100% { opacity: .3; transform: scale(1) rotate(0deg); }
+    50% { opacity: .75; transform: scale(1.15) rotate(20deg); }
+  }
+  .hero-sparkle { position: absolute; pointer-events: none; animation: sparkle-pulse 3.5s ease-in-out infinite; }
+  .hero-v2-inner {
+    position: relative; max-width: var(--sn-max-w); margin: 0 auto;
+    display: flex; flex-direction: column; gap: 40px; align-items: center;
+  }
+  @media (min-width: 900px) {
+    .hero-v2 { padding: 64px 48px 72px; }
+    .hero-v2-inner { flex-direction: row; gap: 48px; align-items: center; }
+  }
+  .hero-v2-text { flex: 1; text-align: center; }
+  @media (min-width: 900px) { .hero-v2-text { text-align: left; } }
+  .hero-v2-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--brand-100); color: var(--brand-600); border-radius: var(--radius-pill);
+    font-weight: 700; padding: 6px 14px; font-size: 12px; letter-spacing: .06em; margin-bottom: 18px;
+  }
+  .hero-v2-title {
+    font-family: 'Noto Sans JP', 'Inter', system-ui, sans-serif;
+    font-size: clamp(26px, 5vw, 46px);
+    font-weight: 800; line-height: 1.32; color: var(--ink-900); margin-bottom: 20px;
+  }
+  .hero-v2-accent { color: var(--brand-600); }
+  .hero-v2-underline { background: linear-gradient(transparent 65%, #ffd9ec 65%); padding: 0 2px; }
+  .hero-v2-desc {
+    font-size: 14px; color: var(--ink-700); line-height: 1.85;
+    max-width: 460px; margin: 0 auto 24px;
+  }
+  @media (min-width: 900px) { .hero-v2-desc { margin: 0 0 24px; } }
+  .hero-v2-cta-group { display: flex; gap: 12px; align-items: center; justify-content: center; flex-wrap: wrap; margin-bottom: 12px; }
+  @media (min-width: 900px) { .hero-v2-cta-group { justify-content: flex-start; } }
+  .hero-v2-cta {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: linear-gradient(180deg, #8a6dff 0%, #6c47ff 100%);
+    color: #fff; font-weight: 700; letter-spacing: .04em;
+    box-shadow: 0 10px 22px rgba(108,71,255,.32), 0 2px 4px rgba(108,71,255,.18);
+    border-radius: var(--radius-pill); padding: 14px 24px; font-size: 16px;
+    text-decoration: none; min-height: var(--sn-tap-min);
+    transition: opacity var(--sn-dur-fast) var(--sn-ease), transform var(--sn-dur-fast) var(--sn-ease);
+  }
+  .hero-v2-cta:hover { opacity: .92; color: #fff; text-decoration: none; }
+  .hero-v2-cta:active { transform: scale(.97); }
+  .hero-v2-cta-sub {
+    display: inline-flex; align-items: center;
+    color: var(--ink-700); font-weight: 600; font-size: 14px;
+    text-decoration: none; padding: 10px 16px; border-radius: var(--radius-pill);
+    border: 1.5px solid var(--line-2); min-height: var(--sn-tap-min);
+    transition: background var(--sn-dur-fast) var(--sn-ease);
+  }
+  .hero-v2-cta-sub:hover { background: var(--brand-50); color: var(--brand-600); text-decoration: none; }
+  .hero-v2-proof { font-size: 12px; color: var(--ink-400); text-align: center; }
+  @media (min-width: 900px) { .hero-v2-proof { text-align: left; } }
+  /* 8診断タイル */
+  .hero-v2-tiles {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+    width: 100%; max-width: 420px;
+  }
+  @media (min-width: 900px) { .hero-v2-tiles { max-width: 360px; gap: 14px; } }
+  .hero-tile-item {
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+    text-decoration: none; color: var(--ink-700);
+    transition: transform var(--sn-dur-fast) var(--sn-ease-bounce);
+  }
+  .hero-tile-item:hover { transform: translateY(-3px); text-decoration: none; color: var(--ink-700); }
+  .hero-tile-circle {
+    width: 60px; height: 60px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center; color: #fff;
+    box-shadow: 0 8px 18px rgba(0,0,0,.14);
+  }
+  @media (max-width: 400px) { .hero-tile-circle { width: 48px; height: 48px; } }
+  .hero-tile-label { font-size: 11px; font-weight: 700; text-align: center; white-space: nowrap; }
+
+  /* 3つの理由 */
+  .reasons-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--sn-space-6);
+  }
+  .reason-card {
+    background: var(--sn-bg-white);
+    border-radius: var(--sn-radius);
+    padding: var(--sn-space-8);
+    box-shadow: var(--sn-shadow-sm);
+    text-align: center;
+  }
+  .reason-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--sn-primary);
+    color: #fff;
+    font-family: var(--sn-font-rounded);
+    font-size: var(--sn-text-xl);
+    font-weight: 700;
+    margin-bottom: var(--sn-space-4);
+  }
+  .reason-title {
+    font-size: var(--sn-text-lg);
+    font-weight: 700;
+    margin-bottom: var(--sn-space-3);
+  }
+  .reason-desc {
+    font-size: var(--sn-text-sm);
+    color: var(--sn-muted);
+    line-height: var(--sn-leading-relaxed);
+  }
+
+  /* 8診断グリッド */
+  .diag-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: var(--sn-space-4);
+  }
+  .diag-card {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--sn-space-3);
+    background: var(--sn-bg-white);
+    border-radius: var(--sn-radius);
+    padding: var(--sn-space-5);
+    text-decoration: none;
+    color: inherit;
+    box-shadow: var(--sn-shadow-sm);
+    border: 1px solid var(--sn-border);
+    transition: all var(--sn-dur-base) var(--sn-ease);
+  }
+  .diag-card:hover {
+    box-shadow: var(--sn-shadow-md);
+    transform: translateY(-2px);
+    border-color: var(--sn-primary-light);
+  }
+  .diag-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--sn-radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+  }
+  .diag-name {
+    font-size: var(--sn-text-base);
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .diag-desc {
+    font-size: var(--sn-text-sm);
+    color: var(--sn-muted);
+  }
+
+  /* 5シーン軸 */
+  .scenes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: var(--sn-space-4);
+  }
+  .scene-card {
+    border-radius: var(--sn-radius);
+    padding: var(--sn-space-6);
+    text-align: center;
+  }
+  .scene-icon {
+    font-size: 2rem;
+    margin-bottom: var(--sn-space-2);
+  }
+  .scene-label {
+    font-size: var(--sn-text-lg);
+    font-weight: 700;
+    margin-bottom: var(--sn-space-2);
+  }
+  .scene-desc {
+    font-size: var(--sn-text-sm);
+    line-height: var(--sn-leading-relaxed);
+  }
+
+  /* 統合プロファイル訴求 */
+  .profile-flow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: var(--sn-space-4);
+    margin: var(--sn-space-8) 0;
+  }
+  .profile-step {
+    background: var(--sn-bg-white);
+    border-radius: var(--sn-radius);
+    padding: var(--sn-space-5) var(--sn-space-6);
+    text-align: center;
+    box-shadow: var(--sn-shadow-sm);
+    min-width: 160px;
+  }
+  .profile-step-num {
+    font-size: var(--sn-text-sm);
+    color: var(--sn-muted);
+    margin-bottom: var(--sn-space-1);
+  }
+  .profile-step-label {
+    font-size: var(--sn-text-base);
+    font-weight: 700;
+  }
+  .profile-arrow {
+    font-size: 1.5rem;
+    color: var(--sn-primary);
+  }
+
+  /* 料金プラン */
+  .plans-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--sn-space-6);
+    align-items: start;
+  }
+  .plan-card {
+    background: var(--sn-bg-white);
+    border-radius: var(--sn-radius-lg);
+    padding: var(--sn-space-8);
+    box-shadow: var(--sn-shadow-sm);
+    border: 2px solid var(--sn-border);
+    position: relative;
+  }
+  .plan-card.highlight {
+    border-color: var(--sn-pro-color);
+    box-shadow: var(--sn-shadow-lg);
+  }
+  .plan-badge {
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--sn-pro-gradient);
+    color: #fff;
+    font-size: var(--sn-text-xs);
+    font-weight: 700;
+    padding: 4px 16px;
+    border-radius: var(--sn-radius-pill);
+    white-space: nowrap;
+  }
+  .plan-name {
+    font-family: var(--sn-font-rounded);
+    font-size: var(--sn-text-xl);
+    font-weight: 700;
+    margin-bottom: var(--sn-space-2);
+  }
+  .plan-price {
+    font-size: var(--sn-text-3xl);
+    font-weight: 700;
+    margin-bottom: var(--sn-space-1);
+  }
+  .plan-period {
+    font-size: var(--sn-text-sm);
+    color: var(--sn-muted);
+    margin-bottom: var(--sn-space-5);
+  }
+  .plan-features {
+    list-style: none;
+    margin-bottom: var(--sn-space-6);
+  }
+  .plan-features li {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--sn-space-2);
+    font-size: var(--sn-text-sm);
+    padding: var(--sn-space-2) 0;
+    border-bottom: 1px solid var(--sn-border-soft);
+  }
+  .plan-features li::before {
+    content: "✓";
+    color: var(--sn-success);
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .plan-cta {
+    display: block;
+    text-align: center;
+    font-weight: 700;
+    padding: var(--sn-space-3) var(--sn-space-6);
+    border-radius: var(--sn-radius-pill);
+    text-decoration: none;
+    min-height: var(--sn-tap-min);
+    line-height: var(--sn-tap-min);
+    transition: all var(--sn-dur-base) var(--sn-ease);
+  }
+
+  /* バイラル訴求 */
+  .viral-box {
+    background: linear-gradient(135deg, var(--sn-primary) 0%, var(--sn-secondary) 100%);
+    color: #fff;
+    border-radius: var(--sn-radius-xl);
+    padding: var(--sn-space-12) var(--sn-space-8);
+    text-align: center;
+  }
+  .viral-title {
+    font-family: var(--sn-font-rounded);
+    font-size: var(--sn-text-2xl);
+    font-weight: 700;
+    margin-bottom: var(--sn-space-4);
+  }
+  .viral-desc {
+    font-size: var(--sn-text-base);
+    opacity: 0.9;
+    margin-bottom: var(--sn-space-6);
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .viral-flow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: var(--sn-space-3);
+    margin-bottom: var(--sn-space-6);
+    font-size: var(--sn-text-sm);
+  }
+  .viral-step {
+    background: rgba(255,255,255,0.2);
+    border-radius: var(--sn-radius-sm);
+    padding: var(--sn-space-2) var(--sn-space-4);
+  }
+
+  /* ボタン */
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sn-space-2);
+    background: var(--sn-primary);
+    color: #fff;
+    font-weight: 700;
+    padding: var(--sn-space-3) var(--sn-space-8);
+    border-radius: var(--sn-radius-pill);
+    text-decoration: none;
+    min-height: var(--sn-tap-min);
+  }
+  .btn-white {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sn-space-2);
+    background: #fff;
+    color: var(--sn-primary);
+    font-weight: 700;
+    padding: var(--sn-space-3) var(--sn-space-8);
+    border-radius: var(--sn-radius-pill);
+    text-decoration: none;
+    min-height: var(--sn-tap-min);
+    transition: all var(--sn-dur-base) var(--sn-ease);
+  }
+  .btn-white:hover { opacity: 0.9; transform: translateY(-1px); }
+  .btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sn-space-2);
+    background: var(--sn-primary-bg);
+    color: var(--sn-primary);
+    font-weight: 700;
+    padding: var(--sn-space-3) var(--sn-space-8);
+    border-radius: var(--sn-radius-pill);
+    border: 2px solid var(--sn-primary);
+    text-decoration: none;
+    min-height: var(--sn-tap-min);
+  }
+
+  /* FAQ */
+  .faq-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sn-space-4);
+    max-width: 700px;
+    margin: 0 auto;
+  }
+  .faq-item {
+    background: var(--sn-bg-white);
+    border-radius: var(--sn-radius);
+    padding: var(--sn-space-5) var(--sn-space-6);
+    box-shadow: var(--sn-shadow-sm);
+  }
+  .faq-q {
+    font-weight: 700;
+    margin-bottom: var(--sn-space-2);
+    display: flex;
+    align-items: flex-start;
+    gap: var(--sn-space-2);
+    cursor: pointer;
+  }
+  .faq-q::before {
+    content: "Q";
+    color: var(--sn-primary);
+    font-family: var(--sn-font-rounded);
+    flex-shrink: 0;
+  }
+  .faq-a {
+    font-size: var(--sn-text-sm);
+    color: var(--sn-text-soft);
+    line-height: var(--sn-leading-relaxed);
+    padding-left: calc(var(--sn-text-base) + var(--sn-space-2));
+  }
+
+  /* レスポンシブ */
+  @media (max-width: 600px) {
+    .plans-grid { grid-template-columns: 1fr; }
+    .scenes-grid { grid-template-columns: repeat(2, 1fr); }
+    .profile-flow { flex-direction: column; }
+    .profile-arrow { transform: rotate(90deg); }
+  }
+</style>
