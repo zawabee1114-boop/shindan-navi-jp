@@ -24,10 +24,7 @@ const PAGE_LAST_MODIFIED = {
   '/diagnosis/perfectionism/': '2026-05-21',
   '/diagnosis/love-style/': '2026-05-21',
   '/diagnosis/money-style/': '2026-05-21',
-  '/diagnosis/money-sense/': '2026-05-21',
   '/diagnosis/zodiac/': '2026-05-21',
-  '/diagnosis/seiza/': '2026-05-21',
-  '/diagnosis/ketsuekigata/': '2026-05-21',
   '/diagnosis/blood-compat/': '2026-05-21',
   '/diagnosis/friend-compat/': '2026-05-21',
   '/diagnosis/mbti-compat/': '2026-05-21',
@@ -210,10 +207,7 @@ export default defineConfig({
           pathname === '/diagnosis/perfectionism/' ||
           pathname === '/diagnosis/love-style/' ||
           pathname === '/diagnosis/money-style/' ||
-          pathname === '/diagnosis/money-sense/' ||
           pathname === '/diagnosis/zodiac/' ||
-          pathname === '/diagnosis/seiza/' ||
-          pathname === '/diagnosis/ketsuekigata/' ||
           pathname === '/diagnosis/blood-compat/' ||
           pathname === '/diagnosis/friend-compat/' ||
           pathname === '/diagnosis/mbti-compat/' ||

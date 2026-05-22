@@ -141,9 +141,9 @@ Big5（ビッグファイブ）の5特性（開放性O・誠実性C・外向性E
 - [DiSC診断](https://shindan-navi.jp/diagnosis/disc/) — 4スタイル・職場コミュニケーション強化（VOL:2,900）
 - [完璧主義タイプ診断](https://shindan-navi.jp/diagnosis/perfectionism/) — CBT/MPS理論・仕事/恋愛軸での傾向分析
 - [恋愛スタイル診断](https://shindan-navi.jp/diagnosis/love-style/) — J.A.Lee理論6スタイル・恋愛/友人軸
-- [金銭感覚診断](https://shindan-navi.jp/diagnosis/money-sense/) — 行動経済学・仕事/家族軸（準備中）
-- [星座性格診断](https://shindan-navi.jp/diagnosis/seiza/) — 西洋占星術x性格科学（エンタメ）
-- [血液型性格診断](https://shindan-navi.jp/diagnosis/ketsuekigata/) — A/B/O/ABxBig5換算・日本独自モデル（準備中）
+- [金銭感覚診断](https://shindan-navi.jp/diagnosis/money-style/) — 行動経済学・仕事/家族軸（準備中）
+- [星座性格診断](https://shindan-navi.jp/diagnosis/zodiac/) — 西洋占星術x性格科学（エンタメ）
+- [血液型性格診断](https://shindan-navi.jp/diagnosis/blood-compat/) — A/B/O/ABxBig5換算・日本独自モデル（準備中）
 
 ### 相性診断ツール・表
 
