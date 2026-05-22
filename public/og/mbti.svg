@@ -21,29 +21,32 @@
   <rect x="60" y="52" width="160" height="36" rx="18" fill="#8b5cf6"/>
   <text x="140" y="75" font-family="'Noto Sans JP', sans-serif" font-size="15" font-weight="700" fill="white" text-anchor="middle">診断ナビ</text>
 
-  <!-- Big icon -->
+  <!-- Big icon area -->
   <circle cx="980" cy="315" r="170" fill="#8b5cf6" fill-opacity="0.12"/>
   <circle cx="980" cy="315" r="120" fill="#8b5cf6" fill-opacity="0.1"/>
-  <text x="980" y="350" font-size="110" text-anchor="middle">🔮</text>
+  <g transform="translate(910, 245) scale(5.833333333333333)">
+      <path d="M12 2.5c1.7 0 3 1.3 3 3 0 .8-.3 1.5-.8 2 .5-.5 1.2-.8 2-.8 1.7 0 3 1.3 3 3s-1.3 3-3 3c-.8 0-1.5-.3-2-.8.5.5.8 1.2.8 2 0 1.7-1.3 3-3 3s-3-1.3-3-3c0-.8.3-1.5.8-2-.5.5-1.2.8-2 .8-1.7 0-3-1.3-3-3s1.3-3 3-3c.8 0 1.5.3 2 .8C9.3 7 9 6.3 9 5.5c0-1.7 1.3-3 3-3z" fill="white"/>
+      <circle cx="12" cy="11.7" r="2.3" fill="rgba(255,255,255,.35)"/>
+    </g>
 
   <!-- Main headline -->
   <text x="60" y="220" font-family="'Noto Sans JP', sans-serif" font-size="62" font-weight="900" fill="#1f2235" letter-spacing="-1">MBTI診断</text>
 
   <!-- Subtitle -->
-  <text x="60" y="278" font-family="'Noto Sans JP', sans-serif" font-size="22" font-weight="600" fill="#8b5cf6">16タイプ ｜ 性格・相性分析</text>
+  <text x="60" y="278" font-family="'Noto Sans JP', sans-serif" font-size="22" font-weight="600" fill="#8b5cf6">16タイプ | 性格・相性分析</text>
 
   <!-- Description -->
   <text x="60" y="340" font-family="'Noto Sans JP', sans-serif" font-size="26" font-weight="400" fill="#3b3d56">性格の核心を5軸で徹底分析</text>
 
-  <!-- Feature chip: 無料 -->
+  <!-- Feature chip: 完全無料 -->
   <rect x="60" y="390" width="110" height="38" rx="19" fill="none" stroke="#8b5cf6" stroke-width="1.5"/>
   <text x="115" y="414" font-family="'Noto Sans JP', sans-serif" font-size="15" font-weight="600" fill="#8b5cf6" text-anchor="middle">完全無料</text>
 
-  <!-- Feature chip: 相性診断 -->
+  <!-- Feature chip: 相性診断あり -->
   <rect x="184" y="390" width="130" height="38" rx="19" fill="none" stroke="#8b5cf6" stroke-width="1.5"/>
   <text x="249" y="414" font-family="'Noto Sans JP', sans-serif" font-size="15" font-weight="600" fill="#8b5cf6" text-anchor="middle">相性診断あり</text>
 
-  <!-- Feature chip: 統合 -->
+  <!-- Feature chip: 統合プロファイル -->
   <rect x="328" y="390" width="160" height="38" rx="19" fill="none" stroke="#8b5cf6" stroke-width="1.5"/>
   <text x="408" y="414" font-family="'Noto Sans JP', sans-serif" font-size="15" font-weight="600" fill="#8b5cf6" text-anchor="middle">統合プロファイル</text>
 
