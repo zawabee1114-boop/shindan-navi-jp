@@ -2,10 +2,12 @@
 /**
  * /aisei/yujin/ - 友達相性ページ（友人軸統合プロファイル接続版）
  * 第3巡AIO/LLMO強化: TldrBlock + ScienceNote + FAQ + mentions JSON-LD 追加
+ * 品質改善: 定義セクション + FAQ（8問）追加 → 70点ゲートクリア
  *
  * 友人軸: 友達相性タイプ + 対人的知能 + DiSC の組み合わせを統合表示
+ * YMYL回避: 医療・心理診断ではない旨を明記
  *
- * 確認日: 2026-05-21
+ * 確認日: 2026-05-22
  */
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Container from '../../../components/Container.astro';
@@ -24,11 +26,82 @@ const jsonLd = [
     url: pageUrl,
     name: '友人関係の特性 | 統合プロファイル - 診断ナビ',
     description: '友達相性タイプ・対人的知能・DiSCを統合した友人軸プロファイル。社交性・共感力・グループでの立ち位置の傾向を確認できます。',
-    dateModified: '2026-05-21',
+    dateModified: '2026-05-22',
     isPartOf: { '@type': 'WebSite', '@id': `${siteUrl}/#website`, url: siteUrl },
     mentions: [
       { '@type': 'Thing', name: 'DiSC理論', sameAs: 'https://www.discprofile.com/' },
       { '@type': 'Thing', name: '多重知能（対人的知能）', sameAs: 'https://www.pz.harvard.edu/projects/multiple-intelligences' },
+    ],
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    url: `${pageUrl}#faq`,
+    mainEntity: [
+      {
+        '@type': 'Question',
+        name: '友人関係における性格相性とは何ですか？',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: '友人関係における性格相性とは、Howard Gardner（1983年）の多重知能理論の「対人的知能」・DiSC行動スタイル（4タイプ）・友達相性タイプ（6タイプ）の組み合わせに基づいて、社交性・共感力・グループでの立ち位置がどのように機能するかを分析した参考情報です。医療・心理診断ではないため、重要な人間関係の判断の唯一の根拠にすることは推奨しません。',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: '友達と性格が合わないと感じたら、どうすればいいですか？',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'まず診断で自分と相手の行動スタイルの違いを把握することが第一歩です。DiSC理論では、スタイルの「違い」は対立ではなく補完関係であることが多いとされています。価値観の根本的なズレが大きい場合は、無理に合わせるよりも距離感を調整しながら関係を維持することが健全なアプローチです。深刻な悩みがある場合は、信頼できる第三者（カウンセラー等）への相談も選択肢です。',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: '友人関係で相性のいいタイプはどれですか？',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: '「相性がいい」の定義は状況によって異なります。DiSC理論では同系統のスタイル（例：Influence同士）は共感しやすく、補完スタイル（例：DominanceとSteadiness）は互いの弱点を補いやすいとされます。「相性の良し悪し」より「違いの理解と尊重」が長続きする友情の基盤です。',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: '8診断のどれが友人関係に最も効きますか？',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: '友人軸には「友達相性タイプ診断（6タイプ）」「多重知能診断（対人的知能を測定）」「DiSC診断（社交・協調スタイル）」の3つが特に関連します。3診断すべてが完了すると、このページの統合プロファイルで友人軸スコアが自動表示されます。まずは友達相性タイプ診断から始めると、グループでの自分の立ち位置が把握しやすいです。',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: 'グループでの自分の役割を知るには？',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'DiSC診断（主導・感化・安定・慎重の4スタイル）と友達相性タイプ診断（6タイプ）を組み合わせるのが効果的です。例えばDiSC「感化（I）型」×友達相性「ムードメーカー型」であれば、グループの雰囲気づくりに自然と貢献している傾向があります。統合プロファイルでは両診断の結果を掛け合わせたグループ内役割の傾向を表示します。',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: '友達相性診断と多重知能診断の違いは何ですか？',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: '友達相性タイプ診断は「友情の維持スタイル」（ムードメーカー・傾聴型等6タイプ）を友人関係に特化して分類します。多重知能診断はHoward Gardner（1983年）の8知能モデルで、そのうち「対人的知能」が高い人は他者の感情・意図・動機を読み取る能力に優れるとされます。両者を組み合わせることで友人関係での特性をより立体的に把握できます。',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: '性格タイプが大きく違う友人とうまく付き合うには？',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'DiSC理論では、スタイルの違いを「強みの違い」として理解することを推奨しています。例えば、行動が速い主導（D）型と安定を重視する安定（S）型は意思決定のペースが異なりますが、互いの強みを活かした関係が築けます。相手のスタイルに合わせたコミュニケーション（例：S型の友人には急かさずゆっくり話す）を意識するのが第一歩です。',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: '友人関係の深刻な悩みは診断で解決できますか？',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: '本サービスの診断は、自己理解と相互理解を深める参考情報の提供を目的としています。友人関係の深刻な悩み（ハラスメント・いじめ・精神的苦痛等）は、診断結果だけで解決できるものではありません。状況が深刻な場合は、学校のスクールカウンセラー・地域の相談窓口・心理士などの専門家に相談することを推奨します。本サービスは医療診断・心理診断ではありません。',
+        },
+      },
     ],
   },
   {
@@ -48,12 +121,11 @@ const jsonLd = [
   description="友達相性タイプ・対人的知能（Gardner理論）・DiSCを統合した友人軸プロファイル。社交性・共感力・グループでの立ち位置の傾向を確認できます。"
   canonical={pageUrl}
   jsonLd={jsonLd}
-  noindex={true}
   breadcrumbs={[
     { name: '相性診断', url: '/aisei/' },
     { name: '友達相性', url: '/aisei/yujin/' },
   ]}
-  lastUpdated="2026-05-21"
+  lastUpdated="2026-05-22"
 >
   <!-- ヘッダー -->
   <section class="axis-header axis-header--friend">
@@ -81,12 +153,23 @@ const jsonLd = [
       points={[
         "友達相性タイプ（6タイプ）・対人的知能（Gardner理論）・DiSC（4スタイル）の3診断を統合した友人軸の特性表示",
         "社交性・共感力・グループでの立ち位置・友情の維持スタイルの傾向を参考情報として確認できる",
-        "Gardner理論では「対人的知能」が高い人は他者の感情・意図・動機を読み取る能力に優れるとされる"
+        "Gardner理論では「対人的知能」が高い人は他者の感情・意図・動機を読み取る能力に優れるとされる",
+        "3診断（友達相性・多重知能・DiSC）が完了すると友人軸スコアが自動表示される"
       ]}
-      updatedAt="2026-05-21"
+      updatedAt="2026-05-22"
       sourceLabel="Harvard University Project Zero"
       sourceUrl="https://www.pz.harvard.edu/projects/multiple-intelligences"
     />
+  </Container>
+
+  <!-- 定義セクション（AI Overview最適化） -->
+  <Container>
+    <div class="axis-definition">
+      <h2 class="axis-def-title">友人関係における性格相性とは何ですか？</h2>
+      <p class="axis-def-text">
+        友人関係における性格相性とは、Howard Gardner（Harvard大・1983年）が提唱した多重知能理論の「対人的知能」・William Moulton Marston（1928年）のDiSC行動スタイル（Dominance・Influence・Steadiness・Conscientiousness）・友達相性タイプ（ムードメーカー型・傾聴型等6タイプ）の組み合わせに基づいて、社交性・共感力・グループでの立ち位置がどのように機能するかを分析した参考情報です。Gardner理論によれば、対人的知能が高い人は他者の感情・意図・動機を正確に読み取り、効果的な対人関係を築く能力に優れるとされています。本サービスは医療・心理診断ではなく、自己理解と相互理解の参考情報として活用することを推奨します。
+      </p>
+    </div>
   </Container>
 
   <!-- 統合プロファイル（友人軸） -->
@@ -96,14 +179,66 @@ const jsonLd = [
     </Container>
   </section>
 
+  <!-- FAQ -->
+  <Container>
+    <div class="axis-faq" id="faq">
+      <h2 class="axis-faq-title">よくある質問</h2>
+      <div class="faq-list">
+        {[
+          {
+            q: "友達と性格が合わないと感じたら、どうすればいいですか？",
+            a: "まず診断で自分と相手の行動スタイルの違いを把握することが第一歩です。DiSC理論では、スタイルの「違い」は対立ではなく補完関係であることが多いとされています。価値観の根本的なズレが大きい場合は、無理に合わせるよりも距離感を調整しながら関係を維持することが健全なアプローチです。深刻な悩みがある場合は、信頼できる第三者（カウンセラー等）への相談も選択肢です。"
+          },
+          {
+            q: "友人関係で相性のいいタイプはどれですか？",
+            a: "「相性がいい」の定義は状況によって異なります。DiSC理論では同系統のスタイル（例：Influence同士）は共感しやすく、補完スタイル（例：DominanceとSteadiness）は互いの弱点を補いやすいとされます。「相性の良し悪し」より「違いの理解と尊重」が長続きする友情の基盤です。"
+          },
+          {
+            q: "8診断のどれが友人関係に最も効きますか？",
+            a: "友人軸には「友達相性タイプ診断（6タイプ）」「多重知能診断（対人的知能を測定）」「DiSC診断（社交・協調スタイル）」の3つが特に関連します。3診断すべてが完了すると、このページの統合プロファイルで友人軸スコアが自動表示されます。まずは友達相性タイプ診断から始めると、グループでの自分の立ち位置が把握しやすいです。"
+          },
+          {
+            q: "グループでの自分の役割を知るには？",
+            a: "DiSC診断（主導・感化・安定・慎重の4スタイル）と友達相性タイプ診断（6タイプ）を組み合わせるのが効果的です。例えばDiSC「感化（I）型」×友達相性「ムードメーカー型」であれば、グループの雰囲気づくりに自然と貢献している傾向があります。統合プロファイルでは両診断の結果を掛け合わせたグループ内役割の傾向を表示します。"
+          },
+          {
+            q: "友達相性診断と多重知能診断の違いは何ですか？",
+            a: "友達相性タイプ診断は「友情の維持スタイル」（ムードメーカー・傾聴型等6タイプ）を友人関係に特化して分類します。多重知能診断はHoward Gardner（1983年）の8知能モデルで、そのうち「対人的知能」が高い人は他者の感情・意図・動機を読み取る能力に優れるとされます。両者を組み合わせることで友人関係での特性をより立体的に把握できます。"
+          },
+          {
+            q: "性格タイプが大きく違う友人とうまく付き合うには？",
+            a: "DiSC理論では、スタイルの違いを「強みの違い」として理解することを推奨しています。例えば、行動が速い主導（D）型と安定を重視する安定（S）型は意思決定のペースが異なりますが、互いの強みを活かした関係が築けます。相手のスタイルに合わせたコミュニケーション（例：S型の友人には急かさずゆっくり話す）を意識するのが第一歩です。"
+          },
+          {
+            q: "学生時代の友人と社会人の友人では、相性の見方は変わりますか？",
+            a: "共通の目標・環境・価値観の変化によって、相性の感じ方は変わることがあります。学生時代は同じ環境にいることで自然と関係が維持されますが、社会人になると生活リズムや価値観の変化で関係性が変化することも珍しくありません。診断結果は「性格の傾向」を示す参考情報であり、状況や成長によって変化する側面もあります。定期的に診断を受け直すことで、変化を確認できます。"
+          },
+          {
+            q: "友人関係の深刻な悩みは診断で解決できますか？",
+            a: "本サービスの診断は、自己理解と相互理解を深める参考情報の提供を目的としています。友人関係の深刻な悩み（ハラスメント・いじめ・精神的苦痛等）は、診断結果だけで解決できるものではありません。状況が深刻な場合は、学校のスクールカウンセラー・地域の相談窓口・心理士などの専門家に相談することを推奨します。本サービスは医療診断・心理診断ではありません。"
+          },
+        ].map(item => (
+          <details class="faq-item">
+            <summary class="faq-summary">
+              <span class="faq-q">Q</span>
+              <span class="faq-q-text">{item.q}</span>
+            </summary>
+            <div class="faq-answer">{item.a}</div>
+          </details>
+        ))}
+      </div>
+    </div>
+  </Container>
+
   <!-- ScienceNote -->
   <Container>
     <ScienceNote
-      basisText="対人的知能: Howard Gardner「Frames of Mind」（1983年・Harvard大）の8知能の1つ。他者の感情・意図・動機を読み取り、効果的に対人関係を築く能力を指す。DiSC: William Moulton Marston（1928年）の行動スタイル理論。"
+      basisText="対人的知能: Howard Gardner「Frames of Mind」（1983年・Harvard大）の8知能の1つ。他者の感情・意図・動機を読み取り、効果的に対人関係を築く能力を指す。DiSC: William Moulton Marston「Emotions of Normal People」（1928年）に基づく行動スタイル理論。Wiley社が「Everything DiSC®」として整備。"
       basisUrl="https://www.pz.harvard.edu/projects/multiple-intelligences"
       basisLabel="Harvard University Project Zero"
       notMedical={true}
-      updatedAt="2026-05-21"
+      updatedAt="2026-05-22"
+      additionalNote="本サービスは医療診断・心理診断ではありません。友人関係の深刻な悩みがある場合は、専門家（スクールカウンセラー・心理士等）に相談してください。"
     />
   </Container>
 
@@ -164,7 +299,19 @@ const jsonLd = [
   .axis-icon { font-size: 2.5rem; flex-shrink: 0; line-height: 1; }
   .axis-title { font-family: var(--sn-font-rounded, sans-serif); font-size: clamp(1.25rem, 4vw, 1.75rem); font-weight: 900; color: var(--sn-text, #111827); margin: 0 0 var(--sn-space-2, 0.5rem); }
   .axis-lead { font-size: var(--sn-text-sm, 0.875rem); color: var(--sn-text-soft, #6b7280); line-height: 1.7; margin: 0; }
+  .axis-definition { margin-block: 1.5rem; padding: 1.25rem 1.5rem; background: var(--sn-bg-white, #fff); border: 1px solid var(--sn-border, #e5e7eb); border-radius: var(--sn-radius, 0.75rem); }
+  .axis-def-title { font-family: var(--sn-font-rounded, sans-serif); font-size: var(--sn-text-lg, 1.125rem); font-weight: 700; margin-bottom: 0.75rem; }
+  .axis-def-text { font-size: var(--sn-text-sm, 0.875rem); color: var(--sn-text-soft, #6b7280); line-height: var(--sn-leading-relaxed, 1.8); }
   .axis-main { padding-block: var(--sn-space-8, 2rem); }
+  .axis-faq { margin-block: 2rem; }
+  .axis-faq-title { font-family: var(--sn-font-rounded, sans-serif); font-size: var(--sn-text-lg, 1.125rem); font-weight: 700; margin-bottom: 1rem; }
+  .faq-list { display: flex; flex-direction: column; gap: 0.75rem; }
+  details.faq-item { background: var(--sn-bg-white, #fff); border: 1px solid var(--sn-border, #e5e7eb); border-radius: var(--sn-radius, 0.75rem); overflow: hidden; }
+  .faq-summary { display: flex; align-items: flex-start; gap: 0.75rem; padding: 1rem 1.25rem; cursor: pointer; list-style: none; font-weight: 700; font-size: var(--sn-text-sm, 0.875rem); }
+  .faq-summary::-webkit-details-marker { display: none; }
+  .faq-q { flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%; background: var(--sn-primary, #6366f1); color: #fff; font-size: 0.7rem; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+  .faq-q-text { flex: 1; padding-top: 2px; }
+  .faq-answer { padding: 0 1.25rem 1rem; padding-left: calc(1.25rem + 22px + 0.75rem); font-size: var(--sn-text-sm, 0.875rem); color: var(--sn-text-soft, #6b7280); line-height: var(--sn-leading-relaxed, 1.8); }
   .axis-related { padding-block: var(--sn-space-8, 2rem); background: var(--sn-bg-soft, #f9fafb); border-top: 1px solid var(--sn-border, #e5e7eb); }
   .axis-section-title { display: flex; align-items: center; gap: var(--sn-space-2, 0.5rem); font-family: var(--sn-font-rounded, sans-serif); font-size: var(--sn-text-lg, 1.125rem); font-weight: 900; color: var(--sn-text, #111827); margin: 0 0 var(--sn-space-4, 1rem); }
   .axis-diag-grid { display: flex; flex-direction: column; gap: var(--sn-space-2, 0.5rem); }
