@@ -1,33 +1,40 @@
 ---
 /**
- * CharacterDisplay.astro - Big5 16動物キャラ表示
+ * CharacterDisplay.astro - 16動物キャラ表示
  *
- * ===== SVG差し替えガイド =====
- * 現在: 絵文字ダミー
- * 本番: src/assets/characters/{characterId}.svg を配置し、
- *       下記の TODO コメント箇所を <Image> コンポーネントに差し替える
+ * Big5 4軸（O/C/E/A）× 各2段階（high/low）= 16パターンの動物SVGを表示する。
+ * N（情緒安定性）は別途 Big5MoodMeter で管理。
  *
- * characterId の命名規則:
- *   4軸（O/C/E/A）× 各2段階（high/low）= 16パターン
- *   例: "o-high_c-high_e-high_a-high" → ライオン
+ * characterId 命名規則: "o-{level}_c-{level}_e-{level}_a-{level}"
+ * 例: "o-high_c-high_e-high_a-high" → ライオン王
  *
- * デザイナー向け:
- *   src/assets/characters/ に {characterId}.svg を配置するだけで反映される
- * ===========================
+ * ユーザー向けルール:
+ * - Big5/OCEAN/ビッグファイブ という表記はユーザーに見せない
+ * - 動物名・特性キーワードで表現する
+ *
+ * 実装メモ:
+ * - AnimalIcons.astro に全16動物SVGを集約
+ * - animals.ts に16動物の定義データ
+ * - 未知の characterId は絵文字フォールバックで表示
  */
+import AnimalIcons from './AnimalIcons.astro';
+import { getAnimalById } from '../data/animals';
+
 interface Props {
   /** キャラクターID（Big5 4軸パターン）*/
   characterId: string;
   /** キャラクター表示名 */
-  characterName: string;
-  /** 絵文字ダミー（SVG差し替えまでの暫定）*/
+  characterName?: string;
+  /** 絵文字フォールバック（SVG未定義時の保険） */
   emojiDummy?: string;
   /** 表示サイズ */
   size?: 'sm' | 'md' | 'lg' | 'xl';
-  /** ライト版（無料）か完全版（有料）か */
+  /** ライト版（無料・ぼかし）か完全版（有料）か */
   variant?: 'lite' | 'full';
   /** アニメーション効果 */
   animated?: boolean;
+  /** 名前ラベルを非表示にする */
+  hideName?: boolean;
 }
 
 const {
@@ -37,6 +44,7 @@ const {
   size = 'md',
   variant = 'lite',
   animated = false,
+  hideName = false,
 } = Astro.props;
 
 const sizeMap = {
@@ -46,27 +54,45 @@ const sizeMap = {
   xl: '180px',
 };
 
+const svgSizeMap = {
+  sm: 64,
+  md: 100,
+  lg: 140,
+  xl: 180,
+};
+
 const sizePx = sizeMap[size];
+const svgSize = svgSizeMap[size];
+
+// 動物データを取得
+const animalData = getAnimalById(characterId);
+const displayName = characterName ?? animalData?.name ?? '???';
+const animalType = animalData?.animal;
+const animalColor = animalData?.color ?? '#7c5cff';
+const animalGradient = animalData?.gradient ?? 'linear-gradient(135deg, var(--brand-100) 0%, var(--brand-200) 100%)';
 ---
 
 <div
   class={`character-display character-display--${size} ${animated ? 'character-display--animated' : ''} ${variant === 'lite' ? 'character-display--lite' : ''}`}
   data-character-id={characterId}
-  aria-label={`${characterName}のキャラクターアイコン`}
-  style={`--char-size: ${sizePx}`}
+  style={`--char-size: ${sizePx}; --animal-color: ${animalColor};`}
 >
-  <div class="character-frame">
-    <!--
-      TODO: デザイナーがSVGキャラを配置したら以下に差し替え:
-      <img
-        src={`/characters/${characterId}.svg`}
-        alt={characterName}
-        width={parseInt(sizePx)}
-        height={parseInt(sizePx)}
-        loading="lazy"
+  <div
+    class="character-frame"
+    style={`background: ${animalGradient};`}
+    role="img"
+    aria-label={`${displayName}のキャラクターアイコン`}
+  >
+    {animalType ? (
+      <AnimalIcons
+        animal={animalType as any}
+        size={svgSize}
+        color={animalColor}
+        class="character-svg"
       />
-    -->
-    <span class="character-emoji" aria-hidden="true">{emojiDummy}</span>
+    ) : (
+      <span class="character-emoji" aria-hidden="true">{emojiDummy}</span>
+    )}
   </div>
 
   {variant === 'lite' && (
@@ -75,7 +101,9 @@ const sizePx = sizeMap[size];
     </div>
   )}
 
-  <p class="character-name">{characterName}</p>
+  {!hideName && (
+    <p class="character-name">{displayName}</p>
+  )}
 </div>
 
 <style>
@@ -91,7 +119,6 @@ const sizePx = sizeMap[size];
   .character-frame {
     width: var(--char-size);
     height: var(--char-size);
-    background: linear-gradient(135deg, var(--sn-primary-bg) 0%, var(--sn-secondary-bg) 100%);
     border-radius: var(--sn-radius-lg);
     display: flex;
     align-items: center;
@@ -99,7 +126,18 @@ const sizePx = sizeMap[size];
     box-shadow: var(--sn-shadow);
     overflow: hidden;
     position: relative;
-    border: 2px solid var(--sn-border);
+    border: 2px solid rgba(255, 255, 255, 0.8);
+    transition: box-shadow var(--sn-dur-fast) var(--sn-ease);
+  }
+
+  .character-frame:hover {
+    box-shadow: var(--sn-shadow-md);
+  }
+
+  .character-svg {
+    display: block;
+    /* SVGがフレームを若干はみ出せるよう overflow: visible を維持 */
+    overflow: visible;
   }
 
   .character-emoji {
@@ -115,16 +153,19 @@ const sizePx = sizeMap[size];
   .lite-overlay {
     position: absolute;
     inset: 0;
+    width: var(--char-size);
+    height: var(--char-size);
     display: flex;
     align-items: center;
     justify-content: center;
     background: rgba(255, 255, 255, 0.4);
     border-radius: var(--sn-radius-lg);
+    pointer-events: none;
   }
 
   .lite-lock {
     font-size: calc(var(--char-size) * 0.3);
-    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
   }
 
   .character-name {
@@ -133,6 +174,7 @@ const sizePx = sizeMap[size];
     font-weight: 700;
     color: var(--sn-text);
     text-align: center;
+    margin: 0;
   }
 
   /* アニメーション */
@@ -143,5 +185,15 @@ const sizePx = sizeMap[size];
   @keyframes characterBounce {
     0%, 100% { transform: translateY(0); }
     50% { transform: translateY(-6px); }
+  }
+
+  /* サイズ別の名前フォントサイズ調整 */
+  .character-display--sm .character-name {
+    font-size: var(--sn-text-xs);
+  }
+
+  .character-display--lg .character-name,
+  .character-display--xl .character-name {
+    font-size: var(--sn-text-base);
   }
 </style>

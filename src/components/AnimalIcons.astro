@@ -1,0 +1,699 @@
+---
+/**
+ * AnimalIcons.astro - 16動物キャラ SVGアイコン集約コンポーネント
+ *
+ * 使い方:
+ *   <AnimalIcons animal="lion" size={120} color="#f59e0b" />
+ *
+ * スタイル: パステル・丸み・フラットイラスト
+ * viewBox: 0 0 120 120（全動物統一）
+ * WCAG: role="img" + aria-label を親コンポーネント側で付与すること
+ */
+
+interface Props {
+  /** 動物種別 */
+  animal: 'lion' | 'falcon' | 'owl' | 'octopus' | 'dolphin' | 'fox' | 'cat' | 'tiger' |
+          'dog' | 'wolf' | 'beaver' | 'eagle' | 'panda' | 'cheetah' | 'rabbit' | 'hedgehog';
+  /** SVGの表示サイズ（px） */
+  size?: number;
+  /** メインカラー（キャラ固有色） */
+  color?: string;
+  /** 追加クラス */
+  class?: string;
+}
+
+const {
+  animal,
+  size = 120,
+  color = '#7c5cff',
+  class: className = '',
+} = Astro.props;
+---
+
+{animal === 'lion' && (
+  <svg
+    viewBox="0 0 120 120"
+    width={size}
+    height={size}
+    class={`animal-icon ${className}`}
+    xmlns="http://www.w3.org/2000/svg"
+    aria-hidden="true"
+    focusable="false"
+  >
+    <!-- たてがみ -->
+    <circle cx="60" cy="62" r="36" fill={color} opacity="0.25"/>
+    <circle cx="60" cy="62" r="30" fill={color} opacity="0.35"/>
+    <!-- 顔 -->
+    <circle cx="60" cy="62" r="24" fill="#fde68a"/>
+    <!-- 耳 -->
+    <circle cx="40" cy="40" r="9" fill={color} opacity="0.5"/>
+    <circle cx="80" cy="40" r="9" fill={color} opacity="0.5"/>
+    <circle cx="40" cy="40" r="5" fill="#fde68a"/>
+    <circle cx="80" cy="40" r="5" fill="#fde68a"/>
+    <!-- 目 -->
+    <circle cx="52" cy="58" r="4.5" fill="#1f2235"/>
+    <circle cx="68" cy="58" r="4.5" fill="#1f2235"/>
+    <circle cx="53.5" cy="56.5" r="1.5" fill="#fff"/>
+    <circle cx="69.5" cy="56.5" r="1.5" fill="#fff"/>
+    <!-- 鼻 -->
+    <ellipse cx="60" cy="66" rx="5" ry="3.5" fill={color} opacity="0.7"/>
+    <!-- 口 -->
+    <path d="M55 70 Q60 75 65 70" stroke="#b45309" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+    <!-- ひげ -->
+    <line x1="36" y1="64" x2="50" y2="66" stroke="#b45309" stroke-width="1.2" opacity="0.5"/>
+    <line x1="36" y1="68" x2="50" y2="68" stroke="#b45309" stroke-width="1.2" opacity="0.5"/>
+    <line x1="70" y1="66" x2="84" y2="64" stroke="#b45309" stroke-width="1.2" opacity="0.5"/>
+    <line x1="70" y1="68" x2="84" y2="68" stroke="#b45309" stroke-width="1.2" opacity="0.5"/>
+    <!-- 王冠 -->
+    <path d="M46 36 L50 26 L55 32 L60 22 L65 32 L70 26 L74 36 Z" fill={color} opacity="0.9"/>
+    <circle cx="60" cy="22" r="3" fill="#fff" opacity="0.9"/>
+    <circle cx="50" cy="26" r="2" fill="#fff" opacity="0.7"/>
+    <circle cx="70" cy="26" r="2" fill="#fff" opacity="0.7"/>
+  </svg>
+)}
+
+{animal === 'falcon' && (
+  <svg
+    viewBox="0 0 120 120"
+    width={size}
+    height={size}
+    class={`animal-icon ${className}`}
+    xmlns="http://www.w3.org/2000/svg"
+    aria-hidden="true"
+    focusable="false"
+  >
+    <!-- 翼 -->
+    <path d="M20 65 Q35 50 55 60 Q40 45 30 30 Q50 38 65 60" fill={color} opacity="0.3"/>
+    <path d="M100 65 Q85 50 65 60 Q80 45 90 30 Q70 38 55 60" fill={color} opacity="0.3"/>
+    <!-- 体 -->
+    <ellipse cx="60" cy="72" rx="18" ry="22" fill={color} opacity="0.6"/>
+    <!-- 顔 -->
+    <circle cx="60" cy="52" r="20" fill={color} opacity="0.8"/>
+    <circle cx="60" cy="52" r="16" fill="#c7d2fe"/>
+    <!-- 目のまわり（ハヤブサ特有の黒ライン） -->
+    <path d="M45 49 Q52 44 58 50" fill="#1f2235" opacity="0.8"/>
+    <path d="M75 49 Q68 44 62 50" fill="#1f2235" opacity="0.8"/>
+    <!-- 目 -->
+    <circle cx="52" cy="50" r="4" fill="#1f2235"/>
+    <circle cx="68" cy="50" r="4" fill="#1f2235"/>
+    <circle cx="53" cy="49" r="1.5" fill="#fff"/>
+    <circle cx="69" cy="49" r="1.5" fill="#fff"/>
+    <!-- くちばし -->
+    <path d="M55 57 L60 63 L65 57 Z" fill={color}/>
+    <path d="M55 57 L65 57 Q60 60 55 57" fill="#4f46e5" opacity="0.5"/>
+    <!-- 尾 -->
+    <path d="M48 88 Q60 96 72 88 Q60 105 48 88" fill={color} opacity="0.5"/>
+  </svg>
+)}
+
+{animal === 'owl' && (
+  <svg
+    viewBox="0 0 120 120"
+    width={size}
+    height={size}
+    class={`animal-icon ${className}`}
+    xmlns="http://www.w3.org/2000/svg"
+    aria-hidden="true"
+    focusable="false"
+  >
+    <!-- 体 -->
+    <ellipse cx="60" cy="78" rx="28" ry="30" fill={color} opacity="0.4"/>
+    <!-- 翼模様 -->
+    <path d="M34 70 Q38 82 46 88" stroke={color} stroke-width="2" fill="none" opacity="0.6"/>
+    <path d="M86 70 Q82 82 74 88" stroke={color} stroke-width="2" fill="none" opacity="0.6"/>
+    <!-- 顔（大きな円） -->
+    <circle cx="60" cy="52" r="26" fill="#ddd6fe"/>
+    <!-- 顔の輪郭線 -->
+    <circle cx="60" cy="52" r="26" fill="none" stroke={color} stroke-width="2" opacity="0.3"/>
+    <!-- 耳角 -->
+    <path d="M40 30 L44 18 L52 30 Z" fill={color} opacity="0.6"/>
+    <path d="M80 30 L76 18 L68 30 Z" fill={color} opacity="0.6"/>
+    <!-- 目（フクロウの大きな目） -->
+    <circle cx="49" cy="50" r="9" fill="#fff"/>
+    <circle cx="71" cy="50" r="9" fill="#fff"/>
+    <circle cx="49" cy="50" r="6" fill="#1f2235"/>
+    <circle cx="71" cy="50" r="6" fill="#1f2235"/>
+    <circle cx="51" cy="48" r="2.5" fill="#fff"/>
+    <circle cx="73" cy="48" r="2.5" fill="#fff"/>
+    <!-- くちばし -->
+    <path d="M56 58 L60 65 L64 58 Z" fill={color} opacity="0.8"/>
+    <!-- 本 -->
+    <rect x="44" y="85" width="32" height="20" rx="3" fill={color} opacity="0.4"/>
+    <line x1="60" y1="85" x2="60" y2="105" stroke={color} stroke-width="1.5" opacity="0.5"/>
+    <line x1="48" y1="92" x2="72" y2="92" stroke="#fff" stroke-width="1" opacity="0.5"/>
+    <line x1="48" y1="97" x2="72" y2="97" stroke="#fff" stroke-width="1" opacity="0.5"/>
+  </svg>
+)}
+
+{animal === 'octopus' && (
+  <svg
+    viewBox="0 0 120 120"
+    width={size}
+    height={size}
+    class={`animal-icon ${className}`}
+    xmlns="http://www.w3.org/2000/svg"
+    aria-hidden="true"
+    focusable="false"
+  >
+    <!-- 触手 -->
+    <path d="M35 78 Q28 90 32 105" stroke={color} stroke-width="8" fill="none" stroke-linecap="round" opacity="0.6"/>
+    <path d="M44 85 Q40 98 44 110" stroke={color} stroke-width="8" fill="none" stroke-linecap="round" opacity="0.6"/>
+    <path d="M55 88 Q55 102 58 112" stroke={color} stroke-width="8" fill="none" stroke-linecap="round" opacity="0.6"/>
+    <path d="M65 88 Q65 102 62 112" stroke={color} stroke-width="8" fill="none" stroke-linecap="round" opacity="0.6"/>
+    <path d="M76 85 Q80 98 76 110" stroke={color} stroke-width="8" fill="none" stroke-linecap="round" opacity="0.6"/>
+    <path d="M85 78 Q92 90 88 105" stroke={color} stroke-width="8" fill="none" stroke-linecap="round" opacity="0.6"/>
+    <!-- 吸盤ライン -->
+    <path d="M33 88 Q30 94 33 100" stroke="#fff" stroke-width="1.5" fill="none" opacity="0.4"/>
+    <path d="M44 94 Q42 100 44 106" stroke="#fff" stroke-width="1.5" fill="none" opacity="0.4"/>
+    <path d="M87 88 Q90 94 87 100" stroke="#fff" stroke-width="1.5" fill="none" opacity="0.4"/>
+    <!-- マント -->
+    <ellipse cx="60" cy="60" rx="34" ry="28" fill={color} opacity="0.7"/>
+    <!-- 顔 -->
+    <ellipse cx="60" cy="55" rx="26" ry="22" fill={color} opacity="0.9"/>
+    <!-- 目 -->
+    <circle cx="50" cy="52" r="7" fill="#fff"/>
+    <circle cx="70" cy="52" r="7" fill="#fff"/>
+    <circle cx="50" cy="52" r="4.5" fill="#1f2235"/>
+    <circle cx="70" cy="52" r="4.5" fill="#1f2235"/>
+    <circle cx="51.5" cy="50.5" r="2" fill="#fff"/>
+    <circle cx="71.5" cy="50.5" r="2" fill="#fff"/>
+    <!-- 口 -->
+    <path d="M54 62 Q60 66 66 62" stroke="#fff" stroke-width="1.8" fill="none" stroke-linecap="round" opacity="0.7"/>
+    <!-- 眼鏡 -->
+    <circle cx="50" cy="52" r="9" fill="none" stroke="#fff" stroke-width="1.5" opacity="0.5"/>
+    <circle cx="70" cy="52" r="9" fill="none" stroke="#fff" stroke-width="1.5" opacity="0.5"/>
+    <line x1="59" y1="52" x2="61" y2="52" stroke="#fff" stroke-width="1.5" opacity="0.5"/>
+  </svg>
+)}
+
+{animal === 'dolphin' && (
+  <svg
+    viewBox="0 0 120 120"
+    width={size}
+    height={size}
+    class={`animal-icon ${className}`}
+    xmlns="http://www.w3.org/2000/svg"
+    aria-hidden="true"
+    focusable="false"
+  >
+    <!-- 水しぶき -->
+    <ellipse cx="60" cy="98" rx="30" ry="8" fill={color} opacity="0.15"/>
+    <path d="M38 92 Q32 86 36 80" stroke={color} stroke-width="2" fill="none" opacity="0.3" stroke-linecap="round"/>
+    <path d="M82 92 Q88 86 84 80" stroke={color} stroke-width="2" fill="none" opacity="0.3" stroke-linecap="round"/>
+    <!-- 尾びれ -->
+    <path d="M42 90 Q52 98 60 94 Q68 98 78 90 Q68 104 60 100 Q52 104 42 90" fill={color} opacity="0.5"/>
+    <!-- 体 -->
+    <ellipse cx="60" cy="72" rx="28" ry="20" fill={color} opacity="0.7"/>
+    <!-- 腹部 白 -->
+    <ellipse cx="60" cy="76" rx="18" ry="12" fill="#e0f2fe"/>
+    <!-- 背びれ -->
+    <path d="M55 55 Q58 40 65 45 Q62 55 60 55 Z" fill={color} opacity="0.7"/>
+    <!-- 胸びれ -->
+    <path d="M38 72 Q30 65 34 58 Q42 68 44 74 Z" fill={color} opacity="0.5"/>
+    <!-- 頭 -->
+    <ellipse cx="60" cy="54" rx="22" ry="20" fill={color} opacity="0.8"/>
+    <!-- くちばし -->
+    <path d="M42 57 L28 54 L42 51" fill={color} opacity="0.8"/>
+    <path d="M42 54 L28 54" stroke="#fff" stroke-width="1" opacity="0.4"/>
+    <!-- 目 -->
+    <circle cx="46" cy="50" r="4" fill="#1f2235"/>
+    <circle cx="47.5" cy="48.5" r="1.5" fill="#fff"/>
+    <!-- 笑顔 -->
+    <path d="M32 57 Q35 61 42 60" stroke="#fff" stroke-width="1.5" fill="none" stroke-linecap="round" opacity="0.6"/>
+  </svg>
+)}
+
+{animal === 'fox' && (
+  <svg
+    viewBox="0 0 120 120"
+    width={size}
+    height={size}
+    class={`animal-icon ${className}`}
+    xmlns="http://www.w3.org/2000/svg"
+    aria-hidden="true"
+    focusable="false"
+  >
+    <!-- しっぽ -->
+    <path d="M78 85 Q96 78 100 60 Q100 45 88 48 Q96 60 85 72 Q80 78 78 85" fill={color} opacity="0.4"/>
+    <path d="M82 80 Q96 72 98 58 Q96 50 90 52" stroke="#fff" stroke-width="2" fill="none" opacity="0.4" stroke-linecap="round"/>
+    <!-- 体 -->
+    <ellipse cx="56" cy="80" rx="24" ry="22" fill={color} opacity="0.7"/>
+    <!-- 胸の白 -->
+    <ellipse cx="56" cy="84" rx="14" ry="14" fill="#fff7ed"/>
+    <!-- 顔 -->
+    <ellipse cx="56" cy="52" rx="24" ry="22" fill={color}/>
+    <!-- 耳 -->
+    <path d="M34 38 L28 18 L46 34 Z" fill={color}/>
+    <path d="M78 38 L84 18 L66 34 Z" fill={color}/>
+    <path d="M36 36 L31 20 L44 33 Z" fill="#fed7aa"/>
+    <path d="M76 36 L81 20 L68 33 Z" fill="#fed7aa"/>
+    <!-- 顔の白い部分 -->
+    <ellipse cx="56" cy="58" rx="14" ry="12" fill="#fff7ed"/>
+    <!-- 目 -->
+    <ellipse cx="47" cy="50" rx="4" ry="4.5" fill="#1f2235"/>
+    <ellipse cx="65" cy="50" rx="4" ry="4.5" fill="#1f2235"/>
+    <circle cx="48.5" cy="48.5" r="1.5" fill="#fff"/>
+    <circle cx="66.5" cy="48.5" r="1.5" fill="#fff"/>
+    <!-- 鼻 -->
+    <ellipse cx="56" cy="59" rx="4" ry="3" fill={color}/>
+    <!-- 口 -->
+    <path d="M52 63 Q56 67 60 63" stroke={color} stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    <!-- ひげ -->
+    <line x1="34" y1="60" x2="47" y2="61" stroke={color} stroke-width="1.2" opacity="0.5"/>
+    <line x1="34" y1="63" x2="47" y2="63" stroke={color} stroke-width="1.2" opacity="0.5"/>
+    <line x1="65" y1="61" x2="78" y2="60" stroke={color} stroke-width="1.2" opacity="0.5"/>
+    <line x1="65" y1="63" x2="78" y2="63" stroke={color} stroke-width="1.2" opacity="0.5"/>
+  </svg>
+)}
+
+{animal === 'cat' && (
+  <svg
+    viewBox="0 0 120 120"
+    width={size}
+    height={size}
+    class={`animal-icon ${className}`}
+    xmlns="http://www.w3.org/2000/svg"
+    aria-hidden="true"
+    focusable="false"
+  >
+    <!-- しっぽ -->
+    <path d="M80 96 Q100 88 102 70 Q102 58 94 60 Q100 70 92 80 Q88 86 80 90" fill={color} opacity="0.4" stroke={color} stroke-width="4" stroke-linecap="round"/>
+    <!-- 体 -->
+    <ellipse cx="56" cy="82" rx="26" ry="24" fill="#fce7f3"/>
+    <!-- 顔 -->
+    <circle cx="56" cy="52" r="26" fill="#fce7f3"/>
+    <!-- 耳 -->
+    <path d="M34 36 L30 16 L50 34 Z" fill={color} opacity="0.6"/>
+    <path d="M78 36 L82 16 L62 34 Z" fill={color} opacity="0.6"/>
+    <path d="M36 35 L33 19 L48 33 Z" fill="#fbcfe8"/>
+    <path d="M76 35 L79 19 L64 33 Z" fill="#fbcfe8"/>
+    <!-- 目（猫の特徴：縦長の瞳孔） -->
+    <circle cx="46" cy="50" r="6" fill="#fff"/>
+    <circle cx="66" cy="50" r="6" fill="#fff"/>
+    <ellipse cx="46" cy="50" rx="3" ry="5" fill="#1f2235"/>
+    <ellipse cx="66" cy="50" rx="3" ry="5" fill="#1f2235"/>
+    <circle cx="47" cy="48" r="1.5" fill="#fff"/>
+    <circle cx="67" cy="48" r="1.5" fill="#fff"/>
+    <!-- 鼻 -->
+    <path d="M52 59 L56 63 L60 59 Q56 56 52 59" fill={color} opacity="0.7"/>
+    <!-- 口 -->
+    <path d="M52 63 Q56 67 60 63" stroke={color} stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    <line x1="56" y1="63" x2="56" y2="66" stroke={color} stroke-width="1.5" stroke-linecap="round"/>
+    <!-- ひげ -->
+    <line x1="30" y1="59" x2="48" y2="61" stroke={color} stroke-width="1.2" opacity="0.5"/>
+    <line x1="30" y1="63" x2="48" y2="63" stroke={color} stroke-width="1.2" opacity="0.5"/>
+    <line x1="64" y1="61" x2="82" y2="59" stroke={color} stroke-width="1.2" opacity="0.5"/>
+    <line x1="64" y1="63" x2="82" y2="63" stroke={color} stroke-width="1.2" opacity="0.5"/>
+  </svg>
+)}
+
+{animal === 'tiger' && (
+  <svg
+    viewBox="0 0 120 120"
+    width={size}
+    height={size}
+    class={`animal-icon ${className}`}
+    xmlns="http://www.w3.org/2000/svg"
+    aria-hidden="true"
+    focusable="false"
+  >
+    <!-- 体 -->
+    <ellipse cx="60" cy="82" rx="28" ry="26" fill="#fde68a"/>
+    <!-- 体のしま -->
+    <path d="M44 72 Q48 66 52 72" stroke={color} stroke-width="3" fill="none" opacity="0.5" stroke-linecap="round"/>
+    <path d="M68 72 Q72 66 76 72" stroke={color} stroke-width="3" fill="none" opacity="0.5" stroke-linecap="round"/>
+    <path d="M48 82 Q52 76 56 82" stroke={color} stroke-width="2.5" fill="none" opacity="0.4" stroke-linecap="round"/>
+    <path d="M64 82 Q68 76 72 82" stroke={color} stroke-width="2.5" fill="none" opacity="0.4" stroke-linecap="round"/>
+    <!-- 顔 -->
+    <circle cx="60" cy="52" r="26" fill="#fde68a"/>
+    <!-- 耳 -->
+    <path d="M36 38 L32 18 L52 36 Z" fill={color} opacity="0.7"/>
+    <path d="M84 38 L88 18 L68 36 Z" fill={color} opacity="0.7"/>
+    <path d="M38 37 L35 21 L50 35 Z" fill="#fde68a"/>
+    <path d="M82 37 L85 21 L70 35 Z" fill="#fde68a"/>
+    <!-- 顔のしま -->
+    <path d="M42 42 Q44 36 48 40" stroke={color} stroke-width="2.5" fill="none" opacity="0.6" stroke-linecap="round"/>
+    <path d="M78 42 Q76 36 72 40" stroke={color} stroke-width="2.5" fill="none" opacity="0.6" stroke-linecap="round"/>
+    <path d="M55 36 Q57 30 60 36" stroke={color} stroke-width="2" fill="none" opacity="0.5" stroke-linecap="round"/>
+    <path d="M65 36 Q63 30 60 36" stroke={color} stroke-width="2" fill="none" opacity="0.5" stroke-linecap="round"/>
+    <!-- 顔の白い部分 -->
+    <ellipse cx="60" cy="60" rx="14" ry="11" fill="#fff7ed"/>
+    <!-- 目 -->
+    <circle cx="48" cy="50" r="5" fill="#1f2235"/>
+    <circle cx="72" cy="50" r="5" fill="#1f2235"/>
+    <circle cx="49.5" cy="48.5" r="2" fill="#fff"/>
+    <circle cx="73.5" cy="48.5" r="2" fill="#fff"/>
+    <!-- 鼻 -->
+    <ellipse cx="60" cy="60" rx="5" ry="3.5" fill={color}/>
+    <!-- 口 -->
+    <path d="M54 64 Q57 68 60 65 Q63 68 66 64" stroke={color} stroke-width="1.8" fill="none" stroke-linecap="round"/>
+    <!-- ひげ -->
+    <line x1="33" y1="60" x2="50" y2="62" stroke={color} stroke-width="1.2" opacity="0.5"/>
+    <line x1="33" y1="64" x2="50" y2="64" stroke={color} stroke-width="1.2" opacity="0.5"/>
+    <line x1="70" y1="62" x2="87" y2="60" stroke={color} stroke-width="1.2" opacity="0.5"/>
+    <line x1="70" y1="64" x2="87" y2="64" stroke={color} stroke-width="1.2" opacity="0.5"/>
+  </svg>
+)}
+
+{animal === 'dog' && (
+  <svg
+    viewBox="0 0 120 120"
+    width={size}
+    height={size}
+    class={`animal-icon ${className}`}
+    xmlns="http://www.w3.org/2000/svg"
+    aria-hidden="true"
+    focusable="false"
+  >
+    <!-- しっぽ（上向きで元気） -->
+    <path d="M82 84 Q94 72 96 58 Q96 50 90 52 Q93 60 88 68 Q85 75 82 80" stroke={color} stroke-width="7" fill="none" stroke-linecap="round" opacity="0.6"/>
+    <!-- 体 -->
+    <ellipse cx="56" cy="82" rx="28" ry="24" fill="#d1fae5"/>
+    <!-- 顔 -->
+    <circle cx="56" cy="52" r="26" fill="#d1fae5"/>
+    <!-- 垂れ耳 -->
+    <ellipse cx="34" cy="58" rx="10" ry="18" fill={color} opacity="0.5" transform="rotate(-15 34 58)"/>
+    <ellipse cx="78" cy="58" rx="10" ry="18" fill={color} opacity="0.5" transform="rotate(15 78 58)"/>
+    <!-- 鼻先（丸い） -->
+    <ellipse cx="56" cy="62" rx="10" ry="7" fill="#a7f3d0"/>
+    <!-- 目 -->
+    <circle cx="46" cy="48" r="5" fill="#1f2235"/>
+    <circle cx="66" cy="48" r="5" fill="#1f2235"/>
+    <circle cx="47.5" cy="46.5" r="2" fill="#fff"/>
+    <circle cx="67.5" cy="46.5" r="2" fill="#fff"/>
+    <!-- まゆげ（ハッピーな） -->
+    <path d="M42 42 Q46 40 50 43" stroke={color} stroke-width="2" fill="none" stroke-linecap="round" opacity="0.7"/>
+    <path d="M62 42 Q66 40 70 43" stroke={color} stroke-width="2" fill="none" stroke-linecap="round" opacity="0.7"/>
+    <!-- 鼻 -->
+    <ellipse cx="56" cy="60" rx="5" ry="3.5" fill="#1f2235"/>
+    <ellipse cx="56" cy="59" rx="2" ry="1" fill="#fff" opacity="0.4"/>
+    <!-- 舌（にこにこ） -->
+    <path d="M50 66 Q56 73 62 66" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round"/>
+    <ellipse cx="56" cy="70" rx="5" ry="4" fill="#fb7185" opacity="0.7"/>
+    <!-- 首輪 -->
+    <path d="M36 70 Q56 78 76 70" stroke={color} stroke-width="4" fill="none" stroke-linecap="round" opacity="0.5"/>
+    <circle cx="56" cy="74" r="3" fill={color} opacity="0.8"/>
+  </svg>
+)}
+
+{animal === 'wolf' && (
+  <svg
+    viewBox="0 0 120 120"
+    width={size}
+    height={size}
+    class={`animal-icon ${className}`}
+    xmlns="http://www.w3.org/2000/svg"
+    aria-hidden="true"
+    focusable="false"
+  >
+    <!-- 体 -->
+    <ellipse cx="60" cy="84" rx="28" ry="24" fill="#e2e8f0"/>
+    <!-- 胸の毛 -->
+    <ellipse cx="60" cy="88" rx="16" ry="14" fill="#f8fafc"/>
+    <!-- 顔 -->
+    <ellipse cx="60" cy="50" rx="28" ry="26" fill="#e2e8f0"/>
+    <!-- 耳 （とがった） -->
+    <path d="M34 34 L28 12 L52 30 Z" fill="#64748b"/>
+    <path d="M86 34 L92 12 L68 30 Z" fill="#64748b"/>
+    <path d="M36 33 L32 15 L50 29 Z" fill="#e2e8f0"/>
+    <path d="M84 33 L88 15 L70 29 Z" fill="#e2e8f0"/>
+    <!-- 鼻先 -->
+    <ellipse cx="60" cy="58" rx="12" ry="9" fill="#f8fafc"/>
+    <!-- 目（鋭い） -->
+    <ellipse cx="48" cy="47" rx="5" ry="4.5" fill="#1f2235"/>
+    <ellipse cx="72" cy="47" rx="5" ry="4.5" fill="#1f2235"/>
+    <circle cx="49.5" cy="45.5" r="2" fill="#fff"/>
+    <circle cx="73.5" cy="45.5" r="2" fill="#fff"/>
+    <!-- 鼻 -->
+    <ellipse cx="60" cy="57" rx="5" ry="3.5" fill="#1f2235"/>
+    <ellipse cx="60" cy="56" rx="2" ry="1" fill="#fff" opacity="0.4"/>
+    <!-- 口（引き締まった） -->
+    <path d="M55 62 Q60 64 65 62" stroke="#64748b" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    <line x1="60" y1="62" x2="60" y2="64" stroke="#64748b" stroke-width="1.5" stroke-linecap="round"/>
+    <!-- ひげ -->
+    <line x1="36" y1="57" x2="52" y2="58" stroke="#94a3b8" stroke-width="1.2" opacity="0.6"/>
+    <line x1="36" y1="61" x2="52" y2="61" stroke="#94a3b8" stroke-width="1.2" opacity="0.6"/>
+    <line x1="68" y1="58" x2="84" y2="57" stroke="#94a3b8" stroke-width="1.2" opacity="0.6"/>
+    <line x1="68" y1="61" x2="84" y2="61" stroke="#94a3b8" stroke-width="1.2" opacity="0.6"/>
+    <!-- 月（オオカミと月） -->
+    <path d="M92 22 Q98 28 94 36 Q100 30 100 22 Q96 14 88 14 Q94 18 92 22" fill="#f1f5f9" opacity="0.8"/>
+  </svg>
+)}
+
+{animal === 'beaver' && (
+  <svg
+    viewBox="0 0 120 120"
+    width={size}
+    height={size}
+    class={`animal-icon ${className}`}
+    xmlns="http://www.w3.org/2000/svg"
+    aria-hidden="true"
+    focusable="false"
+  >
+    <!-- 扁平なしっぽ -->
+    <ellipse cx="60" cy="100" rx="22" ry="12" fill={color} opacity="0.5"/>
+    <line x1="42" y1="96" x2="78" y2="96" stroke={color} stroke-width="1.5" opacity="0.3"/>
+    <line x1="42" y1="100" x2="78" y2="100" stroke={color} stroke-width="1.5" opacity="0.3"/>
+    <line x1="44" y1="104" x2="76" y2="104" stroke={color} stroke-width="1.5" opacity="0.3"/>
+    <!-- 体 -->
+    <ellipse cx="60" cy="82" rx="26" ry="22" fill="#fef9c3"/>
+    <!-- 顔 -->
+    <circle cx="60" cy="54" r="24" fill="#fef9c3"/>
+    <!-- 耳（丸い小さな耳） -->
+    <circle cx="40" cy="36" r="8" fill={color} opacity="0.6"/>
+    <circle cx="80" cy="36" r="8" fill={color} opacity="0.6"/>
+    <circle cx="40" cy="36" r="5" fill="#fef9c3"/>
+    <circle cx="80" cy="36" r="5" fill="#fef9c3"/>
+    <!-- 目 -->
+    <circle cx="50" cy="50" r="5" fill="#1f2235"/>
+    <circle cx="70" cy="50" r="5" fill="#1f2235"/>
+    <circle cx="51.5" cy="48.5" r="2" fill="#fff"/>
+    <circle cx="71.5" cy="48.5" r="2" fill="#fff"/>
+    <!-- 特徴的な大きな出っ歯 -->
+    <rect x="54" y="61" width="5" height="7" rx="1.5" fill="#fff" stroke={color} stroke-width="0.8" opacity="0.8"/>
+    <rect x="61" y="61" width="5" height="7" rx="1.5" fill="#fff" stroke={color} stroke-width="0.8" opacity="0.8"/>
+    <!-- 鼻 -->
+    <ellipse cx="60" cy="60" rx="5" ry="3.5" fill={color} opacity="0.7"/>
+    <!-- 木材（ビーバーらしい小道具） -->
+    <rect x="38" y="90" width="44" height="7" rx="3.5" fill={color} opacity="0.4"/>
+    <line x1="44" y1="90" x2="44" y2="97" stroke={color} stroke-width="1" opacity="0.3"/>
+    <line x1="54" y1="90" x2="54" y2="97" stroke={color} stroke-width="1" opacity="0.3"/>
+    <line x1="66" y1="90" x2="66" y2="97" stroke={color} stroke-width="1" opacity="0.3"/>
+    <line x1="76" y1="90" x2="76" y2="97" stroke={color} stroke-width="1" opacity="0.3"/>
+  </svg>
+)}
+
+{animal === 'eagle' && (
+  <svg
+    viewBox="0 0 120 120"
+    width={size}
+    height={size}
+    class={`animal-icon ${className}`}
+    xmlns="http://www.w3.org/2000/svg"
+    aria-hidden="true"
+    focusable="false"
+  >
+    <!-- 広げた翼 -->
+    <path d="M15 58 Q30 48 50 56 Q35 40 22 28 Q42 36 58 58" fill="#475569" opacity="0.4"/>
+    <path d="M105 58 Q90 48 70 56 Q85 40 98 28 Q78 36 62 58" fill="#475569" opacity="0.4"/>
+    <!-- 尾 -->
+    <path d="M46 88 Q60 96 74 88 Q64 108 60 104 Q56 108 46 88" fill="#475569" opacity="0.4"/>
+    <!-- 体 -->
+    <ellipse cx="60" cy="76" rx="20" ry="22" fill="#1f2235" opacity="0.7"/>
+    <!-- 白い胸 -->
+    <ellipse cx="60" cy="80" rx="12" ry="14" fill="#f1f5f9"/>
+    <!-- 頭（白） -->
+    <circle cx="60" cy="50" r="20" fill="#f1f5f9"/>
+    <!-- 目（鋭く） -->
+    <circle cx="52" cy="48" r="5" fill="#1f2235"/>
+    <circle cx="68" cy="48" r="5" fill="#1f2235"/>
+    <circle cx="53.5" cy="46.5" r="2" fill="#fff" opacity="0.6"/>
+    <circle cx="69.5" cy="46.5" r="2" fill="#fff" opacity="0.6"/>
+    <!-- 眉（鋭く下がる） -->
+    <path d="M47 43 L57 46" stroke="#1f2235" stroke-width="2.5" stroke-linecap="round" opacity="0.8"/>
+    <path d="M73 43 L63 46" stroke="#1f2235" stroke-width="2.5" stroke-linecap="round" opacity="0.8"/>
+    <!-- くちばし（鉤型） -->
+    <path d="M55 56 L60 64 L65 56 Q62 60 60 65 Q58 60 55 56" fill="#d97706"/>
+    <path d="M55 56 Q60 52 65 56" fill="#b45309"/>
+  </svg>
+)}
+
+{animal === 'panda' && (
+  <svg
+    viewBox="0 0 120 120"
+    width={size}
+    height={size}
+    class={`animal-icon ${className}`}
+    xmlns="http://www.w3.org/2000/svg"
+    aria-hidden="true"
+    focusable="false"
+  >
+    <!-- 体 -->
+    <ellipse cx="60" cy="84" rx="30" ry="28" fill="#f0fdf4"/>
+    <!-- 黒い腕部分 -->
+    <ellipse cx="36" cy="88" rx="10" ry="8" fill="#1f2235" opacity="0.8"/>
+    <ellipse cx="84" cy="88" rx="10" ry="8" fill="#1f2235" opacity="0.8"/>
+    <!-- 顔 -->
+    <circle cx="60" cy="52" r="28" fill="#f0fdf4"/>
+    <!-- 耳（黒い丸耳） -->
+    <circle cx="36" cy="30" r="12" fill="#1f2235" opacity="0.8"/>
+    <circle cx="84" cy="30" r="12" fill="#1f2235" opacity="0.8"/>
+    <!-- 目のまわり（黒い模様） -->
+    <ellipse cx="47" cy="49" rx="9" ry="8" fill="#1f2235" opacity="0.8"/>
+    <ellipse cx="73" cy="49" rx="9" ry="8" fill="#1f2235" opacity="0.8"/>
+    <!-- 目（白目と黒目） -->
+    <circle cx="47" cy="50" r="6" fill="#f0fdf4"/>
+    <circle cx="73" cy="50" r="6" fill="#f0fdf4"/>
+    <circle cx="47" cy="50" r="3.5" fill="#1f2235"/>
+    <circle cx="73" cy="50" r="3.5" fill="#1f2235"/>
+    <circle cx="48" cy="49" r="1.5" fill="#fff"/>
+    <circle cx="74" cy="49" r="1.5" fill="#fff"/>
+    <!-- 鼻 -->
+    <ellipse cx="60" cy="60" rx="5" ry="3.5" fill="#1f2235" opacity="0.6"/>
+    <!-- にっこり口 -->
+    <path d="M54 65 Q60 71 66 65" stroke="#1f2235" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.6"/>
+    <!-- 笹 -->
+    <path d="M74 85 Q82 74 86 62" stroke={color} stroke-width="4" fill="none" stroke-linecap="round" opacity="0.5"/>
+    <path d="M79 75 Q86 70 88 64" stroke={color} stroke-width="2.5" fill="none" stroke-linecap="round" opacity="0.4"/>
+    <path d="M75 80 Q68 75 68 68" stroke={color} stroke-width="2.5" fill="none" stroke-linecap="round" opacity="0.4"/>
+  </svg>
+)}
+
+{animal === 'cheetah' && (
+  <svg
+    viewBox="0 0 120 120"
+    width={size}
+    height={size}
+    class={`animal-icon ${className}`}
+    xmlns="http://www.w3.org/2000/svg"
+    aria-hidden="true"
+    focusable="false"
+  >
+    <!-- スピードライン -->
+    <line x1="8" y1="55" x2="28" y2="55" stroke={color} stroke-width="2.5" stroke-linecap="round" opacity="0.3"/>
+    <line x1="8" y1="62" x2="24" y2="62" stroke={color} stroke-width="2" stroke-linecap="round" opacity="0.2"/>
+    <line x1="8" y1="69" x2="20" y2="69" stroke={color} stroke-width="1.5" stroke-linecap="round" opacity="0.15"/>
+    <!-- 体（細長いフォルム） -->
+    <ellipse cx="64" cy="80" rx="24" ry="18" fill="#fde68a"/>
+    <!-- 体の斑点 -->
+    <circle cx="52" cy="76" r="3" fill={color} opacity="0.35"/>
+    <circle cx="64" cy="72" r="3" fill={color} opacity="0.35"/>
+    <circle cx="76" cy="76" r="3" fill={color} opacity="0.35"/>
+    <circle cx="58" cy="84" r="2.5" fill={color} opacity="0.35"/>
+    <circle cx="70" cy="84" r="2.5" fill={color} opacity="0.35"/>
+    <!-- 顔 -->
+    <circle cx="64" cy="50" r="22" fill="#fde68a"/>
+    <!-- 耳（小さく前傾き） -->
+    <path d="M46 36 L42 22 L58 34 Z" fill={color} opacity="0.6"/>
+    <path d="M82 36 L86 22 L70 34 Z" fill={color} opacity="0.6"/>
+    <!-- チーター特有の黒ライン（涙のライン） -->
+    <path d="M54 53 Q52 58 50 65" stroke="#1f2235" stroke-width="2.5" fill="none" stroke-linecap="round" opacity="0.5"/>
+    <path d="M74 53 Q76 58 78 65" stroke="#1f2235" stroke-width="2.5" fill="none" stroke-linecap="round" opacity="0.5"/>
+    <!-- 目 -->
+    <ellipse cx="52" cy="48" rx="5" ry="4.5" fill="#1f2235"/>
+    <ellipse cx="76" cy="48" rx="5" ry="4.5" fill="#1f2235"/>
+    <circle cx="53.5" cy="46.5" r="2" fill="#fff"/>
+    <circle cx="77.5" cy="46.5" r="2" fill="#fff"/>
+    <!-- 顔の斑点 -->
+    <circle cx="46" cy="44" r="2" fill={color} opacity="0.4"/>
+    <circle cx="82" cy="44" r="2" fill={color} opacity="0.4"/>
+    <!-- 鼻 -->
+    <ellipse cx="64" cy="57" rx="5" ry="3.5" fill={color}/>
+    <!-- 口 -->
+    <path d="M59 61 Q64 65 69 61" stroke={color} stroke-width="1.5" fill="none" stroke-linecap="round"/>
+  </svg>
+)}
+
+{animal === 'rabbit' && (
+  <svg
+    viewBox="0 0 120 120"
+    width={size}
+    height={size}
+    class={`animal-icon ${className}`}
+    xmlns="http://www.w3.org/2000/svg"
+    aria-hidden="true"
+    focusable="false"
+  >
+    <!-- 体 -->
+    <ellipse cx="60" cy="85" rx="28" ry="25" fill="#fdf2f8"/>
+    <!-- しっぽ（丸くて小さい） -->
+    <circle cx="82" cy="92" r="8" fill="#fff"/>
+    <!-- 顔 -->
+    <circle cx="60" cy="55" r="26" fill="#fdf2f8"/>
+    <!-- 長耳 -->
+    <ellipse cx="46" cy="24" rx="9" ry="22" fill="#fbcfe8" transform="rotate(-8 46 24)"/>
+    <ellipse cx="74" cy="24" rx="9" ry="22" fill="#fbcfe8" transform="rotate(8 74 24)"/>
+    <ellipse cx="46" cy="24" rx="5" ry="17" fill={color} opacity="0.3" transform="rotate(-8 46 24)"/>
+    <ellipse cx="74" cy="24" rx="5" ry="17" fill={color} opacity="0.3" transform="rotate(8 74 24)"/>
+    <!-- 目（丸く大きい） -->
+    <circle cx="49" cy="53" r="6.5" fill="#fff"/>
+    <circle cx="71" cy="53" r="6.5" fill="#fff"/>
+    <circle cx="49" cy="53" r="4.5" fill={color} opacity="0.8"/>
+    <circle cx="71" cy="53" r="4.5" fill={color} opacity="0.8"/>
+    <circle cx="50.5" cy="51.5" r="2" fill="#fff"/>
+    <circle cx="72.5" cy="51.5" r="2" fill="#fff"/>
+    <!-- 鼻（小さくかわいい） -->
+    <ellipse cx="60" cy="62" rx="3.5" ry="2.5" fill={color} opacity="0.6"/>
+    <!-- Y字口 -->
+    <path d="M57 65 Q60 68 63 65" stroke={color} stroke-width="1.5" fill="none" stroke-linecap="round" opacity="0.5"/>
+    <line x1="60" y1="65" x2="60" y2="67" stroke={color} stroke-width="1.5" stroke-linecap="round" opacity="0.5"/>
+    <!-- ほっぺのまる -->
+    <circle cx="44" cy="60" r="7" fill={color} opacity="0.15"/>
+    <circle cx="76" cy="60" r="7" fill={color} opacity="0.15"/>
+    <!-- ひげ -->
+    <line x1="36" y1="62" x2="52" y2="63" stroke={color} stroke-width="1" opacity="0.4"/>
+    <line x1="36" y1="65" x2="52" y2="65" stroke={color} stroke-width="1" opacity="0.4"/>
+    <line x1="68" y1="63" x2="84" y2="62" stroke={color} stroke-width="1" opacity="0.4"/>
+    <line x1="68" y1="65" x2="84" y2="65" stroke={color} stroke-width="1" opacity="0.4"/>
+  </svg>
+)}
+
+{animal === 'hedgehog' && (
+  <svg
+    viewBox="0 0 120 120"
+    width={size}
+    height={size}
+    class={`animal-icon ${className}`}
+    xmlns="http://www.w3.org/2000/svg"
+    aria-hidden="true"
+    focusable="false"
+  >
+    <!-- 針のエリア（背中） -->
+    <ellipse cx="66" cy="65" rx="34" ry="28" fill={color} opacity="0.3"/>
+    <!-- 針 -->
+    <path d="M45 44 L48 28 L52 44" fill={color} opacity="0.5"/>
+    <path d="M56 38 L60 22 L64 38" fill={color} opacity="0.5"/>
+    <path d="M67 40 L72 24 L76 40" fill={color} opacity="0.5"/>
+    <path d="M78 46 L84 30 L88 46" fill={color} opacity="0.5"/>
+    <path d="M84 58 L92 44 L95 58" fill={color} opacity="0.5"/>
+    <path d="M86 70 L94 58 L96 70" fill={color} opacity="0.5"/>
+    <path d="M82 82 L90 72 L90 82" fill={color} opacity="0.5"/>
+    <path d="M68 88 L70 76 L74 88" fill={color} opacity="0.4"/>
+    <!-- 体（顔側・白っぽい） -->
+    <ellipse cx="50" cy="76" rx="24" ry="20" fill="#fdf4ff"/>
+    <!-- 顔 -->
+    <circle cx="44" cy="62" r="20" fill="#fdf4ff"/>
+    <!-- 目（小さく丸い） -->
+    <circle cx="38" cy="58" r="4" fill="#1f2235"/>
+    <circle cx="52" cy="56" r="4" fill="#1f2235"/>
+    <circle cx="39" cy="57" r="1.5" fill="#fff"/>
+    <circle cx="53" cy="55" r="1.5" fill="#fff"/>
+    <!-- 小さい鼻先 -->
+    <ellipse cx="36" cy="65" rx="5" ry="4" fill="#e9d5ff"/>
+    <!-- 鼻（小さい） -->
+    <ellipse cx="36" cy="63" rx="3" ry="2" fill={color} opacity="0.6"/>
+    <!-- 口（控えめ） -->
+    <path d="M33 67 Q36 70 39 67" stroke={color} stroke-width="1.5" fill="none" stroke-linecap="round" opacity="0.5"/>
+    <!-- 星（自分の世界の象徴） -->
+    <path d="M90 14 L92 10 L94 14 L98 16 L94 18 L92 22 L90 18 L86 16 Z" fill={color} opacity="0.4"/>
+    <path d="M98 28 L99.5 24 L101 28 L105 30 L101 32 L99.5 36 L98 32 L94 30 Z" fill={color} opacity="0.3"/>
+    <path d="M82 20 L83 17 L84 20 L87 21 L84 22 L83 25 L82 22 L79 21 Z" fill={color} opacity="0.35"/>
+  </svg>
+)}
+
+<style>
+  .animal-icon {
+    display: block;
+    overflow: visible;
+  }
+</style>
