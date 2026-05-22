@@ -21,29 +21,34 @@
   <rect x="60" y="52" width="160" height="36" rx="18" fill="#5b8def"/>
   <text x="140" y="75" font-family="'Noto Sans JP', sans-serif" font-size="15" font-weight="700" fill="white" text-anchor="middle">診断ナビ</text>
 
-  <!-- Big icon -->
+  <!-- Big icon area -->
   <circle cx="980" cy="315" r="170" fill="#5b8def" fill-opacity="0.12"/>
   <circle cx="980" cy="315" r="120" fill="#5b8def" fill-opacity="0.1"/>
-  <text x="980" y="350" font-size="110" text-anchor="middle">🔑</text>
+  <g transform="translate(910, 245) scale(5.833333333333333)">
+      <circle cx="8" cy="9" r="4.5" fill="none" stroke="white" stroke-width="2.2"/>
+      <line x1="11.5" y1="11.5" x2="20" y2="20" stroke="white" stroke-width="2.2" stroke-linecap="round"/>
+      <line x1="17" y1="18" x2="19" y2="16" stroke="white" stroke-width="2" stroke-linecap="round"/>
+      <line x1="15" y1="20" x2="17" y2="18" stroke="white" stroke-width="2" stroke-linecap="round"/>
+    </g>
 
   <!-- Main headline -->
   <text x="60" y="220" font-family="'Noto Sans JP', sans-serif" font-size="48" font-weight="900" fill="#1f2235" letter-spacing="-1">診断PASSで詳細レポート</text>
 
   <!-- Subtitle -->
-  <text x="60" y="278" font-family="'Noto Sans JP', sans-serif" font-size="22" font-weight="600" fill="#5b8def">¥390 買切 ｜ 全8診断に使える</text>
+  <text x="60" y="278" font-family="'Noto Sans JP', sans-serif" font-size="22" font-weight="600" fill="#5b8def">¥390 買切 | 全8診断に使える</text>
 
   <!-- Description -->
   <text x="60" y="340" font-family="'Noto Sans JP', sans-serif" font-size="26" font-weight="400" fill="#3b3d56">5軸の詳細アドバイス・向く環境・注意点</text>
 
-  <!-- Feature chip: 無料 -->
+  <!-- Feature chip: 完全無料 -->
   <rect x="60" y="390" width="110" height="38" rx="19" fill="none" stroke="#5b8def" stroke-width="1.5"/>
   <text x="115" y="414" font-family="'Noto Sans JP', sans-serif" font-size="15" font-weight="600" fill="#5b8def" text-anchor="middle">完全無料</text>
 
-  <!-- Feature chip: 相性診断 -->
+  <!-- Feature chip: 相性診断あり -->
   <rect x="184" y="390" width="130" height="38" rx="19" fill="none" stroke="#5b8def" stroke-width="1.5"/>
   <text x="249" y="414" font-family="'Noto Sans JP', sans-serif" font-size="15" font-weight="600" fill="#5b8def" text-anchor="middle">相性診断あり</text>
 
-  <!-- Feature chip: 統合 -->
+  <!-- Feature chip: 統合プロファイル -->
   <rect x="328" y="390" width="160" height="38" rx="19" fill="none" stroke="#5b8def" stroke-width="1.5"/>
   <text x="408" y="414" font-family="'Noto Sans JP', sans-serif" font-size="15" font-weight="600" fill="#5b8def" text-anchor="middle">統合プロファイル</text>
 

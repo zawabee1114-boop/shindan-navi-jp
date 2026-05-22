@@ -21,29 +21,31 @@
   <rect x="60" y="52" width="160" height="36" rx="18" fill="#4ea4f0"/>
   <text x="140" y="75" font-family="'Noto Sans JP', sans-serif" font-size="15" font-weight="700" fill="white" text-anchor="middle">診断ナビ</text>
 
-  <!-- Big icon -->
+  <!-- Big icon area -->
   <circle cx="980" cy="315" r="170" fill="#4ea4f0" fill-opacity="0.12"/>
   <circle cx="980" cy="315" r="120" fill="#4ea4f0" fill-opacity="0.1"/>
-  <text x="980" y="350" font-size="110" text-anchor="middle">✨</text>
+  <g transform="translate(910, 245) scale(5.833333333333333)">
+      <path d="M12 4l1.6 4.3L18 9.5l-3.2 2.8.9 4.4L12 14.5 8.3 16.7l.9-4.4L6 9.5l4.4-1.2L12 4z" fill="white"/>
+    </g>
 
   <!-- Main headline -->
   <text x="60" y="220" font-family="'Noto Sans JP', sans-serif" font-size="62" font-weight="900" fill="#1f2235" letter-spacing="-1">星座占い診断</text>
 
   <!-- Subtitle -->
-  <text x="60" y="278" font-family="'Noto Sans JP', sans-serif" font-size="22" font-weight="600" fill="#4ea4f0">12星座 ｜ 性格・運気・相性</text>
+  <text x="60" y="278" font-family="'Noto Sans JP', sans-serif" font-size="22" font-weight="600" fill="#4ea4f0">12星座 | 性格・運気・相性</text>
 
   <!-- Description -->
   <text x="60" y="340" font-family="'Noto Sans JP', sans-serif" font-size="26" font-weight="400" fill="#3b3d56">星座から読み解く性格と行動パターン</text>
 
-  <!-- Feature chip: 無料 -->
+  <!-- Feature chip: 完全無料 -->
   <rect x="60" y="390" width="110" height="38" rx="19" fill="none" stroke="#4ea4f0" stroke-width="1.5"/>
   <text x="115" y="414" font-family="'Noto Sans JP', sans-serif" font-size="15" font-weight="600" fill="#4ea4f0" text-anchor="middle">完全無料</text>
 
-  <!-- Feature chip: 相性診断 -->
+  <!-- Feature chip: 相性診断あり -->
   <rect x="184" y="390" width="130" height="38" rx="19" fill="none" stroke="#4ea4f0" stroke-width="1.5"/>
   <text x="249" y="414" font-family="'Noto Sans JP', sans-serif" font-size="15" font-weight="600" fill="#4ea4f0" text-anchor="middle">相性診断あり</text>
 
-  <!-- Feature chip: 統合 -->
+  <!-- Feature chip: 統合プロファイル -->
   <rect x="328" y="390" width="160" height="38" rx="19" fill="none" stroke="#4ea4f0" stroke-width="1.5"/>
   <text x="408" y="414" font-family="'Noto Sans JP', sans-serif" font-size="15" font-weight="600" fill="#4ea4f0" text-anchor="middle">統合プロファイル</text>
 

@@ -21,10 +21,17 @@
   <rect x="60" y="52" width="160" height="36" rx="18" fill="#ff7ab3"/>
   <text x="140" y="75" font-family="'Noto Sans JP', sans-serif" font-size="15" font-weight="700" fill="white" text-anchor="middle">診断ナビ</text>
 
-  <!-- Big icon -->
+  <!-- Big icon area -->
   <circle cx="980" cy="315" r="170" fill="#ff7ab3" fill-opacity="0.12"/>
   <circle cx="980" cy="315" r="120" fill="#ff7ab3" fill-opacity="0.1"/>
-  <text x="980" y="350" font-size="110" text-anchor="middle">🎁</text>
+  <g transform="translate(910, 245) scale(5.833333333333333)">
+      <rect x="3" y="10" width="18" height="11" rx="1.5" fill="white"/>
+      <rect x="3" y="6" width="18" height="4" rx="1" fill="white" fill-opacity=".85"/>
+      <path d="M12 6c-1.5-3-4-3.5-4-1.5S10.5 6 12 6z" fill="white" fill-opacity=".7"/>
+      <path d="M12 6c1.5-3 4-3.5 4-1.5S13.5 6 12 6z" fill="white" fill-opacity=".7"/>
+      <line x1="12" y1="6" x2="12" y2="21" stroke="rgba(255,255,255,.4)" stroke-width="1.5"/>
+      <line x1="3" y1="10" x2="21" y2="10" stroke="rgba(255,255,255,.4)" stroke-width="1.5"/>
+    </g>
 
   <!-- Main headline -->
   <text x="60" y="220" font-family="'Noto Sans JP', sans-serif" font-size="62" font-weight="900" fill="#1f2235" letter-spacing="-1">限定診断</text>
@@ -35,15 +42,15 @@
   <!-- Description -->
   <text x="60" y="340" font-family="'Noto Sans JP', sans-serif" font-size="26" font-weight="400" fill="#3b3d56">招待でしか受けられないプレミアム診断</text>
 
-  <!-- Feature chip: 無料 -->
+  <!-- Feature chip: 完全無料 -->
   <rect x="60" y="390" width="110" height="38" rx="19" fill="none" stroke="#ff7ab3" stroke-width="1.5"/>
   <text x="115" y="414" font-family="'Noto Sans JP', sans-serif" font-size="15" font-weight="600" fill="#ff7ab3" text-anchor="middle">完全無料</text>
 
-  <!-- Feature chip: 相性診断 -->
+  <!-- Feature chip: 相性診断あり -->
   <rect x="184" y="390" width="130" height="38" rx="19" fill="none" stroke="#ff7ab3" stroke-width="1.5"/>
   <text x="249" y="414" font-family="'Noto Sans JP', sans-serif" font-size="15" font-weight="600" fill="#ff7ab3" text-anchor="middle">相性診断あり</text>
 
-  <!-- Feature chip: 統合 -->
+  <!-- Feature chip: 統合プロファイル -->
   <rect x="328" y="390" width="160" height="38" rx="19" fill="none" stroke="#ff7ab3" stroke-width="1.5"/>
   <text x="408" y="414" font-family="'Noto Sans JP', sans-serif" font-size="15" font-weight="600" fill="#ff7ab3" text-anchor="middle">統合プロファイル</text>
 
