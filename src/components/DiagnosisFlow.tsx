@@ -16,6 +16,7 @@
  */
 
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { trackDiagnosisStart, trackDiagnosisComplete } from '../lib/analytics';
 import type { Answer, Question, LikertValue, DiagnosisProgress } from '../types/diagnosis';
 import { LIKERT_LABELS } from '../types/diagnosis';
 
@@ -90,6 +91,8 @@ export default function DiagnosisFlow({
     if (saved && saved.answers.length > 0 && saved.answers.length < totalQuestions) {
       setSavedProgress(saved);
       setResumeDialogVisible(true);
+    } else {
+      trackDiagnosisStart(diagnosisId);
     }
   }, [diagnosisId, totalQuestions]);
 
@@ -164,6 +167,7 @@ export default function DiagnosisFlow({
       clearProgress(diagnosisId);
       const typeId = calculateResult(answers);
       // 遷移（クライアントサイドナビゲーション）
+      trackDiagnosisComplete(diagnosisId, typeId);
       window.location.href = resultPath(typeId);
       return;
     }

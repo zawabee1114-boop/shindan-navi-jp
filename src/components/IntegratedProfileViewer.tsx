@@ -14,6 +14,7 @@
  */
 
 import { useEffect, useState } from 'react';
+import { trackIntegratedProfileView, trackDiagnosisCountMilestone } from '../lib/analytics';
 import type { IntegratedProfile, SceneScore } from '../lib/integrated-profile/types';
 import { DIAGNOSIS_LIST } from '../lib/integrated-profile/types';
 
@@ -361,6 +362,10 @@ export default function IntegratedProfileViewer({
       try {
         const p = generateIntegratedProfile();
         setProfile(p);
+        trackIntegratedProfileView(p.completedCount);
+        if (p.completedCount === 3 || p.completedCount === 8) {
+          trackDiagnosisCountMilestone(p.completedCount as 3 | 8);
+        }
       } catch (e) {
         console.error('IntegratedProfile generation failed:', e);
       }

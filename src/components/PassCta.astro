@@ -32,12 +32,27 @@ const { typeName, diagnosisName, scene } = Astro.props;
     <li>全8診断のレポートに使用可</li>
     <li>登録不要・買切</li>
   </ul>
-  <a href="/pass/" class="pass-cta-btn">
+  <a href="/pass/" class="pass-cta-btn js-pass-cta-btn" data-scene={scene} data-diagnosis={diagnosisName}>
     <span class="pass-cta-price">¥390</span>
     PASSで{scene}レポートを読む
   </a>
   <p class="pass-cta-note">月額ではなく1回払い・全診断に使えます</p>
 </div>
+
+<script>
+  document.querySelectorAll('.js-pass-cta-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      try {
+        const gtagFn = window.gtag;
+        if (typeof gtagFn !== 'function') return;
+        gtagFn('event', 'pass_cta_click', {
+          scene: btn.getAttribute('data-scene') ?? undefined,
+          diagnosis_id: btn.getAttribute('data-diagnosis') ?? undefined,
+        });
+      } catch {}
+    });
+  });
+</script>
 
 <style>
 .pass-cta {

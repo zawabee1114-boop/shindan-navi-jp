@@ -143,6 +143,29 @@ const isStripeConfigured = Boolean(
   </script>
 )}
 
+<script>
+  function setupProCtaTracking() {
+    var btns = document.querySelectorAll(
+      '#pro-upgrade-btn-full, #pro-upgrade-btn-compact, .pro-cta-compact-btn, .pro-cta-btn'
+    );
+    btns.forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        try {
+          var gtagFn = window.gtag;
+          if (typeof gtagFn !== 'function') return;
+          var isCompact = btn.id === 'pro-upgrade-btn-compact' || btn.classList.contains('pro-cta-compact-btn');
+          gtagFn('event', 'pro_cta_click', { location: isCompact ? 'compact' : 'full' });
+        } catch {}
+      });
+    });
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setupProCtaTracking);
+  } else {
+    setupProCtaTracking();
+  }
+</script>
+
 <style>
 /* フルカード */
 .pro-cta-card {
