@@ -23,6 +23,9 @@ import Container from '../../../../components/Container.astro';
 import { types } from '../../../../data/diagnoses/disc/types';
 import { meta } from '../../../../data/diagnoses/disc/meta';
 import type { DiscType } from '../../../../data/diagnoses/disc/questions';
+import TldrBlock from '../../../../components/TldrBlock.astro';
+import ScienceNote from '../../../../components/ScienceNote.astro';
+import ReferenceList from '../../../../components/ReferenceList.astro';
 
 export function getStaticPaths() {
   return Object.keys(types).map((typeId) => ({
@@ -122,6 +125,13 @@ const jsonLdArticle = {
     name: `DiSC ${typeData.nameEn} 行動スタイル`,
     sameAs: 'https://www.discprofile.com/what-is-disc/overview',
   },
+  citation: meta.references.map((r) => ({
+    '@type': 'CreativeWork',
+    name: r.title,
+    ...(r.author ? { author: r.author } : {}),
+    datePublished: String(r.year),
+    ...(r.url ? { url: r.url } : {}),
+  })),
 };
 
 // JSON-LD: BreadcrumbList
@@ -168,14 +178,17 @@ const descriptionClean = typeData.description.replace(/\n+/g, ' ').trim();
   {/* ========== 概要タブ ========== */}
   <Fragment slot="overview">
     <div class="discr-overview">
-      <div class="discr-aio-block">
-        <p class="discr-aio-title">このページでわかること</p>
-        <ul class="discr-aio-list">
-          <li>{typeData.name}（{typeData.nameEn}）の行動傾向・特徴・強み・気をつけたい点</li>
-          <li>仕事スタイル・コミュニケーション傾向・向いている職種5項目</li>
-          <li>他DiSCタイプ（D/i/S/C）との仕事相性・チームでの協力のコツ</li>
-        </ul>
-      </div>
+      <TldrBlock
+        title="このページでわかること"
+        points={[
+          `${typeData.name}(${typeData.nameEn})の行動スタイル・強み・注意点・コミュニケーション傾向`,
+          `仕事・リーダーシップ・チームでの役割傾向`,
+          `他3タイプとの相性（DiSC® Wiley 理論に基づく傾向値）`,
+        ]}
+        updatedAt={meta.updatedAt}
+        sourceLabel="DiSC® - Wiley 公式"
+        sourceUrl="https://www.discprofile.com/"
+      />
 
       <div class="discr-description">
         {descriptionClean.split('。').filter(s => s.trim()).map((sentence) => (
@@ -195,20 +208,15 @@ const descriptionClean = typeData.description.replace(/\n+/g, ' ').trim();
         </ul>
       </div>
 
-      <div class="discr-theory-note">
-        <p>
-          この診断結果はMarston (1928)「Emotions of Normal People」およびWiley DiSC公式
-          （<a href="https://www.discprofile.com/what-is-disc/overview" target="_blank" rel="noopener noreferrer">discprofile.com</a>、2026-05-20確認）
-          に基づく傾向把握のための参考情報です。
-          DiSC&#174;はJohn Wiley &amp; Sons, Inc.の登録商標です。本診断はWiley社の公式アセスメントではありません。
-          採用・評価・選考への使用は推奨しません。
-        </p>
-      </div>
-
-      <div class="discr-freshness">
-        <time datetime={meta.updatedAt}>{meta.updatedAt}</time> 時点の情報。
-        月1回以上の鮮度確認を実施しています。
-      </div>
+      <ScienceNote
+        basisText={meta.scientificBasis}
+        basisUrl="https://www.discprofile.com/"
+        basisLabel="DiSC® - Wiley 公式"
+        notMedical={false}
+        updatedAt={meta.updatedAt}
+        additionalNote="DiSC® はJohn Wiley & Sons, Inc.の登録商標です。本診断はWiley公式の認定ツールではありません。"
+      />
+      <ReferenceList references={meta.references} confirmedAt={meta.updatedAt} />
     </div>
   </Fragment>
 

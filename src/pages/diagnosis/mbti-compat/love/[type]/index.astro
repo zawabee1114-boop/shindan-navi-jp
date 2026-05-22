@@ -34,6 +34,9 @@ import {
   getCategoryLabel,
   getCategoryColor,
 } from '../../../../../data/diagnoses/mbti-compat/results';
+import TldrBlock from '../../../../../components/TldrBlock.astro';
+import ScienceNote from '../../../../../components/ScienceNote.astro';
+import ReferenceList from '../../../../../components/ReferenceList.astro';
 
 export async function getStaticPaths() {
   return MBTI_TYPES.map((type) => ({
@@ -130,6 +133,19 @@ const faqs = [
   },
 ];
 
+// Sternberg reference for merged ReferenceList
+const sternbergRef = {
+  title: 'A triangular theory of love',
+  author: 'Sternberg RJ',
+  year: 1986,
+  journal: 'Psychological Review',
+  volume: '93(2)',
+  pages: '119-135',
+  url: 'https://doi.org/10.1037/0033-295X.93.2.119',
+} as const;
+
+const allReferences = [...mbtiCompatMeta.references, sternbergRef];
+
 // JSON-LD: Article
 const jsonLdArticle = {
   '@context': 'https://schema.org',
@@ -152,24 +168,13 @@ const jsonLdArticle = {
     '@id': `${SITE_URL}/#organization`,
     name: '診断ナビ',
   },
-  citation: [
-    ...mbtiCompatMeta.references.map((ref) => ({
-      '@type': 'Book',
-      name: ref.title,
-      author: ref.author,
-      datePublished: String(ref.year),
-      publisher: ref.publisher,
-      url: ref.url,
-    })),
-    {
-      '@type': 'ScholarlyArticle',
-      name: 'A triangular theory of love',
-      author: 'Sternberg RJ',
-      datePublished: '1986',
-      publisher: 'Psychological Review',
-      url: 'https://doi.org/10.1037/0033-295X.93.2.119',
-    },
-  ],
+  citation: allReferences.map((r) => ({
+    '@type': 'CreativeWork',
+    name: r.title,
+    ...(r.author ? { author: r.author } : {}),
+    datePublished: String(r.year),
+    ...(r.url ? { url: r.url } : {}),
+  })),
 };
 
 // JSON-LD: FAQPage
@@ -251,23 +256,28 @@ const myTempColor = tempColor[detail.temperament] ?? '#6d28d9';
 
   <Container>
     {/* ========== AIOブロック ========== */}
-    <div class="mlt-aio-block" role="note" aria-label="このページでわかること">
-      <p class="mlt-aio-title">このページでわかること</p>
-      <ul class="mlt-aio-list">
-        <li>{type}（{detail.name}）の恋愛傾向・loveStyle（Beebe 2017 / Keirsey 1998理論）</li>
-        <li>15タイプとの恋愛相性スコアランキング（降順）</li>
-        <li>恋愛文脈での強み・気をつけたい傾向</li>
-        <li>ソウルメイト系TOP3・学び合いペアTOP3・同タイプ同士の相性</li>
-      </ul>
-      <p class="mlt-aio-updated">
-        学術根拠:
-        <a href="https://keirsey.com/product/please-understand-me-ii/" target="_blank" rel="noopener noreferrer">Keirsey（1998）</a>・
-        <a href="https://press.princeton.edu/books/paperback/9780691018133/psychological-types" target="_blank" rel="noopener noreferrer">Jung（1921）</a>・
-        <a href="https://www.routledge.com/Energies-and-Patterns-in-Psychological-Type-The-reservoir-of-consciousness/Beebe/p/book/9781138859760" target="_blank" rel="noopener noreferrer">Beebe（2017）</a>・
-        <a href="https://doi.org/10.1037/0033-295X.93.2.119" target="_blank" rel="noopener noreferrer">Sternberg（1986）</a>
-        を確認済。
-      </p>
-    </div>
+    <TldrBlock
+      title="このページでわかること"
+      points={[
+        `${type}(${detail.name})の恋愛傾向・loveStyle（Beebe 2017 / Keirsey 1998理論）`,
+        `15タイプとの恋愛相性スコアランキング（降順）`,
+        `恋愛文脈での強み・気をつけたい傾向`,
+        `ソウルメイト系TOP3・学び合いペアTOP3・同タイプ同士の相性`,
+      ]}
+      updatedAt={UPDATED_AT}
+      sourceLabel="Keirsey (1998) + Jung (1921) + Beebe (2017) + Sternberg (1986)"
+      sourceUrl="https://www.themyersbriggs.com/"
+    />
+
+    {/* ========== AIO 学術根拠・参考文献 ========== */}
+    <ScienceNote
+      basisText={mbtiCompatMeta.scientificBasis}
+      basisUrl="https://www.themyersbriggs.com/"
+      basisLabel="The Myers-Briggs Company 公式 + Keirsey (1998) + Beebe (2017)"
+      notMedical={true}
+      updatedAt={UPDATED_AT}
+    />
+    <ReferenceList references={allReferences} confirmedAt={UPDATED_AT} />
 
     {/* ========== タイプ基本情報 ========== */}
     <section class="mlt-section" aria-labelledby="mlt-profile-h2">
