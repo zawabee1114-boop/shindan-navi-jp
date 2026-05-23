@@ -87,3 +87,6 @@ Sitemap: https://shindan-navi.jp/sitemap-index.xml
 
 # LLM向け全文学習ファイル（詳細版）
 # LLMs-full.txt: https://shindan-navi.jp/llms-full.txt
+
+# IndexNow API キー（Bing/Yandex 即時インデックス通知）
+# https://shindan-navi.jp/ax4413ovu3r17ew1oef7v8i55mz9htca.txt

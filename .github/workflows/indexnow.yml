@@ -1,0 +1,47 @@
+name: IndexNow ping（Bing/Yandex 即時通知）
+
+# main への push 時に自動実行。
+# Cloudflare Pages の自動デプロイと並行して走るため、
+# Cloudflare 側のビルドが完了するまで少し待機してから送信する。
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  indexnow:
+    name: IndexNow API 送信
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: リポジトリのチェックアウト
+        uses: actions/checkout@v4
+
+      - name: Node.js のセットアップ
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: 依存パッケージのインストール
+        run: npm ci
+
+      - name: Astro ビルド
+        run: npm run build
+        env:
+          NODE_ENV: production
+
+      - name: Cloudflare Pages のデプロイ完了待機（60秒）
+        # Cloudflare は push 後自動ビルド開始。キー検証のため公開を待つ。
+        # 60秒はおおよその目安（状況により調整）。
+        run: sleep 60
+
+      - name: IndexNow API 送信
+        run: node scripts/indexnow-ping.mjs
+        env:
+          # キーはリポジトリにコミット済み。
+          # 変更したい場合は GitHub Secrets に INDEXNOW_KEY を設定すれば上書きできる。
+          INDEXNOW_KEY: ax4413ovu3r17ew1oef7v8i55mz9htca
+          # ubuntu-latest は Node.js のシステム CA を自動認識するため --use-system-ca 不要。
+          # ローカル Windows 実行時は npm run indexnow（--use-system-ca 付き）を使う。
