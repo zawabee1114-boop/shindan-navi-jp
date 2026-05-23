@@ -1,0 +1,543 @@
+---
+/**
+ * RelatedDiagnoses.astro - 動的「関連診断」セクションコンポーネント
+ *
+ * 全 result/[type] ページ末尾に統一フォーマットで関連診断を表示する。
+ * 4つのセクションを提供:
+ *   1. 同一診断内の別タイプ（同グループ比較）
+ *   2. クロス診断推薦（この診断を受けたユーザーへのおすすめ）
+ *   3. 統合プロファイルへの誘導 CTA
+ *   4. 招待・シェア促進ブロック
+ *
+ * SEO/AIO:
+ *   - ItemList JSON-LD で関連診断エンティティを構造化
+ *   - 内部リンク密度UP・エンティティグラフ強化
+ *   - WCAG 2.1 AA 準拠（min 44px タップ・コントラスト 4.5:1以上）
+ *
+ * 確認日: 2026-05-23
+ */
+
+import Container from './Container.astro';
+import {
+  getSameGroupLinks,
+  getCrossRecommendLinks,
+  type RelatedLink,
+} from '../data/related-diagnoses-map';
+
+interface Props {
+  /** 診断ID（例: 'mbti' / 'multi-int' / 'disc' など） */
+  diagnosisId: string;
+  /** タイプID（例: 'INTJ' / 'linguistic' など） */
+  typeId: string;
+  /** 診断表示名（例: 'MBTI診断'） */
+  diagnosisName: string;
+  /** タイプ表示名（例: '建築家'） */
+  typeName: string;
+  /** ページURL（シェア用） */
+  pageUrl: string;
+  /** 招待URLベース（任意。省略時は /invite/ を使用） */
+  inviteHref?: string;
+}
+
+const {
+  diagnosisId,
+  typeId,
+  diagnosisName,
+  typeName,
+  pageUrl,
+  inviteHref = '/invite/',
+} = Astro.props;
+
+const SITE_URL = 'https://shindan-navi.jp';
+
+// 同グループリンク（同一診断内の別タイプ）
+const sameGroupLinks = getSameGroupLinks(diagnosisId, typeId);
+
+// クロス推薦リンク（他の診断）
+const crossLinks = getCrossRecommendLinks(diagnosisId);
+
+// ItemList JSON-LD（関連診断の構造化データ）
+const allRelatedLinks = [...sameGroupLinks, ...crossLinks];
+const itemListJsonLd = allRelatedLinks.length > 0
+  ? {
+      '@context': 'https://schema.org',
+      '@type': 'ItemList',
+      '@id': `${pageUrl}#related-diagnoses`,
+      name: `${diagnosisName} ${typeName} 関連診断リスト`,
+      numberOfItems: allRelatedLinks.length,
+      itemListElement: allRelatedLinks.map((link, i) => ({
+        '@type': 'ListItem',
+        position: i + 1,
+        url: `${SITE_URL}${link.href}`,
+        name: link.title,
+      })),
+    }
+  : null;
+
+// 診断カラーマッピング（アクセントボーダー用）
+const diagColorVarMap: Record<string, string> = {
+  'diag-mbti':    'var(--d-mbti)',
+  'diag-multi':   'var(--d-multi)',
+  'diag-perfect': 'var(--d-perfect)',
+  'diag-disc':    'var(--d-disc)',
+  'diag-love':    'var(--d-love)',
+  'diag-money':   'var(--d-money)',
+  'diag-star':    'var(--d-star)',
+};
+
+function diagClassToColor(diagClass?: string): string {
+  return diagColorVarMap[diagClass ?? ''] ?? 'var(--brand-400)';
+}
+---
+
+{itemListJsonLd && (
+  <script type="application/ld+json" set:html={JSON.stringify(itemListJsonLd)} />
+)}
+
+<section class="rd-section" aria-labelledby="rd-heading">
+  <Container>
+    <div class="rd-header">
+      <span class="rd-section-icon" aria-hidden="true">🔗</span>
+      <h2 id="rd-heading" class="rd-title">関連診断</h2>
+      <p class="rd-subtitle">
+        {typeName}さんにおすすめの次の診断
+      </p>
+    </div>
+
+    {/* ---- ブロック 1: 同一診断内の別タイプ ---- */}
+    {sameGroupLinks.length > 0 && (
+      <div class="rd-group">
+        <h3 class="rd-group-title">
+          <span aria-hidden="true">🔄</span>
+          {diagnosisName}の他タイプと比べる
+        </h3>
+        <ul class="rd-card-grid" role="list">
+          {sameGroupLinks.map((link) => (
+            <li class="rd-card-item" role="listitem">
+              <a
+                href={link.href}
+                class={`rd-card${link.diagClass ? ' ' + link.diagClass : ''}`}
+                style={`--rd-accent: ${diagClassToColor(link.diagClass)}`}
+                aria-label={`${link.title}の結果ページへ`}
+              >
+                <span class="rd-card-icon" aria-hidden="true">{link.icon}</span>
+                <span class="rd-card-body">
+                  <span class="rd-card-name">{link.title}</span>
+                  {link.description && (
+                    <span class="rd-card-desc">{link.description}</span>
+                  )}
+                </span>
+                <span class="rd-card-arrow" aria-hidden="true">→</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    )}
+
+    {/* ---- ブロック 2: クロス診断推薦 ---- */}
+    {crossLinks.length > 0 && (
+      <div class="rd-group">
+        <h3 class="rd-group-title">
+          <span aria-hidden="true">✨</span>
+          {typeName}さんにおすすめの別診断
+        </h3>
+        <ul class="rd-card-grid" role="list">
+          {crossLinks.map((link) => (
+            <li class="rd-card-item" role="listitem">
+              <a
+                href={link.href}
+                class={`rd-card${link.diagClass ? ' ' + link.diagClass : ''}`}
+                style={`--rd-accent: ${diagClassToColor(link.diagClass)}`}
+                aria-label={`${link.title}へ`}
+              >
+                <span class="rd-card-icon" aria-hidden="true">{link.icon}</span>
+                <span class="rd-card-body">
+                  <span class="rd-card-name">
+                    {link.title}
+                    {link.badge && (
+                      <span class="rd-badge" aria-label={`${link.badge}ラベル`}>{link.badge}</span>
+                    )}
+                  </span>
+                  {link.description && (
+                    <span class="rd-card-desc">{link.description}</span>
+                  )}
+                </span>
+                <span class="rd-card-arrow" aria-hidden="true">→</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    )}
+
+    {/* ---- ブロック 3: 統合プロファイル CTA ---- */}
+    <div class="rd-profile-cta" role="complementary" aria-label="統合プロファイル案内">
+      <div class="rd-profile-inner">
+        <span class="rd-profile-icon" aria-hidden="true">🧬</span>
+        <div class="rd-profile-text">
+          <p class="rd-profile-title">8診断を統合してあなたの完全プロファイルを作ろう</p>
+          <p class="rd-profile-desc">
+            複数の診断を受けるほど、あなたの行動パターンがより深く分かります。
+            統合プロファイルで8診断の結果をまとめて確認できます。
+          </p>
+        </div>
+        <a href="/diagnosis/" class="rd-profile-btn sn-cta" aria-label="他の診断一覧ページへ">
+          <span aria-hidden="true">🔮</span>
+          他の診断を受ける
+        </a>
+      </div>
+    </div>
+
+    {/* ---- ブロック 4: 招待・シェア促進 ---- */}
+    <div class="rd-invite-cta" role="complementary" aria-label="招待シェア案内">
+      <div class="rd-invite-inner">
+        <span class="rd-invite-icon" aria-hidden="true">👥</span>
+        <div class="rd-invite-text">
+          <p class="rd-invite-title">友達と相性を比べてみよう</p>
+          <p class="rd-invite-desc">
+            招待URLを送るだけ。友達は登録不要で診断・相性チェックが無料で使えます。
+          </p>
+        </div>
+        <a
+          href={inviteHref}
+          class="rd-invite-btn"
+          aria-label="招待URLを生成して友達に送る"
+        >
+          <span aria-hidden="true">📤</span>
+          友達を招待する
+        </a>
+      </div>
+    </div>
+
+  </Container>
+</section>
+
+<style>
+  /* ================================================================
+     RelatedDiagnoses v1
+     ================================================================ */
+
+  .rd-section {
+    background: var(--surface-2, #f8f7ff);
+    border-top: 1px solid var(--line);
+    padding-block: var(--sn-space-12, 3rem);
+  }
+
+  /* ---- セクションヘッダー ---- */
+  .rd-header {
+    text-align: center;
+    margin-bottom: var(--sn-space-8, 2rem);
+  }
+
+  .rd-section-icon {
+    display: block;
+    font-size: 2rem;
+    margin-bottom: var(--sn-space-2, 0.5rem);
+  }
+
+  .rd-title {
+    font-family: var(--sn-font-rounded);
+    font-size: var(--sn-text-2xl, 1.5rem);
+    font-weight: 900;
+    color: var(--ink-900);
+    margin: 0 0 var(--sn-space-2, 0.5rem);
+    line-height: 1.3;
+  }
+
+  .rd-subtitle {
+    font-size: var(--sn-text-sm, 0.875rem);
+    color: var(--ink-500);
+    margin: 0;
+  }
+
+  /* ---- グループ（同グループ / クロス推薦） ---- */
+  .rd-group {
+    margin-bottom: var(--sn-space-8, 2rem);
+  }
+
+  .rd-group-title {
+    display: flex;
+    align-items: center;
+    gap: var(--sn-space-2, 0.5rem);
+    font-family: var(--sn-font-rounded);
+    font-size: var(--sn-text-base, 1rem);
+    font-weight: 700;
+    color: var(--ink-700);
+    margin: 0 0 var(--sn-space-4, 1rem);
+    padding-left: var(--sn-space-1, 0.25rem);
+  }
+
+  /* ---- カードグリッド ---- */
+  .rd-card-grid {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--sn-space-3, 0.75rem);
+  }
+
+  @media (min-width: 480px) {
+    .rd-card-grid {
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    }
+  }
+
+  .rd-card-item {
+    display: contents;
+  }
+
+  /* ---- カード本体 ---- */
+  .rd-card {
+    display: flex;
+    align-items: center;
+    gap: var(--sn-space-3, 0.75rem);
+    padding: var(--sn-space-4, 1rem);
+    background: var(--surface, #fff);
+    border: 1.5px solid var(--line);
+    border-radius: var(--radius-lg, 12px);
+    text-decoration: none;
+    min-height: 64px;
+    position: relative;
+    overflow: hidden;
+    transition:
+      border-color 150ms ease,
+      box-shadow 150ms ease,
+      transform 150ms ease;
+    /* 左アクセントボーダー */
+    border-left: 4px solid var(--rd-accent, var(--brand-400));
+  }
+
+  .rd-card:hover {
+    border-color: var(--rd-accent, var(--brand-400));
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    transform: translateY(-2px);
+    text-decoration: none;
+  }
+
+  .rd-card:focus-visible {
+    outline: 2px solid var(--rd-accent, var(--brand-400));
+    outline-offset: 3px;
+    border-radius: var(--radius-lg, 12px);
+  }
+
+  .rd-card-icon {
+    font-size: 1.75rem;
+    line-height: 1;
+    flex-shrink: 0;
+    width: 2.5rem;
+    text-align: center;
+  }
+
+  .rd-card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .rd-card-name {
+    display: flex;
+    align-items: center;
+    gap: var(--sn-space-2, 0.5rem);
+    font-size: var(--sn-text-sm, 0.875rem);
+    font-weight: 700;
+    color: var(--ink-900);
+    line-height: 1.4;
+    flex-wrap: wrap;
+  }
+
+  .rd-card-desc {
+    font-size: var(--sn-text-xs, 0.75rem);
+    color: var(--ink-500);
+    line-height: 1.5;
+    /* 2行で切る */
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .rd-card-arrow {
+    font-size: var(--sn-text-sm, 0.875rem);
+    color: var(--ink-400);
+    flex-shrink: 0;
+    transition: transform 150ms ease;
+  }
+
+  .rd-card:hover .rd-card-arrow {
+    transform: translateX(3px);
+    color: var(--rd-accent, var(--brand-500));
+  }
+
+  /* ---- バッジ ---- */
+  .rd-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 8px;
+    background: var(--brand-100, #efeaff);
+    color: var(--brand-700, #5435e8);
+    border-radius: 99px;
+    font-size: 0.65rem;
+    font-weight: 700;
+    white-space: nowrap;
+    line-height: 1.4;
+    letter-spacing: 0.02em;
+  }
+
+  /* ---- 統合プロファイル CTA ---- */
+  .rd-profile-cta {
+    background: linear-gradient(135deg, var(--brand-50, #f6f3ff) 0%, #e8f0ff 100%);
+    border: 1px solid var(--brand-200, #e0d8ff);
+    border-radius: var(--radius-xl, 16px);
+    padding: var(--sn-space-6, 1.5rem);
+    margin-bottom: var(--sn-space-4, 1rem);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .rd-profile-cta::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(50% 60% at 80% 20%, rgba(124,92,255,.06), transparent 60%);
+    pointer-events: none;
+  }
+
+  .rd-profile-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--sn-space-4, 1rem);
+    text-align: center;
+    position: relative;
+    z-index: 1;
+  }
+
+  @media (min-width: 640px) {
+    .rd-profile-inner {
+      flex-direction: row;
+      text-align: left;
+    }
+  }
+
+  .rd-profile-icon {
+    font-size: 2.5rem;
+    flex-shrink: 0;
+  }
+
+  .rd-profile-text {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .rd-profile-title {
+    font-family: var(--sn-font-rounded);
+    font-size: var(--sn-text-base, 1rem);
+    font-weight: 700;
+    color: var(--ink-900);
+    margin: 0 0 var(--sn-space-1, 0.25rem);
+    line-height: 1.4;
+  }
+
+  .rd-profile-desc {
+    font-size: var(--sn-text-xs, 0.75rem);
+    color: var(--ink-600, var(--ink-500));
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  .rd-profile-btn {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sn-space-2, 0.5rem);
+    min-height: 44px;
+    white-space: nowrap;
+  }
+
+  /* ---- 招待 CTA ---- */
+  .rd-invite-cta {
+    background: linear-gradient(135deg, #fff0f7 0%, #ffe4f2 100%);
+    border: 1px solid var(--d-love, #ff7ab3);
+    border-radius: var(--radius-xl, 16px);
+    padding: var(--sn-space-6, 1.5rem);
+  }
+
+  .rd-invite-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--sn-space-4, 1rem);
+    text-align: center;
+  }
+
+  @media (min-width: 640px) {
+    .rd-invite-inner {
+      flex-direction: row;
+      text-align: left;
+    }
+  }
+
+  .rd-invite-icon {
+    font-size: 2.5rem;
+    flex-shrink: 0;
+  }
+
+  .rd-invite-text {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .rd-invite-title {
+    font-family: var(--sn-font-rounded);
+    font-size: var(--sn-text-base, 1rem);
+    font-weight: 700;
+    color: var(--ink-900);
+    margin: 0 0 var(--sn-space-1, 0.25rem);
+    line-height: 1.4;
+  }
+
+  .rd-invite-desc {
+    font-size: var(--sn-text-xs, 0.75rem);
+    color: var(--ink-600, var(--ink-500));
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  .rd-invite-btn {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sn-space-2, 0.5rem);
+    min-height: 44px;
+    padding: var(--sn-space-3, 0.75rem) var(--sn-space-5, 1.25rem);
+    background: var(--d-love, #ff7ab3);
+    color: #fff;
+    font-family: var(--sn-font-rounded);
+    font-size: var(--sn-text-sm, 0.875rem);
+    font-weight: 700;
+    border-radius: 99px;
+    text-decoration: none;
+    white-space: nowrap;
+    transition:
+      background 150ms ease,
+      box-shadow 150ms ease,
+      transform 150ms ease;
+  }
+
+  .rd-invite-btn:hover {
+    background: #e85899;
+    box-shadow: 0 4px 12px rgba(255, 122, 179, 0.35);
+    transform: translateY(-1px);
+    text-decoration: none;
+    color: #fff;
+  }
+
+  .rd-invite-btn:focus-visible {
+    outline: 2px solid var(--d-love, #ff7ab3);
+    outline-offset: 3px;
+  }
+</style>

@@ -21,6 +21,7 @@ import Container from '../../../../components/Container.astro';
 import TldrBlock from '../../../../components/TldrBlock.astro';
 import ScienceNote from '../../../../components/ScienceNote.astro';
 import ReferenceList from '../../../../components/ReferenceList.astro';
+import RelatedDiagnoses from '../../../../components/RelatedDiagnoses.astro';
 
 const SITE_URL = 'https://shindan-navi.jp';
 const PAGE_URL = `${SITE_URL}/diagnosis/love-dependency/codependent/`;
@@ -538,6 +539,15 @@ const boundaryExamples = [
 
     <ReferenceList references={references} confirmedAt={UPDATED_AT} />
   </Container>
+
+  <RelatedDiagnoses
+    diagnosisId="love-dependency"
+    typeId="codependent"
+    diagnosisName="愛着スタイル診断"
+    typeName="共依存型"
+    pageUrl={PAGE_URL}
+    inviteHref={`/invite/?from=love-dependency&type=codependent`}
+  />
 </BaseLayout>
 
 <style>

@@ -19,6 +19,7 @@ import Container from '../../../../components/Container.astro';
 import TldrBlock from '../../../../components/TldrBlock.astro';
 import ScienceNote from '../../../../components/ScienceNote.astro';
 import ReferenceList from '../../../../components/ReferenceList.astro';
+import RelatedDiagnoses from '../../../../components/RelatedDiagnoses.astro';
 
 const SITE_URL = 'https://shindan-navi.jp';
 const PAGE_URL = `${SITE_URL}/diagnosis/love-dependency/anxious/`;
@@ -443,16 +444,6 @@ const selfCareItems = [
       </ul>
     </section>
 
-    {/* ========== 関連診断 ========== */}
-    <section class="an-section" aria-labelledby="an-related-h2">
-      <h2 id="an-related-h2" class="an-h2">関連する診断</h2>
-      <ul class="an-related-list">
-        <li><a href="/diagnosis/love-style/" class="an-related-link">恋愛スタイル診断（J.A.Lee 1973 理論）</a></li>
-        <li><a href="/diagnosis/mbti-compat/love/" class="an-related-link">MBTI恋愛相性診断</a></li>
-        <li><a href="/diagnosis/friend-compat/" class="an-related-link">友達相性診断</a></li>
-      </ul>
-    </section>
-
     {/* ========== Science Note ========== */}
     <ScienceNote
       basisText="Ainsworth MDS（1978）Patterns of Attachment / Hazan C, Shaver PR（1987）DOI: 10.1037/0022-3514.52.3.511 / Mikulincer M, Shaver PR（2007）Attachment in Adulthood に基づく自己理解参考情報。不安型愛着スタイルは成人の恋愛傾向の自己理解フレームワークであり、医学的診断カテゴリではありません。"
@@ -484,6 +475,15 @@ const selfCareItems = [
 
     <ReferenceList references={references} confirmedAt={UPDATED_AT} />
   </Container>
+
+  <RelatedDiagnoses
+    diagnosisId="love-dependency"
+    typeId="anxious"
+    diagnosisName="愛着スタイル診断"
+    typeName="不安型"
+    pageUrl={PAGE_URL}
+    inviteHref={`/invite/?from=love-dependency&type=anxious`}
+  />
 </BaseLayout>
 
 <style>
