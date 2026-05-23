@@ -1,0 +1,642 @@
+---
+/**
+ * /search/ - サイト内検索ページ
+ * WebSite SearchAction（SiteLinksSearchBox）の target として機能する。
+ * 実装: クライアントサイドフィルタ（静的ページリスト）
+ *   - ビルド時にページリストを埋め込み
+ *   - ?q= パラメータで絞り込み
+ *   - JS 無効時は全一覧表示
+ * 2026-05-23 新規作成（feat/website-searchaction）
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+// 全ページリスト（静的・クライアントサイドフィルタ用）
+// 新しい診断ページ追加時はここに追記する
+const ALL_PAGES = [
+  // ---- 診断 ----
+  {
+    title: '多重知能テスト（Howard Gardner理論）',
+    description: '8つの知能タイプで才能を発見。仕事・学習に活かせる心理学ベースの診断。',
+    url: '/diagnosis/multi-int/',
+    category: '診断',
+    tags: ['多重知能', '才能', '仕事', 'Howard Gardner', 'IQ'],
+  },
+  {
+    title: 'MBTI診断（16タイプ性格診断）',
+    description: '16タイプの性格を5軸で徹底分析。相性診断にも対応した本格的な性格分類。',
+    url: '/diagnosis/mbti/',
+    category: '診断',
+    tags: ['MBTI', '16タイプ', '性格', 'INFJ', 'ENTP', '相性'],
+  },
+  {
+    title: '血液型性格診断',
+    description: '日本独自×Big5換算で科学的に相性スコアを計算。A型・B型・O型・AB型。',
+    url: '/diagnosis/ketsuekigata/',
+    category: '診断',
+    tags: ['血液型', 'A型', 'B型', 'O型', 'AB型', '性格', '相性'],
+  },
+  {
+    title: 'DiSC診断（職場行動スタイル）',
+    description: '仕事・職場コミュニケーションに最強の4タイプ診断。リーダーシップ・協調性を分析。',
+    url: '/diagnosis/disc/',
+    category: '診断',
+    tags: ['DiSC', '仕事', '職場', 'リーダーシップ', 'コミュニケーション'],
+  },
+  {
+    title: '完璧主義タイプ診断',
+    description: '心理学CBTベース。完璧主義が強みか罠かを診断。ストレス対処にも活かせる。',
+    url: '/diagnosis/perfectionism/',
+    category: '診断',
+    tags: ['完璧主義', 'CBT', 'ストレス', '心理学'],
+  },
+  {
+    title: '恋愛スタイル診断（J.A.Lee理論）',
+    description: '6タイプの恋愛スタイルで相性を分析。情熱型・友情型・ゲーム型など。',
+    url: '/diagnosis/love-style/',
+    category: '診断',
+    tags: ['恋愛', '恋愛スタイル', '相性', 'Lee', '好き'],
+  },
+  {
+    title: '星座性格診断',
+    description: '西洋占星術×性格科学。エンタメ×サイエンスで12星座の特徴を解説。',
+    url: '/diagnosis/seiza/',
+    category: '診断',
+    tags: ['星座', '占い', '性格', '12星座', 'おひつじ座', 'おうし座'],
+  },
+  {
+    title: '金銭感覚診断',
+    description: '行動経済学ベース。お金の使い方タイプを分析。節約・浪費・投資志向を発見。',
+    url: '/diagnosis/money-sense/',
+    category: '診断',
+    tags: ['お金', '金銭感覚', '節約', '浪費', '投資', '行動経済学'],
+  },
+  {
+    title: '月1限定診断（PRO限定）',
+    description: 'PRO会員限定。毎月1日に新テーマを公開する特別診断。',
+    url: '/diagnosis/limited/',
+    category: '診断',
+    tags: ['PRO', '限定', '月額', 'プレミアム'],
+  },
+  // ---- 相性診断 ----
+  {
+    title: 'MBTI相性診断',
+    description: '2人のMBTIタイプを入力して恋愛・友人相性を診断。16タイプ×16タイプ全256パターン対応。',
+    url: '/aisei/mbti-compat/',
+    category: '相性診断',
+    tags: ['MBTI', '相性', '恋愛', '友人', '16タイプ'],
+  },
+  {
+    title: '血液型相性診断',
+    description: '血液型×Big5換算で2人の科学的相性スコアを算出。カップル・友人向け。',
+    url: '/aisei/blood-compat/',
+    category: '相性診断',
+    tags: ['血液型', '相性', 'カップル', '友人'],
+  },
+  {
+    title: '友達相性診断',
+    description: '友人との相性を多角的に診断。タイプ別アドバイスで関係を深める。',
+    url: '/aisei/friend-compat/',
+    category: '相性診断',
+    tags: ['友達', '相性', '友人', 'コミュニケーション'],
+  },
+  // ---- 強み発見 ----
+  {
+    title: '強み発見（8診断統合プロファイル）',
+    description: '8診断の結果を統合し、あなた固有の強みを発見。仕事・恋愛・人間関係で活かせる指針を提示。',
+    url: '/strengths/',
+    category: '強み発見',
+    tags: ['強み', 'プロファイル', '自己分析', '統合', 'Big5'],
+  },
+  // ---- PRO / 機能 ----
+  {
+    title: 'PRO機能（月額¥590）',
+    description: '月1限定診断・詳細レポート・広告非表示。自己理解をもっと深めたい方向け。',
+    url: '/pro/',
+    category: 'PRO',
+    tags: ['PRO', 'プレミアム', '月額', '有料'],
+  },
+  // ---- サイト情報 ----
+  {
+    title: '診断ナビについて',
+    description: '診断ナビの運営方針・心理学ベースの8診断統合アプローチ・編集部について。',
+    url: '/about/',
+    category: 'サイト情報',
+    tags: ['運営', 'about', '編集部', '方針'],
+  },
+  {
+    title: 'よくある質問（FAQ）',
+    description: 'アカウント・診断結果・料金・プライバシーなど、よくあるご質問と回答。',
+    url: '/faq/',
+    category: 'サイト情報',
+    tags: ['FAQ', 'よくある質問', 'Q&A', '使い方'],
+  },
+  {
+    title: '更新履歴（Changelog）',
+    description: '診断ナビの機能追加・改善・バグ修正の更新履歴。',
+    url: '/changelog/',
+    category: 'サイト情報',
+    tags: ['更新', 'changelog', 'リリース', '機能追加'],
+  },
+];
+
+// カテゴリ別カラー（デザイントークン準拠）
+const CATEGORY_COLOR: Record<string, string> = {
+  '診断': 'var(--brand-500)',
+  '相性診断': 'var(--d-love)',
+  '強み発見': 'var(--d-multi)',
+  'PRO': 'var(--d-money)',
+  'サイト情報': 'var(--ink-400)',
+};
+---
+
+<BaseLayout
+  title="診断を検索 - 診断ナビ"
+  description="MBTI・血液型・多重知能・DiSC・完璧主義・恋愛スタイル・星座・金銭感覚。8診断すべてをキーワードで検索できます。"
+  canonical="https://shindan-navi.jp/search/"
+  breadcrumbs={[{ name: '検索', url: '/search/' }]}
+  noindex={true}
+>
+  <div class="search-page">
+    <!-- ヒーローセクション -->
+    <section class="search-hero">
+      <div class="search-hero-inner">
+        <h1 class="search-title">
+          <svg class="search-icon-hero" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="11" cy="11" r="8"/>
+            <path d="m21 21-4.35-4.35"/>
+          </svg>
+          診断を検索
+        </h1>
+        <p class="search-subtitle">診断名・キーワードで絞り込む</p>
+
+        <!-- 検索フォーム -->
+        <form class="search-form" role="search" action="/search/" method="get">
+          <div class="search-input-wrap">
+            <svg class="search-input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="11" cy="11" r="8"/>
+              <path d="m21 21-4.35-4.35"/>
+            </svg>
+            <input
+              id="search-input"
+              type="search"
+              name="q"
+              class="search-input"
+              placeholder="例: MBTI, 恋愛, 仕事, 相性..."
+              autocomplete="off"
+              autocorrect="off"
+              autocapitalize="off"
+              spellcheck="false"
+              aria-label="診断を検索"
+            />
+            <button type="submit" class="search-submit" aria-label="検索">
+              検索
+            </button>
+          </div>
+        </form>
+
+        <!-- Google サイト内検索リンク -->
+        <p class="search-google-hint">
+          より詳しく探す:
+          <a
+            href="https://www.google.com/search?q=site:shindan-navi.jp+"
+            id="google-search-link"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="search-google-link"
+          >
+            Google でサイト内検索
+          </a>
+        </p>
+      </div>
+    </section>
+
+    <!-- 検索結果エリア -->
+    <section class="search-results-section">
+      <div class="search-results-inner">
+        <!-- 検索ステータス -->
+        <div id="search-status" class="search-status" aria-live="polite" aria-atomic="true">
+          全 <strong id="result-count">{ALL_PAGES.length}</strong> ページ
+        </div>
+
+        <!-- 結果リスト -->
+        <ul id="result-list" class="result-list" role="list">
+          {ALL_PAGES.map((page) => (
+            <li class="result-item" data-title={page.title} data-desc={page.description} data-tags={page.tags.join(' ')}>
+              <a href={page.url} class="result-link">
+                <div class="result-meta">
+                  <span
+                    class="result-category"
+                    style={`background: ${CATEGORY_COLOR[page.category] ?? 'var(--brand-500)'}22; color: ${CATEGORY_COLOR[page.category] ?? 'var(--brand-500)'};`}
+                  >
+                    {page.category}
+                  </span>
+                </div>
+                <h2 class="result-title">{page.title}</h2>
+                <p class="result-desc">{page.description}</p>
+                <span class="result-url">{page.url}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+
+        <!-- 0件メッセージ（JS が表示/非表示を制御）-->
+        <div id="no-results" class="no-results" hidden>
+          <p class="no-results-emoji" aria-hidden="true">&#x1F50D;</p>
+          <p class="no-results-text">「<strong id="no-results-query"></strong>」に一致する診断が見つかりません。</p>
+          <p class="no-results-hint">別のキーワードで試してみてください。</p>
+          <a
+            href="https://www.google.com/search?q=site:shindan-navi.jp+"
+            id="no-results-google-link"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="no-results-google-btn"
+          >
+            Google でサイト内を検索する
+          </a>
+        </div>
+      </div>
+    </section>
+  </div>
+</BaseLayout>
+
+<!--
+  クライアントサイド検索ロジック
+  - URLパラメータ ?q= を読み取り、即座にフィルタ
+  - input イベントでリアルタイムフィルタ
+  - JS 無効時: 全リスト表示（graceful degradation）
+-->
+<script is:inline>
+  (function () {
+    'use strict';
+
+    var input = document.getElementById('search-input');
+    var resultList = document.getElementById('result-list');
+    var resultCount = document.getElementById('result-count');
+    var searchStatus = document.getElementById('search-status');
+    var noResults = document.getElementById('no-results');
+    var noResultsQuery = document.getElementById('no-results-query');
+    var googleLink = document.getElementById('google-search-link');
+    var noResultsGoogleLink = document.getElementById('no-results-google-link');
+
+    if (!input || !resultList) return;
+
+    // Google 検索リンクに q パラメータを反映
+    function updateGoogleLinks(q) {
+      var encoded = encodeURIComponent(q || '');
+      var base = 'https://www.google.com/search?q=site:shindan-navi.jp+';
+      if (googleLink) googleLink.href = base + encoded;
+      if (noResultsGoogleLink) noResultsGoogleLink.href = base + encoded;
+    }
+
+    // フィルタ実行
+    function filterResults(q) {
+      var query = (q || '').trim().toLowerCase();
+      var items = resultList.querySelectorAll('.result-item');
+      var visible = 0;
+
+      items.forEach(function (item) {
+        var title = (item.dataset.title || '').toLowerCase();
+        var desc = (item.dataset.desc || '').toLowerCase();
+        var tags = (item.dataset.tags || '').toLowerCase();
+        var match = !query || title.indexOf(query) >= 0 || desc.indexOf(query) >= 0 || tags.indexOf(query) >= 0;
+
+        if (match) {
+          item.removeAttribute('hidden');
+          visible++;
+        } else {
+          item.setAttribute('hidden', '');
+        }
+      });
+
+      // カウント更新
+      if (resultCount) resultCount.textContent = String(visible);
+
+      // 0件メッセージ
+      if (visible === 0 && query) {
+        if (noResults) noResults.removeAttribute('hidden');
+        if (noResultsQuery) noResultsQuery.textContent = q;
+        if (resultList) resultList.setAttribute('hidden', '');
+      } else {
+        if (noResults) noResults.setAttribute('hidden', '');
+        if (resultList) resultList.removeAttribute('hidden');
+      }
+
+      updateGoogleLinks(q);
+    }
+
+    // URL パラメータから初期クエリ取得
+    var params = new URLSearchParams(window.location.search);
+    var initialQ = params.get('q') || '';
+    if (initialQ) {
+      input.value = initialQ;
+      filterResults(initialQ);
+    } else {
+      updateGoogleLinks('');
+    }
+
+    // リアルタイム入力フィルタ
+    input.addEventListener('input', function () {
+      filterResults(input.value);
+    });
+
+    // フォーム送信時: ページリロードせず JS でフィルタ（オプション・UX向上）
+    var form = input.closest('form');
+    if (form) {
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        var q = input.value.trim();
+        // URL を更新（ブラウザ履歴に残す）
+        var url = new URL(window.location.href);
+        url.searchParams.set('q', q);
+        window.history.replaceState(null, '', url.toString());
+        filterResults(q);
+      });
+    }
+  })();
+</script>
+
+<style>
+  /* ===================================================
+     /search/ ページ専用スタイル
+     デザイントークン準拠（design-tokens.css 参照）
+     =================================================== */
+
+  .search-page {
+    min-height: 60vh;
+  }
+
+  /* ---- ヒーロー ---- */
+  .search-hero {
+    background: linear-gradient(135deg, var(--brand-50) 0%, #f0edff 50%, #eae8ff 100%);
+    padding-block: 48px 40px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .search-hero-inner {
+    max-width: 640px;
+    margin-inline: auto;
+    padding-inline: 16px;
+    text-align: center;
+  }
+
+  .search-title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: var(--ink-900);
+    margin-bottom: 8px;
+    letter-spacing: -0.02em;
+  }
+
+  .search-icon-hero {
+    color: var(--brand-500);
+    flex-shrink: 0;
+  }
+
+  .search-subtitle {
+    font-size: 0.9375rem;
+    color: var(--ink-500);
+    margin-bottom: 24px;
+  }
+
+  /* ---- 検索フォーム ---- */
+  .search-form {
+    width: 100%;
+  }
+
+  .search-input-wrap {
+    display: flex;
+    align-items: center;
+    background: var(--surface);
+    border: 2px solid var(--line-2);
+    border-radius: var(--radius-pill);
+    padding: 6px 8px 6px 16px;
+    gap: 8px;
+    box-shadow: var(--shadow-md);
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .search-input-wrap:focus-within {
+    border-color: var(--brand-400);
+    box-shadow: 0 0 0 3px rgba(124, 92, 255, 0.12), var(--shadow-md);
+  }
+
+  .search-input-icon {
+    color: var(--ink-400);
+    flex-shrink: 0;
+  }
+
+  .search-input {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-size: 1rem;
+    font-family: inherit;
+    color: var(--ink-900);
+    background: transparent;
+    min-width: 0;
+    padding-block: 6px;
+  }
+
+  .search-input::placeholder {
+    color: var(--ink-300);
+  }
+
+  /* ネイティブ検索クリアボタン非表示 */
+  .search-input::-webkit-search-cancel-button {
+    -webkit-appearance: none;
+  }
+
+  .search-submit {
+    flex-shrink: 0;
+    background: var(--brand-500);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius-pill);
+    padding: 8px 20px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: background-color 0.15s ease, transform 0.1s ease;
+    white-space: nowrap;
+  }
+
+  .search-submit:hover {
+    background: var(--brand-600);
+  }
+
+  .search-submit:active {
+    transform: scale(0.97);
+  }
+
+  /* ---- Google 検索リンク ---- */
+  .search-google-hint {
+    margin-top: 12px;
+    font-size: 0.8125rem;
+    color: var(--ink-400);
+  }
+
+  .search-google-link {
+    color: var(--brand-500);
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .search-google-link:hover {
+    text-decoration: underline;
+  }
+
+  /* ---- 結果エリア ---- */
+  .search-results-section {
+    padding-block: 24px 64px;
+  }
+
+  .search-results-inner {
+    max-width: 720px;
+    margin-inline: auto;
+    padding-inline: 16px;
+  }
+
+  .search-status {
+    font-size: 0.875rem;
+    color: var(--ink-500);
+    margin-bottom: 16px;
+  }
+
+  /* ---- 結果リスト ---- */
+  .result-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .result-item {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    transition: box-shadow 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+  }
+
+  .result-item:hover {
+    box-shadow: var(--shadow-md);
+    border-color: var(--brand-300);
+    transform: translateY(-1px);
+  }
+
+  .result-link {
+    display: block;
+    padding: 16px 20px;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .result-link:hover {
+    text-decoration: none;
+  }
+
+  .result-meta {
+    margin-bottom: 6px;
+  }
+
+  .result-category {
+    display: inline-block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 2px 10px;
+    border-radius: var(--radius-pill);
+    letter-spacing: 0.02em;
+  }
+
+  .result-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--ink-900);
+    margin: 0 0 4px;
+    line-height: 1.4;
+  }
+
+  .result-item:hover .result-title {
+    color: var(--brand-600);
+  }
+
+  .result-desc {
+    font-size: 0.875rem;
+    color: var(--ink-500);
+    margin: 0 0 8px;
+    line-height: 1.55;
+  }
+
+  .result-url {
+    font-size: 0.75rem;
+    color: var(--brand-400);
+    font-family: 'Inter', monospace;
+  }
+
+  /* ---- 0件メッセージ ---- */
+  .no-results {
+    text-align: center;
+    padding-block: 48px;
+    color: var(--ink-500);
+  }
+
+  .no-results-emoji {
+    font-size: 3rem;
+    margin-bottom: 12px;
+    line-height: 1;
+  }
+
+  .no-results-text {
+    font-size: 1rem;
+    color: var(--ink-700);
+    margin-bottom: 8px;
+  }
+
+  .no-results-hint {
+    font-size: 0.875rem;
+    color: var(--ink-400);
+    margin-bottom: 20px;
+  }
+
+  .no-results-google-btn {
+    display: inline-block;
+    background: var(--brand-500);
+    color: #fff;
+    text-decoration: none;
+    padding: 10px 24px;
+    border-radius: var(--radius-pill);
+    font-size: 0.875rem;
+    font-weight: 600;
+    transition: background-color 0.15s ease;
+  }
+
+  .no-results-google-btn:hover {
+    background: var(--brand-600);
+    text-decoration: none;
+  }
+
+  /* ---- モバイル調整 ---- */
+  @media (max-width: 480px) {
+    .search-hero {
+      padding-block: 32px 28px;
+    }
+
+    .search-title {
+      font-size: 1.5rem;
+    }
+
+    .search-submit {
+      padding: 8px 14px;
+    }
+
+    .result-link {
+      padding: 14px 16px;
+    }
+  }
+</style>
