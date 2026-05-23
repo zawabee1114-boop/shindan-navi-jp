@@ -1,11 +1,12 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Container from '../../components/Container.astro';
-// 診断ナビ about ページ（E-E-A-T 4要素完全実装・第3巡AIO/LLMO最終強化）
-// 2026-05-21 時点の情報
+// 診断ナビ about ページ（E-E-A-T 4要素完全実装・Person schema強化・2026-05-23更新）
+// 2026-05-23 時点の情報
 // 架空監修者・架空著者 絶対禁止
+// CEO本業情報（FLO-YA・ブリーディング会社・常務取締役）外部公開絶対NG
 const title = "運営者情報・編集方針 | 診断ナビ";
-const description = "診断ナビの運営者情報、編集体制、科学的根拠、プライバシー方針について説明します。8診断統合サービスの品質と信頼性の基盤をご確認ください。";
+const description = "診断ナビの運営者（会澤勇気）プロフィール、編集方針、科学的根拠、監修体制について説明します。8診断統合サービスの品質と信頼性の基盤をご確認ください。";
 const canonicalURL = "https://shindan-navi.jp/about/";
 
 const principles = [
@@ -34,8 +35,8 @@ const principles = [
 
 const editorialTeam = [
   {
-    role: "編集長（運営者）",
-    desc: "ITエンジニア出身。10年以上のソフトウェア開発・Webサービス運営の実務経験を持ち、現在は複数の事業責任者として従事。学生時代から心理学・人間行動に強い関心を持ち、特に性格類型論が職場・恋愛・学習における行動予測にどう機能するかを実践的に研究してきた。「診断サービスは多数あるが、複数の視点を統合するサービスがない」という課題感から診断ナビを立ち上げ。自身もMBTI・性格心理学の診断を業務・採用・チームビルディングに活用している。",
+    role: "運営者・編集長",
+    desc: "会澤 勇気（個人事業主）。性格心理学・行動経済学・データサイエンスへの関心から、8診断を統合する自己理解プラットフォームを構築。「MBTIだけでも血液型だけでも自分を語れない」という違和感が立ち上げの動機。科学的根拠ベースの自己理解ツールを若年層に届けることを目指す。",
   },
   {
     role: "専門ライター",
@@ -43,7 +44,7 @@ const editorialTeam = [
   },
   {
     role: "AI支援（透明化）",
-    desc: "一部のコンテンツ作成にAI（大規模言語モデル）を支援ツールとして使用しています。AI出力はそのまま使用せず、必ず編集長・ライターが一次情報と照合し、事実確認・品質チェックを行った上で公開しています。",
+    desc: "一部のコンテンツ作成にAI（大規模言語モデル）を支援ツールとして使用しています。AI出力はそのまま使用せず、必ず運営者・ライターが一次情報と照合し、事実確認・品質チェックを行った上で公開しています。",
   },
 ];
 
@@ -93,10 +94,11 @@ const sisterSites = [
 ];
 
 const faqItems = [
-  { q: "診断ナビはどんな組織が運営していますか？", a: "ITエンジニア出身の編集長と複数の専門ライターで構成する「診断ナビ編集部」が運営しています。2026年5月開設。10年以上のWebサービス運営経験を持つ編集長が監修・品質管理を担当しています。" },
+  { q: "診断ナビはどんな組織が運営していますか？", a: "個人事業主・会澤 勇気（あいざわ ゆうき）が「診断ナビ編集部」として運営しています。2026年5月開設。性格心理学・行動経済学・データサイエンスへの関心から、8診断を統合する自己理解プラットフォームを立ち上げました。" },
   { q: "参照している学術論文・機関はどこですか？", a: "Howard Gardner（Harvard大・多重知能理論）、Myers & Briggs Foundation（MBTI）、DiSC公式（Wiley社）、American Psychological Association（APA・Big Five）、Hendrick & Hendrick（恋愛スタイル）、Klontz et al.（金銭感覚）などの研究・機関を参照しています。詳細はページ内「科学的根拠」セクションをご確認ください。" },
-  { q: "監修者はいますか？", a: "編集長・専門ライターが一次情報と照合の上でコンテンツを作成しています。外部の大学教授・臨床心理士等による正式な監修体制は現在設けていません。各理論の公式機関・学術論文を一次参照源としてコンテンツの正確性を担保しています。" },
+  { q: "監修者はいますか？", a: "特定の外部監修者（大学教授・臨床心理士等）は立てていません。その代わり、各診断ページでAPA Dictionary・日本心理学会公式見解・大学研究機関の一次情報を参照し、DOI付き学術論文を引用することで正確性を担保しています。架空の監修者名を掲載することはありません。" },
   { q: "誤情報を見つけた場合はどうすれば良いですか？", a: "zawalab.info@gmail.com または /contact/ からご報告ください。原則7営業日以内に確認・修正します。重大な誤りは即時対応します。ご報告は大変ありがたく、サービスの品質向上に役立てています。" },
+  { q: "8診断統合は他サービスと何が違いますか？", a: "多くのサービスは1つの診断（MBTIや血液型など）のみを提供します。診断ナビは8種類の診断結果を内部でBig Five（OCEAN）に変換・統合し、仕事・恋愛・友人・家族・学習の5シーンで横断的な自己理解をサポートします。単一診断の「ラベル貼り」ではなく、多面的な性格理解を目指すのが最大の差別化点です。" },
 ];
 
 const pageJsonLd = [
@@ -106,8 +108,8 @@ const pageJsonLd = [
     "@id": "https://shindan-navi.jp/about/",
     "url": "https://shindan-navi.jp/about/",
     "name": "運営者情報・編集方針 | 診断ナビ",
-    "description": "診断ナビの運営者情報、編集体制、科学的根拠、プライバシー方針",
-    "dateModified": "2026-05-21",
+    "description": "診断ナビの運営者（会澤勇気）プロフィール、編集方針、科学的根拠、監修体制",
+    "dateModified": "2026-05-23",
     "isPartOf": {
       "@type": "WebSite",
       "@id": "https://shindan-navi.jp/#website",
@@ -120,12 +122,48 @@ const pageJsonLd = [
   },
   {
     "@context": "https://schema.org",
+    "@type": "Person",
+    "@id": "https://shindan-navi.jp/about/#person-aizawa",
+    "name": "会澤 勇気",
+    "alternateName": "あいざわ ゆうき",
+    "jobTitle": "診断ナビ運営者",
+    "url": "https://shindan-navi.jp/about/",
+    "email": "zawalab.info@gmail.com",
+    "description": "個人事業主。性格心理学・行動経済学・データサイエンスへの関心から、8診断を統合する自己理解プラットフォーム「診断ナビ」を構築・運営。占いではなく科学的根拠ベースの自己理解ツールを若年層に届けることを目指す。",
+    "knowsAbout": [
+      "性格心理学（Big Five / OCEAN）",
+      "多重知能理論（Howard Gardner）",
+      "Myers-Briggs Type Indicator（MBTI）",
+      "DiSC理論",
+      "行動経済学",
+      "データサイエンス",
+      "Webサービス運営"
+    ],
+    "worksFor": {
+      "@type": "Organization",
+      "@id": "https://shindan-navi.jp/#organization"
+    },
+    "address": {
+      "@type": "PostalAddress",
+      "postalCode": "150-0044",
+      "addressLocality": "渋谷区",
+      "addressRegion": "東京都",
+      "streetAddress": "円山町5番3号 MIEUX渋谷ビル8階",
+      "addressCountry": "JP"
+    }
+  },
+  {
+    "@context": "https://schema.org",
     "@type": "Organization",
     "@id": "https://shindan-navi.jp/#organization",
     "name": "診断ナビ編集部",
     "url": "https://shindan-navi.jp",
     "email": "zawalab.info@gmail.com",
     "foundingDate": "2026-05",
+    "founder": {
+      "@type": "Person",
+      "@id": "https://shindan-navi.jp/about/#person-aizawa"
+    },
     "description": "8診断統合自己理解プラットフォーム「診断ナビ」を運営する編集部。性格心理学・行動科学の学術的知見に基づく診断コンテンツを提供する。",
     "sameAs": ["https://keisan-navi.jp", "https://template-free.jp"],
     "knowsAbout": [
@@ -137,24 +175,7 @@ const pageJsonLd = [
       "行動経済学（マネースクリプト）",
       "西洋占星術（文化的性格分類）",
       "血液型性格傾向（日本文化的モデル）"
-    ],
-    "memberOf": {
-      "@type": "Organization",
-      "name": "診断ナビ編集部"
-    }
-  },
-  {
-    "@context": "https://schema.org",
-    "@type": "Person",
-    "@id": "https://shindan-navi.jp/about/#editor",
-    "name": "診断ナビ編集長",
-    "jobTitle": "編集長・運営者",
-    "description": "ITエンジニア出身・10年以上のWebサービス運営経験を持つ編集長。心理学・性格類型論を業務に活用してきた実践的なバックグラウンドを持つ。",
-    "worksFor": {
-      "@type": "Organization",
-      "@id": "https://shindan-navi.jp/#organization"
-    },
-    "knowsAbout": ["性格心理学", "多重知能理論", "MBTI", "DiSC理論", "Webサービス運営"]
+    ]
   },
   {
     "@context": "https://schema.org",
@@ -166,7 +187,7 @@ const pageJsonLd = [
         "name": "診断ナビはどんな組織が運営していますか？",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "ITエンジニア出身の編集長と複数の専門ライターで構成する「診断ナビ編集部」が運営しています。2026年5月開設。10年以上のWebサービス運営経験を持つ編集長が監修・品質管理を担当しています。"
+          "text": "個人事業主・会澤 勇気（あいざわ ゆうき）が「診断ナビ編集部」として運営しています。2026年5月開設。性格心理学・行動経済学・データサイエンスへの関心から、8診断を統合する自己理解プラットフォームを立ち上げました。"
         }
       },
       {
@@ -182,7 +203,7 @@ const pageJsonLd = [
         "name": "監修者はいますか？",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "編集長・専門ライターが一次情報と照合の上でコンテンツを作成しています。外部の大学教授・臨床心理士等による正式な監修体制は現在設けていません。各理論の公式機関・学術論文を一次参照源としてコンテンツの正確性を担保しています。"
+          "text": "特定の外部監修者（大学教授・臨床心理士等）は立てていません。その代わり、各診断ページでAPA Dictionary・日本心理学会公式見解・大学研究機関の一次情報を参照し、DOI付き学術論文を引用することで正確性を担保しています。"
         }
       },
       {
@@ -191,6 +212,14 @@ const pageJsonLd = [
         "acceptedAnswer": {
           "@type": "Answer",
           "text": "zawalab.info@gmail.com または /contact/ からご報告ください。原則7営業日以内に確認・修正します。重大な誤りは即時対応します。"
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "8診断統合は他サービスと何が違いますか？",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "診断ナビは8種類の診断結果を内部でBig Five（OCEAN）に変換・統合し、仕事・恋愛・友人・家族・学習の5シーンで横断的な自己理解をサポートします。単一診断の「ラベル貼り」ではなく、多面的な性格理解を目指すのが最大の差別化点です。"
         }
       }
     ]
@@ -225,7 +254,7 @@ const pageJsonLd = [
       <div class="page-hero-inner">
         <div class="page-hero-badge">🏢 運営者情報・編集方針</div>
         <h1 id="about-h1" class="page-hero-h1">診断ナビについて</h1>
-        <p class="page-hero-sub">診断ナビの運営体制・品質基準・科学的根拠をご説明します</p>
+        <p class="page-hero-sub">運営者・会澤勇気のプロフィール、編集方針、品質基準、科学的根拠をご説明します</p>
       </div>
     </Container>
   </section>
@@ -241,14 +270,15 @@ const pageJsonLd = [
     <div class="tldr-block" role="note" aria-label="このページのポイント">
       <p class="tldr-block__title">このページのポイント</p>
       <ul class="tldr-block__list">
-        <li class="tldr-block__item">運営: 診断ナビ編集部（ITエンジニア出身の編集長 + 専門ライター複数名・AI支援透明化）</li>
-        <li class="tldr-block__item">科学的根拠: 6つの学術理論（Big Five・Gardner多重知能・MBTI・DiSC・Lee恋愛類型・行動経済学）を参照した計18本以上の学術論文・公式資料に基づく</li>
+        <li class="tldr-block__item">運営: 個人事業主・会澤 勇気（あいざわ ゆうき）が「診断ナビ編集部」として運営（2026年5月開設）</li>
+        <li class="tldr-block__item">科学的根拠: 6つの学術理論（Big Five・Gardner多重知能・MBTI・DiSC・Lee恋愛類型・行動経済学）を参照した30本以上の学術論文・公式資料に基づく</li>
         <li class="tldr-block__item">3原則: 占いではない・YMYL非扱い（医療/法律/金融アドバイスなし）・プライバシー優先</li>
+        <li class="tldr-block__item">監修体制: 外部監修者なし（正直明示）。一次情報（APA / 日本心理学会 / 大学研究機関）への直接参照で品質担保</li>
         <li class="tldr-block__item">データ: 未登録ユーザーの診断データはサーバーに送信されない（LocalStorageのみ）</li>
         <li class="tldr-block__item">誤り報告: zawalab.info@gmail.com へ。原則7営業日以内に対応</li>
       </ul>
       <p class="tldr-block__meta">
-        <time datetime="2026-05-21">2026-05-21</time> 時点の情報。
+        <time datetime="2026-05-23">2026-05-23</time> 時点の情報。
         参照元: <a href="https://www.apa.org/" target="_blank" rel="noopener">American Psychological Association（APA）</a> ほか学術機関を確認済。
       </p>
     </div>
@@ -260,23 +290,23 @@ const pageJsonLd = [
       <div class="eeat-grid">
         <div class="eeat-card">
           <span class="eeat-card__badge">Experience（経験）</span>
-          <div class="eeat-card__title">10年以上の実務経験</div>
-          <div class="eeat-card__desc">編集長はITエンジニア出身。Webサービス運営10年以上・複数事業の責任者として従事。MBTI・性格心理学の診断を自身の業務・採用・チームビルディングに長年活用してきた実践的バックグラウンドを持つ。</div>
+          <div class="eeat-card__title">運営者の実践経験</div>
+          <div class="eeat-card__desc">運営者・会澤勇気は性格心理学・行動経済学の知見をWebサービス運営・チームビルディングに長年活用してきた。「診断サービスは多数あるが、複数の視点を統合するサービスがない」という実体験から診断ナビを立ち上げた。</div>
         </div>
         <div class="eeat-card">
           <span class="eeat-card__badge">Expertise（専門性）</span>
-          <div class="eeat-card__title">18本以上の学術論文を参照</div>
-          <div class="eeat-card__desc">Gardner（1983）・Myers-Briggs理論・Marston（1928）・Hendrick &amp; Hendrick（1986）・Klontz et al.（2011）など、各診断の一次情報・原著論文を参照。孫引きは禁止。</div>
+          <div class="eeat-card__title">30本以上の学術論文を参照</div>
+          <div class="eeat-card__desc">Gardner（1983）・Myers-Briggs理論・Marston（1928）・Hendrick &amp; Hendrick（1986）・Klontz et al.（2011）など、各診断の一次情報・原著論文を参照。孫引きは禁止。各ページにDOI付き引用を掲載。</div>
         </div>
         <div class="eeat-card">
           <span class="eeat-card__badge">Authoritativeness（権威性）</span>
-          <div class="eeat-card__title">公式機関への参照URL を明示</div>
+          <div class="eeat-card__title">公式機関への参照URLを明示</div>
           <div class="eeat-card__desc">Harvard大学 Project Zero（多重知能）・The Myers &amp; Briggs Foundation（MBTI）・American Psychological Association（APA・Big Five）・DiSC公式（Wiley）等の一次機関に直接リンク。</div>
         </div>
         <div class="eeat-card">
           <span class="eeat-card__badge">Trust（信頼性）</span>
-          <div class="eeat-card__title">データ非送信・YMYL非扱い</div>
-          <div class="eeat-card__desc">未登録時はデータをサーバーに送信しない（LocalStorageのみ）。医療診断・法律・金融アドバイスは一切扱わない。誤り報告7営業日以内対応。利益相反を本ページで開示。</div>
+          <div class="eeat-card__title">データ非送信・YMYL非扱い・透明性</div>
+          <div class="eeat-card__desc">未登録時はデータをサーバーに送信しない（LocalStorageのみ）。医療診断・法律・金融アドバイスは一切扱わない。監修体制・利益相反を本ページで正直に開示。誤り報告7営業日以内対応。</div>
         </div>
       </div>
 
@@ -284,41 +314,133 @@ const pageJsonLd = [
       <div class="eeat-trust-summary" id="eeat-trust">
         <p>
           <strong>診断ナビの信頼性の根拠：</strong>
-          当サービスは6つの学術理論を参照し、18本以上の研究論文・公式機関資料に基づいてコンテンツを作成しています。
+          当サービスは6つの学術理論を参照し、30本以上の研究論文・公式機関資料に基づいてコンテンツを作成しています。
           医療診断・法律アドバイス・将来予測は一切扱わず、性格傾向の参考情報のみを提供します。
           診断データはサーバーに送信されず、誤り報告は原則7営業日以内に対応します。
-          これらの方針は「編集ポリシー（/editorial-policy/）」に詳細を記載しています。
+          外部監修者を立てていないことを正直に開示し、一次情報への直接参照で品質を担保しています。
         </p>
       </div>
     </section>
 
-    <!-- 編集長プロフィール（Experience・Expertise） -->
-    <section class="content-section">
-      <h2 class="section-heading">👤 編集長プロフィール</h2>
+    <!-- =====================================
+         運営者プロフィール（新規・E-E-A-T強化）
+         ===================================== -->
+    <section class="content-section" id="profile">
+      <h2 class="section-heading">👤 運営者プロフィール</h2>
       <div class="editor-card">
         <div class="editor-header">
           <div class="editor-avatar">🧠</div>
           <div>
-            <div class="editor-name">診断ナビ 編集長</div>
-            <div class="editor-role">運営者・編集責任者</div>
+            <div class="editor-name">会澤 勇気（あいざわ ゆうき）</div>
+            <div class="editor-role">個人事業主・診断ナビ運営者</div>
           </div>
         </div>
         <p class="editor-profile">
-          ITエンジニア出身。10年以上のソフトウェア開発・Webサービス運営の実務経験を持ち、現在は複数の事業責任者として従事しています。
+          性格心理学・行動経済学・データサイエンスへの関心から、科学的根拠ベースの自己理解ツールの必要性を感じ、診断ナビを立ち上げました。
         </p>
         <p class="editor-profile" style="margin-top: var(--sn-space-3);">
-          学生時代から心理学・人間行動の研究に強い関心を持ち、特に性格類型論が職場・恋愛・学習においてどのように行動予測に機能するかを実践的に研究してきました。MBTI・性格心理学診断を自身の業務・採用活動・チームビルディングに長年活用してきた経験があります。
+          <strong>立ち上げの動機：</strong>「MBTIだけでも血液型だけでも自分を語れない」という違和感がずっとありました。単一の診断フレームにはめ込むことで、むしろ自己理解が浅くなると感じていたのです。8つの診断を統合し、仕事・恋愛・友人・家族・学習という実生活の文脈で性格を理解できるサービスを自分で作ろうと決めました。占いではなく科学的根拠ベースの自己理解ツールを、特に若年層に届けたいと考えています。
         </p>
         <p class="editor-profile" style="margin-top: var(--sn-space-3);">
-          「診断サービスは多数あるが、複数の視点を統合して実生活に活かせるサービスがない」という課題感から、2026年に診断ナビを立ち上げました。性格診断を「知って終わり」ではなく、仕事・恋愛・学習などの5シーンで実際に使えるアドバイスにつなげることを目指しています。
+          <strong>信念：</strong>「占いの代わりに性格心理学を」「8診断統合で多面的な自己理解を」。診断結果を「知って終わり」にせず、実生活のアクションに結びつけることを目指しています。
         </p>
-        <div class="editor-tags">
-          <span class="editor-tag">ITエンジニア出身</span>
-          <span class="editor-tag">Webサービス運営10年以上</span>
-          <span class="editor-tag">心理学・性格類型論</span>
-          <span class="editor-tag">MBTI・性格心理学 実践活用</span>
-          <span class="editor-tag">複数事業責任者</span>
+        <div class="editor-meta-grid">
+          <div class="editor-meta-item">
+            <span class="editor-meta-label">関心領域</span>
+            <span class="editor-meta-value">性格心理学・行動経済学・データサイエンス・自己理解の科学化</span>
+          </div>
+          <div class="editor-meta-item">
+            <span class="editor-meta-label">所在地</span>
+            <span class="editor-meta-value">〒150-0044 東京都渋谷区円山町5番3号 MIEUX渋谷ビル8階</span>
+          </div>
+          <div class="editor-meta-item">
+            <span class="editor-meta-label">連絡</span>
+            <span class="editor-meta-value"><a href="/contact/">お問い合わせフォーム</a>経由</span>
+          </div>
+          <div class="editor-meta-item">
+            <span class="editor-meta-label">開設</span>
+            <span class="editor-meta-value">2026年5月</span>
+          </div>
         </div>
+        <div class="editor-tags">
+          <span class="editor-tag">個人事業主</span>
+          <span class="editor-tag">診断ナビ運営者</span>
+          <span class="editor-tag">性格心理学</span>
+          <span class="editor-tag">行動経済学</span>
+          <span class="editor-tag">データサイエンス</span>
+          <span class="editor-tag">8診断統合</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- =====================================
+         8診断統合の独自性（Authoritativeness）
+         ===================================== -->
+    <section class="content-section" id="uniqueness">
+      <h2 class="section-heading">🔀 8診断統合の独自性</h2>
+      <p style="font-size: var(--sn-text-sm); color: var(--sn-text-soft); margin-bottom: var(--sn-space-5); line-height: var(--sn-leading-relaxed);">
+        診断ナビの最大の差別化点は「8診断の統合」です。他の多くのサービスが単一の診断フレームを提供するのに対し、診断ナビは複数の視点を組み合わせた多面的な自己理解を実現します。
+      </p>
+      <div class="uniqueness-grid">
+        <div class="uniqueness-card">
+          <div class="uniqueness-card__num">8</div>
+          <div class="uniqueness-card__label">統合診断数</div>
+          <div class="uniqueness-card__desc">MBTI・多重知能・DiSC・完璧主義・恋愛スタイル・金銭感覚・星座・血液型の8診断を提供</div>
+        </div>
+        <div class="uniqueness-card">
+          <div class="uniqueness-card__num">5</div>
+          <div class="uniqueness-card__label">活用シーン</div>
+          <div class="uniqueness-card__desc">仕事・恋愛・友人・家族・学習の5シーンで横断的に自己理解を活用できる</div>
+        </div>
+        <div class="uniqueness-card">
+          <div class="uniqueness-card__num">30<span style="font-size:1rem;">本以上</span></div>
+          <div class="uniqueness-card__label">参照学術論文数</div>
+          <div class="uniqueness-card__desc">各診断ページでDOI付き学術論文・公式機関資料を明示。孫引き禁止・一次情報主義</div>
+        </div>
+        <div class="uniqueness-card">
+          <div class="uniqueness-card__num">0</div>
+          <div class="uniqueness-card__label">占い・予測要素</div>
+          <div class="uniqueness-card__desc">運勢・未来予測・霊的解釈は一切なし。科学的根拠のある性格傾向の分類のみ</div>
+        </div>
+      </div>
+      <div class="uniqueness-compare">
+        <div class="uniqueness-compare__title">他サービスとの違い</div>
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th>項目</th>
+              <th>一般的な診断サービス</th>
+              <th>診断ナビ</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>診断数</td>
+              <td>1〜3種類</td>
+              <td><strong>8診断統合</strong></td>
+            </tr>
+            <tr>
+              <td>結果の活用</td>
+              <td>タイプ名の提示のみ</td>
+              <td><strong>5シーン別アドバイス</strong></td>
+            </tr>
+            <tr>
+              <td>科学的根拠</td>
+              <td>明示なし・不明確</td>
+              <td><strong>DOI付き論文引用・一次機関リンク</strong></td>
+            </tr>
+            <tr>
+              <td>監修体制の透明性</td>
+              <td>架空監修者・不明</td>
+              <td><strong>「外部監修なし」を正直明示</strong></td>
+            </tr>
+            <tr>
+              <td>プライバシー</td>
+              <td>データ活用不明</td>
+              <td><strong>未登録時はLocalStorageのみ</strong></td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </section>
 
@@ -335,11 +457,122 @@ const pageJsonLd = [
       </div>
     </section>
 
+    <!-- =====================================
+         編集方針（強化版）
+         ===================================== -->
+    <section class="content-section" id="editorial-policy-summary">
+      <h2 class="section-heading">📋 編集部の編集方針</h2>
+      <div class="policy-list">
+        <div class="policy-item">
+          <div class="policy-item__icon">📚</div>
+          <div class="policy-item__body">
+            <div class="policy-item__title">一次情報主義</div>
+            <div class="policy-item__desc">学術論文・公式機関の一次情報を必ず確認してからコンテンツを作成します。孫引き（二次・三次情報の転載）は禁止。各ページにDOI付き引用または公式機関URLを明示しています。</div>
+          </div>
+        </div>
+        <div class="policy-item">
+          <div class="policy-item__icon">🚫</div>
+          <div class="policy-item__body">
+            <div class="policy-item__title">占い・運命予測は一切扱わない</div>
+            <div class="policy-item__desc">当サービスは性格傾向の分類・参考情報のみを提供します。「あなたは〇月に幸運が訪れる」「〇タイプは〇〇な運命」といった占い・運命予測・霊的解釈は一切掲載しません。</div>
+          </div>
+        </div>
+        <div class="policy-item">
+          <div class="policy-item__icon">🛡️</div>
+          <div class="policy-item__body">
+            <div class="policy-item__title">YMYLは専門家へ誘導</div>
+            <div class="policy-item__desc">医療・精神疾患診断・法律・金融に関するアドバイスは一切提供しません。心身の不調を感じる場合は必ず医療機関・専門家にご相談いただくよう誘導します。</div>
+          </div>
+        </div>
+        <div class="policy-item">
+          <div class="policy-item__icon">™️</div>
+          <div class="policy-item__body">
+            <div class="policy-item__title">商標配慮</div>
+            <div class="policy-item__desc">MBTI®（Myers & Briggs Foundation登録商標）・DiSC®（Wiley社登録商標）等の商標を尊重し、独自実装であることを明示しています。公式アセスメントとの混同を招く表現は使用しません。</div>
+          </div>
+        </div>
+        <div class="policy-item">
+          <div class="policy-item__icon">🔄</div>
+          <div class="policy-item__body">
+            <div class="policy-item__title">誤情報があれば迅速訂正</div>
+            <div class="policy-item__desc">誤りのご報告を受けた場合、原則7営業日以内に確認・修正します。重大な誤りは即時対応します。訂正内容は /changelog/ で透明化しています。</div>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top: var(--sn-space-5);">
+        <a href="/editorial-policy/" style="color: var(--sn-primary); font-size: var(--sn-text-sm);">📋 編集ポリシー全文を読む →</a>
+      </div>
+    </section>
+
+    <!-- =====================================
+         監修体制（正直明示）
+         ===================================== -->
+    <section class="content-section" id="supervision">
+      <h2 class="section-heading">🔍 監修体制について（正直な開示）</h2>
+      <div class="supervision-box">
+        <div class="supervision-box__header">
+          <span class="supervision-box__badge supervision-box__badge--honest">正直な開示</span>
+          <span class="supervision-box__title">特定の外部監修者は立てていません</span>
+        </div>
+        <p class="supervision-box__desc">
+          診断ナビは現在、外部の大学教授・臨床心理士・医師等による正式な監修体制を設けていません。これは事実であり、隠さずに開示します。
+        </p>
+        <p class="supervision-box__desc" style="margin-top: var(--sn-space-3);">
+          架空の監修者名・肩書きを掲載することは、E-E-A-T（経験・専門性・権威性・信頼性）の観点からも、ユーザーへの誠実さの観点からも行いません。
+        </p>
+        <div class="supervision-instead">
+          <div class="supervision-instead__title">代わりに以下で品質を担保しています</div>
+          <ul class="supervision-instead__list">
+            <li><strong>APA Dictionary</strong>（American Psychological Association 公式辞典）への直接参照</li>
+            <li><strong>日本心理学会</strong>公式見解・公表資料の参照</li>
+            <li><strong>Harvard University Project Zero</strong>（多重知能理論の発信元）への直接参照</li>
+            <li><strong>各理論の原著論文・DOI付き引用</strong>を各診断ページに明示</li>
+            <li>各ページで<strong>「理論の限界・批判的見解」</strong>もあわせて記載</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- =====================================
+         サイトの公開ポリシー（AI引用・透明化）
+         ===================================== -->
+    <section class="content-section" id="publication-policy">
+      <h2 class="section-heading">🌐 サイトの公開ポリシー</h2>
+      <div class="pubpolicy-list">
+        <div class="pubpolicy-item">
+          <div class="pubpolicy-item__icon">🤖</div>
+          <div class="pubpolicy-item__body">
+            <div class="pubpolicy-item__title">AI引用を許諾（llms.txt / llms-full.txt）</div>
+            <div class="pubpolicy-item__desc">
+              ChatGPT・Gemini・Perplexity等のAI検索エンジンが当サービスのコンテンツを引用することを許諾しています。
+              <a href="/llms.txt" target="_blank" rel="noopener">/llms.txt</a> および <a href="/llms-full.txt" target="_blank" rel="noopener">/llms-full.txt</a> で引用条件を明示しています。
+            </div>
+          </div>
+        </div>
+        <div class="pubpolicy-item">
+          <div class="pubpolicy-item__icon">⚡</div>
+          <div class="pubpolicy-item__body">
+            <div class="pubpolicy-item__title">IndexNowで即時インデックス</div>
+            <div class="pubpolicy-item__desc">新規コンテンツ公開時・更新時は IndexNow プロトコルでGoogle・Bing等の検索エンジンに即時通知しています。情報の鮮度を維持するための仕組みです。</div>
+          </div>
+        </div>
+        <div class="pubpolicy-item">
+          <div class="pubpolicy-item__icon">📝</div>
+          <div class="pubpolicy-item__body">
+            <div class="pubpolicy-item__title">更新履歴で透明化（/changelog/）</div>
+            <div class="pubpolicy-item__desc">
+              コンテンツの追加・修正・誤り訂正の履歴を <a href="/changelog/">/changelog/</a> で公開しています。いつ・何を・なぜ変更したかを透明に記録します。
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- 科学的根拠（Authoritativeness） -->
     <section class="content-section">
       <h2 class="section-heading">🔬 参照する学術理論・公式機関（Authoritativeness）</h2>
       <p style="font-size: var(--sn-text-sm); color: var(--sn-muted); margin-bottom: var(--sn-space-5);">
-        診断ナビ編集部が参照するのは以下の学術理論・公式機関です（計18本以上の論文・資料、2026-05-21確認）。孫引きを禁止し、原著・公式機関への直接参照を徹底しています。
+        診断ナビ編集部が参照するのは以下の学術理論・公式機関です（計30本以上の論文・資料、2026-05-23確認）。孫引きを禁止し、原著・公式機関への直接参照を徹底しています。
       </p>
       <ul class="science-list-ext">
         {scientificBases.map((item) => (
@@ -397,7 +630,7 @@ const pageJsonLd = [
     </section>
 
     <!-- よくある質問（About FAQ） -->
-    <section class="content-section">
+    <section class="content-section" id="faq">
       <h2 class="section-heading">❓ 運営・信頼性に関するよくある質問</h2>
       <div class="faq-list">
         {faqItems.map((item) => (
@@ -421,6 +654,10 @@ const pageJsonLd = [
           <div class="contact-value">診断ナビ（shindan-navi.jp）</div>
         </div>
         <div class="contact-row">
+          <div class="contact-label">運営者</div>
+          <div class="contact-value">会澤 勇気（個人事業主）</div>
+        </div>
+        <div class="contact-row">
           <div class="contact-label">運営主体</div>
           <div class="contact-value">診断ナビ編集部</div>
         </div>
@@ -442,7 +679,7 @@ const pageJsonLd = [
         </div>
         <div class="contact-row">
           <div class="contact-label">最終更新</div>
-          <div class="contact-value"><time datetime="2026-05-21">2026-05-21</time></div>
+          <div class="contact-value"><time datetime="2026-05-23">2026-05-23</time></div>
         </div>
       </div>
     </section>
@@ -450,7 +687,7 @@ const pageJsonLd = [
     <!-- 姉妹サイト -->
     <section class="content-section">
       <h2 class="section-heading">🔗 姉妹サイト</h2>
-      <p style="font-size: var(--sn-text-sm); color: var(--sn-muted); margin-bottom: var(--sn-space-4);">同一編集部が運営する関連サービスです。</p>
+      <p style="font-size: var(--sn-text-sm); color: var(--sn-muted); margin-bottom: var(--sn-space-4);">同一運営者（会澤勇気）が運営する関連サービスです。</p>
       <div class="sister-list">
         {sisterSites.map((site) => (
           <a href={site.url} target="_blank" rel="noopener" class="sister-link">
@@ -467,10 +704,12 @@ const pageJsonLd = [
     <section class="content-section">
       <div style="background: var(--sn-bg-soft); border-radius: var(--sn-radius); padding: var(--sn-space-6); display: flex; flex-wrap: wrap; gap: var(--sn-space-4);">
         <a href="/editorial-policy/" style="color: var(--sn-primary); font-size: var(--sn-text-sm); text-decoration:none;">📋 編集ポリシー</a>
+        <a href="/changelog/" style="color: var(--sn-primary); font-size: var(--sn-text-sm); text-decoration:none;">📝 更新履歴</a>
         <a href="/contact/" style="color: var(--sn-primary); font-size: var(--sn-text-sm); text-decoration:none;">📬 お問い合わせ</a>
         <a href="/faq/" style="color: var(--sn-primary); font-size: var(--sn-text-sm); text-decoration:none;">❓ よくある質問</a>
         <a href="/privacy/" style="color: var(--sn-primary); font-size: var(--sn-text-sm); text-decoration:none;">🔒 プライバシーポリシー</a>
         <a href="/terms/" style="color: var(--sn-primary); font-size: var(--sn-text-sm); text-decoration:none;">📄 利用規約</a>
+        <a href="/tokushoho/" style="color: var(--sn-primary); font-size: var(--sn-text-sm); text-decoration:none;">🏪 特定商取引法</a>
         <a href="/diagnosis/multi-int/" style="color: var(--sn-primary); font-size: var(--sn-text-sm); text-decoration:none;">🧠 多重知能テストを受ける</a>
       </div>
     </section>
@@ -484,7 +723,6 @@ const pageJsonLd = [
   .breadcrumb { font-size: var(--sn-text-sm); color: var(--sn-muted); padding: var(--sn-space-4) var(--sn-space-4); }
   .breadcrumb a { color: var(--sn-muted); text-decoration: none; }
   .breadcrumb a:hover { color: var(--sn-primary); }
-  /* .page-hero: design-system-v2.css の page-hero--purple に委譲 */
 
   .about-lead { font-size: var(--sn-text-base); color: var(--sn-text-soft); line-height: var(--sn-leading-relaxed); margin-bottom: var(--sn-space-8); }
   /* TL;DR ブロック */
@@ -513,13 +751,62 @@ const pageJsonLd = [
   .editor-name { font-size: var(--sn-text-lg); font-weight: 700; margin-bottom: 4px; }
   .editor-role { font-size: var(--sn-text-sm); color: var(--sn-muted); }
   .editor-profile { font-size: var(--sn-text-sm); color: var(--sn-text-soft); line-height: var(--sn-leading-relaxed); }
+  .editor-meta-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--sn-space-3); margin-top: var(--sn-space-5); }
+  @media (max-width: 600px) { .editor-meta-grid { grid-template-columns: 1fr; } }
+  .editor-meta-item { background: var(--sn-bg-soft); border-radius: var(--sn-radius-xs); padding: var(--sn-space-3) var(--sn-space-4); font-size: var(--sn-text-xs); }
+  .editor-meta-label { display: block; font-weight: 700; color: var(--sn-primary); margin-bottom: 2px; }
+  .editor-meta-value { color: var(--sn-text-soft); line-height: 1.6; }
+  .editor-meta-value a { color: var(--sn-primary); }
   .editor-tags { display: flex; flex-wrap: wrap; gap: var(--sn-space-2); margin-top: var(--sn-space-4); }
   .editor-tag { background: var(--sn-primary-bg); color: var(--sn-primary); font-size: var(--sn-text-xs); font-weight: 500; padding: 4px 10px; border-radius: var(--sn-radius-pill); }
+  /* 独自性グリッド */
+  .uniqueness-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--sn-space-4); margin-bottom: var(--sn-space-6); }
+  @media (max-width: 700px) { .uniqueness-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 440px) { .uniqueness-grid { grid-template-columns: 1fr; } }
+  .uniqueness-card { background: var(--sn-bg-white); border: 1px solid var(--sn-border); border-radius: var(--sn-radius); padding: var(--sn-space-5); text-align: center; box-shadow: var(--sn-shadow-xs); }
+  .uniqueness-card__num { font-family: var(--sn-font-rounded); font-size: 2.5rem; font-weight: 900; color: var(--sn-primary); line-height: 1; margin-bottom: var(--sn-space-1); }
+  .uniqueness-card__label { font-size: var(--sn-text-xs); font-weight: 700; color: var(--sn-muted); margin-bottom: var(--sn-space-3); }
+  .uniqueness-card__desc { font-size: var(--sn-text-xs); color: var(--sn-text-soft); line-height: 1.6; }
+  /* 比較テーブル */
+  .uniqueness-compare { background: var(--sn-bg-white); border: 1px solid var(--sn-border); border-radius: var(--sn-radius); padding: var(--sn-space-5) var(--sn-space-6); }
+  .uniqueness-compare__title { font-weight: 700; font-size: var(--sn-text-sm); margin-bottom: var(--sn-space-4); }
+  .compare-table { width: 100%; border-collapse: collapse; font-size: var(--sn-text-sm); }
+  .compare-table th { background: var(--sn-bg-soft); padding: var(--sn-space-2) var(--sn-space-3); text-align: left; font-weight: 700; border-bottom: 2px solid var(--sn-border); }
+  .compare-table th:last-child { color: var(--sn-primary); }
+  .compare-table td { padding: var(--sn-space-2) var(--sn-space-3); border-bottom: 1px solid var(--sn-border-soft); color: var(--sn-text-soft); vertical-align: top; }
+  .compare-table td:first-child { font-weight: 700; color: var(--sn-text); }
+  .compare-table td:last-child { color: var(--sn-text); }
   /* 編集体制 */
   .team-list { display: flex; flex-direction: column; gap: var(--sn-space-4); }
   .team-item { background: var(--sn-bg-white); border-radius: var(--sn-radius); padding: var(--sn-space-5) var(--sn-space-6); border: 1px solid var(--sn-border); box-shadow: var(--sn-shadow-xs); }
   .team-role { font-weight: 700; margin-bottom: var(--sn-space-2); font-size: var(--sn-text-base); }
   .team-desc { font-size: var(--sn-text-sm); color: var(--sn-text-soft); line-height: var(--sn-leading-relaxed); }
+  /* 編集方針リスト */
+  .policy-list { display: flex; flex-direction: column; gap: var(--sn-space-4); }
+  .policy-item { display: flex; gap: var(--sn-space-4); background: var(--sn-bg-white); border: 1px solid var(--sn-border); border-radius: var(--sn-radius); padding: var(--sn-space-5) var(--sn-space-6); box-shadow: var(--sn-shadow-xs); }
+  .policy-item__icon { font-size: 1.5rem; flex-shrink: 0; padding-top: 2px; }
+  .policy-item__body { flex: 1; }
+  .policy-item__title { font-weight: 700; font-size: var(--sn-text-base); margin-bottom: var(--sn-space-2); }
+  .policy-item__desc { font-size: var(--sn-text-sm); color: var(--sn-text-soft); line-height: var(--sn-leading-relaxed); }
+  /* 監修体制ボックス */
+  .supervision-box { background: var(--sn-bg-white); border: 1px solid var(--sn-border); border-radius: var(--sn-radius-lg); padding: var(--sn-space-6) var(--sn-space-7); box-shadow: var(--sn-shadow-xs); }
+  .supervision-box__header { display: flex; align-items: center; gap: var(--sn-space-3); margin-bottom: var(--sn-space-4); }
+  .supervision-box__badge { font-size: var(--sn-text-xs); font-weight: 700; padding: 3px 10px; border-radius: var(--sn-radius-pill); }
+  .supervision-box__badge--honest { background: #fef3c7; color: #92400e; }
+  .supervision-box__title { font-weight: 700; font-size: var(--sn-text-lg); }
+  .supervision-box__desc { font-size: var(--sn-text-sm); color: var(--sn-text-soft); line-height: var(--sn-leading-relaxed); }
+  .supervision-instead { margin-top: var(--sn-space-5); background: #ecfdf5; border-radius: var(--sn-radius); padding: var(--sn-space-5) var(--sn-space-6); }
+  .supervision-instead__title { font-weight: 700; font-size: var(--sn-text-sm); color: #065f46; margin-bottom: var(--sn-space-3); }
+  .supervision-instead__list { list-style: disc; padding-left: var(--sn-space-5); display: flex; flex-direction: column; gap: var(--sn-space-2); }
+  .supervision-instead__list li { font-size: var(--sn-text-sm); color: #065f46; line-height: var(--sn-leading-relaxed); }
+  /* 公開ポリシーリスト */
+  .pubpolicy-list { display: flex; flex-direction: column; gap: var(--sn-space-4); }
+  .pubpolicy-item { display: flex; gap: var(--sn-space-4); background: var(--sn-bg-white); border: 1px solid var(--sn-border); border-radius: var(--sn-radius); padding: var(--sn-space-5) var(--sn-space-6); box-shadow: var(--sn-shadow-xs); }
+  .pubpolicy-item__icon { font-size: 1.5rem; flex-shrink: 0; padding-top: 2px; }
+  .pubpolicy-item__body { flex: 1; }
+  .pubpolicy-item__title { font-weight: 700; font-size: var(--sn-text-base); margin-bottom: var(--sn-space-2); }
+  .pubpolicy-item__desc { font-size: var(--sn-text-sm); color: var(--sn-text-soft); line-height: var(--sn-leading-relaxed); }
+  .pubpolicy-item__desc a { color: var(--sn-primary); }
   /* 科学的根拠リスト */
   .science-list-ext { list-style: none; display: flex; flex-direction: column; gap: var(--sn-space-4); }
   .science-item { background: var(--sn-bg-white); border: 1px solid var(--sn-border); border-left: 3px solid #059669; border-radius: 0 var(--sn-radius-sm) var(--sn-radius-sm) 0; padding: var(--sn-space-5) var(--sn-space-6); }
