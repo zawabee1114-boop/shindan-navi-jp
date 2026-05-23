@@ -1,0 +1,1106 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Container from '../../components/Container.astro';
+// 更新履歴ページ（鮮度シグナル + E-E-A-T Trust 強化）
+// 2026-05-23 作成
+// 実際のPRマージ履歴（#1〜#69）に基づく。捏造なし。
+
+const canonicalURL = "https://shindan-navi.jp/changelog/";
+const lastUpdated = "2026-05-23";
+
+// 更新種別
+const TYPE = {
+  NEW:     { label: "新機能",         color: "#7c3aed", bg: "#f3f0ff", icon: "🆕" },
+  FIX:     { label: "バグ修正・改善",  color: "#059669", bg: "#ecfdf5", icon: "🔧" },
+  CONTENT: { label: "コンテンツ追加", color: "#0891b2", bg: "#ecfeff", icon: "📝" },
+  DESIGN:  { label: "デザイン",       color: "#d97706", bg: "#fffbeb", icon: "🎨" },
+  SEO:     { label: "SEO/技術",       color: "#6366f1", bg: "#eef2ff", icon: "🔍" },
+} as const;
+
+type TypeKey = keyof typeof TYPE;
+
+interface ChangeEntry {
+  date: string;
+  type: TypeKey;
+  title: string;
+  desc: string;
+  link?: string;
+  linkLabel?: string;
+  pr?: number;
+}
+
+// 2026年5月の更新履歴（PR#1〜#69 のマージ実績に基づく・日付はJST）
+const may2026: ChangeEntry[] = [
+  {
+    date: "2026-05-23",
+    type: "SEO",
+    title: "Speakable Schema 全ページ拡張",
+    desc: "音声検索・AI Overview での引用率向上を目的に、全ページへ Speakable Schema を実装。cssSelector を7セレクタに拡張し、診断ハブ・結果・信頼ページすべてを対象化。",
+    pr: 69,
+  },
+  {
+    date: "2026-05-23",
+    type: "SEO",
+    title: "IndexNow API 接続（Bing/Yandex 即時インデックス通知）",
+    desc: "ページ更新時に Bing・Yandex へ即時クロール通知を送る IndexNow API を接続。新コンテンツの検索インデックス反映速度を短縮。",
+    pr: 68,
+  },
+  {
+    date: "2026-05-23",
+    type: "SEO",
+    title: "llms-full.txt 作成（LLM全文学習用）",
+    desc: "ChatGPT・Claude・Gemini 等の LLM がサイト全体のコンテンツを学習しやすくする llms-full.txt を作成。AI 経由の流入強化・ブランド認知向上を目的とする。",
+    link: "/llms-full.txt",
+    linkLabel: "llms-full.txt を見る",
+    pr: 67,
+  },
+  {
+    date: "2026-05-23",
+    type: "NEW",
+    title: "動的 OGP 画像生成（診断結果タイプ別・バイラル質向上）",
+    desc: "診断結果ページに対し、タイプ別の動的 OGP 画像を自動生成。SNS シェア時に結果タイプのビジュアルが表示されバイラル率が向上。対応タイプ数：80種類以上。",
+    pr: 66,
+  },
+  {
+    date: "2026-05-23",
+    type: "FIX",
+    title: "SSR 問題一掃（login/signup/招待ページ 静的化）",
+    desc: "login・signup・招待ページが SSR 要求でビルド時に HTML 生成できなかった問題を解消。全ページを静的化しクライアントサイドで認証状態を取得する設計に変更。",
+    pr: 65,
+  },
+  {
+    date: "2026-05-23",
+    type: "FIX",
+    title: "全 153 ページ UI/UX 崩れ網羅監査・修正",
+    desc: "サイト全ページを対象にしたUI/UX崩れの網羅監査を実施。レイアウト崩れ・フォントサイズ不整合・タッチターゲット不足など多数の課題を一括修正。",
+    pr: 62,
+  },
+  {
+    date: "2026-05-22",
+    type: "FIX",
+    title: "TOP 8診断円形配置を復活",
+    desc: "PR #59（BaseLayout統一修正）によって消失したトップページの8診断円形（DiagnosisRing）表示を復活。CSSアニメーションと配置を完全再現。",
+    link: "/",
+    linkLabel: "トップページを見る",
+    pr: 60,
+  },
+  {
+    date: "2026-05-22",
+    type: "FIX",
+    title: "緊急UI崩壊修正 - 生HTML5ページを BaseLayout 統一",
+    desc: "生HTML で実装されていた5ページ（/about/, /privacy/ 等）が CSS 崩壊・モバイル固定フッター欠落を起こしていた問題を緊急修正。全ページを BaseLayout に統一。",
+    pr: 59,
+  },
+  {
+    date: "2026-05-22",
+    type: "CONTENT",
+    title: "AI生成文コンテンツ品質向上（定義セクション・FAQ追加）",
+    desc: "aisei（AI生成文診断）・yujin（友人相性ページ）の品質スコアが基準（70点）を下回っていたため、定義セクションの追記・FAQ5問追加を実施。",
+    pr: 58,
+  },
+  {
+    date: "2026-05-22",
+    type: "FIX",
+    title: "OGP 絵文字 SVGパス化（黒つぶれ解消・SNS表示対応）",
+    desc: "OGP 画像内の絵文字が一部 SNS（Twitter/X 等）で黒つぶれしていた問題を修正。絵文字を SVG パスに変換し、クロスプラットフォームで正常表示されるように対応。",
+    pr: 56,
+  },
+  {
+    date: "2026-05-22",
+    type: "SEO",
+    title: "AIO/LLMO 最適化 - 全結果ページ AIO 標準化",
+    desc: "多重知能・MBTI・完璧主義など10診断・80ページの結果ページに対し、AIO（AI Overview）引用を促す構造化・FAQ・定義段落を標準化。",
+    pr: 54,
+  },
+  {
+    date: "2026-05-22",
+    type: "SEO",
+    title: "OGP 画像整備 + GA4 カスタムイベント実装",
+    desc: "全診断ハブ・結果ページに OGP 画像を整備。診断開始・結果閲覧・シェアの各行動を GA4 カスタムイベントとして計測開始。",
+    pr: 53,
+  },
+  {
+    date: "2026-05-22",
+    type: "SEO",
+    title: "技術 SEO 最終確認（sitemap/robots/llms.txt/404 対応）",
+    desc: "sitemap.xml 全ページ収録確認・robots.txt 最適化・llms.txt 初版作成・カスタム 404 ページ実装を完了。",
+    pr: 52,
+  },
+  {
+    date: "2026-05-22",
+    type: "FIX",
+    title: "PASS 購入ページ新規作成 + リンク切れ全修正",
+    desc: "¥390 PASS 購入フローに必要な /pass/ ページが欠落していた問題を修正し新規作成。サイト全体のハードコード 404 リンクを一括修正。",
+    link: "/pass/",
+    linkLabel: "/pass/ を見る",
+    pr: 51,
+  },
+  {
+    date: "2026-05-22",
+    type: "NEW",
+    title: "月1限定診断 実装（PRO 最上位特典・初月：ストレス対処タイプ診断）",
+    desc: "PRO 会員向けの月1回限定診断機能をリリース。初月コンテンツは「ストレス対処タイプ診断（8タイプ）」。毎月第1日曜にコンテンツを更新する設計。",
+    link: "/diagnosis/monthly/",
+    linkLabel: "月1限定診断を見る",
+    pr: 50,
+  },
+  {
+    date: "2026-05-22",
+    type: "DESIGN",
+    title: "16動物キャラクター SVG アートワーク制作",
+    desc: "Big5（OCEAN）スコアを可視化する統合プロファイルで使用する16動物キャラクター（ライオン・オウム・クマ・イルカ等）の SVG アートワークを制作・実装。",
+    link: "/profile/",
+    linkLabel: "統合プロファイルを見る",
+    pr: 49,
+  },
+  {
+    date: "2026-05-22",
+    type: "FIX",
+    title: "Critical リンク切れ全修正（TOP 8診断カード・統合プロファイル 404 解消）",
+    desc: "トップページの8診断カードから飛ぶリンクおよび統合プロファイルへのリンクが 404 になっていた問題を全修正。CSS 背景バグも併せて解消。",
+    pr: 48,
+  },
+  {
+    date: "2026-05-22",
+    type: "NEW",
+    title: "MBTI 主診断 本実装（40問・16タイプ判定）",
+    desc: "8診断統合の核となる MBTI 主診断（40問・16タイプ）が欠落していた問題を修正し本実装。E/I・N/S・T/F・J/P 4軸をスコアリングし16タイプを判定。",
+    link: "/diagnosis/mbti/",
+    linkLabel: "MBTI 診断を受ける",
+    pr: 46,
+  },
+  {
+    date: "2026-05-21",
+    type: "DESIGN",
+    title: "新デザインシステム v2.0 全 126 ページ横展開（フェーズ3）",
+    desc: "フェーズ1・2 で実装したデザイントークン・page-hero コンポーネントを全 126 ページに横展開。サイト全体のビジュアル統一を完了。",
+    pr: 45,
+  },
+  {
+    date: "2026-05-21",
+    type: "DESIGN",
+    title: "新デザインシステム v2.0 - 結果ページ・統合プロファイル・マイページ（フェーズ2）",
+    desc: "診断結果ページ（動的）・統合プロファイル・5シーン軸・マイページへ新デザインを適用。ダークパープル系グラデーション・カード UI・アニメーション体験を実装。",
+    pr: 44,
+  },
+  {
+    date: "2026-05-21",
+    type: "DESIGN",
+    title: "新デザインシステム v2.0 - モバイル最適化（フェーズ4）",
+    desc: "モバイル専用タブバー（BottomNavigation）・グラスモーフィズムモバイルヘッダーを実装。タッチターゲット最小 44px 確保・スワイプUX最適化。",
+    pr: 42,
+  },
+  {
+    date: "2026-05-21",
+    type: "DESIGN",
+    title: "新デザインシステム v2.0 フェーズ1 - デザイントークン刷新 + TOP・8診断ハブ",
+    desc: "--sn-* CSS カスタムプロパティ（62変数）・Nunito フォント・パープル系カラーパレットを確立。TOPページと8診断ハブ9ページに新デザインを先行適用。",
+    pr: 41,
+  },
+  {
+    date: "2026-05-21",
+    type: "NEW",
+    title: "招待バイラル本格化（4プライバシーモード本接続・K>1 設計）",
+    desc: "「こっそりモード」「オープンモード」等4プライバシーモードを本接続。招待リンク経由の相性チェックフローを Supabase compatibility_pairs DB に接続。バイラル係数 K>1 設計を実装。",
+    link: "/invite/",
+    linkLabel: "招待ページを見る",
+    pr: 40,
+  },
+  {
+    date: "2026-05-21",
+    type: "SEO",
+    title: "穴場 KW 強化 - 学術引用一次情報 + 競合差別化比較表",
+    desc: "3つの穴場キーワードページに学術引用・一次情報セクションと競合差別化比較表を追加。3ヶ月以内の5-8位獲得を目標とした強化。",
+    pr: 39,
+  },
+  {
+    date: "2026-05-21",
+    type: "NEW",
+    title: "Supabase 認証フロー本接続 + LocalStorage→DB 移行",
+    desc: "Magic Link 認証（Supabase Auth）を本接続。診断結果・プロフィールデータを LocalStorage から Supabase DB に移行するマイグレーションフローを実装。",
+    pr: 38,
+  },
+  {
+    date: "2026-05-21",
+    type: "CONTENT",
+    title: "特商法ページ 住所・運営者名 反映",
+    desc: "特定商取引法に基づく表記ページに運営者名・住所を正式反映。AdSense 審査・法的コンプライアンス対応を完了。",
+    link: "/tokushoho/",
+    linkLabel: "特商法ページを見る",
+    pr: 37,
+  },
+  {
+    date: "2026-05-21",
+    type: "NEW",
+    title: "Phase 3.1 モック+スタブ実装（Supabase/Stripe/Claude API/招待/タイムカプセル）",
+    desc: "Supabase・Stripe 決済・Claude API・招待バイラル・タイムカプセル機能のモック+スタブを実装。本接続前の動作確認環境を整備。",
+    pr: 35,
+  },
+  {
+    date: "2026-05-21",
+    type: "SEO",
+    title: "AIO/LLMO 最適化 全3巡 完了（E-E-A-T・FAQ・定義段落・引用源化）",
+    desc: "全診断ページ・信頼ページ・統合系ページを対象に AIO/LLMO 最適化3巡を実施。FAQPage・SpeakableSpecification JSON-LD・定義段落・学術引用を全ページ標準化。",
+    pr: 22,
+  },
+  {
+    date: "2026-05-21",
+    type: "SEO",
+    title: "内部 SEO 最適化 100 ページ一括",
+    desc: "全100ページを対象に内部SEO・構造化データ・サイトマップ・内部リンクを全面強化。タイトル・メタディスクリプション最適化・正規URL統一を実施。",
+    pr: 19,
+  },
+  {
+    date: "2026-05-21",
+    type: "CONTENT",
+    title: "Phase 2 コンテンツ拡張（血液型・恋愛依存・DiSCサブ・学校軸・家族軸 計25本）",
+    desc: "血液型タイプ別4本・恋愛依存系5本・血液型サブ4本・DiSCサブ2本・学校軸4本・家族軸3本・性格変化系3本・タイムカプセル2本・音楽タイプ5本を追加。計33本の新コンテンツ実装。",
+    pr: 34,
+  },
+  {
+    date: "2026-05-20",
+    type: "NEW",
+    title: "統合プロファイル機能 本実装（8診断統合・5シーン軸・AIプロンプトカード）",
+    desc: "8診断の結果を Big5 スコアで統合し、仕事・恋愛・友人・家族・学習の5シーン別にアドバイスを生成する統合プロファイル機能を本実装。ChatGPT/Claude/Gemini 向け AIプロンプトカードも実装。",
+    link: "/profile/",
+    linkLabel: "統合プロファイルを見る",
+    pr: 18,
+  },
+  {
+    date: "2026-05-20",
+    type: "NEW",
+    title: "金銭感覚診断 実装（Phase 1 第10優先・8診断統合の最終ピース）",
+    desc: "行動経済学（Klontz のマネースクリプト理論・Kahneman の損失回避理論）に基づく金銭感覚診断を実装。スピリチュアル・快楽主義・防衛的・焦点型の4タイプで分類。8診断が全て揃い Phase 1 完成。",
+    link: "/diagnosis/money-sense/",
+    linkLabel: "金銭感覚診断を受ける",
+    pr: 17,
+  },
+  {
+    date: "2026-05-20",
+    type: "NEW",
+    title: "恋愛スタイル診断 実装（VOL 3,600・J.A.Lee 理論）",
+    desc: "社会学者 J.A.Lee の6恋愛タイプ理論（Eros/Ludus/Storge/Pragma/Mania/Agape）に基づく診断を実装。Hendrick & Hendrick（1986）の Love Attitudes Scale を参照。",
+    link: "/diagnosis/love-style/",
+    linkLabel: "恋愛スタイル診断を受ける",
+    pr: 15,
+  },
+  {
+    date: "2026-05-20",
+    type: "NEW",
+    title: "星座性格診断 実装（VOL 4,400・12星座タイプ）",
+    desc: "西洋占星術の12星座を文化的性格分類フレームとして活用した星座性格診断を実装。「占いではなく傾向分析」という立ち位置を明示し YMYL 境界を厳守。",
+    link: "/diagnosis/constellation/",
+    linkLabel: "星座性格診断を受ける",
+    pr: 14,
+  },
+  {
+    date: "2026-05-20",
+    type: "NEW",
+    title: "DiSC 診断 実装（VOL 2,900・CPC ¥191 収益重要 KW）",
+    desc: "行動心理学者 Marston（1928）が提唱した DiSC 理論（Dominance/Influence/Steadiness/Conscientiousness）に基づく診断を実装。ビジネス・チームビルディングシーンへの応用を重視。",
+    link: "/diagnosis/disc/",
+    linkLabel: "DiSC診断を受ける",
+    pr: 13,
+  },
+  {
+    date: "2026-05-20",
+    type: "NEW",
+    title: "血液型相性診断 実装（VOL 18,100・超穴場 KW）",
+    desc: "日本で最も検索ボリュームの高い相性診断テーマのひとつ。血液型4タイプ（A/B/O/AB）の全16組み合わせ相性をデータ化し実装。文化的傾向分析としての立ち位置を明示。",
+    link: "/diagnosis/blood-type-compatibility/",
+    linkLabel: "血液型相性診断を受ける",
+    pr: 12,
+  },
+  {
+    date: "2026-05-20",
+    type: "NEW",
+    title: "MBTI 恋愛相性ページ実装（VOL 1,900）",
+    desc: "MBTI 16タイプ別の恋愛相性ページを実装。既存 MBTI 相性データを恋愛シーン向けに再構成し、16×16 = 256 組み合わせをカバー。",
+    link: "/diagnosis/mbti-love/",
+    linkLabel: "MBTI恋愛相性を見る",
+    pr: 11,
+  },
+  {
+    date: "2026-05-20",
+    type: "NEW",
+    title: "友達相性診断 実装（VOL 2,900・招待バイラル装置）",
+    desc: "友達を招待して2人の相性をチェックする診断機能を実装。招待リンク経由でバイラル拡散が起きる設計。プライバシーモード（こっそり/オープン）に対応。",
+    link: "/diagnosis/friend-compatibility/",
+    linkLabel: "友達相性診断を受ける",
+    pr: 10,
+  },
+  {
+    date: "2026-05-20",
+    type: "NEW",
+    title: "MBTI 相性3ページ実装（VOL 19,600）",
+    desc: "MBTI タイプ別相性ページ（全16タイプ・それぞれの相性一覧・ベストマッチ/ワーストマッチ）を実装。VOL 19,600 の高検索需要に対応。",
+    link: "/diagnosis/mbti-compatibility/",
+    linkLabel: "MBTI相性診断を見る",
+    pr: 9,
+  },
+  {
+    date: "2026-05-20",
+    type: "NEW",
+    title: "完璧主義診断 実装（Phase 1 第2優先穴場 KW）",
+    desc: "完璧主義傾向を4タイプ（自己指向・他者指向・社会規定・適応型）で分類する診断を実装。心理学者 Hewitt & Flett（1991）の多次元完璧主義尺度を参照。",
+    link: "/diagnosis/perfectionism/",
+    linkLabel: "完璧主義診断を受ける",
+    pr: 7,
+  },
+  {
+    date: "2026-05-20",
+    type: "NEW",
+    title: "多重知能テスト 本実装（Howard Gardner 理論・8知能タイプ）",
+    desc: "Harvard 大学 Gardner 教授の多重知能理論（1983）に基づく8知能タイプ診断を実装。全79問・中断保存機能・8タイプ別詳細結果ページを完備。Phase 1 最初の診断コンテンツ。",
+    link: "/diagnosis/multi-int/",
+    linkLabel: "多重知能テストを受ける",
+    pr: 4,
+  },
+  {
+    date: "2026-05-20",
+    type: "NEW",
+    title: "¥390 PASS / ¥590/月 PRO プラン設計・公開",
+    desc: "一時アンロック ¥390 PASS と月額 ¥590 PRO（広告非表示・月1限定診断・タイムカプセル・AIプロンプトカード）の2プラン体制を設計。Stripe 決済フローを接続。",
+    link: "/pro/",
+    linkLabel: "料金プランを見る",
+    pr: 51,
+  },
+  {
+    date: "2026-05-20",
+    type: "NEW",
+    title: "ベータ公開開始（Phase 0 技術基盤 + Phase 1 基盤ページ 5本）",
+    desc: "shindan-navi.jp のベータ公開を開始。Astro 4 + Cloudflare Pages 構成の技術基盤を確立。TOP・運営者情報・編集ポリシー・お問い合わせ・FAQ の基盤5ページを公開。",
+    link: "/",
+    linkLabel: "トップページを見る",
+    pr: 1,
+  },
+];
+
+// TL;DR 要点
+const tldrItems = [
+  "2026-05-20 ベータ公開開始。同日中に8診断のうち6診断（多重知能・完璧主義・MBTI相性・友達相性・MBTI恋愛・血液型相性）を実装。",
+  "2026-05-21 に DiSC・星座・恋愛スタイル・金銭感覚の残り4診断を追加し、Phase 1（8診断統合）を完成。統合プロファイル機能・Supabase 認証も本接続。",
+  "2026-05-22 に MBTI 主診断本実装・16動物キャラ SVG・月1限定診断・動的 OGP 画像・新デザインシステム v2.0 をリリース。",
+  "2026-05-23 に IndexNow API・llms-full.txt・Speakable Schema 全頁拡張で SEO/AIO 基盤を完成。",
+  "公開3日間で PR #1〜#69（計69件）をマージ。現在も継続改善中。",
+];
+
+// FAQ
+const faqItems = [
+  {
+    q: "なぜ更新履歴を公開しているのですか？",
+    a: "診断ナビは「情報の透明性」を編集方針の核としています。サービスがいつ・どのような改善を行ったかを公開することで、ユーザーの皆さんがサービスを信頼する根拠を提供します。また、情報鮮度のシグナルとして Google・AI 検索エンジンへの信頼性向上にも寄与します。",
+  },
+  {
+    q: "どのくらいの頻度で更新されますか？",
+    a: "ベータ公開（2026-05-20）から最初の3日間で69件のプルリクエストをマージし、機能・コンテンツ・SEO を集中実装しました。安定運用フェーズ移行後は、月1回以上の定期コンテンツ更新（月1限定診断の更新など）と、バグ・情報誤りの随時修正を継続します。",
+  },
+  {
+    q: "今後の大きな機能追加予定はありますか？",
+    a: "現在計画中の主な追加機能として、タイムカプセル機能（結果を1年後に再確認・変化を可視化）・診断別詳細解説コンテンツの拡充・PRO 向け AI 分析レポートの自動生成などがあります。具体的なリリース日は確定次第この更新履歴ページでお知らせします。",
+  },
+  {
+    q: "バグや誤情報を見つけた場合はどこに報告できますか？",
+    a: "お問い合わせページ（/contact/）またはメール（zawalab.info@gmail.com）にてご報告ください。重大なバグ・誤情報は即時対応、その他は原則7営業日以内に確認・修正します。ご報告いただいた内容はこの更新履歴に反映します。",
+  },
+  {
+    q: "開発体制はどのようになっていますか？",
+    a: "診断ナビ編集部（ITエンジニア出身の編集長 + 専門ライター）が運営しています。AI ツールをコンテンツ作成支援・開発補助に活用していますが、一次情報との照合・YMYL 判定・最終公開承認はすべて人間が行っています。架空の監修者・外部専門家は設けていません（詳細は編集ポリシーをご覧ください）。",
+  },
+];
+
+// JSON-LD
+const pageJsonLd = [
+  {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "@id": "https://shindan-navi.jp/changelog/",
+    "url": "https://shindan-navi.jp/changelog/",
+    "name": "更新履歴 | 診断ナビ",
+    "description": "診断ナビの開発・改善履歴。2026-05-20 ベータ公開から現在までの全機能追加・バグ修正・SEO改善を透明公開。",
+    "datePublished": "2026-05-20",
+    "dateModified": lastUpdated,
+    "isPartOf": {
+      "@type": "WebSite",
+      "@id": "https://shindan-navi.jp/#website",
+      "url": "https://shindan-navi.jp"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "@id": "https://shindan-navi.jp/#organization",
+      "name": "診断ナビ編集部",
+      "url": "https://shindan-navi.jp"
+    },
+    "speakable": {
+      "@type": "SpeakableSpecification",
+      "cssSelector": [".tldr-block", ".changelog-summary", ".changelog-hero-sub"]
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "ホーム", "item": "https://shindan-navi.jp/" },
+      { "@type": "ListItem", "position": 2, "name": "更新履歴", "item": "https://shindan-navi.jp/changelog/" }
+    ]
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "url": "https://shindan-navi.jp/changelog/#faq",
+    "mainEntity": faqItems.map(({ q, a }) => ({
+      "@type": "Question",
+      "name": q,
+      "acceptedAnswer": { "@type": "Answer", "text": a }
+    }))
+  }
+];
+---
+
+<BaseLayout
+  title="更新履歴"
+  description="診断ナビの開発・改善履歴。8診断統合プラットフォームの機能追加・バグ修正・SEO改善をすべて透明公開。2026-05-20 ベータ公開から継続更新中。"
+  canonical={canonicalURL}
+  jsonLd={pageJsonLd}
+  ogImage="/ogp-default.png"
+  publishDate="2026-05-20"
+  lastUpdated={lastUpdated}
+  breadcrumbs={[{ name: "更新履歴", url: "/changelog/" }]}
+>
+
+  <!-- パンくず -->
+  <nav class="breadcrumb" aria-label="パンくずリスト">
+    <a href="/">ホーム</a> &gt; 更新履歴
+  </nav>
+
+  <!-- ヒーロー -->
+  <section class="page-hero page-hero--purple" aria-labelledby="changelog-h1">
+    <svg class="page-hero-sparkle" style="top:12%;right:7%;width:56px;height:56px;" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M12 2l1.8 5.4L19 9l-5.2 3.8L15.6 19 12 15.6 8.4 19l1.8-6.2L5 9l5.2-1.6z" fill="#fff" opacity=".4"/>
+    </svg>
+    <svg class="page-hero-sparkle" style="bottom:20%;left:6%;width:36px;height:36px;" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <circle cx="12" cy="12" r="10" fill="#fff" opacity=".12"/>
+    </svg>
+    <Container>
+      <div class="page-hero-inner">
+        <div class="page-hero-badge">📋 更新履歴</div>
+        <h1 id="changelog-h1" class="page-hero-h1">更新履歴</h1>
+        <p class="page-hero-sub changelog-hero-sub">診断ナビの開発・改善履歴。最終更新: <time datetime={lastUpdated}>{lastUpdated}</time></p>
+        <div class="hero-stats">
+          <div class="hero-stat"><span class="hero-stat-num">69</span><span class="hero-stat-label">PR マージ数</span></div>
+          <div class="hero-stat"><span class="hero-stat-num">8</span><span class="hero-stat-label">診断実装数</span></div>
+          <div class="hero-stat"><span class="hero-stat-num">3</span><span class="hero-stat-label">公開日数（初期集中開発）</span></div>
+        </div>
+      </div>
+    </Container>
+  </section>
+
+  <div class="container">
+
+    <!-- TL;DR -->
+    <div class="tldr-block" role="note" aria-label="更新履歴の要点">
+      <p class="tldr-block__title">このページでわかること</p>
+      <ul class="tldr-block__list">
+        {tldrItems.map(item => (
+          <li class="tldr-block__item">{item}</li>
+        ))}
+      </ul>
+      <p class="tldr-block__meta">
+        <time datetime={lastUpdated}>{lastUpdated}</time> 時点の情報。
+        実際のGitHubプルリクエスト（#1〜#69）のマージ履歴に基づいています。
+      </p>
+    </div>
+
+    <!-- サマリーバッジ（Speakable） -->
+    <div class="changelog-summary" id="changelog-summary">
+      <p>
+        診断ナビは 2026-05-20 にベータ公開を開始し、公開から3日間で69件の機能追加・改善を実施しました。
+        多重知能・MBTI・完璧主義・友達相性・血液型相性・DiSC・星座・恋愛スタイル・金銭感覚の8診断統合プラットフォームとして、
+        Supabase 認証・Stripe 決済・動的 OGP 画像・AIO/SEO 最適化を並行実装しています。
+      </p>
+    </div>
+
+    <!-- 種別フィルター（静的アンカーリンク） -->
+    <div class="filter-bar" role="navigation" aria-label="種別フィルター">
+      <span class="filter-label">種別で絞る:</span>
+      <a href="#new-features"     class="filter-tag filter-tag--new">🆕 新機能</a>
+      <a href="#fixes"            class="filter-tag filter-tag--fix">🔧 バグ修正・改善</a>
+      <a href="#content"          class="filter-tag filter-tag--content">📝 コンテンツ</a>
+      <a href="#design"           class="filter-tag filter-tag--design">🎨 デザイン</a>
+      <a href="#seo"              class="filter-tag filter-tag--seo">🔍 SEO/技術</a>
+    </div>
+
+    <!-- 2026年5月 タイムライン -->
+    <section class="month-section" aria-labelledby="month-2026-05">
+      <h2 class="month-heading" id="month-2026-05">
+        <span class="month-badge">2026年5月</span>
+        <span class="month-count">{may2026.length} 件の更新</span>
+      </h2>
+
+      <div class="timeline">
+        {may2026.map((entry, idx) => {
+          const typeInfo = TYPE[entry.type];
+          return (
+            <article class={`timeline-item timeline-item--${entry.type.toLowerCase()}`} id={idx === 0 ? "new-features" : undefined}>
+              <div class="timeline-dot" aria-hidden="true"></div>
+              <div class="timeline-content">
+                <div class="timeline-header">
+                  <span
+                    class="timeline-type-badge"
+                    style={`background:${typeInfo.bg}; color:${typeInfo.color}; border-color:${typeInfo.color}33;`}
+                  >
+                    {typeInfo.icon} {typeInfo.label}
+                  </span>
+                  <time class="timeline-date" datetime={entry.date}>{entry.date}</time>
+                  {entry.pr && (
+                    <a
+                      href={`https://github.com/zawabee1114-boop/shindan-navi-jp/pull/${entry.pr}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="timeline-pr"
+                      aria-label={`PR #${entry.pr} を GitHub で確認`}
+                    >
+                      PR #{entry.pr}
+                    </a>
+                  )}
+                </div>
+                <h3 class="timeline-title">{entry.title}</h3>
+                <p class="timeline-desc">{entry.desc}</p>
+                {entry.link && (
+                  <a href={entry.link} class="timeline-link">
+                    {entry.linkLabel ?? entry.link} →
+                  </a>
+                )}
+              </div>
+            </article>
+          );
+        })}
+      </div>
+    </section>
+
+    <!-- 種別別セクション（アンカーリンク先） -->
+    <section class="summary-section" aria-labelledby="summary-by-type">
+      <h2 class="section-heading" id="summary-by-type">種別サマリー</h2>
+
+      <div class="summary-grid">
+        <div class="summary-card" id="new-features-anchor">
+          <div class="summary-card__header" style="background:#f3f0ff; color:#7c3aed;">
+            <span id="new-features">🆕 新機能</span>
+          </div>
+          <ul class="summary-card__list">
+            <li>8診断フル実装（多重知能・MBTI・完璧主義・友達相性・MBTI恋愛・血液型相性・DiSC・星座・恋愛スタイル・金銭感覚）</li>
+            <li>統合プロファイル機能（Big5スコア・5シーン軸・16動物キャラ）</li>
+            <li>月1限定診断（PRO特典・初月：ストレス対処タイプ）</li>
+            <li>¥390 PASS / ¥590/月 PRO プラン</li>
+            <li>招待バイラル（4プライバシーモード）</li>
+            <li>Supabase 認証フロー本接続</li>
+            <li>AIプロンプトカード生成（ChatGPT/Claude/Gemini 対応）</li>
+            <li>動的 OGP 画像生成（80種類以上）</li>
+          </ul>
+        </div>
+
+        <div class="summary-card">
+          <div class="summary-card__header" style="background:#ecfdf5; color:#059669;">
+            <span id="fixes">🔧 バグ修正・改善</span>
+          </div>
+          <ul class="summary-card__list">
+            <li>生HTML5ページを BaseLayout 統一（CSS崩壊・フッター欠落解消）</li>
+            <li>TOP 8診断円形配置 復活（PR #59 で消失）</li>
+            <li>全153ページ UI/UX 崩れ網羅監査・修正</li>
+            <li>SSR 問題一掃（login/signup/招待 静的化）</li>
+            <li>OGP 絵文字 SVGパス化（黒つぶれ解消）</li>
+            <li>PASS 購入ページ新規作成 + リンク切れ全修正</li>
+          </ul>
+        </div>
+
+        <div class="summary-card">
+          <div class="summary-card__header" style="background:#ecfeff; color:#0891b2;">
+            <span id="content">📝 コンテンツ追加</span>
+          </div>
+          <ul class="summary-card__list">
+            <li>Phase 2 コンテンツ拡張（血液型・恋愛依存・学校軸・家族軸 等 33本）</li>
+            <li>特商法ページ 住所・運営者名 反映</li>
+            <li>aisei/yujin 品質70点クリア（定義・FAQ追加）</li>
+          </ul>
+        </div>
+
+        <div class="summary-card">
+          <div class="summary-card__header" style="background:#fffbeb; color:#d97706;">
+            <span id="design">🎨 デザイン</span>
+          </div>
+          <ul class="summary-card__list">
+            <li>新デザインシステム v2.0 全ページ適用（フェーズ1〜4）</li>
+            <li>デザイントークン 62変数確立（パープル系カラーパレット）</li>
+            <li>モバイルタブバー・グラスモーフィズムヘッダー実装</li>
+            <li>16動物キャラクター SVG アートワーク制作</li>
+          </ul>
+        </div>
+
+        <div class="summary-card" style="grid-column: 1 / -1;">
+          <div class="summary-card__header" style="background:#eef2ff; color:#6366f1;">
+            <span id="seo">🔍 SEO / 技術</span>
+          </div>
+          <ul class="summary-card__list summary-card__list--two-col">
+            <li>IndexNow API 接続（Bing/Yandex 即時インデックス通知）</li>
+            <li>llms-full.txt 作成（LLM 全文学習用）</li>
+            <li>Speakable Schema 全ページ拡張（7セレクタ・音声検索対応）</li>
+            <li>AIO/LLMO 最適化 全3巡（FAQPage/SpeakableSpecification JSON-LD）</li>
+            <li>内部 SEO 最適化 100ページ一括</li>
+            <li>動的 OGP 画像・GA4 カスタムイベント実装</li>
+            <li>sitemap.xml・robots.txt・404 対応完了</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="faq-section" aria-labelledby="faq-heading" id="faq">
+      <h2 class="section-heading" id="faq-heading">❓ よくある質問</h2>
+      <div class="faq-list">
+        {faqItems.map(item => (
+          <details class="faq-item">
+            <summary class="faq-question">
+              <span class="faq-q-label">Q</span>
+              <span style="flex:1; padding-top:4px;">{item.q}</span>
+            </summary>
+            <div class="faq-answer">{item.a}</div>
+          </details>
+        ))}
+      </div>
+    </section>
+
+    <!-- 内部リンク -->
+    <section class="related-section" aria-labelledby="related-heading">
+      <h2 class="section-heading" id="related-heading">🔗 関連ページ</h2>
+      <div class="related-links">
+        <a href="/about/" class="related-link">
+          <span class="related-link__icon">👤</span>
+          <div>
+            <div class="related-link__title">運営者情報</div>
+            <div class="related-link__desc">編集部・編集長プロフィール・科学的根拠</div>
+          </div>
+        </a>
+        <a href="/editorial-policy/" class="related-link">
+          <span class="related-link__icon">📋</span>
+          <div>
+            <div class="related-link__title">編集ポリシー</div>
+            <div class="related-link__desc">コンテンツ作成基準・AI支援透明化・訂正方針</div>
+          </div>
+        </a>
+        <a href="/contact/" class="related-link">
+          <span class="related-link__icon">📬</span>
+          <div>
+            <div class="related-link__title">お問い合わせ</div>
+            <div class="related-link__desc">バグ報告・誤情報指摘・フィードバック</div>
+          </div>
+        </a>
+        <a href="/faq/" class="related-link">
+          <span class="related-link__icon">❓</span>
+          <div>
+            <div class="related-link__title">よくある質問</div>
+            <div class="related-link__desc">サービス全般のQ&amp;A</div>
+          </div>
+        </a>
+        <a href="/diagnosis/multi-int/" class="related-link">
+          <span class="related-link__icon">🧠</span>
+          <div>
+            <div class="related-link__title">多重知能テストを受ける</div>
+            <div class="related-link__desc">8診断統合の最初の一歩</div>
+          </div>
+        </a>
+        <a href="/profile/" class="related-link">
+          <span class="related-link__icon">🦁</span>
+          <div>
+            <div class="related-link__title">統合プロファイル</div>
+            <div class="related-link__desc">8診断を1枚のプロファイルに統合</div>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <!-- 最終更新フッター -->
+    <div class="last-updated-note">
+      <span>最終更新: <time datetime={lastUpdated}>{lastUpdated}</time></span>
+      <span>・</span>
+      <a href="/contact/">誤りの報告・フィードバックはこちら</a>
+    </div>
+
+  </div>
+
+</BaseLayout>
+
+<style>
+  /* コンテナ */
+  .container {
+    max-width: var(--sn-max-w-content);
+    margin: 0 auto;
+    padding: 0 var(--sn-space-4);
+  }
+  /* パンくず */
+  .breadcrumb {
+    font-size: var(--sn-text-sm);
+    color: var(--sn-muted);
+    padding: var(--sn-space-4) var(--sn-space-4);
+  }
+  .breadcrumb a { color: var(--sn-muted); text-decoration: none; }
+  .breadcrumb a:hover { color: var(--sn-primary); }
+
+  /* ヒーロー統計 */
+  .hero-stats {
+    display: flex;
+    gap: var(--sn-space-6);
+    margin-top: var(--sn-space-6);
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .hero-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    background: rgba(255,255,255,0.12);
+    border-radius: var(--sn-radius);
+    padding: var(--sn-space-3) var(--sn-space-5);
+    min-width: 80px;
+  }
+  .hero-stat-num {
+    font-family: var(--sn-font-rounded);
+    font-size: var(--sn-text-3xl);
+    font-weight: 700;
+    color: #fff;
+    line-height: 1;
+  }
+  .hero-stat-label {
+    font-size: var(--sn-text-xs);
+    color: rgba(255,255,255,0.8);
+    text-align: center;
+    line-height: 1.3;
+  }
+
+  /* TL;DR */
+  .tldr-block {
+    background: #f0f4ff;
+    border-left: 4px solid var(--sn-primary);
+    border-radius: 0 var(--sn-radius-sm) var(--sn-radius-sm) 0;
+    padding: var(--sn-space-5) var(--sn-space-6);
+    margin-bottom: var(--sn-space-8);
+  }
+  .tldr-block__title {
+    font-weight: 700;
+    font-size: var(--sn-text-sm);
+    color: var(--sn-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: var(--sn-space-3);
+  }
+  .tldr-block__list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: var(--sn-space-2);
+    padding-left: var(--sn-space-4);
+  }
+  .tldr-block__item {
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: #1f2937;
+  }
+  .tldr-block__meta {
+    font-size: var(--sn-text-xs);
+    color: var(--sn-muted);
+    margin-top: var(--sn-space-3);
+  }
+
+  /* サマリー（Speakable対象）*/
+  .changelog-summary {
+    background: var(--sn-bg-white);
+    border: 1px solid var(--sn-border);
+    border-radius: var(--sn-radius);
+    padding: var(--sn-space-5) var(--sn-space-6);
+    margin-bottom: var(--sn-space-8);
+    font-size: var(--sn-text-sm);
+    color: var(--sn-text-soft);
+    line-height: var(--sn-leading-relaxed);
+  }
+
+  /* フィルターバー */
+  .filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--sn-space-2);
+    margin-bottom: var(--sn-space-8);
+    padding: var(--sn-space-4) var(--sn-space-5);
+    background: var(--sn-bg-soft);
+    border-radius: var(--sn-radius);
+    border: 1px solid var(--sn-border);
+  }
+  .filter-label {
+    font-size: var(--sn-text-xs);
+    font-weight: 700;
+    color: var(--sn-muted);
+    margin-right: var(--sn-space-2);
+  }
+  .filter-tag {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: var(--sn-radius-pill);
+    font-size: var(--sn-text-xs);
+    font-weight: 600;
+    text-decoration: none;
+    border: 1px solid transparent;
+    transition: all 150ms;
+  }
+  .filter-tag--new     { background: #f3f0ff; color: #7c3aed; border-color: #7c3aed33; }
+  .filter-tag--fix     { background: #ecfdf5; color: #059669; border-color: #05966933; }
+  .filter-tag--content { background: #ecfeff; color: #0891b2; border-color: #0891b233; }
+  .filter-tag--design  { background: #fffbeb; color: #d97706; border-color: #d9770633; }
+  .filter-tag--seo     { background: #eef2ff; color: #6366f1; border-color: #6366f133; }
+  .filter-tag:hover { opacity: 0.8; transform: translateY(-1px); }
+
+  /* 月セクション */
+  .month-section { margin-bottom: var(--sn-space-12); }
+  .month-heading {
+    display: flex;
+    align-items: center;
+    gap: var(--sn-space-3);
+    margin-bottom: var(--sn-space-6);
+  }
+  .month-badge {
+    font-family: var(--sn-font-rounded);
+    font-size: var(--sn-text-xl);
+    font-weight: 700;
+    color: var(--sn-primary);
+  }
+  .month-count {
+    font-size: var(--sn-text-sm);
+    color: var(--sn-muted);
+    background: var(--sn-primary-bg);
+    padding: 2px 10px;
+    border-radius: var(--sn-radius-pill);
+  }
+
+  /* タイムライン */
+  .timeline {
+    position: relative;
+    padding-left: var(--sn-space-6);
+  }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 8px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(to bottom, var(--sn-primary), transparent);
+    border-radius: 1px;
+  }
+  .timeline-item {
+    position: relative;
+    margin-bottom: var(--sn-space-6);
+  }
+  .timeline-dot {
+    position: absolute;
+    left: calc(-1 * var(--sn-space-6) + 4px);
+    top: 18px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--sn-primary);
+    border: 2px solid #fff;
+    box-shadow: 0 0 0 2px var(--sn-primary-light);
+  }
+  .timeline-content {
+    background: var(--sn-bg-white);
+    border: 1px solid var(--sn-border);
+    border-radius: var(--sn-radius);
+    padding: var(--sn-space-5) var(--sn-space-6);
+    box-shadow: var(--sn-shadow-xs);
+    transition: box-shadow 150ms;
+  }
+  .timeline-content:hover { box-shadow: var(--sn-shadow-sm); }
+  .timeline-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--sn-space-2);
+    margin-bottom: var(--sn-space-3);
+  }
+  .timeline-type-badge {
+    font-size: var(--sn-text-xs);
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: var(--sn-radius-pill);
+    border: 1px solid;
+  }
+  .timeline-date {
+    font-size: var(--sn-text-xs);
+    color: var(--sn-muted);
+    font-family: monospace;
+  }
+  .timeline-pr {
+    font-size: var(--sn-text-xs);
+    color: var(--sn-muted);
+    text-decoration: none;
+    border: 1px solid var(--sn-border);
+    padding: 1px 6px;
+    border-radius: var(--sn-radius-xs);
+    transition: color 150ms, border-color 150ms;
+  }
+  .timeline-pr:hover { color: var(--sn-primary); border-color: var(--sn-primary-light); }
+  .timeline-title {
+    font-size: var(--sn-text-base);
+    font-weight: 700;
+    margin-bottom: var(--sn-space-2);
+    color: var(--sn-text);
+    line-height: var(--sn-leading-snug);
+  }
+  .timeline-desc {
+    font-size: var(--sn-text-sm);
+    color: var(--sn-text-soft);
+    line-height: var(--sn-leading-relaxed);
+    margin-bottom: var(--sn-space-2);
+  }
+  .timeline-link {
+    display: inline-block;
+    font-size: var(--sn-text-xs);
+    color: var(--sn-primary);
+    text-decoration: none;
+    font-weight: 600;
+    margin-top: var(--sn-space-1);
+  }
+  .timeline-link:hover { text-decoration: underline; }
+
+  /* セクション見出し共通 */
+  .section-heading {
+    font-family: var(--sn-font-rounded);
+    font-size: var(--sn-text-xl);
+    font-weight: 700;
+    margin-bottom: var(--sn-space-6);
+    padding-bottom: var(--sn-space-3);
+    border-bottom: 2px solid var(--sn-primary-bg);
+  }
+
+  /* 種別サマリーグリッド */
+  .summary-section { margin-bottom: var(--sn-space-12); }
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--sn-space-4);
+  }
+  @media (max-width: 600px) { .summary-grid { grid-template-columns: 1fr; } }
+  .summary-card {
+    background: var(--sn-bg-white);
+    border: 1px solid var(--sn-border);
+    border-radius: var(--sn-radius);
+    overflow: hidden;
+    box-shadow: var(--sn-shadow-xs);
+  }
+  .summary-card__header {
+    padding: var(--sn-space-3) var(--sn-space-5);
+    font-weight: 700;
+    font-size: var(--sn-text-sm);
+  }
+  .summary-card__list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: var(--sn-space-2);
+    padding: var(--sn-space-4) var(--sn-space-5);
+  }
+  .summary-card__list--two-col {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--sn-space-2) var(--sn-space-6);
+  }
+  @media (max-width: 600px) { .summary-card__list--two-col { grid-template-columns: 1fr; } }
+  .summary-card__list li {
+    font-size: var(--sn-text-sm);
+    color: var(--sn-text-soft);
+    line-height: var(--sn-leading-relaxed);
+    padding-left: var(--sn-space-3);
+    border-left: 2px solid var(--sn-border-soft);
+  }
+
+  /* FAQ */
+  .faq-section { margin-bottom: var(--sn-space-12); }
+  .faq-list { display: flex; flex-direction: column; gap: var(--sn-space-4); }
+  details.faq-item {
+    background: var(--sn-bg-white);
+    border-radius: var(--sn-radius);
+    border: 1px solid var(--sn-border);
+    overflow: hidden;
+  }
+  details.faq-item[open] { border-color: var(--sn-primary-light); }
+  details.faq-item summary {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--sn-space-3);
+    padding: var(--sn-space-5) var(--sn-space-6);
+    cursor: pointer;
+    list-style: none;
+    font-weight: 700;
+    font-size: var(--sn-text-sm);
+  }
+  details.faq-item summary::-webkit-details-marker { display: none; }
+  details.faq-item summary:hover { background: var(--sn-primary-bg); }
+  .faq-q-label {
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--sn-primary);
+    color: #fff;
+    font-size: var(--sn-text-xs);
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .faq-answer {
+    padding: 0 var(--sn-space-6) var(--sn-space-5);
+    padding-left: calc(var(--sn-space-6) + 24px + var(--sn-space-3));
+    font-size: var(--sn-text-sm);
+    color: var(--sn-text-soft);
+    line-height: var(--sn-leading-relaxed);
+  }
+
+  /* 関連リンク */
+  .related-section { margin-bottom: var(--sn-space-12); }
+  .related-links {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--sn-space-4);
+  }
+  @media (max-width: 600px) { .related-links { grid-template-columns: 1fr; } }
+  .related-link {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--sn-space-3);
+    background: var(--sn-bg-white);
+    border: 1px solid var(--sn-border);
+    border-radius: var(--sn-radius);
+    padding: var(--sn-space-4) var(--sn-space-5);
+    text-decoration: none;
+    color: var(--sn-text);
+    box-shadow: var(--sn-shadow-xs);
+    transition: all 150ms;
+  }
+  .related-link:hover { border-color: var(--sn-primary); box-shadow: var(--sn-shadow-sm); }
+  .related-link__icon { font-size: 1.4rem; flex-shrink: 0; margin-top: 2px; }
+  .related-link__title { font-weight: 700; font-size: var(--sn-text-sm); margin-bottom: 2px; }
+  .related-link__desc { font-size: var(--sn-text-xs); color: var(--sn-muted); line-height: 1.4; }
+
+  /* 最終更新 */
+  .last-updated-note {
+    display: flex;
+    align-items: center;
+    gap: var(--sn-space-3);
+    font-size: var(--sn-text-xs);
+    color: var(--sn-muted);
+    padding: var(--sn-space-4) 0 var(--sn-space-8);
+    border-top: 1px solid var(--sn-border-soft);
+    margin-top: var(--sn-space-4);
+  }
+  .last-updated-note a { color: var(--sn-primary); }
+</style>
