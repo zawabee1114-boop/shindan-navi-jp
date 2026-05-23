@@ -24,6 +24,7 @@ import type { ZodiacType } from '../../../../data/diagnoses/zodiac/meta';
 import TldrBlock from '../../../../components/TldrBlock.astro';
 import ScienceNote from '../../../../components/ScienceNote.astro';
 import ReferenceList from '../../../../components/ReferenceList.astro';
+import RelatedDiagnoses from '../../../../components/RelatedDiagnoses.astro';
 
 export function getStaticPaths() {
   return ZODIAC_TYPES.map((zodiac) => ({
@@ -444,23 +445,18 @@ const jsonLdBreadcrumb = {
       </div>
     </section>
 
-    <!-- 関連診断リンク -->
-    <section style="margin-bottom: 2.5rem;">
-      <h2 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 1rem;">関連する診断</h2>
-      <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 0.75rem;">
-        {[
-          { href: '/diagnosis/zodiac/', label: '12星座 一覧に戻る', desc: '全星座を比較する' },
-          { href: '/diagnosis/zodiac/compatibility/', label: '12×12 相性表', desc: '全144ペアを一覧で' },
-          { href: '/diagnosis/blood-compat/', label: '血液型相性診断', desc: 'A・B・O・AB型' },
-          { href: '/diagnosis/mbti-compat/', label: 'MBTI相性診断', desc: '16タイプの相性' },
-        ].map((link) => (
-          <a href={link.href} style="display: block; background: var(--sn-surface, #fff); border: 2px solid var(--sn-border, #e5e7eb); border-radius: 0.75rem; padding: 0.75rem; text-decoration: none;">
-            <p style="font-size: 0.9rem; font-weight: 700; color: var(--sn-primary); margin: 0 0 0.25rem;">{link.label}</p>
-            <p style="font-size: 0.775rem; color: var(--sn-muted); margin: 0;">{link.desc}</p>
-          </a>
-        ))}
-      </div>
-    </section>
+  </Container>
+
+  <RelatedDiagnoses
+    diagnosisId="zodiac"
+    typeId={zodiac}
+    diagnosisName="星座性格診断"
+    typeName={detail.japaneseName}
+    pageUrl={PAGE_URL}
+    inviteHref={`/invite/?from=zodiac&type=${zodiac}`}
+  />
+
+  <Container>
 
     <!-- Disclaimer -->
     <aside

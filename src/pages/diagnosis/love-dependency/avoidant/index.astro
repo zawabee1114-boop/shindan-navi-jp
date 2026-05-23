@@ -19,6 +19,7 @@ import Container from '../../../../components/Container.astro';
 import TldrBlock from '../../../../components/TldrBlock.astro';
 import ScienceNote from '../../../../components/ScienceNote.astro';
 import ReferenceList from '../../../../components/ReferenceList.astro';
+import RelatedDiagnoses from '../../../../components/RelatedDiagnoses.astro';
 
 const SITE_URL = 'https://shindan-navi.jp';
 const PAGE_URL = `${SITE_URL}/diagnosis/love-dependency/avoidant/`;
@@ -457,6 +458,15 @@ const selfCareItems = [
 
     <ReferenceList references={references} confirmedAt={UPDATED_AT} />
   </Container>
+
+  <RelatedDiagnoses
+    diagnosisId="love-dependency"
+    typeId="avoidant"
+    diagnosisName="愛着スタイル診断"
+    typeName="回避型"
+    pageUrl={PAGE_URL}
+    inviteHref={`/invite/?from=love-dependency&type=avoidant`}
+  />
 </BaseLayout>
 
 <style>

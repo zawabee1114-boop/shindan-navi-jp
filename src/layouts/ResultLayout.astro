@@ -1,6 +1,6 @@
 ---
 /**
- * ResultLayout.astro - 診断結果ページ共通レイアウト v2
+ * ResultLayout.astro - 診断結果ページ共通レイアウト v3
  *
  * フェーズ2 新デザイン対応:
  * - ヒーロー: 診断カラーグラデーション + スパークル装飾
@@ -8,12 +8,18 @@
  * - グラスモーフィズムキャラクターカード
  * - sn-card / sn-cta クラス統一
  * - 5シーン軸 --s-* トークン対応
+ *
+ * v3 追加（2026-05-23）:
+ * - RelatedDiagnoses コンポーネント統合
+ * - 統合プロファイル CTA を RelatedDiagnoses 内に集約
+ * - 既存 relatedDiagnoses prop は後方互換で残す（廃止予定）
  */
 
 import BaseLayout from './BaseLayout.astro';
 import ShareButtons from '../components/ShareButtons.astro';
 import Container from '../components/Container.astro';
 import PassCta from '../components/PassCta.astro';
+import RelatedDiagnoses from '../components/RelatedDiagnoses.astro';
 
 interface RelatedDiagnosis {
   title: string;
@@ -51,7 +57,10 @@ interface Props {
   pageTitle?: string;
   /** メタディスクリプション */
   pageDescription?: string;
-  /** 関連診断リンク */
+  /**
+   * 関連診断リンク（後方互換・廃止予定）
+   * v3 以降は RelatedDiagnoses コンポーネントが自動生成するため省略可
+   */
   relatedDiagnoses?: RelatedDiagnosis[];
   /** 診断一覧への戻りリンク */
   diagnosisListHref?: string;
@@ -316,43 +325,15 @@ const tabs = [
       </section>
     )}
 
-    {/* ---- 統合プロファイル CTA ---- */}
-    <section class="rl-profile-cta" aria-labelledby="profile-cta-heading">
-      <Container class="container--narrow">
-        <div class="rl-profile-card">
-          <p aria-hidden="true" class="rl-profile-icon">🧬</p>
-          <h2 id="profile-cta-heading" class="rl-profile-title">
-            他の診断も受けて統合プロファイルを作ろう
-          </h2>
-          <p class="rl-profile-desc">
-            複数の診断を受けるほど、あなたの行動パターンが深く分かります。
-            8診断を統合した「あなただけのプロファイル」が完成します。
-          </p>
-          <a href="/diagnosis/" class="sn-cta rl-profile-btn">
-            <span aria-hidden="true">🔮</span>
-            他の診断を受ける
-          </a>
-        </div>
-      </Container>
-    </section>
-
-    {/* ---- 関連診断 ---- */}
-    {relatedDiagnoses.length > 0 && (
-      <section class="rl-related" aria-labelledby="related-heading">
-        <Container>
-          <h2 id="related-heading" class="rl-related-title">関連する診断</h2>
-          <div class="rl-related-grid">
-            {relatedDiagnoses.map((d) => (
-              <a href={d.href} class="rl-related-card sn-card">
-                <span class="rl-related-icon" aria-hidden="true">{d.icon}</span>
-                <span class="rl-related-name">{d.title}</span>
-                {d.badge && <span class="sn-pill">{d.badge}</span>}
-              </a>
-            ))}
-          </div>
-        </Container>
-      </section>
-    )}
+    {/* ---- 関連診断（動的自動最適化 v3） ---- */}
+    <RelatedDiagnoses
+      diagnosisId={diagnosisId}
+      typeId={typeId}
+      diagnosisName={diagnosisName}
+      typeName={typeName}
+      pageUrl={shareUrl}
+      inviteHref={`/invite/?from=${diagnosisId}&type=${typeId}`}
+    />
 
     {/* ---- 再シェア ---- */}
     <section class="rl-bottom-share">
@@ -376,7 +357,7 @@ const tabs = [
 
 <style>
   /* ================================================================
-     ResultLayout v2
+     ResultLayout v3
      ================================================================ */
 
   .rl-page {
@@ -687,114 +668,6 @@ const tabs = [
     font-size: var(--sn-text-xs);
     color: var(--ink-400);
     margin: 0;
-  }
-
-  /* ---- 統合プロファイル CTA ---- */
-  .rl-profile-cta { padding-block: var(--sn-space-8); }
-
-  .rl-profile-card {
-    background: linear-gradient(135deg, var(--brand-50) 0%, #e8f0ff 100%);
-    border-radius: var(--radius-xl);
-    border: 1px solid var(--brand-200);
-    padding: var(--sn-space-8);
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: var(--sn-space-4);
-    position: relative;
-    overflow: hidden;
-  }
-
-  .rl-profile-card::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(50% 60% at 80% 20%, rgba(124,92,255,.08), transparent 60%);
-    pointer-events: none;
-  }
-
-  .rl-profile-icon { font-size: 3rem; margin: 0; position: relative; z-index: 1; }
-
-  .rl-profile-title {
-    font-family: var(--sn-font-rounded);
-    font-size: var(--sn-text-xl);
-    font-weight: 900;
-    color: var(--ink-900);
-    margin: 0;
-    position: relative;
-    z-index: 1;
-  }
-
-  .rl-profile-desc {
-    font-size: var(--sn-text-sm);
-    color: var(--ink-700);
-    line-height: var(--sn-leading-base);
-    margin: 0;
-    max-width: 440px;
-    position: relative;
-    z-index: 1;
-  }
-
-  .rl-profile-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--sn-space-2);
-    position: relative;
-    z-index: 1;
-  }
-
-  /* ---- 関連診断 ---- */
-  .rl-related { padding-block: var(--sn-space-8); }
-
-  .rl-related-title {
-    font-family: var(--sn-font-rounded);
-    font-size: var(--sn-text-xl);
-    font-weight: 700;
-    color: var(--ink-900);
-    margin-bottom: var(--sn-space-5);
-    text-align: center;
-  }
-
-  .rl-related-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-    gap: var(--sn-space-3);
-  }
-
-  .rl-related-card {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: var(--sn-space-2);
-    padding: var(--sn-space-4);
-    text-decoration: none;
-    transition:
-      border-color var(--sn-dur-fast) var(--sn-ease),
-      box-shadow var(--sn-dur-fast) var(--sn-ease),
-      transform var(--sn-dur-fast) var(--sn-ease-bounce);
-    min-height: var(--sn-tap-min);
-  }
-
-  .rl-related-card:hover {
-    border-color: var(--brand-300);
-    box-shadow: var(--shadow-lg);
-    transform: translateY(-2px);
-    text-decoration: none;
-  }
-
-  .rl-related-card:focus-visible {
-    outline: 2px solid var(--brand-400);
-    outline-offset: 3px;
-  }
-
-  .rl-related-icon { font-size: var(--sn-text-2xl); }
-
-  .rl-related-name {
-    font-size: var(--sn-text-sm);
-    font-weight: 700;
-    color: var(--ink-900);
-    text-align: center;
   }
 
   /* ---- ボトムシェア ---- */
