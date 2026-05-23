@@ -6,7 +6,7 @@
  * 確認日: 2026-05-22
  *
  * SEO/AIO対応:
- * - JSON-LD: WebApplication + Quiz（citation付） + FAQPage + BreadcrumbList
+ * - JSON-LD: WebApplication + Quiz（citation付） + FAQPage + BreadcrumbList + HowTo
  * - TL;DRブロック
  * - FAQ 12問（AI Overview最適化）
  * - ScienceNote（批判的視点含む）
@@ -184,7 +184,40 @@ const jsonLdBreadcrumb = {
   ],
 };
 
-const jsonLdAll = [jsonLdWebApp, jsonLdQuiz, jsonLdFAQ, jsonLdBreadcrumb];
+
+// JSON-LD: HowTo（診断の受け方）
+const jsonLdHowTo = {
+  '@context': 'https://schema.org',
+  '@type': 'HowTo',
+  '@id': `${PAGE_URL}#howto`,
+  name: 'MBTI診断の受け方（3ステップ）',
+  description: '40問に答えてE/I・S/N・T/F・J/Pの4軸から16タイプを判定するまでの手順',
+  totalTime: 'PT5M',
+  tool: { '@type': 'HowToTool', name: 'スマートフォンまたはパソコン（登録不要・無料）' },
+  step: [
+    {
+      '@type': 'HowToStep',
+      position: 1,
+      name: '「診断スタート」をタップ',
+      text: '登録・インストール不要。ブラウザですぐ始められます。',
+      url: `${PAGE_URL}`,
+    },
+    {
+      '@type': 'HowToStep',
+      position: 2,
+      name: '40問に回答する（約5分）',
+      text: '4軸（E/I・S/N・T/F・J/P）に関する質問に5段階で答えます。正解はないので直感で回答してください。',
+    },
+    {
+      '@type': 'HowToStep',
+      position: 3,
+      name: '16タイプ判定結果を確認',
+      text: '4軸スコアと16タイプが表示されます。仕事・恋愛・友人・家族・学校の5軸詳細は¥390 PASSで解放されます。',
+    },
+  ],
+};
+
+const jsonLdAll = [jsonLdWebApp, jsonLdQuiz, jsonLdFAQ, jsonLdBreadcrumb, jsonLdHowTo];
 
 // 16タイプ一覧グリッド用データ
 const temperamentIds: Array<'NT' | 'NF' | 'SJ' | 'SP'> = ['NT', 'NF', 'SJ', 'SP'];

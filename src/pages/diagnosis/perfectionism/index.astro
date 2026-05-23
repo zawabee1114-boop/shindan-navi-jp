@@ -176,7 +176,40 @@ const jsonLdBreadcrumb = {
   ],
 };
 
-const jsonLdAll = [jsonLdWebApp, jsonLdQuiz, jsonLdFAQ, jsonLdBreadcrumb];
+
+// JSON-LD: HowTo（診断の受け方）
+const jsonLdHowTo = {
+  '@context': 'https://schema.org',
+  '@type': 'HowTo',
+  '@id': `${PAGE_URL}#howto`,
+  name: '完璧主義診断の受け方（3ステップ）',
+  description: '28問に答えて徹底型・こだわり型・先延ばし型・期待型の4タイプを判定するまでの手順',
+  totalTime: 'PT4M',
+  tool: { '@type': 'HowToTool', name: 'スマートフォンまたはパソコン（登録不要・無料）' },
+  step: [
+    {
+      '@type': 'HowToStep',
+      position: 1,
+      name: '「診断スタート」をタップ',
+      text: '登録・インストール不要。ブラウザですぐ始められます。',
+      url: `${PAGE_URL}`,
+    },
+    {
+      '@type': 'HowToStep',
+      position: 2,
+      name: '28問に回答する（約4分）',
+      text: 'Hewitt & Flett（1991）とFrost et al.（1990）の研究に基づく28問に5段階で答えます。日常の傾向を思い浮かべながら回答してください。',
+    },
+    {
+      '@type': 'HowToStep',
+      position: 3,
+      name: '4タイプ判定結果とCBTセルフヘルプTipsを確認',
+      text: '徹底型・こだわり型・先延ばし型・期待型のうちあなたのタイプが表示されます。各タイプのCBT（認知行動療法）に基づくセルフヘルプTipsも確認できます。',
+    },
+  ],
+};
+
+const jsonLdAll = [jsonLdWebApp, jsonLdQuiz, jsonLdFAQ, jsonLdBreadcrumb, jsonLdHowTo];
 
 // 4タイプカード用データ
 const typeCards = [
