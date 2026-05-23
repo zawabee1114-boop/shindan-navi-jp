@@ -126,30 +126,11 @@ export const onRequest = defineMiddleware(async (context, next) => {
   locals.user = user;
   locals.plan = plan;
 
-  // ログイン済みユーザーが /login/ /signup/ にアクセス → /profile/ へ
-  if (user && REDIRECT_IF_AUTHED_PATHS.some((p) => pathname.startsWith(p))) {
-    return redirect('/profile/');
-  }
-
-  // 認証必須ページの保護
-  const isAuthRequired = AUTH_REQUIRED_PATHS.some((p) => pathname.startsWith(p));
-  if (isAuthRequired && !user) {
-    const redirectParam = encodeURIComponent(pathname);
-    return redirect(`/login/?redirect=${redirectParam}`);
-  }
-
-  // PRO 限定ページの保護
-  const isProOnly = PRO_ONLY_PATHS.some((p) => pathname.startsWith(p));
-  if (isProOnly) {
-    if (!user) {
-      const redirectParam = encodeURIComponent(pathname);
-      return redirect(`/login/?redirect=${redirectParam}`);
-    }
-    if (plan !== 'pro') {
-      return redirect('/pro/?ref=gate');
-    }
-  }
-
+  // Phase 3.2 認証ガード（一時無効化・2026-05-23）
+  // 理由: output:'static' + middleware redirect で保護ページがビルド時に
+  //       「Redirecting to: /login/」HTMLになり、/me/invitations/ は静的出力されず404
+  // 対応: 認証チェックはクライアントサイド（AuthHeader/React Island）に委譲
+  // 復活時: Phase 3.3 で Cloudflare Pages Functions として正しく hybrid 化する際に再設計
   return next();
 });
 
