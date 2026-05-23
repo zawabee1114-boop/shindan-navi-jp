@@ -9,6 +9,10 @@
  *   - ゲスト体験維持（LocalStorage + APIコード生成の二重保存）
  *   - K>1 バイラル係数: 「3人招待でグループ診断解放」インセンティブ
  *   - QRコード: Canvas API で生成（ライブラリ不要の簡易版）
+ *
+ * URL形式変更（fix/static-ssr-cleanup 2026-05-23）:
+ *   - 旧: /i/{code}/?from={type}
+ *   - 新: /invite/?code={code}&from={type}
  */
 
 import { useState, useCallback, useEffect, useRef } from 'react';
@@ -80,6 +84,15 @@ function incrementInviteSentCount(): number {
   }
 }
 
+/** 招待URL生成（静的ページ対応形式）*/
+function buildInviteUrl(code: string, fromType: string): string {
+  const base = 'https://shindan-navi.jp';
+  const url = new URL('/invite/', base);
+  url.searchParams.set('code', code);
+  if (fromType) url.searchParams.set('from', encodeURIComponent(fromType));
+  return url.toString();
+}
+
 /** 簡易QRコード生成（Data URL）: qrcode.js 未使用でCanvas描画 */
 function generateQRDataUrl(text: string): string {
   // 簡易実装: URLをエンコードしたQRコードのプレースホルダー
@@ -130,7 +143,8 @@ export default function InviteViralBlock({
         if (existing) {
           setInviteCode(existing.code);
           setSelectedMode(existing.mode);
-          const url = `https://shindan-navi.jp/i/${existing.code}/?from=${encodeURIComponent(myTypeName)}`;
+          // 新URL形式: /invite/?code=XXXX&from=TYPE
+          const url = buildInviteUrl(existing.code, myTypeName);
           setInviteUrl(url);
           setStep('generated');
         }
@@ -173,7 +187,8 @@ export default function InviteViralBlock({
         localStorage.setItem(STORAGE_KEY, JSON.stringify(stored));
       } catch { /* ignore */ }
 
-      const url = `https://shindan-navi.jp/i/${code}/?from=${encodeURIComponent(myTypeName)}`;
+      // 新URL形式: /invite/?code=XXXX&from=TYPE
+      const url = buildInviteUrl(code, myTypeName);
       setInviteCode(code);
       setInviteUrl(url);
       trackInviteCreate(selectedMode, resultId);
@@ -191,7 +206,8 @@ export default function InviteViralBlock({
         localStorage.setItem(STORAGE_KEY, JSON.stringify(stored));
       } catch { /* ignore */ }
 
-      const url = `https://shindan-navi.jp/i/${code}/?from=${encodeURIComponent(myTypeName)}`;
+      // 新URL形式: /invite/?code=XXXX&from=TYPE
+      const url = buildInviteUrl(code, myTypeName);
       setInviteCode(code);
       setInviteUrl(url);
       trackInviteCreate(selectedMode, resultId);

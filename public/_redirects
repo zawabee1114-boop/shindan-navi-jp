@@ -6,3 +6,9 @@
 /diagnosis/seiza/        /diagnosis/zodiac/        301
 /diagnosis/money-sense/  /diagnosis/money-style/   301
 /diagnosis/ketsuekigata/ /diagnosis/blood-compat/  301
+
+# 招待URL 静的化救済（fix/static-ssr-cleanup 2026-05-23）
+# 旧動的ルート /i/[code]/ → 静的ページ /invite/?code=XXXX に301
+# Cloudflare Pages は :splat でパスセグメントをキャプチャできる
+/i/:code/    /invite/?code=:code    301
+/i/:code     /invite/?code=:code    301
