@@ -10,7 +10,9 @@
     "prebuild": "node scripts/generate-ogp-svg.mjs && node scripts/generate-ogp-png.mjs && node scripts/generate-result-ogp.mjs && node scripts/generate-result-ogp-png.mjs",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "indexnow": "node --use-system-ca scripts/indexnow-ping.mjs",
+    "indexnow:dry": "DRY_RUN=1 node --use-system-ca scripts/indexnow-ping.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.97.1",
