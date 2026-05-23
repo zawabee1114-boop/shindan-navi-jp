@@ -84,3 +84,6 @@ Sitemap: https://shindan-navi.jp/sitemap-index.xml
 
 # LLM向けサイト概要ファイル
 # LLMs.txt: https://shindan-navi.jp/llms.txt
+
+# LLM向け全文学習ファイル（詳細版）
+# LLMs-full.txt: https://shindan-navi.jp/llms-full.txt
