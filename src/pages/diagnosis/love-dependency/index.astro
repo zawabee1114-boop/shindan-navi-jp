@@ -200,7 +200,40 @@ const jsonLdBreadcrumb = {
   ],
 };
 
-const jsonLdAll = [jsonLdWebApp, jsonLdQuiz, jsonLdFAQ, jsonLdBreadcrumb];
+
+// JSON-LD: HowTo（ページの使い方）
+const jsonLdHowTo = {
+  '@context': 'https://schema.org',
+  '@type': 'HowTo',
+  '@id': `${PAGE_URL}#howto`,
+  name: '恋愛における依存的傾向を自己理解する手順（3ステップ）',
+  description: '愛着スタイル4タイプから自分の傾向を把握し、self-careのヒントを得るまでの手順',
+  totalTime: 'PT5M',
+  tool: { '@type': 'HowToTool', name: 'スマートフォンまたはパソコン（登録不要・無料）' },
+  step: [
+    {
+      '@type': 'HowToStep',
+      position: 1,
+      name: '4タイプの説明を読んで自分に近い傾向を確認',
+      text: '不安型・回避型・共依存的傾向・安定型の4タイプから自分の恋愛パターンを確認します。',
+      url: `${PAGE_URL}`,
+    },
+    {
+      '@type': 'HowToStep',
+      position: 2,
+      name: '各タイプページで詳細と自己理解ヒントを確認',
+      text: '自分に近いタイプのページで強み・注意点・self-careのTipsを確認します。',
+    },
+    {
+      '@type': 'HowToStep',
+      position: 3,
+      name: '他の診断と組み合わせて統合プロファイルを確認',
+      text: 'MBTI診断・恋愛スタイル診断などと合わせることで恋愛パターンの全体像が把握できます。',
+    },
+  ],
+};
+
+const jsonLdAll = [jsonLdWebApp, jsonLdQuiz, jsonLdFAQ, jsonLdBreadcrumb, jsonLdHowTo];
 
 // 4タイプカードデータ
 const typeCards = [

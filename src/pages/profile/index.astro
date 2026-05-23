@@ -49,6 +49,43 @@ const jsonLd = [
       { '@type': 'ListItem', position: 2, name: '統合プロファイル', item: pageUrl },
     ],
   },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'HowTo',
+    '@id': `${pageUrl}#howto`,
+    name: '統合プロファイルの使い方（4ステップ）',
+    description: '8診断を受診して統合プロファイルを生成し、5シーン軸スコアとAIプロンプトカードを確認するまでの手順',
+    totalTime: 'PT20M',
+    tool: { '@type': 'HowToTool', name: 'スマートフォンまたはパソコン（登録不要）' },
+    step: [
+      {
+        '@type': 'HowToStep',
+        position: 1,
+        name: 'コア診断を受診する',
+        text: 'MBTI診断・多重知能テスト・完璧主義診断・DiSC診断など8つのコア診断を受診します。受診済みの診断があれば、ブラウザのデータが自動的に引き継がれます。',
+        url: 'https://shindan-navi.jp/diagnosis/',
+      },
+      {
+        '@type': 'HowToStep',
+        position: 2,
+        name: '統合プロファイルページを開く',
+        text: '診断ナビの「統合プロファイル」ページを開くと、受診済みの診断結果が自動的に統合されます。',
+        url: `${pageUrl}`,
+      },
+      {
+        '@type': 'HowToStep',
+        position: 3,
+        name: '5シーン軸スコアを確認',
+        text: '仕事・恋愛・友人・家族・学校の5シーンにおける特性スコアが表示されます。詳細レポートは¥390 PASSまたはPRO会員で閲覧できます。',
+      },
+      {
+        '@type': 'HowToStep',
+        position: 4,
+        name: 'AIプロンプトカードを出力・活用',
+        text: 'あなたの特性を要約したAIプロンプトカードが生成されます。ChatGPTやClaudeに貼り付けることで、自分向けにカスタマイズされたアドバイスが得られます。',
+      },
+    ],
+  },
 ];
 ---
 

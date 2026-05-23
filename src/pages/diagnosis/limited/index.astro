@@ -114,7 +114,41 @@ const jsonLdBreadcrumb = {
   ],
 };
 
-const jsonLdAll = [jsonLdWebApp, jsonLdFAQ, jsonLdBreadcrumb];
+
+// JSON-LD: HowTo（月1限定診断の受け方）
+const jsonLdHowTo = {
+  '@context': 'https://schema.org',
+  '@type': 'HowTo',
+  '@id': `${PAGE_URL}#howto`,
+  name: '月1限定診断の受け方（3ステップ）',
+  description: 'PRO会員として月替わり限定診断を受けて結果を統合プロファイルに反映するまでの手順',
+  totalTime: 'PT5M',
+  tool: { '@type': 'HowToTool', name: 'PRO会員アカウント（¥590/月）' },
+  step: [
+    {
+      '@type': 'HowToStep',
+      position: 1,
+      name: 'PRO会員に登録またはログイン',
+      text: '/pro/ ページからPRO会員（¥590/月）に登録します。既存会員はログインするだけで受診できます。',
+      url: 'https://shindan-navi.jp/pro/',
+    },
+    {
+      '@type': 'HowToStep',
+      position: 2,
+      name: '今月の限定診断を受診',
+      text: '毎月1日に公開される新しいテーマの診断に回答します（所要時間は診断ごとに異なります）。',
+      url: `${PAGE_URL}`,
+    },
+    {
+      '@type': 'HowToStep',
+      position: 3,
+      name: '結果確認・統合プロファイルへ反映',
+      text: '診断結果が表示され、統合プロファイル（/profile/）に自動的に追加されます。過去の限定診断はアーカイブから遡って受診できます。',
+    },
+  ],
+};
+
+const jsonLdAll = [jsonLdWebApp, jsonLdFAQ, jsonLdBreadcrumb, jsonLdHowTo];
 ---
 
 <BaseLayout

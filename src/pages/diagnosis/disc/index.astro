@@ -177,7 +177,40 @@ const jsonLdBreadcrumb = {
   ],
 };
 
-const jsonLdAll = [jsonLdWebApp, jsonLdQuiz, jsonLdFAQ, jsonLdBreadcrumb];
+
+// JSON-LD: HowTo（診断の受け方）
+const jsonLdHowTo = {
+  '@context': 'https://schema.org',
+  '@type': 'HowTo',
+  '@id': `${PAGE_URL}#howto`,
+  name: 'DiSC診断の受け方（3ステップ）',
+  description: '28問に答えてD/i/S/Cの4タイプを判定しビジネス活用場面を確認するまでの手順',
+  totalTime: 'PT4M',
+  tool: { '@type': 'HowToTool', name: 'スマートフォンまたはパソコン（登録不要・無料）' },
+  step: [
+    {
+      '@type': 'HowToStep',
+      position: 1,
+      name: '「診断スタート」をタップ',
+      text: '登録・インストール不要。ブラウザですぐ始められます。',
+      url: `${PAGE_URL}`,
+    },
+    {
+      '@type': 'HowToStep',
+      position: 2,
+      name: '28問に回答する（約4分）',
+      text: 'Marston（1928）理論に基づく28問に5段階で答えます。職場での行動傾向を念頭に回答してください。',
+    },
+    {
+      '@type': 'HowToStep',
+      position: 3,
+      name: 'D/i/S/Cタイプ判定結果とビジネス活用シーンを確認',
+      text: '主力タイプとスコア分布が表示されます。各タイプの強み・対人スタイル・チームでの役割を確認してください。',
+    },
+  ],
+};
+
+const jsonLdAll = [jsonLdWebApp, jsonLdQuiz, jsonLdFAQ, jsonLdBreadcrumb, jsonLdHowTo];
 
 // 4タイプカード用データ
 const typeCards = [
