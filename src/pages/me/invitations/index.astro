@@ -2,167 +2,22 @@
 /**
  * /me/invitations/ - 招待ダッシュボード
  *
- * Phase 3.5: 自分が送った招待コード一覧 + 相性結果表示
+ * Phase 3.5 静的化リファクタ（fix/invitations-static）:
+ * - 旧実装: prerender=false + Astro frontmatter で createServerClient 使用
+ *   → output:'static' ビルドで dist 未生成 → 本番404
  *
- * - active: 有効期限内・未使用
- * - used: 受け手が診断完了済み
- * - expired: 期限切れ
+ * 修正後:
+ * - 静的 HTML シェル（noindex・ヒーロー・新規発行ボタン）を Astro で出力
+ * - DB 取得・認証確認は InvitationsClient.tsx（React Island）に移譲
  *
- * PRO ユーザー: 相性詳細スコア表示
- * 無料/PASS: 概要スコアのみ（詳細はぼかし）
- *
- * 認証: middleware で /me/ 以下は要ログイン
- * noindex: 個人データページ
+ * noindex: 個人データページのため検索除外
  */
 
-export const prerender = false;
+// prerender=false を削除 → デフォルト static（output:'static'）で dist 生成される
 
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Container from '../../../components/Container.astro';
-import { createServerClient } from '../../../lib/supabase/server';
-
-const user = Astro.locals.user;
-const plan = Astro.locals.plan ?? 'free';
-
-// DB から招待一覧を取得
-interface InvitationRow {
-  id: string;
-  invite_code: string;
-  mode: string;
-  expires_at: string;
-  accepted_at: string | null;
-  created_at: string;
-  compatibility_result: Record<string, unknown> | null;
-}
-
-interface CompatScores {
-  overall: number;
-  love: number;
-  work: number;
-  friend: number;
-  family: number;
-  school: number;
-}
-
-interface EnrichedInvitation extends InvitationRow {
-  status: 'used' | 'active' | 'expired';
-  overallScore: number | null;
-  compatScores: CompatScores | null;
-  modeBg: string;
-  modeLabel: string;
-  modeIcon: string;
-  formattedAcceptedAt: string;
-  formattedCreatedAt: string;
-  formattedExpiresAt: string;
-  inviteUrl: string;
-}
-
-let invitations: EnrichedInvitation[] = [];
-let dbError = false;
-
-const SCENE_AXES = ['love', 'work', 'friend', 'family', 'school'] as const;
-type SceneAxis = typeof SCENE_AXES[number];
-
-const MODE_LABELS: Record<string, string> = {
-  secret: 'こっそり',
-  invite: '招待',
-  one_way: '片方向',
-  full_share: '完全共有',
-};
-const MODE_ICONS: Record<string, string> = {
-  secret: '🔮',
-  invite: '👋',
-  one_way: '👁️',
-  full_share: '🤝',
-};
-const MODE_COLORS: Record<string, string> = {
-  secret: '#6b7280',
-  invite: '#6366f1',
-  one_way: '#3b82f6',
-  full_share: '#10b981',
-};
-const AXIS_LABELS: Record<SceneAxis, string> = {
-  love: '恋愛',
-  work: '仕事',
-  friend: '友人',
-  family: '家族',
-  school: '学校',
-};
-
-function formatDate(dateStr: string): string {
-  const d = new Date(dateStr);
-  return `${d.getFullYear()}/${String(d.getMonth() + 1).padStart(2, '0')}/${String(d.getDate()).padStart(2, '0')}`;
-}
-
-if (user) {
-  const supabase = createServerClient();
-  if (supabase) {
-    try {
-      const { data, error } = await supabase
-        .from('invitations')
-        .select('id, invite_code, mode, expires_at, accepted_at, created_at, compatibility_result')
-        .eq('inviter_id', user.id)
-        .order('created_at', { ascending: false })
-        .limit(50);
-
-      if (error) {
-        console.error('[InviteDashboard] DB エラー:', error.message);
-        dbError = true;
-      } else {
-        const now = new Date();
-        invitations = ((data as InvitationRow[]) ?? []).map((inv) => {
-          const status: 'used' | 'active' | 'expired' = inv.accepted_at
-            ? 'used'
-            : new Date(inv.expires_at) < now
-            ? 'expired'
-            : 'active';
-
-          const rawResult = inv.compatibility_result;
-          let overallScore: number | null = null;
-          let compatScores: CompatScores | null = null;
-
-          if (rawResult && typeof rawResult === 'object') {
-            const r = rawResult as Record<string, unknown>;
-            if (typeof r.overall === 'number') {
-              overallScore = r.overall;
-              compatScores = {
-                overall: r.overall as number,
-                love: typeof r.love === 'number' ? r.love : 0,
-                work: typeof r.work === 'number' ? r.work : 0,
-                friend: typeof r.friend === 'number' ? r.friend : 0,
-                family: typeof r.family === 'number' ? r.family : 0,
-                school: typeof r.school === 'number' ? r.school : 0,
-              };
-            }
-          }
-
-          return {
-            ...inv,
-            status,
-            overallScore,
-            compatScores,
-            modeBg: MODE_COLORS[inv.mode] ?? '#6b7280',
-            modeLabel: MODE_LABELS[inv.mode] ?? inv.mode,
-            modeIcon: MODE_ICONS[inv.mode] ?? '🤝',
-            formattedAcceptedAt: inv.accepted_at ? formatDate(inv.accepted_at) : '—',
-            formattedCreatedAt: formatDate(inv.created_at),
-            formattedExpiresAt: formatDate(inv.expires_at),
-            inviteUrl: `https://shindan-navi.jp/i/${inv.invite_code}/`,
-          };
-        });
-      }
-    } catch (err) {
-      console.error('[InviteDashboard] 接続エラー:', err);
-      dbError = true;
-    }
-  }
-}
-
-const isPro = plan === 'pro';
-
-const usedList = invitations.filter((i) => i.status === 'used');
-const activeList = invitations.filter((i) => i.status === 'active');
-const expiredList = invitations.filter((i) => i.status === 'expired');
+import InvitationsClient from '../../../components/me/InvitationsClient';
 ---
 
 <BaseLayout
@@ -174,6 +29,7 @@ const expiredList = invitations.filter((i) => i.status === 'expired');
     { name: '招待ダッシュボード', url: '/me/invitations/' },
   ]}
 >
+  <!-- ヒーローセクション（静的）-->
   <section class="page-hero page-hero--purple">
     <Container>
       <div class="inv-header-inner">
@@ -189,22 +45,7 @@ const expiredList = invitations.filter((i) => i.status === 'expired');
   <Container>
     <div class="inv-body">
 
-      {dbError && (
-        <div class="inv-alert inv-alert--error" role="alert">
-          <span aria-hidden="true">⚠️</span>
-          データの読み込みに失敗しました。しばらく経ってから再度お試しください。
-        </div>
-      )}
-
-      {!user && (
-        <div class="inv-alert" role="status">
-          <span aria-hidden="true">ℹ️</span>
-          ログインすると招待履歴がすべて表示されます。
-          <a href="/login/?redirect=/me/invitations/" class="inv-alert-link">ログインする</a>
-        </div>
-      )}
-
-      <!-- 新規発行ボタン -->
+      <!-- 新規発行ボタン（静的・常時表示）-->
       <div class="inv-new-section">
         <a href="/diagnosis/" class="inv-new-btn" aria-label="新しい招待を発行する">
           <span aria-hidden="true">+</span>
@@ -213,227 +54,14 @@ const expiredList = invitations.filter((i) => i.status === 'expired');
         <p class="inv-new-note">招待相性は完全無料・無制限</p>
       </div>
 
-      <!-- 統計 -->
-      {user && (
-        <div class="inv-stats" role="group" aria-label="招待統計">
-          <div class="inv-stat-card">
-            <span class="inv-stat-num">{invitations.length}</span>
-            <span class="inv-stat-label">発行済み</span>
-          </div>
-          <div class="inv-stat-card inv-stat-card--used">
-            <span class="inv-stat-num">{usedList.length}</span>
-            <span class="inv-stat-label">相性確認済み</span>
-          </div>
-          <div class="inv-stat-card inv-stat-card--active">
-            <span class="inv-stat-num">{activeList.length}</span>
-            <span class="inv-stat-label">待機中</span>
-          </div>
-        </div>
-      )}
-
-      <!-- 相性確認済み -->
-      {usedList.length > 0 && (
-        <section class="inv-section" aria-labelledby="inv-used-heading">
-          <h2 class="inv-section-title" id="inv-used-heading">
-            <span aria-hidden="true">✅</span> 相性確認済み（{usedList.length}件）
-          </h2>
-          <ul class="inv-list" role="list">
-            {usedList.map((inv) => (
-              <li class="inv-item inv-item--used">
-                <div class="inv-item-left">
-                  <span class="inv-mode-badge" style={`background: ${inv.modeBg}`}>
-                    {inv.modeIcon} {inv.modeLabel}
-                  </span>
-                  <p class="inv-item-code">
-                    コード: <code class="inv-code-text">{inv.invite_code}</code>
-                  </p>
-                  <p class="inv-item-date">受診日: {inv.formattedAcceptedAt}</p>
-                </div>
-                <div class="inv-item-right">
-                  {inv.overallScore !== null ? (
-                    isPro ? (
-                      <div class="inv-compat-result">
-                        <div class="inv-compat-score" aria-label={`相性スコア ${inv.overallScore}点`}>
-                          <span class="inv-compat-num">{inv.overallScore}</span>
-                          <span class="inv-compat-unit">点</span>
-                        </div>
-                        {inv.compatScores && (
-                          <div class="inv-compat-breakdown">
-                            {SCENE_AXES.map((axis) => (
-                              <div class="inv-compat-axis">
-                                <span class="inv-compat-axis-label">{AXIS_LABELS[axis]}</span>
-                                <div class="inv-compat-bar-bg">
-                                  <div
-                                    class="inv-compat-bar-fill"
-                                    style={`width: ${inv.compatScores![axis]}%`}
-                                  />
-                                </div>
-                                <span class="inv-compat-axis-score">{inv.compatScores![axis]}</span>
-                              </div>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    ) : (
-                      <div class="inv-compat-blur-wrapper" aria-label="相性スコア（詳細はPROで表示）">
-                        <div class="inv-compat-score inv-compat-score--blurred">
-                          <span class="inv-compat-num">{inv.overallScore}</span>
-                          <span class="inv-compat-unit">点</span>
-                        </div>
-                        <a href="/pro/?ref=compat-dashboard" class="inv-pro-unlock-btn" aria-label="PROで詳細を見る">
-                          PROで詳細を見る
-                        </a>
-                      </div>
-                    )
-                  ) : (
-                    <p class="inv-no-score">スコア算出中</p>
-                  )}
-                </div>
-              </li>
-            ))}
-          </ul>
-        </section>
-      )}
-
-      <!-- 待機中 -->
-      {activeList.length > 0 && (
-        <section class="inv-section" aria-labelledby="inv-active-heading">
-          <h2 class="inv-section-title" id="inv-active-heading">
-            <span aria-hidden="true">⏳</span> 待機中（{activeList.length}件）
-          </h2>
-          <ul class="inv-list" role="list">
-            {activeList.map((inv) => (
-              <li class="inv-item inv-item--active">
-                <div class="inv-item-left">
-                  <span class="inv-mode-badge" style={`background: ${inv.modeBg}`}>
-                    {inv.modeIcon} {inv.modeLabel}
-                  </span>
-                  <p class="inv-item-code">
-                    コード: <code class="inv-code-text">{inv.invite_code}</code>
-                  </p>
-                  <p class="inv-item-date">期限: {inv.formattedExpiresAt}</p>
-                </div>
-                <div class="inv-item-right inv-item-actions">
-                  <button
-                    class="inv-action-btn inv-action-btn--copy"
-                    data-url={inv.inviteUrl}
-                    type="button"
-                    aria-label="招待URLをコピー"
-                  >
-                    URLコピー
-                  </button>
-                  <button
-                    class="inv-action-btn inv-action-btn--cancel"
-                    data-id={inv.id}
-                    type="button"
-                    aria-label="この招待を取り消す"
-                  >
-                    取り消す
-                  </button>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </section>
-      )}
-
-      <!-- 期限切れ（折りたたみ） -->
-      {expiredList.length > 0 && (
-        <section class="inv-section">
-          <details class="inv-expired-details">
-            <summary class="inv-section-title">
-              <span aria-hidden="true">🗂️</span> 期限切れ（{expiredList.length}件）
-            </summary>
-            <ul class="inv-list inv-list--muted" role="list">
-              {expiredList.map((inv) => (
-                <li class="inv-item inv-item--expired">
-                  <span class="inv-mode-badge inv-mode-badge--muted">
-                    {inv.modeIcon} {inv.modeLabel}
-                  </span>
-                  <p class="inv-item-code">
-                    コード: <code class="inv-code-text">{inv.invite_code}</code>
-                  </p>
-                  <p class="inv-item-date">
-                    発行: {inv.formattedCreatedAt} / 期限: {inv.formattedExpiresAt}
-                  </p>
-                </li>
-              ))}
-            </ul>
-          </details>
-        </section>
-      )}
-
-      <!-- DB接続済みで招待ゼロ -->
-      {user && !dbError && invitations.length === 0 && (
-        <div class="inv-empty">
-          <span class="inv-empty-icon" aria-hidden="true">🤝</span>
-          <h2 class="inv-empty-title">まだ招待を送っていません</h2>
-          <p class="inv-empty-desc">
-            診断結果ページから「友達と相性チェック」ボタンで招待リンクを発行できます
-          </p>
-          <a href="/diagnosis/" class="inv-cta-btn">診断を受ける →</a>
-        </div>
-      )}
+      <!-- React Island: 認証確認 + DB 取得 + 統計 + リスト表示 -->
+      <InvitationsClient client:load />
 
     </div>
   </Container>
 </BaseLayout>
 
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-    document.querySelectorAll<HTMLButtonElement>('.inv-action-btn--copy').forEach((btn) => {
-      btn.addEventListener('click', async () => {
-        const url = btn.dataset.url ?? '';
-        try {
-          await navigator.clipboard.writeText(url);
-          const orig = btn.textContent ?? '';
-          btn.textContent = 'コピーしました';
-          btn.disabled = true;
-          setTimeout(() => {
-            btn.textContent = orig;
-            btn.disabled = false;
-          }, 2000);
-        } catch {
-          prompt('URLをコピーしてください:', url);
-        }
-      });
-    });
-
-    document.querySelectorAll<HTMLButtonElement>('.inv-action-btn--cancel').forEach((btn) => {
-      btn.addEventListener('click', async () => {
-        if (!confirm('この招待を取り消しますか？')) return;
-        const id = btn.dataset.id ?? '';
-        try {
-          const res = await fetch('/api/invitation/cancel', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ invitation_id: id }),
-          });
-          const data: { ok: boolean } = await res.json();
-          if (data.ok) {
-            const item = btn.closest('.inv-item');
-            if (item) {
-              item.classList.remove('inv-item--active');
-              item.classList.add('inv-item--expired');
-              btn.closest('.inv-item-actions')?.remove();
-            }
-          } else {
-            alert('取り消しに失敗しました。再度お試しください。');
-          }
-        } catch {
-          alert('通信エラーが発生しました。');
-        }
-      });
-    });
-  });
-</script>
-
 <style>
-.inv-header {
-  background: linear-gradient(135deg, var(--sn-primary-bg) 0%, var(--sn-bg-soft) 100%);
-  padding-block: var(--sn-space-8) var(--sn-space-6);
-  border-bottom: 1px solid var(--sn-border);
-}
 .inv-header-inner {
   display: flex;
   align-items: center;
@@ -471,29 +99,6 @@ const expiredList = invitations.filter((i) => i.status === 'expired');
   padding-block: var(--sn-space-8);
 }
 
-.inv-alert {
-  display: flex;
-  align-items: center;
-  gap: var(--sn-space-2);
-  padding: var(--sn-space-3) var(--sn-space-4);
-  background: var(--sn-bg-soft);
-  border-radius: var(--sn-radius-md);
-  border: 1px solid var(--sn-border);
-  font-size: var(--sn-text-sm);
-  color: var(--sn-text-soft);
-}
-.inv-alert--error {
-  background: var(--sn-error-bg);
-  border-color: color-mix(in srgb, var(--sn-error) 20%, transparent);
-  color: var(--sn-error);
-}
-.inv-alert-link {
-  color: var(--sn-primary);
-  font-weight: 700;
-  text-decoration: underline;
-  margin-left: var(--sn-space-2);
-}
-
 .inv-new-section {
   display: flex;
   align-items: center;
@@ -528,12 +133,63 @@ const expiredList = invitations.filter((i) => i.status === 'expired');
   margin: 0;
 }
 
-.inv-stats {
+/* ===== React Island から使用するクラス ===== */
+
+/* スケルトン */
+:global(.inv-skeleton) {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sn-space-3);
+}
+:global(.inv-skeleton-stat) {
+  height: 80px;
+  background: var(--sn-bg-soft);
+  border-radius: var(--sn-radius-md);
+  animation: inv-pulse 1.5s ease-in-out infinite;
+}
+:global(.inv-skeleton-item) {
+  height: 72px;
+  background: var(--sn-bg-soft);
+  border-radius: var(--sn-radius-md);
+  animation: inv-pulse 1.5s ease-in-out infinite;
+  animation-delay: 0.2s;
+}
+@keyframes inv-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* アラート */
+:global(.inv-alert) {
+  display: flex;
+  align-items: center;
+  gap: var(--sn-space-2);
+  padding: var(--sn-space-3) var(--sn-space-4);
+  background: var(--sn-bg-soft);
+  border-radius: var(--sn-radius-md);
+  border: 1px solid var(--sn-border);
+  font-size: var(--sn-text-sm);
+  color: var(--sn-text-soft);
+}
+:global(.inv-alert--error) {
+  background: var(--sn-error-bg);
+  border-color: color-mix(in srgb, var(--sn-error) 20%, transparent);
+  color: var(--sn-error);
+}
+:global(.inv-alert-link) {
+  color: var(--sn-primary);
+  font-weight: 700;
+  text-decoration: underline;
+  margin-left: var(--sn-space-2);
+}
+
+/* 統計 */
+:global(.inv-stats) {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: var(--sn-space-3);
 }
-.inv-stat-card {
+:global(.inv-stat-card) {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -544,23 +200,24 @@ const expiredList = invitations.filter((i) => i.status === 'expired');
   border: 1px solid var(--sn-border);
   text-align: center;
 }
-.inv-stat-card--used { border-color: color-mix(in srgb, var(--sn-success) 25%, transparent); }
-.inv-stat-card--active { border-color: color-mix(in srgb, var(--sn-primary) 25%, transparent); }
-.inv-stat-num {
+:global(.inv-stat-card--used) { border-color: color-mix(in srgb, var(--sn-success) 25%, transparent); }
+:global(.inv-stat-card--active) { border-color: color-mix(in srgb, var(--sn-primary) 25%, transparent); }
+:global(.inv-stat-num) {
   font-family: var(--sn-font-rounded);
   font-size: var(--sn-text-2xl);
   font-weight: 900;
   color: var(--sn-primary);
   line-height: 1;
 }
-.inv-stat-label {
+:global(.inv-stat-label) {
   font-size: var(--sn-text-xs);
   color: var(--sn-muted);
   font-weight: 700;
 }
 
-.inv-section { display: flex; flex-direction: column; gap: var(--sn-space-3); }
-.inv-section-title {
+/* セクション */
+:global(.inv-section) { display: flex; flex-direction: column; gap: var(--sn-space-3); }
+:global(.inv-section-title) {
   display: flex;
   align-items: center;
   gap: var(--sn-space-2);
@@ -572,9 +229,10 @@ const expiredList = invitations.filter((i) => i.status === 'expired');
   cursor: pointer;
   list-style: none;
 }
-.inv-section-title::-webkit-details-marker { display: none; }
+:global(.inv-section-title::-webkit-details-marker) { display: none; }
 
-.inv-list {
+/* リスト */
+:global(.inv-list) {
   list-style: none;
   padding: 0;
   margin: 0;
@@ -582,9 +240,10 @@ const expiredList = invitations.filter((i) => i.status === 'expired');
   flex-direction: column;
   gap: var(--sn-space-2);
 }
-.inv-list--muted { opacity: 0.7; }
+:global(.inv-list--muted) { opacity: 0.7; }
 
-.inv-item {
+/* カード */
+:global(.inv-item) {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
@@ -595,17 +254,17 @@ const expiredList = invitations.filter((i) => i.status === 'expired');
   border: 1px solid var(--sn-border);
   flex-wrap: wrap;
 }
-.inv-item--used { border-left: 3px solid var(--sn-success); }
-.inv-item--active { border-left: 3px solid var(--sn-primary); }
-.inv-item--expired { border-left: 3px solid var(--sn-border); opacity: 0.75; }
+:global(.inv-item--used) { border-left: 3px solid var(--sn-success); }
+:global(.inv-item--active) { border-left: 3px solid var(--sn-primary); }
+:global(.inv-item--expired) { border-left: 3px solid var(--sn-border); opacity: 0.75; }
 
-.inv-item-left {
+:global(.inv-item-left) {
   display: flex;
   flex-direction: column;
   gap: var(--sn-space-1);
   flex: 1;
 }
-.inv-mode-badge {
+:global(.inv-mode-badge) {
   display: inline-flex;
   align-items: center;
   gap: 0.25rem;
@@ -616,13 +275,13 @@ const expiredList = invitations.filter((i) => i.status === 'expired');
   color: #fff;
   width: fit-content;
 }
-.inv-mode-badge--muted { background: var(--sn-muted) !important; }
-.inv-item-code {
+:global(.inv-mode-badge--muted) { background: var(--sn-muted) !important; }
+:global(.inv-item-code) {
   font-size: var(--sn-text-sm);
   color: var(--sn-text-soft);
   margin: 0;
 }
-.inv-code-text {
+:global(.inv-code-text) {
   font-family: var(--sn-font-mono);
   background: var(--sn-bg-soft);
   padding: 1px 5px;
@@ -631,21 +290,22 @@ const expiredList = invitations.filter((i) => i.status === 'expired');
   font-size: var(--sn-text-sm);
   color: var(--sn-text);
 }
-.inv-item-date {
+:global(.inv-item-date) {
   font-size: var(--sn-text-xs);
   color: var(--sn-muted);
   margin: 0;
 }
 
-.inv-item-right { flex-shrink: 0; }
-.inv-item-actions {
+:global(.inv-item-right) { flex-shrink: 0; }
+:global(.inv-item-actions) {
   display: flex;
   flex-direction: column;
   gap: var(--sn-space-2);
   align-items: flex-end;
 }
 
-.inv-action-btn {
+/* アクションボタン */
+:global(.inv-action-btn) {
   padding: var(--sn-space-2) var(--sn-space-4);
   border-radius: var(--sn-radius-pill);
   font-size: var(--sn-text-xs);
@@ -656,71 +316,72 @@ const expiredList = invitations.filter((i) => i.status === 'expired');
   transition: opacity 0.15s;
   border: 1px solid transparent;
 }
-.inv-action-btn:hover { opacity: 0.8; }
-.inv-action-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-.inv-action-btn--copy { background: var(--sn-primary); color: #fff; }
-.inv-action-btn--cancel {
+:global(.inv-action-btn:hover) { opacity: 0.8; }
+:global(.inv-action-btn:disabled) { opacity: 0.5; cursor: not-allowed; }
+:global(.inv-action-btn--copy) { background: var(--sn-primary); color: #fff; }
+:global(.inv-action-btn--cancel) {
   background: none;
   color: var(--sn-error);
   border-color: color-mix(in srgb, var(--sn-error) 30%, transparent);
 }
 
-.inv-compat-result { display: flex; flex-direction: column; gap: var(--sn-space-2); align-items: flex-end; }
-.inv-compat-score {
+/* 相性スコア */
+:global(.inv-compat-result) { display: flex; flex-direction: column; gap: var(--sn-space-2); align-items: flex-end; }
+:global(.inv-compat-score) {
   display: flex;
   align-items: baseline;
   gap: 0.125rem;
 }
-.inv-compat-score--blurred { filter: blur(4px); user-select: none; }
-.inv-compat-num {
+:global(.inv-compat-score--blurred) { filter: blur(4px); user-select: none; }
+:global(.inv-compat-num) {
   font-family: var(--sn-font-rounded);
   font-size: var(--sn-text-2xl);
   font-weight: 900;
   color: var(--sn-primary);
   line-height: 1;
 }
-.inv-compat-unit {
+:global(.inv-compat-unit) {
   font-size: var(--sn-text-sm);
   color: var(--sn-muted);
 }
-.inv-compat-breakdown {
+:global(.inv-compat-breakdown) {
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
   min-width: 140px;
 }
-.inv-compat-axis {
+:global(.inv-compat-axis) {
   display: flex;
   align-items: center;
   gap: var(--sn-space-2);
 }
-.inv-compat-axis-label {
+:global(.inv-compat-axis-label) {
   font-size: var(--sn-text-xs);
   color: var(--sn-muted);
   width: 2em;
   flex-shrink: 0;
 }
-.inv-compat-bar-bg {
+:global(.inv-compat-bar-bg) {
   flex: 1;
   height: 6px;
   background: var(--sn-bg-soft);
   border-radius: 999px;
   overflow: hidden;
 }
-.inv-compat-bar-fill {
+:global(.inv-compat-bar-fill) {
   height: 100%;
   background: var(--sn-primary);
   border-radius: 999px;
 }
-.inv-compat-axis-score {
+:global(.inv-compat-axis-score) {
   font-size: var(--sn-text-xs);
   font-weight: 700;
   color: var(--sn-primary);
   width: 2em;
   text-align: right;
 }
-.inv-compat-blur-wrapper { display: flex; flex-direction: column; align-items: flex-end; gap: var(--sn-space-2); }
-.inv-pro-unlock-btn {
+:global(.inv-compat-blur-wrapper) { display: flex; flex-direction: column; align-items: flex-end; gap: var(--sn-space-2); }
+:global(.inv-pro-unlock-btn) {
   display: inline-flex;
   align-items: center;
   padding: var(--sn-space-1) var(--sn-space-3);
@@ -732,16 +393,17 @@ const expiredList = invitations.filter((i) => i.status === 'expired');
   text-decoration: none;
   min-height: 32px;
 }
-.inv-no-score {
+:global(.inv-no-score) {
   font-size: var(--sn-text-xs);
   color: var(--sn-muted);
   margin: 0;
 }
 
-.inv-expired-details > summary { cursor: pointer; }
-.inv-expired-details[open] > summary { margin-bottom: var(--sn-space-3); }
+:global(.inv-expired-details > summary) { cursor: pointer; }
+:global(.inv-expired-details[open] > summary) { margin-bottom: var(--sn-space-3); }
 
-.inv-empty {
+/* 空状態 */
+:global(.inv-empty) {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -749,22 +411,22 @@ const expiredList = invitations.filter((i) => i.status === 'expired');
   padding: var(--sn-space-12) var(--sn-space-4);
   text-align: center;
 }
-.inv-empty-icon { font-size: 3.5rem; }
-.inv-empty-title {
+:global(.inv-empty-icon) { font-size: 3.5rem; }
+:global(.inv-empty-title) {
   font-family: var(--sn-font-rounded);
   font-size: var(--sn-text-xl);
   font-weight: 900;
   color: var(--sn-text);
   margin: 0;
 }
-.inv-empty-desc {
+:global(.inv-empty-desc) {
   font-size: var(--sn-text-sm);
   color: var(--sn-muted);
   line-height: var(--sn-leading-base);
   max-width: 380px;
   margin: 0;
 }
-.inv-cta-btn {
+:global(.inv-cta-btn) {
   display: inline-flex;
   align-items: center;
   padding: var(--sn-space-3) var(--sn-space-6);
@@ -778,19 +440,20 @@ const expiredList = invitations.filter((i) => i.status === 'expired');
   min-height: var(--sn-tap-min);
   transition: transform var(--sn-dur-fast), box-shadow var(--sn-dur-fast);
 }
-.inv-cta-btn:hover {
+:global(.inv-cta-btn:hover) {
   transform: translateY(-1px);
   box-shadow: var(--sn-shadow-md);
   text-decoration: none;
   color: #fff;
 }
 
+/* レスポンシブ */
 @media (max-width: 640px) {
   .inv-header-inner { flex-direction: column; align-items: flex-start; gap: var(--sn-space-3); }
-  .inv-stat-card { padding: var(--sn-space-3) var(--sn-space-2); }
-  .inv-item { flex-direction: column; }
-  .inv-item-right { width: 100%; }
-  .inv-item-actions { flex-direction: row; align-items: center; }
-  .inv-compat-breakdown { min-width: 100%; }
+  :global(.inv-stat-card) { padding: var(--sn-space-3) var(--sn-space-2); }
+  :global(.inv-item) { flex-direction: column; }
+  :global(.inv-item-right) { width: 100%; }
+  :global(.inv-item-actions) { flex-direction: row; align-items: center; }
+  :global(.inv-compat-breakdown) { min-width: 100%; }
 }
 </style>
