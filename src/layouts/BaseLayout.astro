@@ -9,6 +9,8 @@
  *   - MobileTabBar（ボトムタブ・モバイルのみ表示）追加
  *   - PC/モバイル出し分けロジック実装
  *   - body の padding-bottom は MobileTabBar CSS で制御
+ * フェーズ6: WebSite SearchAction 実装（2026-05-23 更新）
+ *   - /search/?q= ページ追加・SiteLinksSearchBox リッチリザルト対応
  * 準拠基準書: zawa-empire/docs/seo-aio/01-foundations.md / 02-structured-data.md
  *
  * テーマ変更ガイド:
@@ -173,6 +175,7 @@ const organizationSchema = {
 };
 
 // WebSite JSON-LD（SiteLinksSearchBox + SearchAction + @id連結）
+// urlTemplate は /search/?q= （末尾スラッシュ付き・Astro trailingSlash: always に準拠）
 const websiteSchema = {
   '@context': 'https://schema.org',
   '@type': 'WebSite',
@@ -186,7 +189,7 @@ const websiteSchema = {
     '@type': 'SearchAction',
     target: {
       '@type': 'EntryPoint',
-      urlTemplate: `${SITE_URL}/search?q={search_term_string}`,
+      urlTemplate: `${SITE_URL}/search/?q={search_term_string}`,
     },
     'query-input': 'required name=search_term_string',
   },

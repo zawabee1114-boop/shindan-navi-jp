@@ -1,8 +1,9 @@
 ---
 /**
- * SiteHeader.astro - グローバルヘッダー v2.0
+ * SiteHeader.astro - グローバルヘッダー v2.1
  * Claude Design ハンドオフ準拠: 白半透明 + backdrop-filter
- * 2026-05-22 更新
+ * 2026-05-23 更新: 検索アイコン（/search/へリンク）追加
+ * 2026-05-22 更新: v2.0 初版
  *
  * AuthHeader.tsx を React Island として組み込み
  * ログイン状態は client:only="react" でマウント後に取得
@@ -48,6 +49,14 @@ const navItems = [
         ))}
       </ul>
     </nav>
+
+    <!-- 検索アイコン（/search/ へ遷移）-->
+    <a href="/search/" class="header-search-btn" aria-label="サイト内検索">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="11" cy="11" r="8"/>
+        <path d="m21 21-4.35-4.35"/>
+      </svg>
+    </a>
 
     <!-- 認証 UI（React Island）-->
     <div class="header-auth" aria-label="認証メニュー">
@@ -157,9 +166,43 @@ const navItems = [
     text-decoration: none;
   }
 
+  /* 検索アイコンボタン */
+  .header-search-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-sm);
+    color: var(--ink-500);
+    text-decoration: none;
+    transition: background-color var(--sn-dur-fast) var(--sn-ease), color var(--sn-dur-fast) var(--sn-ease);
+    flex-shrink: 0;
+    /* ナビとauthの間に配置（ナビが非表示の場合は auto-margin で右寄せ）*/
+    margin-left: auto;
+  }
+
+  @media (min-width: 768px) {
+    .header-search-btn {
+      /* PCではナビがあるので auto-margin は不要 */
+      margin-left: 0;
+    }
+  }
+
+  .header-search-btn:hover {
+    background: var(--brand-50);
+    color: var(--brand-600);
+    text-decoration: none;
+  }
+
+  .header-search-btn:focus-visible {
+    outline: 2px solid var(--brand-400);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+  }
+
   /* 認証エリア */
   .header-auth {
-    margin-left: auto;
     flex-shrink: 0;
     /* CLS 対策: マウント前のプレースホルダー幅を確保 */
     min-width: 80px;
