@@ -194,6 +194,7 @@ const descriptionClean = typeData.description.replace(/\n+/g, ' ').trim();
   pageDescription={`恋愛スタイル診断の結果は「${typeData.japaneseName}（${typeData.nameEn}）」。${typeData.catchphrase} 恋愛傾向・強み・気をつけたい点・5タイプとの相性ランキングを詳しく解説。J.A.Lee（1973）理論に基づく自己理解ガイド。`}
   relatedDiagnoses={relatedDiagnoses}
   jsonLd={jsonLdAll}
+  ogImage={`/og/result/love-style/${typeId}.png`}
 >
   {/* ========== 概要タブ ========== */}
   <Fragment slot="overview">

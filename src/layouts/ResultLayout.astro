@@ -57,6 +57,8 @@ interface Props {
   diagnosisListHref?: string;
   /** 構造化データ */
   jsonLd?: object | object[];
+  /** OGP画像URL（絶対URL または /から始まるパス） */
+  ogImage?: string;
 }
 
 const {
@@ -75,6 +77,7 @@ const {
   relatedDiagnoses = [],
   diagnosisListHref = '/diagnosis/',
   jsonLd,
+  ogImage,
 } = Astro.props;
 
 const autoTitle = pageTitle ?? `${typeName}（${typeId}）- ${diagnosisName}の診断結果 | 診断ナビ`;
@@ -103,6 +106,7 @@ const tabs = [
   canonical={shareUrl}
   jsonLd={jsonLd}
   ogType="article"
+  ogImage={ogImage}
   breadcrumbs={[
     { name: '診断一覧', url: diagnosisListHref },
     { name: `${diagnosisName} 結果`, url: shareUrl },

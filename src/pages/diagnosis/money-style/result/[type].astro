@@ -205,6 +205,7 @@ const descriptionClean = typeData.description.replace(/\n+/g, ' ').trim();
   pageDescription={`金銭感覚診断の結果は「${typeData.japaneseName}（${typeData.nameEn}）」。${typeData.catchphrase} 消費パターン・貯蓄傾向・強み・気をつけたい点・3タイプとの相性ランキングを詳しく解説。Klontz et al.（2011）マネースクリプト理論に基づく自己理解ガイド。`}
   relatedDiagnoses={relatedDiagnoses}
   jsonLd={jsonLdAll}
+  ogImage={`/og/result/money-style/${typeId}.png`}
 >
   {/* ========== 概要タブ ========== */}
   <Fragment slot="overview">

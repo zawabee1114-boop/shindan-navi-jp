@@ -142,7 +142,7 @@ const jsonLdBreadcrumb = {
 };
 ---
 
-<BaseLayout title={pageTitle} description={pageDesc}>
+<BaseLayout title={pageTitle} description={pageDesc} ogImage={`/og/result/zodiac/${zodiac}.png`} ogType="article">
   <Fragment slot="head">
     <link rel="canonical" href={PAGE_URL} />
     <script type="application/ld+json" set:html={JSON.stringify(jsonLdArticle)} />
