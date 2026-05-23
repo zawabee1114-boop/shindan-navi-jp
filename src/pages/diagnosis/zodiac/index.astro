@@ -241,12 +241,6 @@ const ELEMENT_COLORS: Record<string, { bg: string; border: string; text: string;
       <span aria-current="page">星座性格診断</span>
     </nav>
 
-    <!-- H1（hidden: ヒーローに移動済み） -->
-    <h1 style="font-size: clamp(1.5rem, 4vw, 2.25rem); font-weight: 800; line-height: 1.3; margin-bottom: 0.75rem; color: var(--sn-text); display: none;" aria-hidden="true">
-      星座性格診断【12星座完全版】<br>
-      <span style="font-size: 0.75em; font-weight: 600; color: var(--sn-muted);">性格分類 × 心理学 × 科学的位置付け</span>
-    </h1>
-
     <!-- 鮮度バッジ -->
     <p style="font-size: 0.8rem; color: var(--sn-muted); margin-bottom: 1.5rem;">
       <time datetime={meta.updatedAt}>{meta.updatedAt.replace(/-/g, '/')} 時点の情報</time>

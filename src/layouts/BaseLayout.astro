@@ -100,9 +100,16 @@ const ogImageUrl = ogImage
   ? (ogImage.startsWith('http') ? ogImage : `${SITE_URL}${ogImage}`)
   : `${SITE_URL}${siteMeta.ogImage}`;
 
-const fullTitle = title === siteMeta.siteName
-  ? siteMeta.siteName
-  : `${title} | ${siteMeta.siteName}`;
+// title が既に '| 診断ナビ' で終わる場合は重複付加しない（SEO Critical 修正 2026-05-23）
+const SITE_NAME = siteMeta.siteName;
+const fullTitle = (
+  title === SITE_NAME ||
+  title.endsWith(' | ' + SITE_NAME) ||
+  title.endsWith('| ' + SITE_NAME) ||  // 句読点直後の半角 | パターン
+  title.endsWith('｜' + SITE_NAME)  // 全角パイプ｜パターン
+)
+  ? title
+  : title + ' | ' + SITE_NAME;
 
 // ページ別 JSON-LD を配列に正規化
 const jsonLdArray = jsonLd
@@ -364,6 +371,8 @@ const GSC_VERIFICATION = '';
       crossorigin="anonymous"
     ></script>
   )}
+  <!-- ページ個別の head 追加スロット（zodiac等のインラインJSON-LD用）-->
+  <slot name="head" />
 </head>
 <body class:list={[{ 'has-mobile-tabbar': !hideBottomNav }]}>
 

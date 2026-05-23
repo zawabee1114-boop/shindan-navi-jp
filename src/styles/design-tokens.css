@@ -122,6 +122,7 @@
   --sn-bg-soft:           var(--surface-2);
   --sn-border:            var(--line);
   --sn-border-soft:       var(--surface-2);
+  --sn-surface:           var(--surface);      /* 後方互換: 複数ページで参照 */
 
   /* シーン軸別カラー → --s-* に橋渡し */
   --sn-scene-work:        var(--s-work);
