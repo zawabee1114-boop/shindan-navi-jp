@@ -446,8 +446,8 @@ const pageJsonLd = [
   },
   {
     "@context": "https://schema.org",
+    // Fix GSC: FAQPage に url プロパティを含めると「解析不能」エラーになる（2026-05-23修正）
     "@type": "FAQPage",
-    "url": "https://shindan-navi.jp/changelog/#faq",
     "mainEntity": faqItems.map(({ q, a }) => ({
       "@type": "Question",
       "name": q,
