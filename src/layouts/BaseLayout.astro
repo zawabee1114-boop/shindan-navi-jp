@@ -2,6 +2,8 @@
 /**
  * BaseLayout.astro - 診断ナビ 共通レイアウト
  * SEO/AIO/LLMO 基盤設定完了（2026-05-21 更新）
+ * フェーズ5: Speakable Schema 全頁拡張（2026-05-23 更新）
+ *   - cssSelector を7セレクタに拡張（音声検索 + AI Overview 対応強化）
  * フェーズ4: モバイルUI実装（2026-05-22 更新）
  *   - MobileHeader（グラスモーフィズム・モバイルのみ表示）追加
  *   - MobileTabBar（ボトムタブ・モバイルのみ表示）追加
@@ -112,9 +114,22 @@ const fullTitle = (
   : title + ' | ' + SITE_NAME;
 
 // ページ別 JSON-LD を配列に正規化
-const jsonLdArray = jsonLd
+const jsonLdArrayRaw = jsonLd
   ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd])
   : [];
+
+// Article スキーマに speakable を自動注入（全ページ対応・既存定義がある場合は維持）
+const ARTICLE_SPEAKABLE = {
+  '@type': 'SpeakableSpecification',
+  cssSelector: ['.tldr', '.faq-question', '.science-note-summary'],
+} as const;
+
+const jsonLdArray = jsonLdArrayRaw.map((schema: Record<string, unknown>) => {
+  if (schema['@type'] === 'Article' && !schema['speakable']) {
+    return { ...schema, speakable: ARTICLE_SPEAKABLE };
+  }
+  return schema;
+});
 
 // ============================================================
 // 共通 JSON-LD スキーマ（全ページ必須・@id連結設計）
@@ -224,7 +239,23 @@ const speakableSchema = {
   },
   speakable: {
     '@type': 'SpeakableSpecification',
-    cssSelector: ['.hero-description', 'h1', '.result-summary', '.tldr'],
+    cssSelector: [
+      // 全ページ共通：ページ見出しと TL;DR 要約
+      'h1',
+      '.tldr',
+      // ヒーロー説明文（page-hero-sub: 全コンテンツページ / hero-v2-desc: TOPページ）
+      '.page-hero-sub',
+      '.hero-v2-desc',
+      '.hero-description',
+      // 診断結果ページ
+      '.result-summary',
+      // 定義段落（definition クラス付与ページ）
+      '.definition',
+      // FAQ 質問テキスト
+      '.faq-question',
+      // ScienceNote 理論的根拠サマリー
+      '.science-note-summary',
+    ],
   },
 };
 
