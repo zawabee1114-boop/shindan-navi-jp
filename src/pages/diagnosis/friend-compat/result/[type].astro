@@ -179,6 +179,7 @@ const inviteBaseUrl = `${SITE_URL}/invite/friend-compat/?from=${typeId}`;
   pageDescription={`友達相性診断の結果は「${typeData.japaneseName}」。${typeData.catchphrase} グループでの役割・友情エピソード・6タイプ別相性スコアを詳しく解説。招待機能で友達と無料で相性チェック。`}
   relatedDiagnoses={relatedDiagnoses}
   jsonLd={jsonLdAll}
+  ogImage={`/og/result/friend-compat/${typeId}.png`}
 >
   {/* ========== 概要タブ ========== */}
   <Fragment slot="overview">
