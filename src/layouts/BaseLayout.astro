@@ -187,10 +187,9 @@ const websiteSchema = {
   inLanguage: 'ja-JP',
   potentialAction: {
     '@type': 'SearchAction',
-    target: {
-      '@type': 'EntryPoint',
-      urlTemplate: `${SITE_URL}/search/?q={search_term_string}`,
-    },
+    // Fix GSC: target は EntryPoint ネストではなく文字列URLテンプレートが Google 推奨
+    // EntryPoint ネストは「解析不能な構造化データ」エラーの原因になる（2026-05-23修正）
+    target: `${SITE_URL}/search/?q={search_term_string}`,
     'query-input': 'required name=search_term_string',
   },
   publisher: {
@@ -236,10 +235,8 @@ const speakableSchema = {
     '@type': 'WebSite',
     '@id': `${SITE_URL}/#website`,
   },
-  about: {
-    '@type': 'Organization',
-    '@id': `${SITE_URL}/#organization`,
-  },
+  // Fix GSC: WebPage.about から Organization 参照を削除
+  // WebPage.about は CreativeWork が期待値。Organization は unexpected で解析不能の原因（2026-05-23修正）
   speakable: {
     '@type': 'SpeakableSpecification',
     cssSelector: [

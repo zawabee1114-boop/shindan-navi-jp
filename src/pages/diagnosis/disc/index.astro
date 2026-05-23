@@ -63,7 +63,9 @@ const jsonLdWebApp = {
 // JSON-LD: Quiz（citation に学術文献を配置）
 const jsonLdQuiz = {
   '@context': 'https://schema.org',
-  '@type': 'Quiz',
+  // Fix GSC: Quiz @type は schema.org 標準だが Google リッチリザルト非対応で「解析不能」エラーになる
+  // LearningResource（上位タイプ）に変更（2026-05-23修正）
+  '@type': 'LearningResource',
   '@id': `${PAGE_URL}#quiz`,
   name: 'DiSC診断（28問）',
   url: PAGE_URL,

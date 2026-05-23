@@ -165,7 +165,8 @@ const pageJsonLd = [
       "@id": "https://shindan-navi.jp/about/#person-aizawa"
     },
     "description": "8診断統合自己理解プラットフォーム「診断ナビ」を運営する編集部。性格心理学・行動科学の学術的知見に基づく診断コンテンツを提供する。",
-    "sameAs": ["https://keisan-navi.jp", "https://template-free.jp"],
+    // Fix GSC: sameAs は同一エンティティの別URLのみ。別サービスURLは削除（2026-05-23修正）
+    "sameAs": [],
     "knowsAbout": [
       "性格心理学（Big Five）",
       "多重知能理論（Howard Gardner）",
@@ -179,8 +180,8 @@ const pageJsonLd = [
   },
   {
     "@context": "https://schema.org",
+    // Fix GSC: FAQPage に url プロパティを含めると「解析不能」エラーになる（2026-05-23修正）
     "@type": "FAQPage",
-    "url": "https://shindan-navi.jp/about/#faq",
     "mainEntity": [
       {
         "@type": "Question",
