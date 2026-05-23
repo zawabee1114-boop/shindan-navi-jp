@@ -4,14 +4,19 @@
  *
  * Phase 3.2: Supabase Magic Link でメール送信（本接続）
  *
+ * 静的化（fix/static-ssr-cleanup）:
+ * - 旧実装: prerender=false + Astro.url.searchParams.get('redirect')
+ *   → output:'static' ビルドで dist 未生成 → 本番404
+ * - 修正後: prerender=false 削除 → 静的HTML生成
+ *   - ?redirect= / ?auth_error= はクライアント JS (window.location.search) で取得
+ *   - Magic Link 送信も既存 <script> ブロックでクライアント完結
+ *
  * - ログイン済みなら /profile/ へリダイレクト（middleware が処理）
  * - ?redirect= パラメータでログイン後の遷移先を保持
  * - ?auth_error= パラメータでコールバックエラーを表示
  * - Magic Link = @supabase/supabase-js の signInWithOtp 使用
  * - 同意チェック: ログインボタン押下でポリシー同意とみなす（再確認は不要）
  */
-
-export const prerender = false;
 
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Container from '../../components/Container.astro';
@@ -21,11 +26,6 @@ const isConfigured = Boolean(
 );
 const siteUrl = 'https://shindan-navi.jp';
 const pageUrl = `${siteUrl}/login/`;
-
-// ?redirect= パラメータを取得（ログイン後の遷移先）
-const redirectTo = Astro.url.searchParams.get('redirect') ?? '/profile/';
-// ?auth_error= パラメータを取得（コールバックエラー）
-const authError = Astro.url.searchParams.get('auth_error');
 ---
 
 <BaseLayout
@@ -53,22 +53,14 @@ const authError = Astro.url.searchParams.get('auth_error');
           パスワードは不要です。
         </p>
 
-        {/* コールバックエラー表示 */}
-        {authError && (
-          <div class="login-message login-message--error" role="alert">
-            {authError === 'no_code'
-              ? 'ログインリンクが無効です。もう一度お試しください。'
-              : authError === 'session_exchange_failed'
-              ? 'ログインリンクの期限が切れています。新しいリンクを送信してください。'
-              : `ログインエラー: ${decodeURIComponent(authError)}`
-            }
-          </div>
-        )}
+        {/* コールバックエラー表示（JS で動的に表示） */}
+        <div id="login-auth-error" class="login-message login-message--error" role="alert" hidden></div>
 
         {isConfigured ? (
           /* 本番フォーム（env設定済み）*/
           <form id="login-form" class="login-form" novalidate>
-            <input type="hidden" name="redirect" value={redirectTo} />
+            {/* redirect パラメータは JS で取得するため hidden input は JS で設定 */}
+            <input type="hidden" name="redirect" id="login-redirect-input" value="/profile/" />
             <label class="login-label" for="login-email">
               メールアドレス
             </label>
@@ -122,59 +114,92 @@ const authError = Astro.url.searchParams.get('auth_error');
   </Container>
 </BaseLayout>
 
-{isConfigured && (
-  <script>
-    const form = document.getElementById('login-form') as HTMLFormElement;
-    const submitBtn = document.getElementById('login-submit-btn') as HTMLButtonElement;
-    const messageEl = document.getElementById('login-message') as HTMLElement;
+<script>
+  // クライアントサイドで URL パラメータを取得（静的化対応）
+  const params = new URLSearchParams(window.location.search);
 
-    form?.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const email = (form.elements.namedItem('email') as HTMLInputElement).value.trim();
-      const redirectPath = (form.elements.namedItem('redirect') as HTMLInputElement).value;
-      if (!email) return;
+  // ?redirect= パラメータ処理
+  const redirectParam = params.get('redirect');
+  const redirectInput = document.getElementById('login-redirect-input') as HTMLInputElement | null;
+  if (redirectInput && redirectParam) {
+    redirectInput.value = redirectParam;
+  }
 
+  // ?auth_error= パラメータ処理
+  const authError = params.get('auth_error');
+  const authErrorEl = document.getElementById('login-auth-error') as HTMLElement | null;
+  if (authErrorEl && authError) {
+    let errorText = '';
+    if (authError === 'no_code') {
+      errorText = 'ログインリンクが無効です。もう一度お試しください。';
+    } else if (authError === 'session_exchange_failed') {
+      errorText = 'ログインリンクの期限が切れています。新しいリンクを送信してください。';
+    } else {
+      errorText = `ログインエラー: ${decodeURIComponent(authError)}`;
+    }
+    authErrorEl.textContent = errorText;
+    authErrorEl.removeAttribute('hidden');
+  }
+
+  // フォーム送信（Supabase Magic Link）
+  const form = document.getElementById('login-form') as HTMLFormElement | null;
+  const submitBtn = document.getElementById('login-submit-btn') as HTMLButtonElement | null;
+  const messageEl = document.getElementById('login-message') as HTMLElement | null;
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = (form.elements.namedItem('email') as HTMLInputElement).value.trim();
+    const redirectPath = (form.elements.namedItem('redirect') as HTMLInputElement).value;
+    if (!email) return;
+
+    if (submitBtn) {
       submitBtn.disabled = true;
       submitBtn.textContent = '送信中...';
+    }
 
-      try {
-        const { signInWithMagicLink } = await import('../../lib/supabase/client');
+    try {
+      const { signInWithMagicLink } = await import('../../lib/supabase/client');
 
-        // redirectTo にリダイレクト先を含める
-        const siteOrigin = window.location.origin;
-        const callbackUrl = `${siteOrigin}/api/auth/callback?next=${encodeURIComponent(redirectPath)}`;
+      // redirectTo にリダイレクト先を含める
+      const siteOrigin = window.location.origin;
+      const callbackUrl = `${siteOrigin}/api/auth/callback?next=${encodeURIComponent(redirectPath)}`;
 
-        // signInWithMagicLink はメール送信のみ（redirectTo は emailRedirectTo として渡る）
-        const { error } = await signInWithMagicLink(email);
+      // signInWithMagicLink はメール送信のみ（redirectTo は emailRedirectTo として渡る）
+      const { error } = await signInWithMagicLink(email);
 
-        if (error) {
+      if (error) {
+        if (messageEl) {
           messageEl.textContent = `エラー: ${(error as Error).message}`;
           messageEl.className = 'login-message login-message--error';
           messageEl.removeAttribute('hidden');
-        } else {
-          // 送信成功
+        }
+      } else {
+        // 送信成功
+        if (messageEl) {
           messageEl.innerHTML = `
             <strong>${email}</strong> にログインリンクを送りました。<br>
             メールをご確認ください（迷惑メールフォルダもご確認を）。
           `;
           messageEl.className = 'login-message login-message--success';
           messageEl.removeAttribute('hidden');
-          form.querySelector('input[type="email"]')?.setAttribute('disabled', 'true');
-          submitBtn.style.display = 'none';
         }
-      } catch {
+        form.querySelector('input[type="email"]')?.setAttribute('disabled', 'true');
+        if (submitBtn) submitBtn.style.display = 'none';
+      }
+    } catch {
+      if (messageEl) {
         messageEl.textContent = '送信に失敗しました。しばらく後でお試しください。';
         messageEl.className = 'login-message login-message--error';
         messageEl.removeAttribute('hidden');
-      } finally {
-        if (!submitBtn.style.display) {
-          submitBtn.disabled = false;
-          submitBtn.textContent = 'ログインリンクを送る';
-        }
       }
-    });
-  </script>
-)}
+    } finally {
+      if (submitBtn && !submitBtn.style.display) {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'ログインリンクを送る';
+      }
+    }
+  });
+</script>
 
 <style>
 .login-page {

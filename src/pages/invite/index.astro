@@ -1,8 +1,14 @@
 ---
 /**
- * /i/[code]/ - 招待コード受け取りページ
+ * /invite/ - 招待コード受け取りページ（静的版）
  *
- * Phase 3.5: Supabase invitations テーブルから取得 + 4プライバシーモード別UI
+ * Phase 3.5 静的化（fix/static-ssr-cleanup）:
+ * - 旧実装: /i/[code]/index.astro
+ *   - 動的ルート + prerender=false → output:'static' で dist 未生成 → 本番404
+ * - 修正後: /invite/?code=XXXX のクエリパラメータ形式に統一
+ *   - 静的HTMLシェルを生成し、クライアントJSがURLから code を取得
+ *   - DB verify も fetch でクライアント完結
+ *   - /i/XXXX/ は _redirects で /invite/?code=XXXX に301救済
  *
  * 4モード:
  *   secret    (こっそり): 招待者が誰かは見えない。診断誘導のみ
@@ -11,93 +17,17 @@
  *   full_share(完全共有): お互いの結果を全公開
  *
  * ゲスト体験維持: ログイン不要で招待を受け取り診断へ進める
- *
- * export const prerender = false; で SSR 動作（Cloudflare Pages）
  */
 
-export const prerender = false;
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Container from '../../components/Container.astro';
 
-import BaseLayout from '../../../layouts/BaseLayout.astro';
-import Container from '../../../components/Container.astro';
-
-const { code } = Astro.params;
 const siteUrl = 'https://shindan-navi.jp';
-const pageUrl = `${siteUrl}/i/${code}/`;
-const normalizedCode = (code ?? '').trim().toUpperCase();
+const pageUrl = `${siteUrl}/invite/`;
 
-const fromType = Astro.url.searchParams.get('from') ?? '';
-
-// DB から招待情報を取得（SSR）
-let dbInvitation: {
-  valid: boolean;
-  source: string;
-  mode: string | null;
-  inviter_id: string | null;
-  invitation_id: string | null;
-  expires_at: string | null;
-  already_accepted: boolean;
-  inviter_diagnosis_snapshot: Record<string, unknown> | null;
-} | null = null;
-
-if (normalizedCode && /^[ABCDEFGHJKLMNPQRSTUVWXYZ23456789]{4,8}$/.test(normalizedCode)) {
-  try {
-    const verifyUrl = `${siteUrl}/api/invitation/verify/${normalizedCode}`;
-    const res = await fetch(verifyUrl, {
-      headers: { 'Content-Type': 'application/json' },
-    });
-    if (res.ok) {
-      dbInvitation = await res.json();
-    }
-  } catch {
-    // フォールバック: クライアントサイドで処理
-  }
-}
-
-const mode = dbInvitation?.mode ?? 'secret';
-const isValidCode = normalizedCode.length >= 4;
-
-const ogTitle = fromType
-  ? `${fromType}タイプのユーザーがあなたとの相性を診断したい｜診断ナビ`
-  : `あなたとの相性を診断したい人がいます｜診断ナビ`;
+// 静的OG（クライアントで上書き不可なため汎用テキストを使用）
+const ogTitle = 'あなたとの相性を診断したい人がいます｜診断ナビ';
 const ogDescription = '診断ナビで相性チェック。登録不要・完全無料で今すぐ診断できます。';
-
-// モード別設定（SSR 時のデフォルト）
-const modeConfigs = {
-  secret: {
-    icon: '🔮',
-    title: 'だれかがあなたとの相性を確認したい',
-    desc: '診断を受けると相性スコアが表示されます。相手が誰かはわかりません。',
-    ctaLabel: '診断を受けてみる（無料）',
-    badge: 'こっそりモード',
-    badgeColor: '#6b7280',
-  },
-  invite: {
-    icon: '👋',
-    title: 'あなたへの相性診断の招待が届いています',
-    desc: '診断を受けると、招待した相手との相性スコアが確認できます。お互いの結果を基に分析します。',
-    ctaLabel: '診断を受けて相性を確認する（無料）',
-    badge: '招待モード',
-    badgeColor: '#6366f1',
-  },
-  one_way: {
-    icon: '👁️',
-    title: '招待した人の診断結果を見ませんか？',
-    desc: '招待した相手の診断結果との相性スコアが表示されます。あなたの結果は相手には共有されません。',
-    ctaLabel: '診断して相性スコアを見る（無料）',
-    badge: '片方向モード',
-    badgeColor: '#3b82f6',
-  },
-  full_share: {
-    icon: '🤝',
-    title: 'お互いの相性を完全公開で比較しませんか？',
-    desc: 'お互いの診断結果をすべて共有して、リアルな相性スコアを確認します。',
-    ctaLabel: '診断してお互いの相性を見る（無料）',
-    badge: '完全共有モード',
-    badgeColor: '#10b981',
-  },
-};
-
-const config = modeConfigs[mode as keyof typeof modeConfigs] ?? modeConfigs.secret;
 ---
 
 <BaseLayout
@@ -107,50 +37,36 @@ const config = modeConfigs[mode as keyof typeof modeConfigs] ?? modeConfigs.secr
   noindex={true}
 >
   <Container>
-    <div
-      class="invite-page"
-      id="invite-page"
-      data-code={normalizedCode}
-      data-from={fromType}
-      data-mode={mode}
-      data-source={dbInvitation?.source ?? 'unknown'}
-      data-invitation-id={dbInvitation?.invitation_id ?? ''}
-      data-valid={isValidCode ? 'true' : 'false'}
-    >
+    <div class="invite-page" id="invite-page">
 
-      <!-- ローディング -->
+      <!-- ローディング（初期表示・JS が code 取得・verify 中） -->
       <div class="invite-loading" id="invite-loading" aria-live="polite">
         <div class="invite-loading-spinner" aria-hidden="true"></div>
         <p class="invite-loading-text">招待情報を確認しています...</p>
       </div>
 
-      <!-- 招待コンテンツ -->
+      <!-- 招待コンテンツ（JS が表示） -->
       <div class="invite-content" id="invite-content" hidden>
 
         <!-- ヒーロー -->
-        <div class="page-hero page-hero--purple" data-mode={mode}>
-          <div class="invite-mode-badge" id="invite-mode-badge" style={`background: ${config.badgeColor}`}>
-            {config.badge}
-          </div>
-          <div class="invite-hero-icon" id="invite-hero-icon" aria-hidden="true">{config.icon}</div>
-          <h1 class="page-hero-h1" id="invite-hero-title">{config.title}</h1>
-          <p class="page-hero-sub" id="invite-hero-desc">{config.desc}</p>
+        <div class="page-hero page-hero--purple" id="invite-hero-section">
+          <div class="invite-mode-badge" id="invite-mode-badge" style="background: #6b7280">こっそりモード</div>
+          <div class="invite-hero-icon" id="invite-hero-icon" aria-hidden="true">🔮</div>
+          <h1 class="page-hero-h1" id="invite-hero-title">だれかがあなたとの相性を確認したい</h1>
+          <p class="page-hero-sub" id="invite-hero-desc">診断を受けると相性スコアが表示されます。相手が誰かはわかりません。</p>
         </div>
 
-        <!-- 招待者情報カード（invite / one_way / full_share モードのみ表示） -->
+        <!-- 招待者情報カード（invite / one_way / full_share モードのみ） -->
         <div class="invite-from-card" id="invite-from-card" hidden>
           <p class="invite-from-label">招待した人</p>
-          <p class="invite-from-type" id="invite-from-type">
-            {fromType ? `${fromType} タイプ` : '—'}
-          </p>
+          <p class="invite-from-type" id="invite-from-type">—</p>
         </div>
 
         <!-- プライバシー説明 -->
         <div class="invite-privacy" id="invite-privacy">
           <div class="invite-privacy-inner" id="invite-privacy-inner">
-            <!-- JS で mode に応じて差し替え -->
             <span class="invite-privacy-icon" aria-hidden="true">🔒</span>
-            <p class="invite-privacy-text">あなたの診断結果の扱いについて表示します</p>
+            <p class="invite-privacy-text">あなたの結果は招待した人の画面には表示されません（こっそりモード）</p>
           </div>
         </div>
 
@@ -180,8 +96,7 @@ const config = modeConfigs[mode as keyof typeof modeConfigs] ?? modeConfigs.secr
           id="invite-cta-btn"
           aria-label="診断を受けて相性を確認する"
         >
-          <span aria-hidden="true">{config.icon}</span>
-          {config.ctaLabel}
+          診断を受けてみる（無料）
         </a>
 
         <!-- ゲスト安心表示 -->
@@ -191,10 +106,10 @@ const config = modeConfigs[mode as keyof typeof modeConfigs] ?? modeConfigs.secr
 
         <!-- 招待コード表示 -->
         <p class="invite-code-display">
-          招待コード: <code class="invite-code-value">{normalizedCode}</code>
+          招待コード: <code class="invite-code-value" id="invite-code-value">—</code>
         </p>
 
-        <!-- 「招待を削除する」オプション（受け手側のプライバシー保護） -->
+        <!-- 「招待を削除する」オプション（ログイン時のみ意味があるが、UI は常時表示） -->
         <div class="invite-delete-section" id="invite-delete-section" hidden>
           <button
             class="invite-delete-btn"
@@ -207,7 +122,7 @@ const config = modeConfigs[mode as keyof typeof modeConfigs] ?? modeConfigs.secr
         </div>
       </div>
 
-      <!-- 無効コード -->
+      <!-- 無効コード（JS が表示） -->
       <div class="invite-invalid" id="invite-invalid" hidden>
         <div class="invite-invalid-icon" aria-hidden="true">⚠️</div>
         <h1 class="invite-invalid-title">招待リンクが無効です</h1>
@@ -226,15 +141,6 @@ const config = modeConfigs[mode as keyof typeof modeConfigs] ?? modeConfigs.secr
 
 <script>
   document.addEventListener('DOMContentLoaded', () => {
-    const page = document.getElementById('invite-page') as HTMLElement;
-    if (!page) return;
-
-    const code = page.dataset.code ?? '';
-    const fromType = page.dataset.from ?? '';
-    const serverMode = page.dataset.mode ?? 'secret';
-    const source = page.dataset.source ?? 'unknown';
-    const invitationId = page.dataset.invitationId ?? '';
-
     const loading = document.getElementById('invite-loading');
     const content = document.getElementById('invite-content');
     const invalid = document.getElementById('invite-invalid');
@@ -248,6 +154,35 @@ const config = modeConfigs[mode as keyof typeof modeConfigs] ?? modeConfigs.secr
       loading?.setAttribute('hidden', '');
       invalid?.removeAttribute('hidden');
     }
+
+    /**
+     * code 取得の優先順位:
+     * 1. ?code=XXXX クエリパラメータ（新URL形式 /invite/?code=XXXX）
+     * 2. /i/XXXX/ のパスセグメント（_redirects経由でここには来ないが念の為）
+     * 3. ?from= などの付加パラメータも取得
+     */
+    const params = new URLSearchParams(window.location.search);
+    let code = (params.get('code') ?? '').trim().toUpperCase();
+    const fromType = params.get('from') ?? '';
+
+    // パスフォールバック: /i/XXXX/ 形式のパスから取得（_redirects 未設定環境向け）
+    if (!code) {
+      const pathMatch = window.location.pathname.match(/\/i\/([A-Z2-9]{4,8})\/?$/i);
+      if (pathMatch) {
+        code = pathMatch[1].toUpperCase();
+      }
+    }
+
+    // フォーマット検証
+    const isValidFormat = /^[A-Z2-9]{4,8}$/.test(code);
+    if (!isValidFormat) {
+      showInvalid();
+      return;
+    }
+
+    // 招待コード表示更新
+    const codeValueEl = document.getElementById('invite-code-value');
+    if (codeValueEl) codeValueEl.textContent = code;
 
     // LocalStorage から招待情報を取得（ゲスト生成コードの場合）
     interface LocalInvitation {
@@ -265,38 +200,12 @@ const config = modeConfigs[mode as keyof typeof modeConfigs] ?? modeConfigs.secr
       const raw = localStorage.getItem(STORAGE_KEY);
       if (raw) {
         const stored: Record<string, LocalInvitation> = JSON.parse(raw);
-        const inv = stored[code.toUpperCase()];
+        const inv = stored[code];
         if (inv && new Date(inv.expiresAt) > new Date()) {
           localInvitation = inv;
         }
       }
     } catch { /* ignore */ }
-
-    // 有効なコードかチェック
-    const isValidFormat = /^[A-Z2-9]{4,8}$/.test(code.toUpperCase());
-    if (!isValidFormat) {
-      showInvalid();
-      return;
-    }
-
-    // source=db かつ DBが「invalid」と返した場合は無効表示
-    // SSR が valid=false を返した場合は page.dataset.valid が 'false'
-    if (page.dataset.valid === 'false') {
-      showInvalid();
-      return;
-    }
-
-    // モードの決定（DB優先 → LocalStorage → デフォルト）
-    let mode = serverMode;
-    let diagPath = '/diagnosis/';
-
-    if (source === 'guest' && localInvitation) {
-      mode = localInvitation.mode;
-      diagPath = localInvitation.diagPath ?? '/diagnosis/';
-    } else if (source === 'guest' && !localInvitation) {
-      // 他人のゲスト生成コード: mode 不明のため secret 扱い
-      mode = 'secret';
-    }
 
     // モード別UI設定
     const modeConfig: Record<string, {
@@ -304,6 +213,8 @@ const config = modeConfigs[mode as keyof typeof modeConfigs] ?? modeConfigs.secr
       title: string;
       desc: string;
       ctaLabel: string;
+      badge: string;
+      badgeColor: string;
       privacyIcon: string;
       privacyText: string;
       showFromCard: boolean;
@@ -313,6 +224,8 @@ const config = modeConfigs[mode as keyof typeof modeConfigs] ?? modeConfigs.secr
         title: 'だれかがあなたとの相性を確認したい',
         desc: '診断を受けると相性スコアが表示されます。相手が誰かはわかりません。',
         ctaLabel: '診断を受けてみる（無料）',
+        badge: 'こっそりモード',
+        badgeColor: '#6b7280',
         privacyIcon: '🔒',
         privacyText: 'あなたの結果は招待した人の画面には表示されません（こっそりモード）',
         showFromCard: false,
@@ -322,6 +235,8 @@ const config = modeConfigs[mode as keyof typeof modeConfigs] ?? modeConfigs.secr
         title: 'あなたへの相性診断の招待が届いています',
         desc: '診断を受けると、招待した相手との相性スコアが確認できます。',
         ctaLabel: '診断を受けて相性を確認する（無料）',
+        badge: '招待モード',
+        badgeColor: '#6366f1',
         privacyIcon: '🤝',
         privacyText: 'お互いの診断タイプを基に相性スコアが計算されます（双方同意モード）',
         showFromCard: true,
@@ -331,6 +246,8 @@ const config = modeConfigs[mode as keyof typeof modeConfigs] ?? modeConfigs.secr
         title: '招待した人の診断結果を見ませんか？',
         desc: '招待した相手の診断結果との相性スコアが表示されます。あなたの結果は相手には共有されません。',
         ctaLabel: '診断して相性スコアを見る（無料）',
+        badge: '片方向モード',
+        badgeColor: '#3b82f6',
         privacyIcon: '🛡️',
         privacyText: 'あなたの診断結果は招待した人には共有されません（片方向モード）',
         showFromCard: true,
@@ -340,75 +257,128 @@ const config = modeConfigs[mode as keyof typeof modeConfigs] ?? modeConfigs.secr
         title: 'お互いの相性を完全公開で比較しませんか？',
         desc: 'お互いの診断結果をすべて共有して、リアルな相性スコアを確認します。',
         ctaLabel: '診断してお互いの相性を見る（無料）',
+        badge: '完全共有モード',
+        badgeColor: '#10b981',
         privacyIcon: '🌐',
         privacyText: 'お互いの診断結果がすべて共有されます（完全共有モード）',
         showFromCard: true,
       },
     };
 
-    const cfg = modeConfig[mode] ?? modeConfig.secret;
+    // DB verify + UI 表示（非同期）
+    async function verifyAndRender(dbMode: string | null, dbInvitationId: string | null, source: string) {
+      // モード決定（DB優先 → LocalStorage → デフォルト secret）
+      let mode = dbMode ?? 'secret';
+      let diagPath = '/diagnosis/';
+      let resultId = '';
 
-    // UI 更新
-    const heroIconEl = document.getElementById('invite-hero-icon');
-    const titleEl = document.getElementById('invite-hero-title');
-    const descEl = document.getElementById('invite-hero-desc');
-    const fromCard = document.getElementById('invite-from-card');
-    const fromTypeEl = document.getElementById('invite-from-type');
-    const ctaBtn = document.getElementById('invite-cta-btn') as HTMLAnchorElement | null;
-    const privacyInner = document.getElementById('invite-privacy-inner');
-    const deleteSection = document.getElementById('invite-delete-section');
+      if (source === 'guest' && localInvitation) {
+        mode = localInvitation.mode;
+        diagPath = localInvitation.diagPath ?? '/diagnosis/';
+        resultId = localInvitation.resultId ?? '';
+      } else if (source === 'guest' && !localInvitation) {
+        mode = 'secret';
+      }
 
-    if (heroIconEl) heroIconEl.textContent = cfg.icon;
-    if (titleEl) titleEl.textContent = cfg.title;
-    if (descEl) descEl.textContent = cfg.desc;
+      const cfg = modeConfig[mode] ?? modeConfig.secret;
 
-    if (cfg.showFromCard && fromCard) {
-      fromCard.removeAttribute('hidden');
-      if (fromTypeEl && fromType) {
-        fromTypeEl.textContent = `${fromType} タイプ`;
+      // UI 更新
+      const heroIconEl = document.getElementById('invite-hero-icon');
+      const titleEl = document.getElementById('invite-hero-title');
+      const descEl = document.getElementById('invite-hero-desc');
+      const badgeEl = document.getElementById('invite-mode-badge');
+      const fromCard = document.getElementById('invite-from-card');
+      const fromTypeEl = document.getElementById('invite-from-type');
+      const ctaBtn = document.getElementById('invite-cta-btn') as HTMLAnchorElement | null;
+      const privacyInner = document.getElementById('invite-privacy-inner');
+      const deleteSection = document.getElementById('invite-delete-section');
+
+      if (heroIconEl) heroIconEl.textContent = cfg.icon;
+      if (titleEl) titleEl.textContent = cfg.title;
+      if (descEl) descEl.textContent = cfg.desc;
+      if (badgeEl) {
+        badgeEl.textContent = cfg.badge;
+        (badgeEl as HTMLElement).style.background = cfg.badgeColor;
+      }
+
+      if (cfg.showFromCard && fromCard) {
+        fromCard.removeAttribute('hidden');
+        if (fromTypeEl && fromType) {
+          fromTypeEl.textContent = `${fromType} タイプ`;
+        }
+      }
+
+      if (privacyInner) {
+        privacyInner.innerHTML = `<span class="invite-privacy-icon" aria-hidden="true">${cfg.privacyIcon}</span><p class="invite-privacy-text">${cfg.privacyText}</p>`;
+      }
+
+      // CTA href 設定
+      const inviteParam = dbInvitationId || code;
+      const ctaHref = `${diagPath}?invite=${inviteParam}&from_code=${code}${resultId ? `&pair=${resultId}` : ''}`;
+      if (ctaBtn) {
+        ctaBtn.href = ctaHref;
+        ctaBtn.textContent = cfg.ctaLabel;
+      }
+
+      // 招待削除ボタン
+      if (dbInvitationId && deleteSection) {
+        deleteSection.removeAttribute('hidden');
+        const deleteBtn = document.getElementById('invite-delete-btn');
+        deleteBtn?.addEventListener('click', () => {
+          if (!confirm('この招待から自分のデータを削除しますか？')) return;
+          try {
+            const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? '{}');
+            delete stored[code];
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(stored));
+          } catch { /* ignore */ }
+          if (deleteBtn) {
+            deleteBtn.textContent = '削除しました';
+            (deleteBtn as HTMLButtonElement).disabled = true;
+          }
+        });
+      }
+
+      // GA4 イベント
+      try {
+        if (typeof (window as typeof window & { gtag?: Function }).gtag === 'function') {
+          const diagId = diagPath.replace(/^\/diagnosis\//, '').replace(/\/$/, '') || undefined;
+          (window as typeof window & { gtag?: Function }).gtag!('event', 'invite_accept', { diagnosis_id: diagId });
+        }
+      } catch { /* ignore */ }
+
+      showContent();
+    }
+
+    // DB verify（クライアントサイドfetch）
+    async function main() {
+      try {
+        const verifyUrl = `/api/invitation/verify/${code}`;
+        const res = await fetch(verifyUrl, {
+          headers: { 'Content-Type': 'application/json' },
+        });
+        if (res.ok) {
+          const data = await res.json() as {
+            valid: boolean;
+            source: string;
+            mode: string | null;
+            invitation_id: string | null;
+          };
+          if (!data.valid) {
+            showInvalid();
+            return;
+          }
+          await verifyAndRender(data.mode, data.invitation_id, data.source);
+        } else {
+          // API 失敗時: LocalStorage フォールバック
+          await verifyAndRender(null, null, localInvitation ? 'guest' : 'unknown');
+        }
+      } catch {
+        // ネットワークエラー: フォールバック表示
+        await verifyAndRender(null, null, localInvitation ? 'guest' : 'unknown');
       }
     }
 
-    if (privacyInner) {
-      privacyInner.innerHTML = `<span class="invite-privacy-icon" aria-hidden="true">${cfg.privacyIcon}</span><p class="invite-privacy-text">${cfg.privacyText}</p>`;
-    }
-
-    // CTA href 設定
-    const inviteParam = invitationId || code;
-    const resultId = localInvitation?.resultId ?? '';
-    const ctaHref = `${diagPath}?invite=${inviteParam}&from_code=${code}${resultId ? `&pair=${resultId}` : ''}`;
-    if (ctaBtn) ctaBtn.href = ctaHref;
-    if (ctaBtn) ctaBtn.querySelector('span')?.remove(); // icon span を更新
-    if (ctaBtn) {
-      ctaBtn.textContent = cfg.ctaLabel;
-    }
-
-    // 受け手の「招待を削除」ボタン（ログイン時のみ意味があるが、UI は常時表示）
-    if (invitationId && deleteSection) {
-      deleteSection.removeAttribute('hidden');
-      const deleteBtn = document.getElementById('invite-delete-btn');
-      deleteBtn?.addEventListener('click', async () => {
-        if (!confirm('この招待から自分のデータを削除しますか？')) return;
-        // 受け手側の削除: invitee_id と invitee_diagnosis_snapshot をクリア
-        // Phase 3.5 では簡易実装（LocalStorage のコードを削除）
-        try {
-          const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? '{}');
-          delete stored[code.toUpperCase()];
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(stored));
-        } catch { /* ignore */ }
-        deleteBtn.textContent = '削除しました';
-        (deleteBtn as HTMLButtonElement).disabled = true;
-      });
-    }
-
-    try {
-      if (typeof window.gtag === 'function') {
-        var diagId = diagPath.replace(/^\/diagnosis\//, '').replace(/\/$/, '') || undefined;
-        window.gtag('event', 'invite_accept', { diagnosis_id: diagId });
-      }
-    } catch {}
-
-    showContent();
+    main();
   });
 </script>
 
@@ -452,18 +422,6 @@ const config = modeConfigs[mode as keyof typeof modeConfigs] ?? modeConfigs.secr
 }
 
 /* ヒーロー */
-.invite-hero {
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 2rem 1.5rem 1.75rem;
-  background: linear-gradient(135deg, #eef2ff 0%, #faf5ff 100%);
-  border-radius: 1.25rem;
-  border: 1px solid #e0e7ff;
-  position: relative;
-}
 .invite-mode-badge {
   display: inline-flex;
   align-items: center;
@@ -477,21 +435,6 @@ const config = modeConfigs[mode as keyof typeof modeConfigs] ?? modeConfigs.secr
 .invite-hero-icon {
   font-size: 3.5rem;
   line-height: 1;
-}
-.invite-hero-title {
-  font-size: 1.25rem;
-  font-family: var(--sn-font-rounded, sans-serif);
-  font-weight: 900;
-  color: var(--sn-text, #1f2937);
-  margin: 0;
-  line-height: 1.4;
-}
-.invite-hero-desc {
-  font-size: 0.9rem;
-  color: var(--sn-muted, #4b5563);
-  line-height: 1.7;
-  margin: 0;
-  max-width: 360px;
 }
 
 /* 招待者カード */
@@ -707,9 +650,6 @@ const config = modeConfigs[mode as keyof typeof modeConfigs] ?? modeConfigs.secr
 @media (max-width: 480px) {
   .invite-page {
     padding-block: 2rem 3rem;
-  }
-  .invite-hero {
-    padding: 1.5rem 1rem 1.25rem;
   }
   .invite-cta-btn {
     font-size: 0.9375rem;

@@ -132,7 +132,7 @@ function enrichInvitation(inv: InvitationRow): EnrichedInvitation {
     formattedAcceptedAt: inv.accepted_at ? formatDate(inv.accepted_at) : '—',
     formattedCreatedAt: formatDate(inv.created_at),
     formattedExpiresAt: formatDate(inv.expires_at),
-    inviteUrl: `https://shindan-navi.jp/i/${inv.invite_code}/`,
+    inviteUrl: `https://shindan-navi.jp/invite/?code=${inv.invite_code}`,
   };
 }
 

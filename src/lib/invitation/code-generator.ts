@@ -6,6 +6,10 @@
  * Phase 3.5: Supabase invitations テーブルに移行
  *
  * アルファベット: 誤読しやすい文字（O/0/I/1/l）を除外
+ *
+ * URL形式変更（fix/static-ssr-cleanup 2026-05-23）:
+ * - 旧: /i/{code}/  → 動的ルートのため output:'static' で404
+ * - 新: /invite/?code={code}  → 静的ページ + クエリパラメータ
  */
 
 export type InviteMode = 'secret' | 'invite' | 'one_way' | 'full_share';
@@ -94,10 +98,15 @@ export function createInvitation(
   return invitation;
 }
 
-/** 招待URLを生成 */
+/**
+ * 招待URLを生成
+ * URL形式: /invite/?code={code}&from={fromType}
+ * （旧形式 /i/{code}/ は _redirects で301救済）
+ */
 export function buildInviteUrl(code: string, fromType?: string): string {
   const base = typeof window !== 'undefined' ? window.location.origin : 'https://shindan-navi.jp';
-  const url = new URL(`/i/${code}/`, base);
+  const url = new URL('/invite/', base);
+  url.searchParams.set('code', code);
   if (fromType) url.searchParams.set('from', fromType);
   return url.toString();
 }

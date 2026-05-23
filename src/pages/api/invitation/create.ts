@@ -54,7 +54,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
   const code = generateInviteCode();
   const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
-  const inviteUrl = `https://shindan-navi.jp/i/${code}/`;
+  const inviteUrl = `https://shindan-navi.jp/invite/?code=${code}`;
 
   // ログインユーザーは DB に保存（招待相性は無料・無制限 = 回数チェックなし）
   const user = locals.user;

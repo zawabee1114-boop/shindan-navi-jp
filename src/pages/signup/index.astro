@@ -2,11 +2,12 @@
 /**
  * /signup/ - 新規登録ページ（Magic Linkと同一フロー）
  *
- * Phase 3.1: env未設定時は「準備中」表示
  * Phase 3.2: /login/ と同じ Supabase Magic Link
+ *
+ * 静的化（fix/static-ssr-cleanup）:
+ * - 旧実装: prerender=false → output:'static' ビルドで dist 未生成 → 本番404
+ * - 修正後: prerender=false 削除 → 静的HTML生成（searchParams 参照なし）
  */
-
-export const prerender = false;
 
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Container from '../../components/Container.astro';
