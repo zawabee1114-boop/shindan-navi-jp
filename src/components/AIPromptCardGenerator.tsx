@@ -305,7 +305,7 @@ const AIPG_STYLES = `
     font-size: 0.8125rem;
     font-weight: 700;
     cursor: pointer;
-    min-height: 36px;
+    min-height: 44px; /* M7: WCAG AA タップターゲット */
     transition: background 0.15s ease;
   }
   .aipg-expand-btn:hover {
@@ -360,7 +360,7 @@ const AIPG_STYLES = `
     font-weight: 700;
     text-decoration: none;
     transition: background 0.15s ease;
-    min-height: 36px;
+    min-height: 44px; /* M7: WCAG AA タップターゲット */
   }
   .aipg-service-badge:hover {
     background: color-mix(in srgb, var(--svc-color, #6366f1) 10%, transparent);

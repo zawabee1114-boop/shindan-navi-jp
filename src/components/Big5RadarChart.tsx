@@ -132,7 +132,7 @@ export default function Big5RadarChart({
   const outerPoints = getPolygonPoints(cx, cy, maxR, FACTORS.length);
 
   // 因子ラベルの座標（頂点の外側）
-  const labelPoints = getPolygonPoints(cx, cy, maxR + 28, FACTORS.length);
+  const labelPoints = getPolygonPoints(cx, cy, maxR + 22, FACTORS.length); // M4: オフセット縮小（超小画面はみ出し防止）
 
   return (
     <div className="b5rc-wrapper" role="figure" aria-label="性格レーダーチャート">
@@ -322,6 +322,9 @@ export default function Big5RadarChart({
           flex-direction: column;
           align-items: center;
           gap: 1.25rem;
+          padding-inline: 28px; /* M4: ラベルはみ出し防止 */
+          box-sizing: border-box;
+          width: 100%;
         }
 
         /* スクリーンリーダー専用テーブル */

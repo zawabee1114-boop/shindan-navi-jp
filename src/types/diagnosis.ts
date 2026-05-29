@@ -32,18 +32,6 @@ export interface DiagnosisFlowProps {
   calculateResult: (answers: Answer[]) => string;
 }
 
-/** 単一質問画面 Props */
-export interface QuestionScreenProps {
-  question: Question;
-  questionIndex: number;
-  totalQuestions: number;
-  selectedValue?: LikertValue;
-  onSelect: (value: LikertValue) => void;
-  onNext: () => void;
-  onBack: () => void;
-  canGoBack: boolean;
-  canGoNext: boolean;
-}
 
 /** リッカートスケールのラベル定義 */
 export const LIKERT_LABELS: Record<LikertValue, string> = {

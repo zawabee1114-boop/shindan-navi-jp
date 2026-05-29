@@ -767,6 +767,20 @@ const pageJsonLd = {
     background-size: contain;
     pointer-events: none;
   }
+  @media (min-width: 768px) and (max-width: 899px) {
+    /* M2: iPad縦でリングが視覚的に大きくなりすぎるため縮小 */
+    .hero-v2-tiles { width: 280px; height: 280px; }
+    .hero-v2-tiles::before { width: 120px; height: 120px; }
+    .hero-v2-tiles::after { width: 85px; height: 85px; }
+    .hero-tile-item:nth-child(1) { transform: translate(-50%, -50%) translate(0, -120px); }
+    .hero-tile-item:nth-child(2) { transform: translate(-50%, -50%) translate(85px, -85px); }
+    .hero-tile-item:nth-child(3) { transform: translate(-50%, -50%) translate(120px, 0); }
+    .hero-tile-item:nth-child(4) { transform: translate(-50%, -50%) translate(85px, 85px); }
+    .hero-tile-item:nth-child(5) { transform: translate(-50%, -50%) translate(0, 120px); }
+    .hero-tile-item:nth-child(6) { transform: translate(-50%, -50%) translate(-85px, 85px); }
+    .hero-tile-item:nth-child(7) { transform: translate(-50%, -50%) translate(-120px, 0); }
+    .hero-tile-item:nth-child(8) { transform: translate(-50%, -50%) translate(-85px, -85px); }
+  }
   @media (min-width: 900px) {
     .hero-v2-tiles { width: 380px; height: 380px; }
   }
@@ -808,14 +822,14 @@ const pageJsonLd = {
   }
   @media (max-width: 400px) {
     .hero-tile-item { width: 60px; }
-    .hero-tile-item:nth-child(1) { transform: translate(-50%, -50%) translate(0, -110px); }
-    .hero-tile-item:nth-child(2) { transform: translate(-50%, -50%) translate(78px, -78px); }
-    .hero-tile-item:nth-child(3) { transform: translate(-50%, -50%) translate(110px, 0); }
-    .hero-tile-item:nth-child(4) { transform: translate(-50%, -50%) translate(78px, 78px); }
-    .hero-tile-item:nth-child(5) { transform: translate(-50%, -50%) translate(0, 110px); }
-    .hero-tile-item:nth-child(6) { transform: translate(-50%, -50%) translate(-78px, 78px); }
-    .hero-tile-item:nth-child(7) { transform: translate(-50%, -50%) translate(-110px, 0); }
-    .hero-tile-item:nth-child(8) { transform: translate(-50%, -50%) translate(-78px, -78px); }
+    .hero-tile-item:nth-child(1) { transform: translate(-50%, -50%) translate(0, -100px); }
+    .hero-tile-item:nth-child(2) { transform: translate(-50%, -50%) translate(70px, -70px); }
+    .hero-tile-item:nth-child(3) { transform: translate(-50%, -50%) translate(100px, 0); }
+    .hero-tile-item:nth-child(4) { transform: translate(-50%, -50%) translate(70px, 70px); }
+    .hero-tile-item:nth-child(5) { transform: translate(-50%, -50%) translate(0, 100px); }
+    .hero-tile-item:nth-child(6) { transform: translate(-50%, -50%) translate(-70px, 70px); }
+    .hero-tile-item:nth-child(7) { transform: translate(-50%, -50%) translate(-100px, 0); }
+    .hero-tile-item:nth-child(8) { transform: translate(-50%, -50%) translate(-70px, -70px); }
   }
   .hero-tile-item:hover .hero-tile-circle {
     transform: translateY(-4px) scale(1.08);

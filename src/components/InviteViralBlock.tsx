@@ -710,7 +710,7 @@ export default function InviteViralBlock({
           color: var(--sn-text-soft);
           cursor: pointer;
           font-family: inherit;
-          min-height: 36px;
+          min-height: 44px; /* M7: WCAG AA タップターゲット */
           transition: background 0.15s;
         }
         .ivb-qr-toggle:hover { background: var(--sn-bg-soft); }
