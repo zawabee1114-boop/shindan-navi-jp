@@ -284,6 +284,7 @@ const ELEMENT_COLORS: Record<string, { bg: string; border: string; text: string;
         'Carlson S（1985）がNature誌（doi:10.1038/318419a0）に発表した二重盲検試験で、占星術的予測が偶然レベルと差がないことが示されており、科学的根拠は確認されていない',
         '国際天文学連合（IAU）は「占星術は科学ではない」と明記（https://www.iau.org/public/themes/astrology_vs_astronomy/）。国立天文台も同様の立場（https://www.nao.ac.jp/faq/a0204.html）',
         '本サイトは12星座を「文化的な性格分類フレームワーク」として参照。運勢・将来予測・ラッキーアイテム等の占い的コンテンツは一切提供しない',
+        'Carlson（1985）の二重盲検試験では占星術師28名・被験者116名を対象に実験。占星術師の正答率は偶然（1/3）と統計的に差がなかった（Nature 318, 419-425, doi:10.1038/318419a0）。厚生労働省・人口動態統計（H25-H27）による星座別出生数では獅子座が最多・山羊座が最少（現代は月別出生数の差はほぼない）',
         '就職・結婚等の重要な判断を星座で行うことは推奨しない。自己理解と会話のきっかけとしてのみ活用を推奨する',
       ]}
       updatedAt={meta.updatedAt}
@@ -315,6 +316,28 @@ const ELEMENT_COLORS: Record<string, { bg: string; border: string; text: string;
         <li>❌ 使えない: 未来予測・運勢判断・就職・結婚の判断基準</li>
         <li>❌ 提供しない: 今日の運勢・ラッキーアイテム・ラッキーカラー</li>
       </ul>
+    </section>
+
+    <!-- 引用可能な数値・統計（MID-2 AIO補強） -->
+    <section style="margin-bottom: 2rem;">
+      <h2 style="font-size: 1.3rem; font-weight: 700; margin-bottom: 1rem; border-bottom: 2px solid var(--sn-primary, #7C3AED); padding-bottom: 0.5rem;">星座性格診断——引用可能な数値・統計データ</h2>
+      <div class="zd-stats-grid" role="note" aria-label="引用可能な数値・統計データ">
+        <div class="zd-stat-card">
+          <div class="zd-stat-card-num">28名の占星術師・116名の被験者</div>
+          <div class="zd-stat-card-label">Carlson（1985）二重盲検試験の規模</div>
+          <p class="zd-stat-card-source">占星術師の正答率は偶然レベル（1/3）と統計的に差がなかった。出典: <a href="https://doi.org/10.1038/318419a0" target="_blank" rel="noopener noreferrer">Carlson S（1985）Nature 318, 419-425</a>。確認日: 2026-05-29</p>
+        </div>
+        <div class="zd-stat-card">
+          <div class="zd-stat-card-num">獅子座が最多・山羊座が最少</div>
+          <div class="zd-stat-card-label">日本の星座別出生数（H25-H27）</div>
+          <p class="zd-stat-card-source">厚生労働省・人口動態統計（平成25〜27年出生数）をもとにした分析。現代（昭和45年以降）は月別出生数の差はほぼない状態。出典: <a href="https://x.com/tokei_ibaraki/status/813545811883626496" target="_blank" rel="noopener noreferrer">茨城県統計情報ネットワーク分析（厚労省データ）</a>。確認日: 2026-05-29</p>
+        </div>
+        <div class="zd-stat-card">
+          <div class="zd-stat-card-num">占星術は科学ではない</div>
+          <div class="zd-stat-card-label">国際天文学連合（IAU）の公式立場</div>
+          <p class="zd-stat-card-source">IAU公式: 「占星術は天文学とは異なり、科学的方法論に基づいていない」（<a href="https://www.iau.org/public/themes/astrology_vs_astronomy/" target="_blank" rel="noopener noreferrer">iau.org</a>）。確認日: 2026-05-29</p>
+        </div>
+      </div>
     </section>
 
     <!-- 12星座 概観グリッド -->
@@ -630,6 +653,40 @@ const ELEMENT_COLORS: Record<string, { bg: string; border: string; text: string;
   .zd-cta-btn:hover {
     opacity: 0.88;
   }
+
+  /* ========== 数値統計グリッド（MID-2 AIO補強） ========== */
+  .zd-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 0.75rem;
+    margin: 1rem 0;
+  }
+  .zd-stat-card {
+    background: #f5f3ff;
+    border: 1px solid #c4b5fd;
+    border-radius: 8px;
+    padding: 0.9rem 1rem;
+  }
+  .zd-stat-card-num {
+    font-size: 1.0rem;
+    font-weight: 800;
+    color: #4c1d95;
+    margin-bottom: 0.2rem;
+    line-height: 1.3;
+  }
+  .zd-stat-card-label {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #6d28d9;
+    margin-bottom: 0.4rem;
+  }
+  .zd-stat-card-source {
+    font-size: 0.75rem;
+    color: #64748b;
+    line-height: 1.5;
+    margin: 0;
+  }
+  .zd-stat-card-source a { color: #6d28d9; }
 
 </style>
 </BaseLayout>

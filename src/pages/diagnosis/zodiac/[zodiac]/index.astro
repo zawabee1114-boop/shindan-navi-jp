@@ -202,6 +202,7 @@ const jsonLdBreadcrumb = {
         `${detail.japaneseName}の伝統的な性格特性・強み・弱み（西洋占星術文化の分類）`,
         `仕事スタイル・恋愛傾向・友人関係の特性`,
         `全11星座との相性ランキング（スコア付き）`,
+        'Carlson S（1985 Nature DOI:10.1038/318419a0）: 占星術師28名・被験者116名の二重盲検試験で、占星術的予測が偶然レベルと統計的に差がないことが示された。本サイトは星座を「文化的自己理解のフレームワーク」として参照（科学的測定値ではない）',
       ]}
       updatedAt={meta.updatedAt}
       sourceLabel="Carlson S (1985) A double-blind test of astrology, Nature"
@@ -219,7 +220,29 @@ const jsonLdBreadcrumb = {
       ))}
     </section>
 
-    <ScienceNote
+    <!-- 引用可能な数値・統計（MID-2 AIO補強） -->
+    <section style="margin-bottom: 2rem;">
+      <h2 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 0.75rem; border-bottom: 2px solid var(--sn-primary, #7C3AED); padding-bottom: 0.4rem;">引用可能な数値・統計データ</h2>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.75rem;" role="note" aria-label="引用可能な数値・統計データ">
+        <div style="background: #f5f3ff; border: 1px solid #c4b5fd; border-radius: 8px; padding: 0.9rem 1rem;">
+          <div style="font-size: 0.95rem; font-weight: 800; color: #4c1d95; margin-bottom: 0.2rem; line-height: 1.3;">28名の占星術師・116名の被験者</div>
+          <div style="font-size: 0.82rem; font-weight: 700; color: #6d28d9; margin-bottom: 0.4rem;">Carlson（1985）二重盲検試験の規模</div>
+          <p style="font-size: 0.75rem; color: #64748b; line-height: 1.5; margin: 0;">占星術師の正答率は偶然（1/3）と差がなかった。出典: <a href="https://doi.org/10.1038/318419a0" target="_blank" rel="noopener noreferrer" style="color: #6d28d9;">Nature 318, 419-425（1985）</a>。確認日: 2026-05-29</p>
+        </div>
+        <div style="background: #f5f3ff; border: 1px solid #c4b5fd; border-radius: 8px; padding: 0.9rem 1rem;">
+          <div style="font-size: 0.95rem; font-weight: 800; color: #4c1d95; margin-bottom: 0.2rem; line-height: 1.3;">12星座・4エレメント・3モダリティ</div>
+          <div style="font-size: 0.82rem; font-weight: 700; color: #6d28d9; margin-bottom: 0.4rem;">西洋占星術の基本分類体系</div>
+          <p style="font-size: 0.75rem; color: #64748b; line-height: 1.5; margin: 0;">プトレマイオス（2世紀）のテトラビブロスを起源とする。エレメント（火・地・風・水）とモダリティ（活動・不動・柔軟）が性格分類の基盤。確認日: 2026-05-29</p>
+        </div>
+        <div style="background: #f5f3ff; border: 1px solid #c4b5fd; border-radius: 8px; padding: 0.9rem 1rem;">
+          <div style="font-size: 0.95rem; font-weight: 800; color: #4c1d95; margin-bottom: 0.2rem; line-height: 1.3;">占星術は科学ではない</div>
+          <div style="font-size: 0.82rem; font-weight: 700; color: #6d28d9; margin-bottom: 0.4rem;">国際天文学連合（IAU）の公式立場</div>
+          <p style="font-size: 0.75rem; color: #64748b; line-height: 1.5; margin: 0;">IAU公式（<a href="https://www.iau.org/public/themes/astrology_vs_astronomy/" target="_blank" rel="noopener noreferrer" style="color: #6d28d9;">iau.org</a>）・国立天文台（<a href="https://www.nao.ac.jp/faq/a0204.html" target="_blank" rel="noopener noreferrer" style="color: #6d28d9;">nao.ac.jp</a>）も同立場。確認日: 2026-05-29</p>
+        </div>
+      </div>
+    </section>
+
+        <ScienceNote
       basisText={meta.scientificBasis}
       basisUrl="https://doi.org/10.1038/318419a0"
       basisLabel="Carlson S (1985) Nature 318, 419-425"
