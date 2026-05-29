@@ -169,6 +169,29 @@ const jsonLdArticle = {
     publisher: ref.publisher,
     url: ref.url,
   })),
+  // MID-6: mentions（重要エンティティ連結・AI引用率向上）
+  mentions: [
+    {
+      '@type': 'Thing',
+      name: 'Myers-Briggs Type Indicator（MBTI®）16タイプ性格分類',
+      sameAs: 'https://www.themyersbriggs.com/',
+    },
+    {
+      '@type': 'Person',
+      name: 'Carl Gustav Jung',
+      sameAs: 'https://ja.wikipedia.org/wiki/%E3%82%AB%E3%83%BC%E3%83%AB%E3%83%BB%E3%82%B0%E3%82%B9%E3%82%BF%E3%83%95%E3%83%BB%E3%83%A6%E3%83%B3%E3%82%B0',
+    },
+    {
+      '@type': 'Thing',
+      name: 'Keirsey Temperament Sorter（4気質分類）',
+      sameAs: 'https://en.wikipedia.org/wiki/Keirsey_Temperament_Sorter',
+    },
+    {
+      '@type': 'Thing',
+      name: 'Jungian Cognitive Functions（ユング認知機能論）',
+      sameAs: 'https://en.wikipedia.org/wiki/Jungian_cognitive_functions',
+    },
+  ],
 };
 
 // JSON-LD: FAQPage

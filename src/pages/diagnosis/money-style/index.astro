@@ -59,6 +59,24 @@ const jsonLdWebApp = {
     '@type': 'Organization',
     '@id': `${SITE_URL}/#organization`,
   },
+  // MID-6: mentions（重要エンティティ連結・AI引用率向上）
+  mentions: [
+    {
+      '@type': 'Thing',
+      name: 'Klontz Money Script Inventory（KMSI・マネースクリプト理論）',
+      sameAs: 'https://doi.org/10.4148/jft.v2i1.451',
+    },
+    {
+      '@type': 'Person',
+      name: 'Brad Klontz',
+      sameAs: 'https://en.wikipedia.org/wiki/Brad_Klontz',
+    },
+    {
+      '@type': 'Thing',
+      name: 'Behavioral Finance（行動ファイナンス）',
+      sameAs: 'https://ja.wikipedia.org/wiki/%E8%A1%8C%E5%8B%95%E3%83%95%E3%82%A1%E3%82%A4%E3%83%8A%E3%83%B3%E3%82%B9',
+    },
+  ],
 };
 
 // JSON-LD: Quiz（citation に学術文献を配置）

@@ -146,6 +146,24 @@ const jsonLdArticle = {
     publisher: ref.publisher,
     url: ref.url,
   })),
+  // MID-6: mentions（重要エンティティ連結・AI引用率向上）
+  mentions: [
+    {
+      '@type': 'Thing',
+      name: '西洋占星術（Western Astrology）',
+      sameAs: 'https://ja.wikipedia.org/wiki/%E8%A5%BF%E6%B4%8B%E5%8D%A0%E6%98%9F%E8%A1%93',
+    },
+    {
+      '@type': 'Thing',
+      name: '黄道十二星座（Zodiac / Ecliptic）',
+      sameAs: 'https://ja.wikipedia.org/wiki/%E9%BB%84%E9%81%93%E5%8D%81%E4%BA%8C%E6%98%9F%E5%BA%A7',
+    },
+    {
+      '@type': 'Thing',
+      name: 'Big Five性格特性モデル（Five-Factor Model）',
+      sameAs: 'https://ja.wikipedia.org/wiki/%E3%83%93%E3%83%83%E3%82%B0%E3%83%95%E3%82%A1%E3%82%A4%E3%83%96_(%E5%BF%83%E7%90%86%E5%AD%A6)',
+    },
+  ],
 };
 
 // JSON-LD: FAQPage

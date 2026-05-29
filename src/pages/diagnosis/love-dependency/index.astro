@@ -93,6 +93,29 @@ const jsonLdWebApp = {
     name: '診断ナビ',
     url: SITE_URL,
   },
+  // MID-6: mentions（重要エンティティ連結・AI引用率向上）
+  mentions: [
+    {
+      '@type': 'Thing',
+      name: 'Adult Attachment Style（成人愛着スタイル）',
+      sameAs: 'https://en.wikipedia.org/wiki/Attachment_in_adults',
+    },
+    {
+      '@type': 'Person',
+      name: 'John Bowlby',
+      sameAs: 'https://ja.wikipedia.org/wiki/%E3%82%B8%E3%83%A7%E3%83%B3%E3%83%BB%E3%83%9C%E3%82%A6%E3%83%AB%E3%83%93%E3%82%A3',
+    },
+    {
+      '@type': 'Person',
+      name: 'Cindy Hazan',
+      sameAs: 'https://en.wikipedia.org/wiki/Cindy_Hazan',
+    },
+    {
+      '@type': 'Thing',
+      name: 'Anxious–avoidant attachment（不安-回避型愛着）',
+      sameAs: 'https://en.wikipedia.org/wiki/Anxious%E2%80%93avoidant_attachment',
+    },
+  ],
 };
 
 // JSON-LD: Quiz（将来実装スタブ）
