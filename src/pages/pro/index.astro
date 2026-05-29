@@ -26,7 +26,7 @@ const features = [
   {
     icon: '🤖',
     title: 'AIプロンプトカード（月次更新）',
-    desc: 'ChatGPT・Claude・Geminiで自己分析を深める専用プロンプトを毎月配信。「あなたのMBTI×Big5パターン専用」でAIをフル活用できます。',
+    desc: 'ChatGPT・Claude・Geminiで自己分析を深める専用プロンプトを毎月配信。「あなたの性格タイプ専用」でAIをフル活用できます。',
     isPro: true,
     isPass: false,
   },
@@ -39,14 +39,14 @@ const features = [
   },
   {
     icon: '📈',
-    title: 'N因子時系列グラフ',
-    desc: 'Big5の神経症傾向（N因子）を週単位で追跡。自分の気分の波パターンが視覚的に分かります。',
+    title: '気分の波グラフ',
+    desc: '気分の波を週単位で追跡。自分の気分パターンが時系列で視覚的に分かります。',
     isPro: true,
     isPass: false,
   },
   {
     icon: '🐾',
-    title: 'Big5キャラ完全解放',
+    title: '動物キャラ完全解放',
     desc: '16動物キャラの詳細版・レアリティ・進化ロードマップ。キャラ装飾・SNSシェア専用素材も付属。',
     isPro: true,
     isPass: true,
@@ -82,12 +82,12 @@ const comparisonRows = [
   { feature: '招待相性診断（完全無料）', free: true, pass: true, pro: true },
   { feature: '統合プロファイル 5軸詳細版', free: false, pass: true, pro: true },
   { feature: '相性詳細レポート（5軸）', free: false, pass: true, pro: true },
-  { feature: 'Big5キャラ完全解放', free: false, pass: true, pro: true },
+  { feature: '動物キャラ完全解放', free: false, pass: true, pro: true },
   { feature: 'シェア用SNS素材（高画質）', free: false, pass: true, pro: true },
   { feature: '広告非表示', free: false, pass: false, pro: true },
   { feature: 'タイムカプセル機能', free: false, pass: false, pro: true },
   { feature: 'AIプロンプトカード（月次）', free: false, pass: false, pro: true },
-  { feature: 'N因子時系列グラフ', free: false, pass: false, pro: true },
+  { feature: '気分の波グラフ', free: false, pass: false, pro: true },
   { feature: '月1限定診断（毎月更新）', free: false, pass: false, pro: true },
   { feature: '優先サポート', free: false, pass: false, pro: true },
 ];
@@ -107,7 +107,7 @@ const comparisonRows = [
         <h1 class="page-hero-h1">自己理解をもっと深く</h1>
         <p class="page-hero-sub">
           タイムカプセルで自己成長を追跡。AIプロンプトカードでChatGPT・Claudeをフル活用。
-          広告なし・相性詳細レポート・Big5キャラ完全解放。
+          広告なし・相性詳細レポート・動物キャラ完全解放。
         </p>
         <div class="pro-hero-price">
           <span class="pro-price-amount">¥590</span>
@@ -191,7 +191,7 @@ const comparisonRows = [
             プロンプトを毎月配信。コピペするだけでAIがあなたの性格に合わせた深掘りをしてくれます。
           </p>
           <ul class="pro-feature-spotlight-list" role="list">
-            <li>MBTI×Big5パターン専用プロンプト（毎月15〜20枚）</li>
+            <li>あなたの性格タイプ専用プロンプト（毎月15〜20枚）</li>
             <li>仕事・恋愛・友人・家族・学校の5軸別プロンプト</li>
             <li>コピペ→AIに貼るだけ（対話例付き）</li>
             <li>前月との変化レポートプロンプトも含む</li>

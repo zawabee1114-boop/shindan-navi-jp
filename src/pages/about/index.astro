@@ -98,7 +98,7 @@ const faqItems = [
   { q: "参照している学術論文・機関はどこですか？", a: "Howard Gardner（Harvard大・多重知能理論）、Myers & Briggs Foundation（MBTI）、DiSC公式（Wiley社）、American Psychological Association（APA・Big Five）、Hendrick & Hendrick（恋愛スタイル）、Klontz et al.（金銭感覚）などの研究・機関を参照しています。詳細はページ内「科学的根拠」セクションをご確認ください。" },
   { q: "監修者はいますか？", a: "特定の外部監修者（大学教授・臨床心理士等）は立てていません。その代わり、各診断ページでAPA Dictionary・日本心理学会公式見解・大学研究機関の一次情報を参照し、DOI付き学術論文を引用することで正確性を担保しています。架空の監修者名を掲載することはありません。" },
   { q: "誤情報を見つけた場合はどうすれば良いですか？", a: "zawalab.info@gmail.com または /contact/ からご報告ください。原則7営業日以内に確認・修正します。重大な誤りは即時対応します。ご報告は大変ありがたく、サービスの品質向上に役立てています。" },
-  { q: "8診断統合は他サービスと何が違いますか？", a: "多くのサービスは1つの診断（MBTIや血液型など）のみを提供します。診断ナビは8種類の診断結果を内部でBig Five（OCEAN）に変換・統合し、仕事・恋愛・友人・家族・学習の5シーンで横断的な自己理解をサポートします。単一診断の「ラベル貼り」ではなく、多面的な性格理解を目指すのが最大の差別化点です。" },
+  { q: "8診断統合は他サービスと何が違いますか？", a: "多くのサービスは1つの診断（MBTIや血液型など）のみを提供します。診断ナビは8種類の診断結果を内部で5つの性格軸に換算・統合し、仕事・恋愛・友人・家族・学習の5シーンで横断的な自己理解をサポートします。単一診断の「ラベル貼り」ではなく、多面的な性格理解を目指すのが最大の差別化点です。" },
 ];
 
 const pageJsonLd = [
@@ -131,7 +131,7 @@ const pageJsonLd = [
     "email": "zawalab.info@gmail.com",
     "description": "個人事業主。性格心理学・行動経済学・データサイエンスへの関心から、8診断を統合する自己理解プラットフォーム「診断ナビ」を構築・運営。占いではなく科学的根拠ベースの自己理解ツールを若年層に届けることを目指す。",
     "knowsAbout": [
-      "性格心理学（Big Five / OCEAN）",
+      "5つの性格軸（性格心理学）",
       "多重知能理論（Howard Gardner）",
       "Myers-Briggs Type Indicator（MBTI）",
       "DiSC理論",
@@ -168,7 +168,7 @@ const pageJsonLd = [
     // Fix GSC: sameAs は同一エンティティの別URLのみ。別サービスURLは削除（2026-05-23修正）
     "sameAs": [],
     "knowsAbout": [
-      "性格心理学（Big Five）",
+      "5因子性格モデル（性格心理学）",
       "多重知能理論（Howard Gardner）",
       "Myers-Briggs Type Indicator",
       "DiSC理論",
@@ -220,7 +220,7 @@ const pageJsonLd = [
         "name": "8診断統合は他サービスと何が違いますか？",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "診断ナビは8種類の診断結果を内部でBig Five（OCEAN）に変換・統合し、仕事・恋愛・友人・家族・学習の5シーンで横断的な自己理解をサポートします。単一診断の「ラベル貼り」ではなく、多面的な性格理解を目指すのが最大の差別化点です。"
+          "text": "診断ナビは8種類の診断結果を内部で5つの性格軸に換算・統合し、仕事・恋愛・友人・家族・学習の5シーンで横断的な自己理解をサポートします。単一診断の「ラベル貼り」ではなく、多面的な性格理解を目指すのが最大の差別化点です。"
         }
       }
     ]
@@ -272,7 +272,7 @@ const pageJsonLd = [
       <p class="tldr-block__title">このページのポイント</p>
       <ul class="tldr-block__list">
         <li class="tldr-block__item">運営: 個人事業主・会澤 勇気（あいざわ ゆうき）が「診断ナビ編集部」として運営（2026年5月開設）</li>
-        <li class="tldr-block__item">科学的根拠: 6つの学術理論（Big Five・Gardner多重知能・MBTI・DiSC・Lee恋愛類型・行動経済学）を参照した30本以上の学術論文・公式資料に基づく</li>
+        <li class="tldr-block__item">科学的根拠: 6つの学術理論（性格の5因子モデル・Gardner多重知能・MBTI・DiSC・Lee恋愛類型・行動経済学）を参照した30本以上の学術論文・公式資料に基づく</li>
         <li class="tldr-block__item">3原則: 占いではない・YMYL非扱い（医療/法律/金融アドバイスなし）・プライバシー優先</li>
         <li class="tldr-block__item">監修体制: 外部監修者なし（正直明示）。一次情報（APA / 日本心理学会 / 大学研究機関）への直接参照で品質担保</li>
         <li class="tldr-block__item">データ: 未登録ユーザーの診断データはサーバーに送信されない（LocalStorageのみ）</li>

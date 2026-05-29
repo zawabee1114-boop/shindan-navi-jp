@@ -157,14 +157,14 @@ const organizationSchema = {
     caption: '診断ナビ',
   },
   foundingDate: '2026',
-  description: 'Big5（ビッグファイブ）を裏エンジンとして8診断を統合し、仕事・恋愛・友人・家族・学校の5シーンで具体的な行動指針を提供する自己理解プラットフォームを運営する編集部。心理学の標準モデルに基づく性格分類のみを扱い、占いやスピリチュアルは一切扱わない。',
+  description: '8つの診断を統合し、仕事・恋愛・友人・家族・学校の5シーンで具体的な行動指針を提供する自己理解プラットフォームを運営する編集部。性格心理学の標準モデルに基づく科学的な性格分類のみを扱い、占いやスピリチュアルは一切扱わない。',
   knowsAbout: [
     { '@type': 'Thing', name: 'MBTI（Myers-Briggs Type Indicator）', sameAs: 'https://www.myersbriggs.org/' },
     { '@type': 'Thing', name: '多重知能理論（Multiple Intelligences）', sameAs: 'https://www.pz.harvard.edu/' },
     { '@type': 'Thing', name: 'DiSC診断（DISC行動スタイル）' },
     { '@type': 'Thing', name: '恋愛スタイル理論（J.A.Lee Love Styles）' },
     { '@type': 'Thing', name: '完璧主義心理学（Multidimensional Perfectionism Scale）' },
-    { '@type': 'Thing', name: 'ビッグファイブ性格特性（Big Five OCEAN）' },
+    { '@type': 'Thing', name: '5因子性格モデル（Five-Factor Model）', sameAs: 'https://www.apa.org/' },
     { '@type': 'Thing', name: '行動経済学（Behavioral Economics）' },
     { '@type': 'Thing', name: '自己理解・自己分析' },
     { '@type': 'Thing', name: '性格心理学' },
@@ -342,6 +342,9 @@ const GSC_VERIFICATION = '';
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32" />
   <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+  <!-- Web App Manifest -->
+  <link rel="manifest" href="/manifest.json" />
 
   <!-- Theme color -->
   <meta name="theme-color" content={siteMeta.themeColor} />
