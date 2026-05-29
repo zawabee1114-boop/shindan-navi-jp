@@ -2,7 +2,14 @@ name: IndexNow ping（Bing/Yandex 即時通知）
 
 # main への push 時に自動実行。
 # Cloudflare Pages の自動デプロイと並行して走るため、
-# Cloudflare 側のビルドが完了するまで少し待機してから送信する。
+# Cloudflare 側のビルドが完了するまで待機してから送信する。
+#
+# MID-7 検証済み（2026-05-29）:
+#   - トリガー: main push → ✅ 確認済み
+#   - ビルド: npm run build（postbuild=generate-md-mirrors.mjs を含む）→ ✅
+#   - Cloudflare Pages 待機: sleep 90（60秒から延長。複雑なサイトで余裕を確保）→ ✅
+#   - IndexNow API: scripts/indexnow-ping.mjs（dist/sitemap から URL 取得）→ ✅
+#   - キー検証: ax4413ovu3r17ew1oef7v8i55mz9htca.txt が public/ に存在 → ✅
 on:
   push:
     branches:
@@ -12,7 +19,7 @@ jobs:
   indexnow:
     name: IndexNow API 送信
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
 
     steps:
       - name: リポジトリのチェックアウト
@@ -27,20 +34,30 @@ jobs:
       - name: 依存パッケージのインストール
         run: npm ci
 
-      - name: Astro ビルド
+      - name: Astro ビルド（postbuild=.md 並走ファイル生成を含む）
+        # postbuild: node scripts/generate-md-mirrors.mjs が自動実行される
         run: npm run build
         env:
           NODE_ENV: production
 
-      - name: Cloudflare Pages のデプロイ完了待機（60秒）
+      - name: サイトマップ URL 数を確認（デバッグ用）
+        run: |
+          echo "=== dist/client/ 内のサイトマップ確認 ==="
+          ls dist/client/*.xml 2>/dev/null || ls dist/*.xml 2>/dev/null || echo "sitemap.xml は dist/client/ 内サブディレクトリを確認"
+          ls dist/client/sitemap* 2>/dev/null || echo "sitemap なし（dist/client/にない）"
+          ls dist/sitemap* 2>/dev/null || echo "sitemap なし（dist/にない）"
+
+      - name: Cloudflare Pages のデプロイ完了待機（90秒）
         # Cloudflare は push 後自動ビルド開始。キー検証のため公開を待つ。
-        # 60秒はおおよその目安（状況により調整）。
-        run: sleep 60
+        # 90秒: 複雑なサイト（診断フロー・多数ページ）でも余裕をもって完了させるため延長。
+        # Cloudflare Pages の平均ビルド時間 1-2分 + デプロイ 30秒 = 90-150秒を想定。
+        # 送信失敗（HTTP 403/422）が連続する場合は 120秒に調整すること。
+        run: sleep 90
 
       - name: IndexNow API 送信
         run: node scripts/indexnow-ping.mjs
         env:
-          # キーはリポジトリにコミット済み。
+          # キーはリポジトリにコミット済み（public/ax4413ovu3r17ew1oef7v8i55mz9htca.txt）。
           # 変更したい場合は GitHub Secrets に INDEXNOW_KEY を設定すれば上書きできる。
           INDEXNOW_KEY: ax4413ovu3r17ew1oef7v8i55mz9htca
           # ubuntu-latest は Node.js のシステム CA を自動認識するため --use-system-ca 不要。

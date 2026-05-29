@@ -168,6 +168,24 @@ const jsonLdArticle = {
     publisher: ref.publisher,
     url: ref.url,
   })),
+  // MID-6: mentions（重要エンティティ連結・AI引用率向上）
+  mentions: [
+    {
+      '@type': 'Thing',
+      name: 'ABO Blood Group System（ABO血液型システム）',
+      sameAs: 'https://ja.wikipedia.org/wiki/ABO%E5%BC%8F%E8%A1%80%E6%B6%B2%E5%9E%8B',
+    },
+    {
+      '@type': 'Thing',
+      name: '血液型と性格の相関研究（能見俊賢・Furukawa 1927）',
+      sameAs: 'https://ja.wikipedia.org/wiki/%E8%A1%80%E6%B6%B2%E5%9E%8B%E6%80%A7%E6%A0%BC%E5%88%86%E9%A1%9E',
+    },
+    {
+      '@type': 'Thing',
+      name: 'Five-Factor Model（ビッグファイブ性格特性モデル）',
+      sameAs: 'https://ja.wikipedia.org/wiki/%E3%83%93%E3%83%83%E3%82%B0%E3%83%95%E3%82%A1%E3%82%A4%E3%83%96_(%E5%BF%83%E7%90%86%E5%AD%A6)',
+    },
+  ],
 };
 
 // JSON-LD: FAQPage
