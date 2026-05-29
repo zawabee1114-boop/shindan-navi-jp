@@ -1,0 +1,907 @@
+---
+/**
+ * 著者プロフィールページ /authors/
+ * E-E-A-T 強化・Person JSON-LD 単独配置
+ *
+ * 設計方針:
+ * - 架空情報・経歴の捏造 絶対禁止（no_fake_supervisor 準拠）
+ * - about/index.astro の #person-aizawa と @id を共有（重複定義しない）
+ * - about の Person JSON-LD は url: /about/ を指すが、
+ *   著者ページは url: /authors/ として独立 URL を持つ
+ * - sameAs: /about/#person-aizawa で aboutページエンティティと連結
+ *
+ * 触ってよいファイル範囲（衝突回避）:
+ * - src/pages/authors/* ← このファイル
+ * - src/components/SiteFooter.astro（/authors/ リンク追加）
+ * のみ。BaseLayout.astro・各診断 index.astro は触らない
+ *
+ * 確認日: 2026-05-29
+ */
+
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Container from '../../components/Container.astro';
+
+const SITE_URL = 'https://shindan-navi.jp';
+const PAGE_URL = `${SITE_URL}/authors/`;
+
+const title = '著者・編集者プロフィール | 診断ナビ';
+const description =
+  '診断ナビ運営者・会澤勇気（あいざわゆうき）の著者プロフィール。専門領域・編集方針・担当範囲・参照学術理論を掲載。性格心理学・行動経済学・データサイエンスの知見を活かして8診断統合プラットフォームを構築・運営しています。';
+
+// 著者情報（about/index.astro の実在情報のみ使用・捏造なし）
+const author = {
+  name: '会澤 勇気',
+  nameKana: 'あいざわ ゆうき',
+  role: '診断ナビ 運営者・編集長',
+  organization: '診断ナビ編集部（個人事業主）',
+  since: '2026年5月',
+  email: 'zawalab.info@gmail.com',
+  address: '〒150-0044 東京都渋谷区円山町5番3号 MIEUX渋谷ビル8階',
+  bio: '性格心理学・行動経済学・データサイエンスへの関心から、科学的根拠ベースの自己理解ツールの必要性を感じ、8診断を統合するプラットフォーム「診断ナビ」を立ち上げました。',
+  motivation:
+    '「MBTIだけでも血液型だけでも自分を語れない」という違和感がずっとありました。単一の診断フレームにはめ込むことで、むしろ自己理解が浅くなると感じていたのです。8つの診断を統合し、仕事・恋愛・友人・家族・学習という実生活の文脈で性格を理解できるサービスを自分で作ろうと決めました。占いではなく科学的根拠ベースの自己理解ツールを、特に若年層に届けたいと考えています。',
+  beliefs: '「占いの代わりに性格心理学を」「8診断統合で多面的な自己理解を」。診断結果を「知って終わり」にせず、実生活のアクションに結びつけることを目指しています。',
+  specialties: [
+    '性格心理学（Big Five / OCEAN）',
+    '多重知能理論（Howard Gardner / Harvard Project Zero）',
+    'Myers-Briggs Type Indicator（MBTI）',
+    'DiSC理論（Marston 1928）',
+    '恋愛スタイル理論（J.A.Lee 1973）',
+    '行動経済学（Daniel Kahneman / マネースクリプト理論）',
+    'データサイエンス・Webサービス設計',
+  ],
+  editorialPrinciples: [
+    {
+      title: '一次情報主義',
+      desc: '学術論文・公式機関（APA・Harvard Project Zero・Myers & Briggs Foundation等）の一次情報を必ず確認してからコンテンツを作成します。孫引き禁止・各ページにDOI付き引用または公式機関URLを明示しています。',
+    },
+    {
+      title: '架空監修者・架空著者 絶対禁止',
+      desc: '外部の大学教授・臨床心理士等による正式な監修体制は現在設けていません。これを正直に開示します。架空の監修者名・肩書きを掲載することはありません。',
+    },
+    {
+      title: '占い・予測は扱わない',
+      desc: '運勢・未来予測・霊的解釈は一切掲載しません。科学的根拠のある性格傾向の分類・参考情報のみを提供します。',
+    },
+    {
+      title: 'YMYL非扱い・専門家誘導',
+      desc: '医療・精神疾患診断・法律・金融アドバイスは一切提供しません。心身の不調を感じる場合は必ず医療機関・専門家にご相談いただくよう誘導します。',
+    },
+    {
+      title: '誤情報があれば迅速訂正',
+      desc: '誤りのご報告を受けた場合、原則7営業日以内に確認・修正します。重大な誤りは即時対応し、/changelog/ で透明化しています。',
+    },
+  ],
+  responsibleDiagnoses: [
+    { name: '多重知能テスト', href: '/diagnosis/multi-int/', desc: 'Gardner（1983）の8知能理論に基づく。向いている才能・仕事・学習スタイルを分析' },
+    { name: 'MBTI診断', href: '/diagnosis/mbti/', desc: 'Jung心理類型論をベースとした16タイプ性格分類。仕事・恋愛・友人関係を網羅' },
+    { name: 'DiSC診断', href: '/diagnosis/disc/', desc: 'Marston（1928）の行動心理学。ビジネス・コミュニケーションスタイル特化' },
+    { name: '完璧主義タイプ診断', href: '/diagnosis/perfectionism/', desc: 'CBTの知見を活かした完璧主義の4分類。セルフケアTips付き' },
+    { name: '恋愛スタイル診断', href: '/diagnosis/love-style/', desc: 'J.A.Lee（1973）の6スタイル分類。Hendrick & Hendrick（1986）の実証研究に基づく' },
+    { name: '金銭感覚診断', href: '/diagnosis/money-style/', desc: 'Klontz et al.（2011）マネースクリプト理論。行動経済学の知見を応用' },
+    { name: '星座性格診断', href: '/diagnosis/zodiac/', desc: '西洋占星術の文化的性格分類フレームワーク（エンタメ用途・科学的根拠なし表記あり）' },
+    { name: '血液型性格診断', href: '/diagnosis/blood-type/', desc: '日本文化的性格分類（文化的背景として紹介。科学的根拠限定的の表記あり）' },
+  ],
+  references: [
+    { name: 'American Psychological Association（APA）', url: 'https://www.apa.org/' },
+    { name: 'Harvard University Project Zero（多重知能理論）', url: 'https://www.pz.harvard.edu/projects/multiple-intelligences' },
+    { name: 'The Myers & Briggs Foundation（MBTI）', url: 'https://www.myersbriggs.org/' },
+    { name: 'DiSC Profile（Wiley社）', url: 'https://www.discprofile.com/' },
+    { name: '日本心理学会', url: 'https://psych.or.jp/' },
+  ],
+};
+
+// FAQ
+const faqItems = [
+  {
+    q: '会澤勇気はどんな人物ですか？',
+    a: '個人事業主・会澤 勇気（あいざわ ゆうき）は、2026年5月に「診断ナビ」を立ち上げた運営者です。性格心理学・行動経済学・データサイエンスへの関心から、8種類の診断を統合する自己理解プラットフォームを構築しました。「MBTIだけでも血液型だけでも自分を語れない」という違和感が立ち上げの動機です。',
+  },
+  {
+    q: '診断ナビの著者・監修体制はどうなっていますか？',
+    a: '診断ナビは現在、外部の大学教授・臨床心理士等による正式な監修体制を設けていません。これを正直に開示します。運営者・会澤勇気が各診断ページで APA・Harvard Project Zero・Myers & Briggs Foundation 等の一次情報を直接参照し、DOI付き学術論文を引用することで品質を担保しています。架空の監修者名を掲載することはありません。',
+  },
+  {
+    q: '担当している診断コンテンツは何ですか？',
+    a: '会澤勇気は診断ナビの全8診断（多重知能テスト・MBTI診断・DiSC診断・完璧主義診断・恋愛スタイル診断・金銭感覚診断・星座診断・血液型診断）のコンテンツを担当しています。各診断の参照学術理論・公式機関への直接リンクを明示しています。',
+  },
+  {
+    q: '参照している学術理論・機関はどこですか？',
+    a: 'Howard Gardner（Harvard大・多重知能理論）、Myers & Briggs Foundation（MBTI）、DiSC公式（Wiley社）、American Psychological Association（APA・Big Five）、Hendrick & Hendrick（恋愛スタイル）、Klontz et al.（2011、金銭感覚）などの研究・機関を参照しています。計30本以上の学術論文・公式資料に基づいています（2026-05-29確認）。',
+  },
+  {
+    q: 'コンテンツの誤りを見つけたらどうすればいいですか？',
+    a: 'zawalab.info@gmail.com または /contact/ からご報告ください。原則7営業日以内に確認・修正します。重大な誤りは即時対応します。訂正内容は /changelog/ で透明化しています。',
+  },
+];
+
+// JSON-LD: Person（about/#person-aizawa とエンティティ共有・重複定義しない）
+const jsonLdPerson = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  // このページを正規 URL として使う独自 ID（about との重複を避け sameAs で連結）
+  '@id': `${PAGE_URL}#person-aizawa`,
+  name: '会澤 勇気',
+  alternateName: 'あいざわ ゆうき',
+  jobTitle: '診断ナビ運営者・編集長',
+  url: PAGE_URL,
+  email: 'zawalab.info@gmail.com',
+  description: '個人事業主。性格心理学・行動経済学・データサイエンスへの関心から、8診断を統合する自己理解プラットフォーム「診断ナビ」を構築・運営。科学的根拠ベースの自己理解ツールを若年層に届けることを目指す。',
+  // about ページの Person エンティティと同一エンティティであることを示す
+  sameAs: [`${SITE_URL}/about/#person-aizawa`],
+  knowsAbout: [
+    '性格心理学（Big Five / OCEAN）',
+    '多重知能理論（Howard Gardner）',
+    'Myers-Briggs Type Indicator（MBTI）',
+    'DiSC理論',
+    '恋愛スタイル理論（J.A.Lee）',
+    '行動経済学',
+    'データサイエンス',
+    'Webサービス運営',
+  ],
+  worksFor: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+  },
+  address: {
+    '@type': 'PostalAddress',
+    postalCode: '150-0044',
+    addressLocality: '渋谷区',
+    addressRegion: '東京都',
+    streetAddress: '円山町5番3号 MIEUX渋谷ビル8階',
+    addressCountry: 'JP',
+  },
+};
+
+// JSON-LD: ProfilePage
+const jsonLdProfilePage = {
+  '@context': 'https://schema.org',
+  '@type': 'ProfilePage',
+  '@id': PAGE_URL,
+  url: PAGE_URL,
+  name: title,
+  description,
+  dateModified: '2026-05-29',
+  about: {
+    '@id': `${PAGE_URL}#person-aizawa`,
+  },
+  mainEntity: {
+    '@id': `${PAGE_URL}#person-aizawa`,
+  },
+  isPartOf: {
+    '@type': 'WebSite',
+    '@id': `${SITE_URL}/#website`,
+  },
+};
+
+// JSON-LD: FAQPage
+const jsonLdFAQ = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqItems.map(({ q, a }) => ({
+    '@type': 'Question',
+    name: q,
+    acceptedAnswer: { '@type': 'Answer', text: a },
+  })),
+};
+
+// JSON-LD: BreadcrumbList
+const jsonLdBreadcrumb = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'ホーム', item: SITE_URL },
+    { '@type': 'ListItem', position: 2, name: '著者プロフィール', item: PAGE_URL },
+  ],
+};
+
+const pageJsonLd = [jsonLdPerson, jsonLdProfilePage, jsonLdFAQ, jsonLdBreadcrumb];
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  canonical={PAGE_URL}
+  jsonLd={pageJsonLd}
+  ogImage="/ogp-default.png"
+  lastUpdated="2026-05-29"
+  breadcrumbs={[{ name: '著者プロフィール', url: '/authors/' }]}
+>
+  <nav class="breadcrumb" aria-label="パンくずリスト">
+    <a href="/">ホーム</a> &gt; 著者プロフィール
+  </nav>
+
+  <section class="page-hero page-hero--purple" aria-labelledby="authors-h1">
+    <Container>
+      <div class="page-hero-inner">
+        <div class="page-hero-badge">著者・編集者情報</div>
+        <h1 id="authors-h1" class="page-hero-h1">著者プロフィール</h1>
+        <p class="page-hero-sub">
+          診断ナビの運営者・会澤勇気（あいざわゆうき）の専門領域・担当コンテンツ・編集方針
+        </p>
+      </div>
+    </Container>
+  </section>
+
+  <div class="authors-container">
+
+    <!-- 定義パラグラフ（AIO引用最適化・Speakable対象） -->
+    <p class="authors-lead" id="authors-lead">
+      診断ナビは、個人事業主・会澤 勇気（あいざわ ゆうき）が2026年5月に立ち上げた、性格心理学・行動経済学・多重知能理論に基づく8診断統合プラットフォームです。外部監修者は設けておらず、一次情報（学術論文・公式機関資料）への直接参照で品質を担保しています。
+    </p>
+
+    <!-- このページでわかること（TL;DR） -->
+    <div class="tldr-block" role="note" aria-label="このページのポイント">
+      <p class="tldr-block__title">このページでわかること</p>
+      <ul class="tldr-block__list">
+        <li class="tldr-block__item">会澤勇気の専門領域（性格心理学・行動経済学・データサイエンス）と診断ナビ立ち上げの経緯</li>
+        <li class="tldr-block__item">担当する8診断コンテンツと各診断の参照学術理論（計30本以上の論文・公式資料）</li>
+        <li class="tldr-block__item">編集方針（一次情報主義・架空監修者禁止・YMYL非扱い・誤情報7営業日以内訂正）</li>
+        <li class="tldr-block__item">外部監修者を設けていないことの正直な開示と代替品質担保の仕組み</li>
+      </ul>
+      <p class="tldr-block__meta">
+        <time datetime="2026-05-29">2026-05-29</time> 時点の情報。
+        著者情報の更新は <a href="/changelog/">changelog</a> に記録します。
+      </p>
+    </div>
+
+    <!-- ========================
+         著者プロフィールカード
+         ======================== -->
+    <section class="content-section" id="profile" aria-labelledby="profile-heading">
+      <h2 class="section-heading" id="profile-heading">著者プロフィール</h2>
+
+      <div class="author-card" itemscope itemtype="https://schema.org/Person">
+        <div class="author-card__header">
+          <div class="author-avatar" aria-hidden="true">
+            <span class="author-avatar__emoji">🧠</span>
+          </div>
+          <div class="author-card__meta">
+            <h3 class="author-name" itemprop="name">
+              {author.name}
+              <span class="author-name-kana" itemprop="alternateName">（{author.nameKana}）</span>
+            </h3>
+            <p class="author-role" itemprop="jobTitle">{author.role}</p>
+            <p class="author-org">
+              <span itemprop="worksFor" itemscope itemtype="https://schema.org/Organization">
+                <span itemprop="name">{author.organization}</span>
+              </span>
+              &nbsp;|&nbsp; 開設: <time datetime="2026-05">{author.since}</time>
+            </p>
+          </div>
+        </div>
+
+        <div class="author-card__body">
+          <p class="author-bio" itemprop="description">{author.bio}</p>
+
+          <div class="author-motivation">
+            <p class="author-motivation__label">立ち上げの動機</p>
+            <p class="author-motivation__text">{author.motivation}</p>
+          </div>
+
+          <div class="author-beliefs">
+            <p class="author-beliefs__label">編集信念</p>
+            <p class="author-beliefs__text">{author.beliefs}</p>
+          </div>
+
+          <div class="author-contact-row">
+            <span class="author-contact-label">連絡先</span>
+            <a href="/contact/" class="author-contact-link" itemprop="url">お問い合わせフォーム</a>
+            <span class="author-contact-sep">|</span>
+            <a href="mailto:zawalab.info@gmail.com" class="author-contact-link" itemprop="email">zawalab.info@gmail.com</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================
+         専門領域
+         ======================== -->
+    <section class="content-section" id="specialties" aria-labelledby="specialties-heading">
+      <h2 class="section-heading" id="specialties-heading">会澤勇気の専門領域と参照学術理論</h2>
+      <p class="section-lead">
+        診断ナビの8診断は、以下の学術理論・公式機関を参照して設計されています（2026-05-29確認・計30本以上の研究論文・公式資料）。
+      </p>
+      <ul class="specialty-list">
+        {author.specialties.map((s) => (
+          <li class="specialty-item">
+            <span class="specialty-dot" aria-hidden="true"></span>
+            <span>{s}</span>
+          </li>
+        ))}
+      </ul>
+
+      <div class="reference-links">
+        <p class="reference-links__label">参照機関（一次情報）</p>
+        <ul class="reference-links__list">
+          {author.references.map((ref) => (
+            <li>
+              <a href={ref.url} target="_blank" rel="noopener" class="reference-link">
+                {ref.name}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+
+    <!-- ========================
+         担当コンテンツ一覧
+         ======================== -->
+    <section class="content-section" id="diagnoses" aria-labelledby="diagnoses-heading">
+      <h2 class="section-heading" id="diagnoses-heading">担当診断コンテンツ（8診断）</h2>
+      <p class="section-lead">
+        会澤勇気は診断ナビの全8診断コンテンツを担当しています。各診断ページで参照学術理論・公式機関URLを明示しています。
+      </p>
+      <div class="diagnosis-grid">
+        {author.responsibleDiagnoses.map((d) => (
+          <a href={d.href} class="diagnosis-card" aria-label={`${d.name}の詳細を見る`}>
+            <p class="diagnosis-card__name">{d.name}</p>
+            <p class="diagnosis-card__desc">{d.desc}</p>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <!-- ========================
+         編集方針
+         ======================== -->
+    <section class="content-section" id="editorial-principles" aria-labelledby="editorial-heading">
+      <h2 class="section-heading" id="editorial-heading">編集方針（5原則）</h2>
+      <p class="section-lead">
+        会澤勇気は以下の5原則に基づいてコンテンツを編集しています。
+      </p>
+      <ol class="principles-list">
+        {author.editorialPrinciples.map((p, i) => (
+          <li class="principle-item">
+            <div class="principle-item__num">{String(i + 1).padStart(2, '0')}</div>
+            <div class="principle-item__body">
+              <p class="principle-item__title">{p.title}</p>
+              <p class="principle-item__desc">{p.desc}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+      <div class="principle-more-links">
+        <a href="/editorial-policy/" class="principle-more-link">編集ポリシー全文を読む</a>
+        <a href="/about/" class="principle-more-link">運営者情報・E-E-A-T詳細を読む</a>
+      </div>
+    </section>
+
+    <!-- ========================
+         E-E-A-T 数値サマリー
+         ======================== -->
+    <section class="content-section" id="eeat-summary" aria-labelledby="eeat-heading">
+      <h2 class="section-heading" id="eeat-heading">E-E-A-T（経験・専門性・権威性・信頼性）の根拠</h2>
+      <div class="eeat-stats">
+        <div class="eeat-stat-card">
+          <div class="eeat-stat-num">8</div>
+          <div class="eeat-stat-label">担当診断数</div>
+        </div>
+        <div class="eeat-stat-card">
+          <div class="eeat-stat-num">30<span class="eeat-stat-unit">本以上</span></div>
+          <div class="eeat-stat-label">参照学術論文・公式資料数</div>
+        </div>
+        <div class="eeat-stat-card">
+          <div class="eeat-stat-num">7</div>
+          <div class="eeat-stat-label">専門領域（学術理論）数</div>
+        </div>
+        <div class="eeat-stat-card">
+          <div class="eeat-stat-num">0</div>
+          <div class="eeat-stat-label">架空監修者・捏造情報</div>
+        </div>
+      </div>
+      <div class="eeat-trust-note">
+        <p>
+          <strong>信頼性の根拠：</strong>
+          外部監修者を設けていないことを正直に開示しています。その代わり、各診断ページでAPA Dictionary・Harvard Project Zero・Myers & Briggs Foundation等の一次機関に直接参照し、DOI付き学術論文を引用することで品質を担保しています。誤情報のご報告は原則7営業日以内に対応します（2026-05-29時点）。
+        </p>
+      </div>
+    </section>
+
+    <!-- ========================
+         FAQ
+         ======================== -->
+    <section class="content-section" id="faq" aria-labelledby="faq-heading">
+      <h2 class="section-heading" id="faq-heading">著者に関するよくある質問</h2>
+      <div class="faq-list">
+        {faqItems.map((item) => (
+          <details class="faq-item">
+            <summary class="faq-question">
+              <span class="faq-q-label" aria-hidden="true">Q</span>
+              <span class="faq-q-text">{item.q}</span>
+            </summary>
+            <div class="faq-answer">
+              <span class="faq-a-label" aria-hidden="true">A</span>
+              <p>{item.a}</p>
+            </div>
+          </details>
+        ))}
+      </div>
+    </section>
+
+    <!-- 関連ページリンク -->
+    <section class="content-section">
+      <div class="related-links">
+        <a href="/about/" class="related-link">運営者情報・E-E-A-T詳細</a>
+        <a href="/editorial-policy/" class="related-link">編集ポリシー全文</a>
+        <a href="/diagnosis/" class="related-link">診断一覧</a>
+        <a href="/contact/" class="related-link">お問い合わせ</a>
+        <a href="/changelog/" class="related-link">更新履歴</a>
+      </div>
+    </section>
+
+  </div>
+</BaseLayout>
+
+<style>
+  .authors-container {
+    max-width: var(--sn-max-w-content);
+    margin: 0 auto;
+    padding: 0 var(--sn-space-4);
+  }
+
+  .breadcrumb {
+    font-size: var(--sn-text-sm);
+    color: var(--sn-muted);
+    padding: var(--sn-space-4) var(--sn-space-4);
+  }
+  .breadcrumb a {
+    color: var(--sn-muted);
+    text-decoration: none;
+  }
+  .breadcrumb a:hover {
+    color: var(--sn-primary);
+  }
+
+  .authors-lead {
+    font-size: var(--sn-text-base);
+    color: var(--sn-text-soft);
+    line-height: var(--sn-leading-relaxed);
+    margin-bottom: var(--sn-space-8);
+  }
+
+  /* TL;DR */
+  .tldr-block {
+    background: #f0f4ff;
+    border-left: 4px solid var(--sn-primary);
+    border-radius: 0 var(--sn-radius-sm) var(--sn-radius-sm) 0;
+    padding: var(--sn-space-5) var(--sn-space-6);
+    margin-bottom: var(--sn-space-8);
+  }
+  .tldr-block__title {
+    font-weight: 700;
+    font-size: var(--sn-text-sm);
+    color: var(--sn-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: var(--sn-space-3);
+  }
+  .tldr-block__list {
+    list-style: none;
+    padding-left: var(--sn-space-4);
+    display: flex;
+    flex-direction: column;
+    gap: var(--sn-space-2);
+  }
+  .tldr-block__item {
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: #1f2937;
+  }
+  .tldr-block__meta {
+    font-size: var(--sn-text-xs);
+    color: var(--sn-muted);
+    margin-top: var(--sn-space-3);
+  }
+  .tldr-block__meta a {
+    color: var(--sn-primary);
+  }
+
+  /* セクション共通 */
+  .content-section {
+    margin-bottom: var(--sn-space-12);
+  }
+  .section-heading {
+    font-family: var(--sn-font-rounded);
+    font-size: var(--sn-text-xl);
+    font-weight: 700;
+    margin-bottom: var(--sn-space-6);
+    padding-bottom: var(--sn-space-3);
+    border-bottom: 2px solid var(--sn-primary-bg);
+  }
+  .section-lead {
+    font-size: var(--sn-text-sm);
+    color: var(--sn-text-soft);
+    line-height: var(--sn-leading-relaxed);
+    margin-bottom: var(--sn-space-5);
+  }
+
+  /* 著者カード */
+  .author-card {
+    background: var(--sn-bg-white);
+    border: 1px solid var(--sn-border);
+    border-radius: var(--sn-radius-lg);
+    padding: var(--sn-space-8);
+    box-shadow: var(--sn-shadow-sm);
+  }
+  .author-card__header {
+    display: flex;
+    gap: var(--sn-space-5);
+    align-items: flex-start;
+    margin-bottom: var(--sn-space-6);
+  }
+  .author-avatar {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: var(--sn-primary-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .author-avatar__emoji {
+    font-size: 2.25rem;
+  }
+  .author-name {
+    font-size: var(--sn-text-xl);
+    font-weight: 700;
+    margin-bottom: var(--sn-space-1);
+  }
+  .author-name-kana {
+    font-size: var(--sn-text-sm);
+    font-weight: 400;
+    color: var(--sn-muted);
+  }
+  .author-role {
+    font-size: var(--sn-text-sm);
+    color: var(--sn-primary);
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .author-org {
+    font-size: var(--sn-text-xs);
+    color: var(--sn-muted);
+  }
+  .author-card__body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sn-space-4);
+  }
+  .author-bio {
+    font-size: var(--sn-text-sm);
+    color: var(--sn-text-soft);
+    line-height: var(--sn-leading-relaxed);
+  }
+  .author-motivation,
+  .author-beliefs {
+    background: var(--sn-bg-soft);
+    border-radius: var(--sn-radius);
+    padding: var(--sn-space-4) var(--sn-space-5);
+  }
+  .author-motivation__label,
+  .author-beliefs__label {
+    font-size: var(--sn-text-xs);
+    font-weight: 700;
+    color: var(--sn-primary);
+    margin-bottom: var(--sn-space-2);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .author-motivation__text,
+  .author-beliefs__text {
+    font-size: var(--sn-text-sm);
+    color: var(--sn-text-soft);
+    line-height: var(--sn-leading-relaxed);
+  }
+  .author-contact-row {
+    display: flex;
+    align-items: center;
+    gap: var(--sn-space-3);
+    flex-wrap: wrap;
+    font-size: var(--sn-text-sm);
+  }
+  .author-contact-label {
+    font-weight: 700;
+    color: var(--sn-text);
+  }
+  .author-contact-link {
+    color: var(--sn-primary);
+    text-decoration: none;
+  }
+  .author-contact-link:hover {
+    text-decoration: underline;
+  }
+  .author-contact-sep {
+    color: var(--sn-border);
+  }
+
+  /* 専門領域リスト */
+  .specialty-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: var(--sn-space-2);
+    margin-bottom: var(--sn-space-6);
+  }
+  .specialty-item {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--sn-space-3);
+    font-size: var(--sn-text-sm);
+    color: var(--sn-text-soft);
+    line-height: var(--sn-leading-relaxed);
+  }
+  .specialty-dot {
+    flex-shrink: 0;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--sn-primary);
+    margin-top: 6px;
+  }
+
+  /* 参照機関リンク */
+  .reference-links {
+    background: #ecfdf5;
+    border: 1px solid #a7f3d0;
+    border-radius: var(--sn-radius);
+    padding: var(--sn-space-4) var(--sn-space-5);
+  }
+  .reference-links__label {
+    font-size: var(--sn-text-xs);
+    font-weight: 700;
+    color: #065f46;
+    margin-bottom: var(--sn-space-2);
+  }
+  .reference-links__list {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sn-space-2) var(--sn-space-4);
+  }
+  .reference-link {
+    font-size: var(--sn-text-xs);
+    color: #059669;
+    text-decoration: none;
+  }
+  .reference-link:hover {
+    text-decoration: underline;
+  }
+
+  /* 担当診断グリッド */
+  .diagnosis-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--sn-space-3);
+  }
+  @media (min-width: 640px) {
+    .diagnosis-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  @media (min-width: 900px) {
+    .diagnosis-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+  .diagnosis-card {
+    display: block;
+    background: var(--sn-bg-white);
+    border: 1px solid var(--sn-border);
+    border-radius: var(--sn-radius);
+    padding: var(--sn-space-4);
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 150ms, box-shadow 150ms;
+  }
+  .diagnosis-card:hover {
+    border-color: var(--sn-primary-light);
+    box-shadow: var(--sn-shadow-sm);
+  }
+  .diagnosis-card__name {
+    font-size: var(--sn-text-sm);
+    font-weight: 700;
+    color: var(--sn-primary);
+    margin-bottom: var(--sn-space-1);
+  }
+  .diagnosis-card__desc {
+    font-size: var(--sn-text-xs);
+    color: var(--sn-text-soft);
+    line-height: 1.5;
+  }
+
+  /* 編集方針リスト */
+  .principles-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: var(--sn-space-4);
+    margin-bottom: var(--sn-space-6);
+  }
+  .principle-item {
+    display: flex;
+    gap: var(--sn-space-4);
+    background: var(--sn-bg-white);
+    border: 1px solid var(--sn-border);
+    border-radius: var(--sn-radius);
+    padding: var(--sn-space-5) var(--sn-space-6);
+    box-shadow: var(--sn-shadow-xs);
+  }
+  .principle-item__num {
+    font-family: var(--sn-font-rounded);
+    font-size: var(--sn-text-xl);
+    font-weight: 700;
+    color: var(--sn-primary-light);
+    flex-shrink: 0;
+    min-width: 2.5rem;
+  }
+  .principle-item__body {
+    flex: 1;
+  }
+  .principle-item__title {
+    font-weight: 700;
+    font-size: var(--sn-text-base);
+    margin-bottom: var(--sn-space-2);
+  }
+  .principle-item__desc {
+    font-size: var(--sn-text-sm);
+    color: var(--sn-text-soft);
+    line-height: var(--sn-leading-relaxed);
+  }
+  .principle-more-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sn-space-3);
+  }
+  .principle-more-link {
+    font-size: var(--sn-text-sm);
+    color: var(--sn-primary);
+    text-decoration: none;
+  }
+  .principle-more-link:hover {
+    text-decoration: underline;
+  }
+
+  /* E-E-A-T 数値 */
+  .eeat-stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--sn-space-4);
+    margin-bottom: var(--sn-space-6);
+  }
+  @media (min-width: 640px) {
+    .eeat-stats {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+  .eeat-stat-card {
+    background: var(--sn-bg-white);
+    border: 1px solid var(--sn-border);
+    border-radius: var(--sn-radius);
+    padding: var(--sn-space-5);
+    text-align: center;
+    box-shadow: var(--sn-shadow-xs);
+  }
+  .eeat-stat-num {
+    font-family: var(--sn-font-rounded);
+    font-size: 2.25rem;
+    font-weight: 900;
+    color: var(--sn-primary);
+    line-height: 1;
+    margin-bottom: var(--sn-space-1);
+  }
+  .eeat-stat-unit {
+    font-size: 0.9rem;
+  }
+  .eeat-stat-label {
+    font-size: var(--sn-text-xs);
+    color: var(--sn-muted);
+    line-height: 1.4;
+  }
+  .eeat-trust-note {
+    background: #ecfdf5;
+    border: 1px solid #a7f3d0;
+    border-radius: var(--sn-radius);
+    padding: var(--sn-space-5) var(--sn-space-6);
+  }
+  .eeat-trust-note p {
+    font-size: var(--sn-text-sm);
+    color: #065f46;
+    line-height: var(--sn-leading-relaxed);
+  }
+
+  /* FAQ */
+  .faq-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sn-space-3);
+  }
+  .faq-item {
+    background: var(--sn-bg-white);
+    border: 1px solid var(--sn-border);
+    border-radius: var(--sn-radius);
+    overflow: hidden;
+  }
+  .faq-item[open] {
+    border-color: var(--sn-primary-light);
+  }
+  .faq-question {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--sn-space-3);
+    padding: var(--sn-space-5) var(--sn-space-6);
+    cursor: pointer;
+    list-style: none;
+    font-weight: 700;
+    font-size: var(--sn-text-sm);
+  }
+  .faq-question::-webkit-details-marker {
+    display: none;
+  }
+  .faq-question:hover {
+    background: var(--sn-primary-bg);
+  }
+  .faq-q-label {
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--sn-primary);
+    color: #fff;
+    font-size: var(--sn-text-xs);
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .faq-q-text {
+    flex: 1;
+    padding-top: 3px;
+  }
+  .faq-answer {
+    display: flex;
+    gap: var(--sn-space-3);
+    padding: 0 var(--sn-space-6) var(--sn-space-5);
+    font-size: var(--sn-text-sm);
+    color: var(--sn-text-soft);
+    line-height: var(--sn-leading-relaxed);
+  }
+  .faq-a-label {
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: #d1fae5;
+    color: #065f46;
+    font-size: var(--sn-text-xs);
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 2px;
+  }
+  .faq-answer p {
+    flex: 1;
+    margin: 0;
+  }
+
+  /* 関連リンク */
+  .related-links {
+    background: var(--sn-bg-soft);
+    border-radius: var(--sn-radius);
+    padding: var(--sn-space-6);
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sn-space-4);
+  }
+  .related-link {
+    color: var(--sn-primary);
+    font-size: var(--sn-text-sm);
+    text-decoration: none;
+  }
+  .related-link:hover {
+    text-decoration: underline;
+  }
+</style>
