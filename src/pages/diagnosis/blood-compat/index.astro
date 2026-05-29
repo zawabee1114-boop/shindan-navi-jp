@@ -331,6 +331,7 @@ const typeLabels: Record<string, string> = { A: 'A型', B: 'B型', O: 'O型', AB
       points={[
         '血液型相性はA・B・O・AB型の4タイプ × 4タイプ計16通りの組み合わせを分析。日本独自の文化的分類として1927年（古川竹二）に始まり、1971年（能見正比古）に普及した',
         '日本心理学会（2014）公式見解では「血液型と性格の科学的統計的相関は認められない」とされており（https://psych.or.jp/opinion/bl-personality/）、本サイトは文化的話題として傾向を参考情報として提示',
+        '日本人のABO血液型分布（出典: 日本赤十字社・献血統計）はA型約38%・O型約31%・B型約22%・AB型約9%。縄田健悟（2014年、心理学研究85巻）は日米1万件超のデータを分析し、血液型が性格を説明できる割合は0.3%未満と報告（DOI: 10.4992/jjpsy.85.13E0025）',
         'O型×O型（85点）・A型×A型（86点）が本サイトの最高スコア。ただし実際の相性は個人の性格・価値観・コミュニケーション方法によって大きく変わる',
         '血液型ハラスメント（ブラハラ）に注意。血液型を根拠にした採用差別・役割の押しつけ・人格否定は不当な扱いであり推奨しない',
         '本ツールは自己理解・会話のきっかけのための参考情報。医学的・精神医学的な診断ではない',
@@ -355,6 +356,24 @@ const typeLabels: Record<string, string> = { A: 'A型', B: 'B型', O: 'O型', AB
           Sakamoto & Yamazaki（2004）の研究でも、血液型ステレオタイプの影響は
           「自己成就予言」として説明できると指摘されています。
         </p>
+        {/* ========== 引用可能な数値・統計（MID-2 AIO補強） ========== */}
+        <div class="bc-stats-grid" role="note" aria-label="引用可能な数値・統計データ">
+          <div class="bc-stat-card">
+            <div class="bc-stat-card-num">A約38% / O約31% / B約22% / AB約9%</div>
+            <div class="bc-stat-card-label">日本人のABO血液型分布</div>
+            <p class="bc-stat-card-source">出典: 日本赤十字社 献血統計（<a href="https://www.bs.jrc.or.jp/ktks/tokyo/special/m6_02_01_01_01_detail1.html" target="_blank" rel="noopener noreferrer">東京都赤十字血液センター</a>）。確認日: 2026-05-29</p>
+          </div>
+          <div class="bc-stat-card">
+            <div class="bc-stat-card-num">0.3%未満</div>
+            <div class="bc-stat-card-label">血液型が性格を説明できる割合</div>
+            <p class="bc-stat-card-source">縄田健悟（2014年）が日米1万件超のデータを分析した結果。出典: <a href="https://doi.org/10.4992/jjpsy.85.13E0025" target="_blank" rel="noopener noreferrer">心理学研究 85(2) DOI: 10.4992/jjpsy.85.13E0025</a>。確認日: 2026-05-29</p>
+          </div>
+          <div class="bc-stat-card">
+            <div class="bc-stat-card-num">科学的統計的相関なし</div>
+            <div class="bc-stat-card-label">日本心理学会（2014）の公式見解</div>
+            <p class="bc-stat-card-source">日本心理学会 公式見解「血液型と性格の間に科学的に明確な統計的相関は認められない」（<a href="https://psych.or.jp/opinion/bl-personality/" target="_blank" rel="noopener noreferrer">psych.or.jp</a>）。確認日: 2026-05-29</p>
+          </div>
+        </div>
         <div class="bc-science-points">
           <div class="bc-science-point bc-science-point--ok">
             <div class="bc-science-point-icon" aria-hidden="true">✅</div>
@@ -1346,4 +1365,39 @@ const typeLabels: Record<string, string> = { A: 'A型', B: 'B型', O: 'O型', AB
     .bc-hero-cta-group { flex-direction: column; align-items: center; }
     .bc-cta-btn { width: 100%; max-width: 320px; text-align: center; }
   }
+  /* ========== 数値統計グリッド（MID-2 AIO補強） ========== */
+  .bc-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 0.75rem;
+    margin: 1rem 0;
+  }
+  .bc-stat-card {
+    background: #f0f9ff;
+    border: 1px solid #bae6fd;
+    border-radius: 8px;
+    padding: 0.9rem 1rem;
+  }
+  .bc-stat-card-num {
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: #0c4a6e;
+    margin-bottom: 0.2rem;
+    line-height: 1.3;
+  }
+  .bc-stat-card-label {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #0369a1;
+    margin-bottom: 0.4rem;
+  }
+  .bc-stat-card-source {
+    font-size: 0.75rem;
+    color: #64748b;
+    line-height: 1.5;
+    margin: 0;
+  }
+  .bc-stat-card-source a { color: #0369a1; }
+
+
 </style>

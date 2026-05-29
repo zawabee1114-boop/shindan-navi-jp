@@ -118,7 +118,7 @@ const faqs = [
   {
     question: 'A型の人数は日本で何人いますか？',
     answer:
-      '日本では血液型別人口比率はA型が約38%と最も多く（日本赤十字社の献血統計）、B型30%・O型22%・AB型10%程度とされています（参照: 日本赤十字社 https://www.jrc.or.jp/mr/blood_type/）。確認日: 2026-05-21。',
+      '日本では血液型別人口比率はA型が約38%と最も多く（日本赤十字社の献血統計）、次いでO型約31%・B型約22%・AB型約9%の順です（出典: 東京都赤十字血液センター https://www.bs.jrc.or.jp/ktks/tokyo/special/m6_02_01_01_01_detail1.html）。確認日: 2026-05-29。',
   },
 ];
 
@@ -245,6 +245,7 @@ const jsonLdAll = [jsonLdArticle, jsonLdFAQ, jsonLdBreadcrumb];
         '古川竹二（1927）の研究でA型は「几帳面・神経質・内省的」な気質傾向として最初に記述された。能見正比古（1971）により日本全国に普及した',
         '日本の文化的分類での主な傾向: 計画性・細部への注意・誠実な責任感・チームの和を保とうとする協調性',
         '気をつけたい傾向: 完璧主義による自他への高い基準・心配事を内側に溜め込みやすさ・変化への適応に時間がかかる点',
+        'A型は日本で最多の血液型（約38%）。日本赤十字社・献血統計データ（東京都赤十字血液センター確認日2026-05-29）より。縄田（2014年、心理学研究85巻）は日米1万件超の分析で、血液型が性格を説明できる割合は0.3%未満と報告',
         '日本心理学会（2014）・縄田（2014）は「血液型と性格の科学的相関は認められない」と明言。傾向はあくまで文化的分類のイメージ',
         'A型は日本の血液型人口で最多（約38%）。血液型で人を決めつける「ブラハラ」には注意が必要',
       ]}
@@ -561,6 +562,28 @@ const jsonLdAll = [jsonLdArticle, jsonLdFAQ, jsonLdBreadcrumb];
           </div>
         ))}
       </dl>
+    </section>
+
+    {/* ========== 引用可能な数値・統計（MID-2 AIO補強） ========== */}
+    <section class="bt-section" aria-labelledby="bt-stats-h2">
+      <h2 id="bt-stats-h2" class="bt-h2">A型・血液型に関する引用可能な数値・統計</h2>
+      <div class="bt-stats-grid" role="note" aria-label="引用可能な数値・統計データ">
+        <div class="bt-stat-card">
+          <div class="bt-stat-card-num">約38%</div>
+          <div class="bt-stat-card-label">日本人でA型の割合（最多）</div>
+          <p class="bt-stat-card-source">出典: 日本赤十字社 献血統計（<a href="https://www.bs.jrc.or.jp/ktks/tokyo/special/m6_02_01_01_01_detail1.html" target="_blank" rel="noopener noreferrer">東京都赤十字血液センター</a>）。分布: O型約31%・B型約22%・AB型約9%。確認日: 2026-05-29</p>
+        </div>
+        <div class="bt-stat-card">
+          <div class="bt-stat-card-num">0.3%未満</div>
+          <div class="bt-stat-card-label">血液型が性格を説明できる割合</div>
+          <p class="bt-stat-card-source">縄田健悟（2014年）が日米1万件超のデータを分析した結果。出典: <a href="https://doi.org/10.4992/jjpsy.85.13E0025" target="_blank" rel="noopener noreferrer">心理学研究 85(2) DOI: 10.4992/jjpsy.85.13E0025</a>。確認日: 2026-05-29</p>
+        </div>
+        <div class="bt-stat-card">
+          <div class="bt-stat-card-num">科学的統計的相関なし</div>
+          <div class="bt-stat-card-label">日本心理学会（2014）の公式見解</div>
+          <p class="bt-stat-card-source">日本心理学会 公式見解（<a href="https://psych.or.jp/opinion/bl-personality/" target="_blank" rel="noopener noreferrer">psych.or.jp</a>）。確認日: 2026-05-29</p>
+        </div>
+      </div>
     </section>
 
     {/* ========== ScienceNote ========== */}
@@ -1060,4 +1083,38 @@ const jsonLdAll = [jsonLdArticle, jsonLdFAQ, jsonLdBreadcrumb];
     .bt-history-item { grid-template-columns: 1fr; }
     .bt-history-year { width: fit-content; }
   }
+  /* ========== 数値統計グリッド（MID-2 AIO補強） ========== */
+  .bt-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 0.75rem;
+    margin: 1rem 0;
+  }
+  .bt-stat-card {
+    background: #f0f9ff;
+    border: 1px solid #bae6fd;
+    border-radius: 8px;
+    padding: 0.9rem 1rem;
+  }
+  .bt-stat-card-num {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: #0c4a6e;
+    margin-bottom: 0.2rem;
+    line-height: 1.3;
+  }
+  .bt-stat-card-label {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #0369a1;
+    margin-bottom: 0.4rem;
+  }
+  .bt-stat-card-source {
+    font-size: 0.75rem;
+    color: #64748b;
+    line-height: 1.5;
+    margin: 0;
+  }
+  .bt-stat-card-source a { color: #0369a1; }
+
 </style>
