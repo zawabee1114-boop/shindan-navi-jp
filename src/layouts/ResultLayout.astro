@@ -518,7 +518,8 @@ const tabs = [
   /* ---- タブナビ ---- */
   .rl-tab-nav-wrapper {
     position: sticky;
-    top: var(--sn-header-h);
+    /* モバイル: MobileHeader（sticky）と被らないよう top:0（積み上がり方式） */
+    top: 0;
     background: rgba(255, 255, 255, 0.9);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
@@ -527,6 +528,12 @@ const tabs = [
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
+  }
+  /* PC: SiteHeader（sticky 60px）の下に配置 */
+  @media (min-width: 768px) {
+    .rl-tab-nav-wrapper {
+      top: var(--sn-header-h);
+    }
   }
   .rl-tab-nav-wrapper::-webkit-scrollbar { display: none; }
 

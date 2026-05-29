@@ -822,6 +822,12 @@ const pageJsonLd = {
     box-shadow: 0 14px 28px rgba(0,0,0,.20);
   }
   .hero-tile-item:hover { text-decoration: none; color: var(--ink-700); }
+  /* a11y: キーボードフォーカスリング */
+  .hero-tile-item:focus-visible {
+    outline: 2px solid var(--brand-500);
+    outline-offset: 4px;
+    border-radius: var(--radius-sm);
+  }
   .hero-tile-circle { transition: transform var(--sn-dur-fast) var(--sn-ease-bounce), box-shadow var(--sn-dur-fast) ease; }
   .hero-tile-circle {
     width: 60px; height: 60px; border-radius: 50%;
@@ -1036,14 +1042,17 @@ const pageJsonLd = {
     flex-shrink: 0;
   }
   .plan-cta {
-    display: block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     text-align: center;
     font-weight: 700;
     padding: var(--sn-space-3) var(--sn-space-6);
     border-radius: var(--sn-radius-pill);
     text-decoration: none;
     min-height: var(--sn-tap-min);
-    line-height: var(--sn-tap-min);
+    /* line-height: var(--sn-tap-min) はテキストを縦に44px引き伸ばすため削除 */
+    line-height: 1.4;
     transition: all var(--sn-dur-base) var(--sn-ease);
   }
 
@@ -1146,7 +1155,12 @@ const pageJsonLd = {
     align-items: flex-start;
     gap: var(--sn-space-2);
     cursor: pointer;
+    /* a11y: タップターゲット最小44px */
+    min-height: 44px;
+    /* Safari: details/summaryの三角マーカー削除 */
+    list-style: none;
   }
+  .faq-q::-webkit-details-marker { display: none; }
   .faq-q::before {
     content: "Q";
     color: var(--sn-primary);

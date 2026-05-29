@@ -208,7 +208,8 @@ input, select, textarea {
 .btn-sm {
   padding: var(--sn-space-2) var(--sn-space-4);
   font-size: var(--sn-text-sm);
-  min-height: 36px;
+  /* WCAG 2.1 AA: タップターゲット最小44px */
+  min-height: 44px;
 }
 
 /* ---- バッジ ---- */

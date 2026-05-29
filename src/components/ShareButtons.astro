@@ -169,7 +169,8 @@ const lineUrl = `https://line.me/R/msg/text/?${encodeURIComponent(`${text} ${url
   .share-buttons--sm .share-btn {
     padding: var(--sn-space-1) var(--sn-space-3);
     font-size: var(--sn-text-xs);
-    min-height: 36px;
+    /* WCAG 2.1 AA: タップターゲット最小44px */
+    min-height: 44px;
   }
 
   .share-buttons--sm .share-icon {
