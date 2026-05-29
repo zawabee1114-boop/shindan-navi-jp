@@ -9,6 +9,7 @@
     "dev": "astro dev",
     "prebuild": "node scripts/generate-ogp-svg.mjs && node scripts/generate-ogp-png.mjs && node scripts/generate-result-ogp.mjs && node scripts/generate-result-ogp-png.mjs",
     "build": "astro build",
+    "postbuild": "node scripts/generate-md-mirrors.mjs",
     "preview": "astro preview",
     "astro": "astro",
     "indexnow": "node --use-system-ca scripts/indexnow-ping.mjs",

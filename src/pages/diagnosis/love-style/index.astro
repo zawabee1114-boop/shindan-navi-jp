@@ -57,6 +57,24 @@ const jsonLdWebApp = {
     '@type': 'Organization',
     '@id': `${SITE_URL}/#organization`,
   },
+  // MID-6: mentions（重要エンティティ連結・AI引用率向上）
+  mentions: [
+    {
+      '@type': 'Thing',
+      name: 'Love Attitudes Scale / Colours of Love Theory（Lee 1973）',
+      sameAs: 'https://doi.org/10.1037/0022-3514.50.2.392',
+    },
+    {
+      '@type': 'Person',
+      name: 'John Alan Lee',
+      sameAs: 'https://en.wikipedia.org/wiki/John_Alan_Lee',
+    },
+    {
+      '@type': 'Thing',
+      name: 'Sternberg Triangular Theory of Love（愛の三角理論）',
+      sameAs: 'https://en.wikipedia.org/wiki/Triangular_theory_of_love',
+    },
+  ],
 };
 
 // JSON-LD: Quiz（citation に学術文献を配置）

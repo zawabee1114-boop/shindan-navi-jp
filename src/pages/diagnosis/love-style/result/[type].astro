@@ -7,7 +7,7 @@
  * タイプID: eros / ludus / storge / pragma / mania / agape
  *
  * SEO/AIO:
- * - JSON-LD: WebApplication + Article + BreadcrumbList
+ * - JSON-LD: WebApplication + Article + FAQPage + BreadcrumbList（FAQPage: MID-3対応 2026-05-29追加）
  * - タイプ別メタタイトル・ディスクリプション
  * - 5タイプとの相性ランキング（スコア順）
  * - 友情関係への転用セクション
@@ -166,7 +166,20 @@ const jsonLdBreadcrumb = {
   ],
 };
 
-const jsonLdAll = [jsonLdWebApp, jsonLdArticle, jsonLdBreadcrumb];
+// JSON-LD: FAQPage（MID-3対応 2026-05-29追加）
+// 恋愛スタイルタイプ別FAQをAI Overview最適化のため構造化データに追加
+const jsonLdFAQ = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  '@id': `${PAGE_URL}#faq`,
+  mainEntity: faqs.map(({ question, answer }) => ({
+    '@type': 'Question',
+    name: question,
+    acceptedAnswer: { '@type': 'Answer', text: answer },
+  })),
+};
+
+const jsonLdAll = [jsonLdWebApp, jsonLdArticle, jsonLdFAQ, jsonLdBreadcrumb];
 
 // 関連診断
 const relatedDiagnoses = [

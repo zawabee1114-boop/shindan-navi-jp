@@ -66,6 +66,29 @@ const jsonLdWebApp = {
     '@type': 'Organization',
     '@id': `${SITE_URL}/#organization`,
   },
+  // MID-6: mentions（重要エンティティ連結・AI引用率向上）
+  mentions: [
+    {
+      '@type': 'Thing',
+      name: 'Myers-Briggs Type Indicator（MBTI®）',
+      sameAs: 'https://www.themyersbriggs.com/',
+    },
+    {
+      '@type': 'Person',
+      name: 'Carl Gustav Jung',
+      sameAs: 'https://ja.wikipedia.org/wiki/%E3%82%AB%E3%83%BC%E3%83%AB%E3%83%BB%E3%82%B0%E3%82%B9%E3%82%BF%E3%83%95%E3%83%BB%E3%83%A6%E3%83%B3%E3%82%B0',
+    },
+    {
+      '@type': 'Thing',
+      name: 'Keirsey Temperament Sorter（気質分類理論）',
+      sameAs: 'https://en.wikipedia.org/wiki/Keirsey_Temperament_Sorter',
+    },
+    {
+      '@type': 'Thing',
+      name: 'Five-Factor Model（ビッグファイブ性格特性モデル）',
+      sameAs: 'https://ja.wikipedia.org/wiki/%E3%83%93%E3%83%83%E3%82%B0%E3%83%95%E3%82%A1%E3%82%A4%E3%83%96_(%E5%BF%83%E7%90%86%E5%AD%A6)',
+    },
+  ],
 };
 
 // JSON-LD: Quiz（citation に学術文献を配置）

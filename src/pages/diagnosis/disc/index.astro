@@ -58,6 +58,24 @@ const jsonLdWebApp = {
     '@type': 'Organization',
     '@id': `${SITE_URL}/#organization`,
   },
+  // MID-6: mentions（重要エンティティ連結・AI引用率向上）
+  mentions: [
+    {
+      '@type': 'Thing',
+      name: 'DiSC® 行動スタイルモデル（Dominance / influence / Steadiness / Conscientiousness）',
+      sameAs: 'https://www.discprofile.com/what-is-disc/overview',
+    },
+    {
+      '@type': 'Person',
+      name: 'William Moulton Marston',
+      sameAs: 'https://en.wikipedia.org/wiki/William_Moulton_Marston',
+    },
+    {
+      '@type': 'Organization',
+      name: 'Wiley（Everything DiSC 公式）',
+      sameAs: 'https://www.discprofile.com/',
+    },
+  ],
 };
 
 // JSON-LD: Quiz（citation に学術文献を配置）

@@ -280,19 +280,22 @@ const GSC_VERIFICATION = '';
   <link rel="dns-prefetch" href="https://pagead2.googlesyndication.com" />
 
   <!--
-    Google Fonts: Inter + Noto Sans JP（v2.0 Claude Design ハンドオフ準拠）（非ブロッキング読み込み）
+    Google Fonts: Inter + Noto Sans JP（MID-10 サブセット化 2026-05-29）（非ブロッキング読み込み）
+    ウェイト選定根拠: Noto Sans JP 400=本文/500=中見出し/700=太字強調/900=超強調（CharacterCard・DiagnosisStart 等多数）
+    Inter 400;500;600;700;800=英数字・UI要素（600,800も複数箇所で使用）
+    削除: Noto 600→700でブラウザフォールバック可能, Noto 800→900で不足を補完
     テーマ変更時は下記 URL と design-tokens.css の --sn-font-* を同時変更すること
   -->
   <link
     rel="stylesheet"
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Noto+Sans+JP:wght@400;500;600;700;800;900&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Noto+Sans+JP:wght@400;500;700;900&display=swap"
     media="print"
     onload="this.media='all'"
   />
   <noscript>
     <link
       rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Noto+Sans+JP:wght@400;500;600;700;800;900&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Noto+Sans+JP:wght@400;500;700;900&display=swap"
     />
   </noscript>
 
