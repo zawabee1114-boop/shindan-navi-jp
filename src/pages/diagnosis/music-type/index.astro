@@ -139,7 +139,37 @@ const jsonLdFAQ = {
   })),
 };
 
-const jsonLdAll = [jsonLdArticle, jsonLdFAQ];
+// IMP-4: WebApplication スキーマ追加（2026-05-29）
+// 診断ハブに EducationalApplication を併記（MBTI等 主診断ハブと同等に標準化）
+const jsonLdWebApp = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  '@id': `${PAGE_URL}#webapp`,
+  name: '音楽タイプ診断｜MUSICモデルで読み解く5つの性格タイプ',
+  url: PAGE_URL,
+  applicationCategory: 'EducationalApplication',
+  operatingSystem: 'Web',
+  description:
+    'Rentfrow & Gosling（2003）のMUSICモデルに基づく音楽性格タイプ解説ツール。好きな音楽ジャンルとBig5性格特性の相関を無料で読み解きます。5タイプ（Mellow・Unpretentious・Sophisticated・Intense・Contemporary）で自己理解を深めましょう。',
+  offers: {
+    '@type': 'Offer',
+    price: '0',
+    priceCurrency: 'JPY',
+    availability: 'https://schema.org/InStock',
+  },
+  author: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+    name: '診断ナビ',
+    url: SITE_URL,
+  },
+  publisher: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+  },
+};
+
+const jsonLdAll = [jsonLdWebApp, jsonLdArticle, jsonLdFAQ];
 
 const musicTypes = [
   {

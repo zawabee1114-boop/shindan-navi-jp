@@ -3,10 +3,11 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Container from '../../components/Container.astro';
 // 更新履歴ページ（鮮度シグナル + E-E-A-T Trust 強化）
 // 2026-05-23 作成
-// 実際のPRマージ履歴（#1〜#69）に基づく。捏造なし。
+// 実際のPRマージ履歴（#1〜#76）に基づく。捏造なし。
+// 2026-05-29 IMP-3: PR#70-76（5/23-5/27分）を追記
 
 const canonicalURL = "https://shindan-navi.jp/changelog/";
-const lastUpdated = "2026-05-23";
+const lastUpdated = "2026-05-27";
 
 // 更新種別
 const TYPE = {
@@ -29,8 +30,66 @@ interface ChangeEntry {
   pr?: number;
 }
 
-// 2026年5月の更新履歴（PR#1〜#69 のマージ実績に基づく・日付はJST）
+// 2026年5月の更新履歴（PR#1〜#76 のマージ実績に基づく・日付はJST）
 const may2026: ChangeEntry[] = [
+  // ===== 2026-05-27 =====
+  {
+    date: "2026-05-27",
+    type: "FIX",
+    title: "WebSite JSON-LD の alternateName を英語表記に統一",
+    desc: "BaseLayout の WebSite スキーマで alternateName が日本語と英語で混在していた問題を修正。alternateName を 'Shindan Navi' に統一し、AI 検索エンジン（Google AI Overview / ChatGPT 等）がサイト名を正確に認識できるよう改善。",
+    pr: 76,
+  },
+  // ===== 2026-05-23（続き: #70〜#75）=====
+  {
+    date: "2026-05-23",
+    type: "FIX",
+    title: "GSC「解析不能な構造化データ」エラー全件修正",
+    desc: "Google Search Console で報告された構造化データの「解析不能」エラーを schema.org 仕様と照合して全件修正。Quiz @type をリッチリザルト非対応のため LearningResource に変更、FAQPage から url プロパティを削除するなど15件を修正。",
+    pr: 75,
+  },
+  {
+    date: "2026-05-23",
+    type: "SEO",
+    title: "動的「関連診断」自動最適化（全 result/[type] に統一実装）",
+    desc: "全診断の result/[type] ページに「関連診断カード」セクションを統一実装。同カテゴリ内の関連ページへの内部リンクを自動最適化し、内部リンク密度と回遊率を向上。",
+    pr: 74,
+  },
+  {
+    date: "2026-05-23",
+    type: "SEO",
+    title: "HowTo schema 全診断展開（7ページ追加・合計14ページ対応）",
+    desc: "HowTo 構造化データを新たに7ページへ追加し、合計14診断ページでの実装を完了。診断手順をステップ形式で記述することで検索結果での HowTo リッチリザルト表示を狙う。",
+    pr: 73,
+  },
+  {
+    date: "2026-05-23",
+    type: "SEO",
+    title: "WebSite SearchAction 実装（SiteLinks SearchBox 対応）",
+    desc: "WebSite スキーマに SearchAction を追加し /search/ ページを新設。Google 検索結果でのサイトリンク検索ボックス（SiteLinks SearchBox）表示に対応。",
+    link: "/search/",
+    linkLabel: "検索ページを見る",
+    pr: 72,
+  },
+  {
+    date: "2026-05-23",
+    type: "SEO",
+    title: "編集部 E-E-A-T 強化（編集長プロフィール・Person schema）",
+    desc: "about ページに編集長「会澤勇気」の詳細プロフィールセクションを追加。Person スキーマを実装し、Google の E-E-A-T（Experience / Expertise / Authoritativeness / Trustworthiness）評価に対応。架空の監修者は設定せず実在人物のみ記載。",
+    link: "/about/",
+    linkLabel: "運営者情報を見る",
+    pr: 71,
+  },
+  {
+    date: "2026-05-23",
+    type: "SEO",
+    title: "更新履歴ページ /changelog/ 新設（鮮度シグナル + E-E-A-T 強化）",
+    desc: "サービスの開発・改善履歴を透明公開する /changelog/ ページを新設。PR#1〜#69 のマージ実績に基づいた更新履歴を掲載。Google・AI 検索エンジンへの鮮度シグナル強化と E-E-A-T Trust 向上が目的。",
+    link: "/changelog/",
+    linkLabel: "更新履歴を見る",
+    pr: 70,
+  },
+  // ===== 2026-05-23（既存: #62〜#69）=====
   {
     date: "2026-05-23",
     type: "SEO",
@@ -75,6 +134,7 @@ const may2026: ChangeEntry[] = [
     desc: "サイト全ページを対象にしたUI/UX崩れの網羅監査を実施。レイアウト崩れ・フォントサイズ不整合・タッチターゲット不足など多数の課題を一括修正。",
     pr: 62,
   },
+  // ===== 2026-05-22 =====
   {
     date: "2026-05-22",
     type: "FIX",
@@ -169,6 +229,7 @@ const may2026: ChangeEntry[] = [
     linkLabel: "MBTI 診断を受ける",
     pr: 46,
   },
+  // ===== 2026-05-21 =====
   {
     date: "2026-05-21",
     type: "DESIGN",
@@ -257,6 +318,7 @@ const may2026: ChangeEntry[] = [
     desc: "血液型タイプ別4本・恋愛依存系5本・血液型サブ4本・DiSCサブ2本・学校軸4本・家族軸3本・性格変化系3本・タイムカプセル2本・音楽タイプ5本を追加。計33本の新コンテンツ実装。",
     pr: 34,
   },
+  // ===== 2026-05-20 =====
   {
     date: "2026-05-20",
     type: "NEW",
@@ -381,8 +443,8 @@ const tldrItems = [
   "2026-05-20 ベータ公開開始。同日中に8診断のうち6診断（多重知能・完璧主義・MBTI相性・友達相性・MBTI恋愛・血液型相性）を実装。",
   "2026-05-21 に DiSC・星座・恋愛スタイル・金銭感覚の残り4診断を追加し、Phase 1（8診断統合）を完成。統合プロファイル機能・Supabase 認証も本接続。",
   "2026-05-22 に MBTI 主診断本実装・16動物キャラ SVG・月1限定診断・動的 OGP 画像・新デザインシステム v2.0 をリリース。",
-  "2026-05-23 に IndexNow API・llms-full.txt・Speakable Schema 全頁拡張で SEO/AIO 基盤を完成。",
-  "公開3日間で PR #1〜#69（計69件）をマージ。現在も継続改善中。",
+  "2026-05-23 に IndexNow API・llms-full.txt・Speakable Schema・HowTo schema・SearchAction・編集部 E-E-A-T・関連診断最適化・GSC エラー修正を実施（PR#68〜#75）。",
+  "2026-05-27 に WebSite JSON-LD alternateName を英語統一（PR#76）。公開以来 PR #1〜#76（計76件）をマージ。現在も継続改善中。",
 ];
 
 // FAQ
@@ -393,7 +455,7 @@ const faqItems = [
   },
   {
     q: "どのくらいの頻度で更新されますか？",
-    a: "ベータ公開（2026-05-20）から最初の3日間で69件のプルリクエストをマージし、機能・コンテンツ・SEO を集中実装しました。安定運用フェーズ移行後は、月1回以上の定期コンテンツ更新（月1限定診断の更新など）と、バグ・情報誤りの随時修正を継続します。",
+    a: "ベータ公開（2026-05-20）から最初の約1週間で76件のプルリクエストをマージし、機能・コンテンツ・SEO を集中実装しました。安定運用フェーズ移行後は、月1回以上の定期コンテンツ更新（月1限定診断の更新など）と、バグ・情報誤りの随時修正を継続します。",
   },
   {
     q: "今後の大きな機能追加予定はありますか？",
@@ -487,7 +549,7 @@ const pageJsonLd = [
         <h1 id="changelog-h1" class="page-hero-h1">更新履歴</h1>
         <p class="page-hero-sub changelog-hero-sub">診断ナビの開発・改善履歴。最終更新: <time datetime={lastUpdated}>{lastUpdated}</time></p>
         <div class="hero-stats">
-          <div class="hero-stat"><span class="hero-stat-num">69</span><span class="hero-stat-label">PR マージ数</span></div>
+          <div class="hero-stat"><span class="hero-stat-num">76</span><span class="hero-stat-label">PR マージ数</span></div>
           <div class="hero-stat"><span class="hero-stat-num">8</span><span class="hero-stat-label">診断実装数</span></div>
           <div class="hero-stat"><span class="hero-stat-num">3</span><span class="hero-stat-label">公開日数（初期集中開発）</span></div>
         </div>
@@ -507,14 +569,14 @@ const pageJsonLd = [
       </ul>
       <p class="tldr-block__meta">
         <time datetime={lastUpdated}>{lastUpdated}</time> 時点の情報。
-        実際のGitHubプルリクエスト（#1〜#69）のマージ履歴に基づいています。
+        実際のGitHubプルリクエスト（#1〜#76）のマージ履歴に基づいています。
       </p>
     </div>
 
     <!-- サマリーバッジ（Speakable） -->
     <div class="changelog-summary" id="changelog-summary">
       <p>
-        診断ナビは 2026-05-20 にベータ公開を開始し、公開から3日間で69件の機能追加・改善を実施しました。
+        診断ナビは 2026-05-20 にベータ公開を開始し、公開から約1週間で76件の機能追加・改善を実施しました。
         多重知能・MBTI・完璧主義・友達相性・血液型相性・DiSC・星座・恋愛スタイル・金銭感覚の8診断統合プラットフォームとして、
         Supabase 認証・Stripe 決済・動的 OGP 画像・AIO/SEO 最適化を並行実装しています。
       </p>
@@ -610,6 +672,8 @@ const pageJsonLd = [
             <li>SSR 問題一掃（login/signup/招待 静的化）</li>
             <li>OGP 絵文字 SVGパス化（黒つぶれ解消）</li>
             <li>PASS 購入ページ新規作成 + リンク切れ全修正</li>
+            <li>GSC 構造化データ「解析不能」エラー全件修正（PR #75）</li>
+            <li>WebSite JSON-LD alternateName 英語統一（PR #76）</li>
           </ul>
         </div>
 
@@ -648,6 +712,10 @@ const pageJsonLd = [
             <li>内部 SEO 最適化 100ページ一括</li>
             <li>動的 OGP 画像・GA4 カスタムイベント実装</li>
             <li>sitemap.xml・robots.txt・404 対応完了</li>
+            <li>編集部 E-E-A-T 強化（Person schema・編集長プロフィール）</li>
+            <li>WebSite SearchAction（SiteLinks SearchBox 対応）</li>
+            <li>HowTo schema 全診断展開（14ページ対応）</li>
+            <li>動的「関連診断」自動最適化（全 result/[type] 統一）</li>
           </ul>
         </div>
       </div>
