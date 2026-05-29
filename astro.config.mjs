@@ -10,13 +10,13 @@ import cloudflare from '@astrojs/cloudflare';
  * ページ実URLと完全一致させること。
  * 未登録は BUILD_DATE にフォールバック。
  *
- * 最終更新: 2026-05-22（技術SEO最終確認 A5: 旧URL削除・新規ページ追加・SITEMAP_EXCLUDE更新）
+ * 最終更新: 2026-05-29（IMP-2: 全未登録ページを実公開日（git初コミット日）で登録。偽鮮度解消）
  */
 const PAGE_LAST_MODIFIED = {
   // ===== TOP =====
   '/': '2026-05-21',
 
-  // ===== 診断メインハブ =====
+  // ===== 診断メインハブ（8診断）=====
   '/diagnosis/': '2026-05-21',
   '/diagnosis/multi-int/': '2026-05-21',
   '/diagnosis/mbti/': '2026-05-21',
@@ -29,6 +29,51 @@ const PAGE_LAST_MODIFIED = {
   '/diagnosis/friend-compat/': '2026-05-21',
   '/diagnosis/mbti-compat/': '2026-05-21',
   '/diagnosis/mbti-compat/love/': '2026-05-21',
+
+  // ===== 恋愛依存 ハブ・サブページ =====
+  '/diagnosis/love-dependency/': '2026-05-21',
+  '/diagnosis/love-dependency/anxious/': '2026-05-21',
+  '/diagnosis/love-dependency/avoidant/': '2026-05-21',
+  '/diagnosis/love-dependency/codependent/': '2026-05-21',
+  '/diagnosis/love-dependency/secure/': '2026-05-21',
+
+  // ===== 音楽タイプ ハブ・サブページ =====
+  '/diagnosis/music-type/': '2026-05-21',
+  '/diagnosis/music-type/genre/': '2026-05-21',
+  '/diagnosis/music-type/mbti-music/': '2026-05-21',
+  '/diagnosis/music-type/mood/': '2026-05-21',
+  '/diagnosis/music-type/multi-int/': '2026-05-21',
+
+  // ===== 性格変化系 サブページ =====
+  '/diagnosis/change/kawaru-kikkake/': '2026-05-21',
+  '/diagnosis/change/mbti-kawatta/': '2026-05-21',
+  '/diagnosis/change/seikaku-kawaru/': '2026-05-21',
+  '/diagnosis/change/seikaku-kawatta/': '2026-05-21',
+
+  // ===== DiSC サブページ =====
+  '/diagnosis/disc/business/': '2026-05-21',
+  '/diagnosis/disc/types-summary/': '2026-05-21',
+
+  // ===== 完璧主義 サブページ =====
+  '/diagnosis/perfectionism/naoshikata/': '2026-05-21',
+  '/diagnosis/perfectionism/work/': '2026-05-21',
+  '/diagnosis/perfectionism/yametai/': '2026-05-21',
+
+  // ===== 血液型相性 サブページ =====
+  '/diagnosis/blood-compat/best-match/': '2026-05-21',
+  '/diagnosis/blood-compat/friend/': '2026-05-21',
+
+  // ===== 血液型タイプ別 サブページ =====
+  '/diagnosis/blood-type/a/': '2026-05-21',
+  '/diagnosis/blood-type/ab/': '2026-05-21',
+  '/diagnosis/blood-type/b/': '2026-05-21',
+  '/diagnosis/blood-type/love/': '2026-05-21',
+  '/diagnosis/blood-type/o/': '2026-05-21',
+  '/diagnosis/blood-type/work/': '2026-05-21',
+
+  // ===== 限定診断 =====
+  '/diagnosis/limited/': '2026-05-22',
+  '/diagnosis/limited/limited-2026-06/': '2026-05-22',
 
   // ===== 診断結果ページ（multi-int 8タイプ）=====
   '/diagnosis/multi-int/result/linguistic/': '2026-05-21',
@@ -113,11 +158,24 @@ const PAGE_LAST_MODIFIED = {
   '/diagnosis/mbti-compat/love/ESTP/': '2026-05-21',
   '/diagnosis/mbti-compat/love/ESFP/': '2026-05-21',
 
-  // ===== 相性ハブ =====
+  // ===== 相性ハブ（aisei）=====
   '/aisei/': '2026-05-21',
   '/aisei/renai/': '2026-05-22',
   '/aisei/shokuba/': '2026-05-22',
   '/aisei/yujin/': '2026-05-22',
+
+  // ===== 学校軸（gakkou）=====
+  '/aisei/gakkou/': '2026-05-21',
+  '/aisei/gakkou/learning-style/': '2026-05-21',
+  '/aisei/gakkou/multi-int-learning/': '2026-05-21',
+  '/aisei/gakkou/parent-support/': '2026-05-21',
+  '/aisei/gakkou/shinro/': '2026-05-21',
+
+  // ===== 家族軸（kazoku）=====
+  '/aisei/kazoku/': '2026-05-21',
+  '/aisei/kazoku/communication/': '2026-05-21',
+  '/aisei/kazoku/fufu/': '2026-05-20',
+  '/aisei/kazoku/oyako/': '2026-05-20',
 
   // ===== 信頼・法的ページ =====
   '/about/': '2026-05-21',
@@ -127,9 +185,15 @@ const PAGE_LAST_MODIFIED = {
   '/privacy/': '2026-05-20',
   '/terms/': '2026-05-20',
   '/disclaimer/': '2026-05-21',
+  '/tokushoho/': '2026-05-21',
 
   // ===== その他機能ページ =====
   '/pro/': '2026-05-21',
+  '/pass/': '2026-05-22',
+  '/changelog/': '2026-05-27',
+  '/time-capsule/': '2026-05-21',
+  '/time-capsule/letter/': '2026-05-21',
+  '/character/': '2026-05-22',
 };
 
 /** ビルド実行日（JST）をデフォルトの lastmod として使用 */
@@ -157,10 +221,12 @@ const SITEMAP_EXCLUDE = [
   // noindex の個人データ・準備中ページ
   /^\/profile\/$/,
   /^\/strengths\/$/,
-  // 認証・開発ページ（noindex）
+  // 認証・開発・noindexページ
   /^\/login\//,
   /^\/signup\//,
   /^\/dev\//,
+  /^\/invite\//,
+  /^\/search\//,
   // 相性診断ハブ（renai/shokuba/yujin は noindex 解除済み・2026-05-22）
   // kazoku/fufu と kazoku/oyako は個人データ依存のため引き続き除外なし
 ];
@@ -214,9 +280,11 @@ export default defineConfig({
           pathname === '/diagnosis/blood-compat/' ||
           pathname === '/diagnosis/friend-compat/' ||
           pathname === '/diagnosis/mbti-compat/' ||
-          pathname === '/diagnosis/mbti-compat/love/'
+          pathname === '/diagnosis/mbti-compat/love/' ||
+          pathname === '/diagnosis/love-dependency/' ||
+          pathname === '/diagnosis/music-type/'
         ) {
-          // 診断メインハブ（8診断 + 相性系ハブ）
+          // 診断メインハブ（8診断 + 相性系ハブ + 拡張診断ハブ）
           item.priority = 0.9;
           item.changefreq = 'weekly';
 
@@ -249,17 +317,18 @@ export default defineConfig({
           item.priority = 0.85;
           item.changefreq = 'weekly';
 
-        } else if (pathname === '/pro/') {
-          // PRO機能ページ（収益化）
+        } else if (pathname === '/pro/' || pathname === '/pass/') {
+          // 収益化ページ
           item.priority = 0.8;
           item.changefreq = 'monthly';
 
         } else if (
           pathname === '/about/' ||
           pathname === '/editorial-policy/' ||
-          pathname === '/faq/'
+          pathname === '/faq/' ||
+          pathname === '/changelog/'
         ) {
-          // 信頼・E-E-A-Tページ
+          // 信頼・E-E-A-Tページ（changelog は鮮度シグナルのため同等扱い）
           item.priority = 0.5;
           item.changefreq = 'monthly';
 
@@ -270,14 +339,15 @@ export default defineConfig({
         } else if (
           pathname === '/privacy/' ||
           pathname === '/terms/' ||
-          pathname === '/disclaimer/'
+          pathname === '/disclaimer/' ||
+          pathname === '/tokushoho/'
         ) {
           // 法的ページ
           item.priority = 0.3;
           item.changefreq = 'yearly';
 
         } else {
-          // その他（未分類）
+          // その他（未分類・診断サブページ等）
           item.priority = 0.7;
           item.changefreq = 'monthly';
         }
