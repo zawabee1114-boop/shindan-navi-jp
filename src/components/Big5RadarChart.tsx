@@ -41,7 +41,7 @@ const FACTORS = [
   { key: 'C' as keyof OceanScores, label: '誠実性', sublabel: 'Conscientiousness', color: '#3b82f6' },
   { key: 'E' as keyof OceanScores, label: '外向性', sublabel: 'Extraversion',    color: '#10b981' },
   { key: 'A' as keyof OceanScores, label: '協調性', sublabel: 'Agreeableness',   color: '#ec4899' },
-  { key: 'N' as keyof OceanScores, label: '神経症', sublabel: 'Neuroticism',     color: '#f59e0b' },
+  { key: 'N' as keyof OceanScores, label: '気分', sublabel: '気分の波',     color: '#f59e0b' },
 ];
 
 // 正五角形の頂点座標を計算（上頂点から時計回り）
@@ -135,7 +135,7 @@ export default function Big5RadarChart({
   const labelPoints = getPolygonPoints(cx, cy, maxR + 28, FACTORS.length);
 
   return (
-    <div className="b5rc-wrapper" role="figure" aria-label="Big5 OCEANレーダーチャート">
+    <div className="b5rc-wrapper" role="figure" aria-label="性格レーダーチャート">
       <svg
         width={size}
         height={size}
@@ -263,8 +263,8 @@ export default function Big5RadarChart({
       </svg>
 
       {/* スコアテーブル（スクリーンリーダー向け） */}
-      <table className="b5rc-sr-table" aria-label="Big5 OCEANスコア一覧">
-        <caption className="b5rc-sr-caption">ビッグファイブ（OCEAN）スコア</caption>
+      <table className="b5rc-sr-table" aria-label="5つの性格軸スコア一覧">
+        <caption className="b5rc-sr-caption">5つの性格軸スコア</caption>
         <thead>
           <tr>
             <th scope="col">因子</th>

@@ -1,0 +1,22 @@
+{
+  "name": "診断ナビ",
+  "short_name": "診断ナビ",
+  "description": "MBTI・血液型・多重知能・DiSC・完璧主義・恋愛スタイル・星座・金銭感覚。8診断を統合してあなたの統合プロファイルを作成します。",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#7c5cff",
+  "lang": "ja",
+  "icons": [
+    {
+      "src": "/favicon-32x32.png",
+      "sizes": "32x32",
+      "type": "image/png"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ]
+}
