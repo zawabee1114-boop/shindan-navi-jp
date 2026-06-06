@@ -1,1194 +1,1520 @@
-# 診断ナビ キャラクター画像生成プロンプト集（外注用）
+# 診断ナビ キャラクター画像生成プロンプト集（外注用・168体）
 
-診断ナビ（shindan-navi.jp）の全84体キャラクター画像生成プロンプトです。
-Midjourney / Adobe Firefly / Google Imagen 等のテキストtoイメージAIにそのまま使用できます。
+診断ナビ（shindan-navi.jp）の全84タイプ × 男女2版 ＝ **168体** の画像生成プロンプト。
+Midjourney / Adobe Firefly / Google Imagen / ChatGPT 等にそのまま使用できます。
+
+> 使い方: 各キャラの【男性版】【女性版】プロンプトを、下記の「共通スタイルプレフィックス」＋個別差分＋「共通ネガティブ」を結合して画像生成AIに投入してください。
 
 ---
 
-## 共通スタイル定義
+## 共通スタイル定義（全168体で統一・一貫性の核）
 
 ### ブランドコンセプト
-全84体は「同一ブランドのキャラクターコレクション」として統一感を持たせること。
-個別の色・モチーフで差別化しながら、アートスタイルは全体で揃える。
+全168体は「同一ブランドのキャラクターコレクション」として統一された画風を持つこと。
+画風は **モダンな日本の青春アニメ／ライトノベル挿絵風（セミリアル・等身）**。3頭身チビ・マスコット・フラットベクターは使わない。
+各タイプの性格を、外見・服装・表情・ポーズ・小物で表現。男女版は外見の性別のみ差分（性格・テーマカラー・小物・世界観は共通）。
 
-### 共通スタイルプレフィックス（EN）
-以下を全プロンプトの冒頭に付与すること:
-
+### 共通スタイルプレフィックス（EN・全プロンプト冒頭に付与）
 ```
-Modern flat 2D mascot illustration, chibi deformed character (2-3 head ratio), 
-clean uniform line art, friendly round shapes, soft flat color with subtle gradient, 
-centered composition fitting in a circular icon frame, simple background with pastel 
-solid color or light gradient plus small thematic decorations, expressive facial 
-features, SNS-ready kawaii style, consistent with a unified character collection,
+Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection,
 ```
 
-### 共通ネガティブプロンプト（EN）
-以下を全プロンプトの末尾に `--no` または negative prompt として付与すること:
-
+### 共通ネガティブプロンプト（EN・全プロンプト末尾に付与）
 ```
-photorealistic, 3D render, dark themes, horror, occult, mystical supernatural symbols, 
-astrology mysticism, fortune telling crystal ball, real brand logos, watermark, 
-in-image text, uncanny valley expressions, scary face, gritty texture, complex 
-background, cluttered composition
+chibi, super-deformed, 2-3 head ratio, mascot, flat vector style, photorealistic, 3D render, dark, horror, occult, astrology mysticism, fortune-telling, real brand logos, watermark, in-image text, uncanny valley, gritty texture, cluttered background
 ```
 
-### 頭身・造形ルール
-- 頭身: 2〜3頭身デフォルメ（全84体統一）
-- 体型: 丸みを帯びた、フレンドリーな造形
-- 表情: 豊かで読み取りやすい（笑顔・真剣・穏やか等を性格に合わせて選択）
-- 構図: 円形アイコン内に収まるよう中央配置・余白あり
-
-### カラートーン基準
-- 彩度は中〜高め（くすみすぎない、暗すぎない）
-- 背景は淡色（白寄り or 淡グラデーション）
-- 各診断グループ内でカラー系統を統一
-
-### 禁止事項（全84体共通・厳守）
-- 占い・神秘主義・オカルト的な演出（星座も占い色NG・性格類型として擬人化のみ）
-- 写実的・フォトリアルな表現
-- 暗い・怖い・不気味な表情・雰囲気
-- 実在ブランドのロゴ・シンボル
-- 画像内テキスト・透かし
-- YMYL的な医療・疾患を連想させる表現
+### 禁止事項（全168体共通・厳守）
+- 占い・神秘主義・オカルト演出（星座も「性格分類のみ＝personality classification only」として擬人化）
+- 写実/フォトリアル・3DCG・3頭身チビ・マスコット・フラットベクター
+- 暗い/怖い/不気味な雰囲気・実在ブランドロゴ・画像内テキスト・透かし
+- YMYL的な医療/疾患を連想させる表現
 
 ---
 
-## 診断グループ別カウント
+## 診断別カウント（合計168体）
 
-| 診断 | 体数 |
-|------|-----:|
-| MBTI 16タイプ | 16 |
-| Big5動物 16体 | 16 |
-| 星座 12体 | 12 |
-| 多重知能 8体 | 8 |
-| 恋愛スタイル 6体 | 6 |
-| 友達相性 6体 | 6 |
-| DiSC 4体 | 4 |
-| 完璧主義 4体 | 4 |
-| 金銭感覚 4体 | 4 |
-| 恋愛依存 4体 | 4 |
-| 血液型 4体 | 4 |
-| **合計** | **84** |
+| 診断 | タイプ | 男女 | 計 |
+|---|---:|---|---:|
+| MBTI | 16 | ×2 | 32 |
+| Big5動物 | 16 | ×2 | 32 |
+| 星座 | 12 | ×2 | 24 |
+| 多重知能 | 8 | ×2 | 16 |
+| 恋愛スタイル | 6 | ×2 | 12 |
+| 友達相性 | 6 | ×2 | 12 |
+| DiSC | 4 | ×2 | 8 |
+| 完璧主義 | 4 | ×2 | 8 |
+| 金銭感覚 | 4 | ×2 | 8 |
+| 恋愛依存 | 4 | ×2 | 8 |
+| 血液型 | 4 | ×2 | 8 |
+| **合計** | **84** | **×2** | **168** |
 
----
-
-## 1. MBTI 16タイプ（NT合理主義者グループ）
-
-テーマカラー系統: インディゴ・パープル系（#6c47ff）
+> 恋愛依存はコードにデータ未実装のため愛着理論（Bowlby/Ainsworth）ベースで設計。実装時に細部調整。
 
 ---
 
 ### MBTI - INTJ 建築家（戦略家）
 
-- 性格要約: 内向的直観×外向的思考。長期戦略を冷静に設計する孤高の完璧主義者。独立心が強く、論理と効率を最重視する。
-- キャラ要件: モチーフ=望遠鏡・青写真・チェス駒/ポーン。表情=知的で静かな自信、クールな微笑み。ポーズ=腕を組む or 設計図を見ている。小物=望遠鏡・設計図・眼鏡。テーマカラー: インディゴ (#6c47ff) + ダークネイビー
+- 性格要約: 長期視点で戦略を立案する孤高の設計者。内向的直観（Ni）×外向的思考（Te）で高い自律性と分析力を発揮する知的クール型。
+- テーマカラー: ディープパープル / ミッドナイトブルー
+- 小物: 分厚い専門書・設計図・万年筆・黒縁メガネ
+- 表情: 静かで鋭い目つき・冷静で自信ある表情
+- ポーズ: 窓辺で腕を組み遠くを見据える / 机に向かい設計図を広げている
 
-- 画像生成プロンプト(EN):
-```
-Modern flat 2D mascot illustration, chibi deformed character (2-3 head ratio), clean uniform line art, friendly round shapes, soft flat color with subtle gradient, centered composition fitting in a circular icon frame, simple background with pastel solid color or light gradient plus small thematic decorations, expressive facial features, SNS-ready kawaii style, consistent with a unified character collection, INTJ architect strategist chibi mascot, arms crossed confident pose, holding blueprint scroll, telescope small prop, cool calm intelligent expression, deep indigo purple color scheme (#6c47ff), dark navy accent, small star constellation decorations on background, glasses optional
-```
+【男性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, male high-school to college student, tall slim build, sharp calm dark eyes, black-framed glasses, deep purple and midnight blue color scheme, wearing a neat dark navy blazer over a white shirt, holding an open thick textbook with detailed notes, standing by a large window arms crossed gazing into the distance with a quiet confident expression, subtle bokeh of a night cityscape behind, cool intellectual atmosphere, deep purple sparkle accents; negative: chibi, super-deformed, 2-3 head ratio, mascot, flat vector style, photorealistic, 3D render, dark, horror, occult, astrology mysticism, fortune-telling, real brand logos, watermark, in-image text, uncanny valley, gritty texture, cluttered background`
+
+【女性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, female high-school to college student, slender composed figure, sharp calm dark eyes, black-framed glasses, straight dark hair neatly tied back, deep purple and midnight blue color scheme, wearing a sophisticated dark blazer with a silver brooch, seated at a desk with open architectural blueprints and a fountain pen, quiet confident expression gazing slightly upward, cool intellectual atmosphere, deep purple sparkle accents and soft moonlight bloom; negative: chibi, super-deformed, 2-3 head ratio, mascot, flat vector style, photorealistic, 3D render, dark, horror, occult, astrology mysticism, fortune-telling, real brand logos, watermark, in-image text, uncanny valley, gritty texture, cluttered background`
 
 ---
+
 
 ### MBTI - INTP 論理学者（思想家）
 
-- 性格要約: 内向的思考×外向的直観。論理の整合性を徹底追求する探求者。アイデアを際限なく生み出し、正確さに強くこだわる。
-- キャラ要件: モチーフ=顕微鏡・数式・電球。表情=思考中のぼんやり微笑み、目が輝いている。ポーズ=考え込む（顎に手）。小物=虫眼鏡・本・数式バブル。テーマカラー: パープル (#8b5cf6) + ライトブルー
+- 性格要約: 論理的整合性を愛する内向的思索者。内向的思考（Ti）×外向的直観（Ne）で多角的な理論構築と好奇心旺盛な探求を行う。
+- テーマカラー: スレートブルー / ソフトグレー
+- 小物: ノートPC・付箋だらけのノート・コーヒーカップ・イヤフォン
+- 表情: 遠くを見ているような思索顔・口元に笑みが浮かぶ
+- ポーズ: 床に座り本や資料に囲まれている / あごに手を当てて考え込む
 
-- 画像生成プロンプト(EN):
-```
-Modern flat 2D mascot illustration, chibi deformed character (2-3 head ratio), clean uniform line art, friendly round shapes, soft flat color with subtle gradient, centered composition fitting in a circular icon frame, simple background with pastel solid color or light gradient plus small thematic decorations, expressive facial features, SNS-ready kawaii style, consistent with a unified character collection, INTP logician thinker chibi mascot, thinking pose hand on chin, magnifying glass prop, floating math formula bubbles, curious dreamy expression, purple violet color scheme (#8b5cf6), light blue accent, small lightbulb and book decorations on background
-```
+【男性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, male high-school to college student, lean slightly disheveled look, slate blue and soft grey color scheme, wavy or tousled light brown hair, wearing a casual grey hoodie and jeans, sitting cross-legged on the floor surrounded by open notebooks covered in sticky notes and an open laptop, one hand on chin in deep thought, a coffee cup nearby, soft curious smile, airy dreamy bokeh background in cool blue tones, gentle sparkle around the books; negative: chibi, super-deformed, 2-3 head ratio, mascot, flat vector style, photorealistic, 3D render, dark, horror, occult, astrology mysticism, fortune-telling, real brand logos, watermark, in-image text, uncanny valley, gritty texture, cluttered background`
+
+【女性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, female high-school to college student, slim slightly casual appearance, slate blue and soft grey color scheme, loose wavy hair with a simple clip, wearing an oversized light grey knit sweater and slim pants, sitting at a desk with multiple open books and sticky notes, earphones around her neck, resting chin on one hand with a thoughtful distant expression and soft smile, cool blue bokeh background, gentle sparkle accents; negative: chibi, super-deformed, 2-3 head ratio, mascot, flat vector style, photorealistic, 3D render, dark, horror, occult, astrology mysticism, fortune-telling, real brand logos, watermark, in-image text, uncanny valley, gritty texture, cluttered background`
 
 ---
+
 
 ### MBTI - ENTJ 指揮官（統率者）
 
-- 性格要約: 外向的思考×内向的直観。生まれながらのリーダー。組織と人材を効率的に動かし、高い目標に向けて突き進む。
-- キャラ要件: モチーフ=旗・矢印・王冠。表情=力強い自信と熱意のある笑顔。ポーズ=前進・指差し・拳を握る。小物=旗・指揮棒・スター。テーマカラー: ディープパープル (#5b21b6) + ゴールド
+- 性格要約: 生まれながらのリーダー。外向的思考（Te）×内向的直観（Ni）で組織を牽引し、高い目標に向けてチームを動かす。
+- テーマカラー: ロイヤルブルー / ゴールド
+- 小物: 手帳・プレゼン資料・時計・マイク
+- 表情: 力強い眼差し・自信と情熱に満ちた表情
+- ポーズ: 前に踏み出して指差すリーダーポーズ / ステージで発表している
 
-- 画像生成プロンプト(EN):
-```
-Modern flat 2D mascot illustration, chibi deformed character (2-3 head ratio), clean uniform line art, friendly round shapes, soft flat color with subtle gradient, centered composition fitting in a circular icon frame, simple background with pastel solid color or light gradient plus small thematic decorations, expressive facial features, SNS-ready kawaii style, consistent with a unified character collection, ENTJ commander leader chibi mascot, confident pointing forward pose, holding flag prop, bold determined expression, deep purple (#5b21b6) and gold color scheme, small crown and direction arrow decorations on background
-```
+【男性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, male high-school to college student, tall confident athletic build, royal blue and gold color scheme, sharp dark eyes full of determination, neatly combed dark hair, wearing a crisp blue dress shirt with sleeves rolled up and a loosened tie, standing forward with one hand pointing ahead in a leadership pose, holding a presentation folder, bold confident expression, golden sparkle accents, energetic dynamic atmosphere; negative: chibi, super-deformed, 2-3 head ratio, mascot, flat vector style, photorealistic, 3D render, dark, horror, occult, astrology mysticism, fortune-telling, real brand logos, watermark, in-image text, uncanny valley, gritty texture, cluttered background`
+
+【女性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, female high-school to college student, tall poised confident figure, royal blue and gold color scheme, sharp determined dark eyes, straight glossy dark hair with a professional clip, wearing an elegant navy blazer with gold buttons and a white blouse, standing with one hand on hip and the other holding a microphone or presentation folder, powerful confident expression, golden sparkle accents, dynamic leadership atmosphere; negative: chibi, super-deformed, 2-3 head ratio, mascot, flat vector style, photorealistic, 3D render, dark, horror, occult, astrology mysticism, fortune-telling, real brand logos, watermark, in-image text, uncanny valley, gritty texture, cluttered background`
 
 ---
+
 
 ### MBTI - ENTP 討論者（発明家）
 
-- 性格要約: 外向的直観×内向的思考。アイデアを次々と生み出す発明家。討論を楽しみ、通説への挑戦を好む革新者。
-- キャラ要件: モチーフ=電球・矢印複数・歯車。表情=にやりとしたユーモラスな表情、目が生き生きしている。ポーズ=両手でアイデアを表現・ひらめきポーズ。小物=大きな電球・歯車。テーマカラー: バイオレット (#7c3aed) + イエロー
+- 性格要約: 革新的アイデアと知的議論を愛する発明家。外向的直観（Ne）×内向的思考（Ti）で常識を覆すアイデアを次々と発信する。
+- テーマカラー: ブライトオレンジ / イエロー
+- 小物: ホワイトボード（アイデアメモ）・スマートフォン・コーヒー
+- 表情: キラキラした目・楽しそうな笑顔・ちょっと挑戦的な表情
+- ポーズ: ホワイトボードに何か書きながら振り返って笑う / 身振り手振りで話す
 
-- 画像生成プロンプト(EN):
-```
-Modern flat 2D mascot illustration, chibi deformed character (2-3 head ratio), clean uniform line art, friendly round shapes, soft flat color with subtle gradient, centered composition fitting in a circular icon frame, simple background with pastel solid color or light gradient plus small thematic decorations, expressive facial features, SNS-ready kawaii style, consistent with a unified character collection, ENTP debater inventor chibi mascot, excited idea pose arms spread, large lightbulb prop, playful smirking expression, violet (#7c3aed) and yellow color scheme, small gear and multiple arrow decorations on background
-```
+【男性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, male high-school to college student, energetic lively build, bright orange and yellow color scheme, sparkling curious eyes, messy expressive hair, wearing a casual graphic t-shirt under an open flannel overshirt and jeans, turning from a whiteboard full of idea sketches with a wide grin and a raised hand mid-gesture, lighthearted playful expression, bright orange and yellow sparkle accents, dynamic idea-burst atmosphere; negative: chibi, super-deformed, 2-3 head ratio, mascot, flat vector style, photorealistic, 3D render, dark, horror, occult, astrology mysticism, fortune-telling, real brand logos, watermark, in-image text, uncanny valley, gritty texture, cluttered background`
 
----
-
-## 2. MBTI 16タイプ（NF理想主義者グループ）
-
-テーマカラー系統: ローズ・マゼンタ系（#e85d9b）
+【女性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, female high-school to college student, energetic lively figure, bright orange and yellow color scheme, sparkling clever eyes, wavy hair tied loosely with a colorful scrunchie, wearing a bright yellow cropped sweater and wide-leg pants, gesturing animatedly with both hands while smiling broadly, a whiteboard with ideas sketched behind her, vibrant playful expression, orange and yellow sparkle accents, cheerful idea-burst atmosphere; negative: chibi, super-deformed, 2-3 head ratio, mascot, flat vector style, photorealistic, 3D render, dark, horror, occult, astrology mysticism, fortune-telling, real brand logos, watermark, in-image text, uncanny valley, gritty texture, cluttered background`
 
 ---
+
 
 ### MBTI - INFJ 提唱者（洞察者）
 
-- 性格要約: 内向的直観×外向的感情。深い洞察と使命感を持つ稀有なタイプ。人類の成長を静かに信じ続ける内なる指導者。
-- キャラ要件: モチーフ=月・本・蝶。表情=穏やかで深みのある微笑み、知的な眼差し。ポーズ=本を抱える・静かに佇む。小物=月・本・蝶。テーマカラー: ディープローズ (#9d174d) + パープル
+- 性格要約: 人類の可能性を信じる希少な洞察者。内向的直観（Ni）×外向的感情（Fe）で他者の深層を読み取り、使命感を持って導く。
+- テーマカラー: ミステリアスパープル / ソフトゴールド
+- 小物: 日記・羽根ペン・月明かりの本棚・ハーブティー
+- 表情: 深く穏やかな眼差し・静かな微笑み
+- ポーズ: 窓辺で日記を書いている / 本を胸に抱えて遠くを見ている
 
-- 画像生成プロンプト(EN):
-```
-Modern flat 2D mascot illustration, chibi deformed character (2-3 head ratio), clean uniform line art, friendly round shapes, soft flat color with subtle gradient, centered composition fitting in a circular icon frame, simple background with pastel solid color or light gradient plus small thematic decorations, expressive facial features, SNS-ready kawaii style, consistent with a unified character collection, INFJ advocate insight chibi mascot, gentle serene pose holding open book, butterfly prop, calm wise expression, deep rose (#9d174d) and soft purple color scheme, small moon and butterfly decorations on background
-```
+【男性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, male high-school to college student, slender gentle build, mysterious purple and soft gold color scheme, deep calm dark eyes with a knowing gaze, soft dark hair slightly falling over forehead, wearing a soft purple cardigan over a white shirt, sitting by a moonlit window writing in a leather journal with a feather pen, a cup of herbal tea nearby, serene thoughtful expression with a quiet smile, gentle gold sparkle and moonlight bloom accents; negative: chibi, super-deformed, 2-3 head ratio, mascot, flat vector style, photorealistic, 3D render, dark, horror, occult, astrology mysticism, fortune-telling, real brand logos, watermark, in-image text, uncanny valley, gritty texture, cluttered background`
+
+【女性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, female high-school to college student, slender graceful figure, mysterious purple and soft gold color scheme, deep serene dark eyes, long dark hair with a few strands framing the face, wearing a flowing dusty-purple dress with delicate lace detail, standing by a moonlit bookshelf holding a book to her chest and gazing softly into the distance, gentle gold sparkle and moonlight bloom accents, ethereal quiet atmosphere; negative: chibi, super-deformed, 2-3 head ratio, mascot, flat vector style, photorealistic, 3D render, dark, horror, occult, astrology mysticism, fortune-telling, real brand logos, watermark, in-image text, uncanny valley, gritty texture, cluttered background`
 
 ---
+
 
 ### MBTI - INFP 仲介者（詩人）
 
-- 性格要約: 内向的感情×外向的直観。豊かな内面世界と強い価値観を持つ詩人。誠実さと人間の可能性を深く信じる理想主義者。
-- キャラ要件: モチーフ=桜・ペン・星。表情=夢見るような優しい微笑み。ポーズ=花を持つ・空を見上げる。小物=桜の花・詩の巻物・流れ星。テーマカラー: ソフトローズ (#fb7185) + ラベンダー
+- 性格要約: 内なる価値観と共感力を持つ詩人。内向的感情（Fi）×外向的直観（Ne）で豊かな創造力と理想への深いコミットを持つ。
+- テーマカラー: ソフトピンク / ラベンダー
+- 小物: スケッチブック・水彩画具・押し花・ヘッドフォン
+- 表情: 夢見るような表情・穏やかで優しい笑顔
+- ポーズ: 野原でスケッチブックに絵を描いている / ヘッドフォンをして目を閉じている
 
-- 画像生成プロンプト(EN):
-```
-Modern flat 2D mascot illustration, chibi deformed character (2-3 head ratio), clean uniform line art, friendly round shapes, soft flat color with subtle gradient, centered composition fitting in a circular icon frame, simple background with pastel solid color or light gradient plus small thematic decorations, expressive facial features, SNS-ready kawaii style, consistent with a unified character collection, INFP mediator poet chibi mascot, dreamy upward gazing pose, cherry blossom petals and scroll prop, soft idealistic expression, soft rose pink (#fb7185) and lavender color scheme, small star and petal decorations on background
-```
+【男性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, male high-school to college student, slim dreamy gentle build, soft pink and lavender color scheme, warm brown gentle eyes, soft wavy light brown hair, wearing a loose pastel pink shirt and light trousers, sitting in a sunny meadow sketching in a large sketchbook with watercolor paint smudges on his fingers, a pressed flower tucked behind his ear, soft dreamy expression with a gentle smile, pink and lavender sparkle petal accents, airy poetic atmosphere; negative: chibi, super-deformed, 2-3 head ratio, mascot, flat vector style, photorealistic, 3D render, dark, horror, occult, astrology mysticism, fortune-telling, real brand logos, watermark, in-image text, uncanny valley, gritty texture, cluttered background`
+
+【女性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, female high-school to college student, slender delicate dreamy figure, soft pink and lavender color scheme, warm gentle eyes, long wavy light hair adorned with small flower clips, wearing a flowy lavender sundress, sitting in a sunny meadow with a watercolor sketchbook open on her lap, paintbrush in hand, a serene dreamy expression with a soft smile, pink and lavender sparkle and petal bloom accents, poetic airy atmosphere; negative: chibi, super-deformed, 2-3 head ratio, mascot, flat vector style, photorealistic, 3D render, dark, horror, occult, astrology mysticism, fortune-telling, real brand logos, watermark, in-image text, uncanny valley, gritty texture, cluttered background`
 
 ---
+
 
 ### MBTI - ENFJ 主人公（教師）
 
-- 性格要約: 外向的感情×内向的直観。人を鼓舞するカリスマ的リーダー。他者の成長に深い使命感を持ち、グループを調和させる天性の指導者。
-- キャラ要件: モチーフ=星・手をつなぐシルエット・輝き。表情=明るく温かい笑顔、包容力のある目。ポーズ=手を広げて歓迎・前向き。小物=大きな星・ハート。テーマカラー: ホットピンク (#e85d9b) + ゴールド
+- 性格要約: 他者の成長を導くカリスマリーダー。外向的感情（Fe）×内向的直観（Ni）でグループを鼓舞し、人の可能性を引き出す。
+- テーマカラー: サンフラワーゴールド / ウォームオレンジ
+- 小物: マイク・グループ写真・スターバッジ・議事録
+- 表情: 情熱的な笑顔・みんなを包み込む温かい眼差し
+- ポーズ: 両手を広げてみんなを迎え入れるポーズ / 熱く語りかけている
 
-- 画像生成プロンプト(EN):
-```
-Modern flat 2D mascot illustration, chibi deformed character (2-3 head ratio), clean uniform line art, friendly round shapes, soft flat color with subtle gradient, centered composition fitting in a circular icon frame, simple background with pastel solid color or light gradient plus small thematic decorations, expressive facial features, SNS-ready kawaii style, consistent with a unified character collection, ENFJ protagonist teacher chibi mascot, welcoming arms open pose, large star and heart props, warm charismatic smile, hot pink (#e85d9b) and gold color scheme, small sparkle and star decorations on background
-```
+【男性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, male high-school to college student, tall warm charismatic build, sunflower gold and warm orange color scheme, bright passionate warm brown eyes, neatly styled dark hair, wearing a warm golden-yellow blazer over a white shirt, standing with both arms open wide in a welcoming gesture, radiant passionate smile, holding a small star badge, golden sparkle and sun-ray accents, warm inspiring atmosphere; negative: chibi, super-deformed, 2-3 head ratio, mascot, flat vector style, photorealistic, 3D render, dark, horror, occult, astrology mysticism, fortune-telling, real brand logos, watermark, in-image text, uncanny valley, gritty texture, cluttered background`
+
+【女性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, female high-school to college student, tall graceful charismatic figure, sunflower gold and warm orange color scheme, bright passionate warm eyes, flowing golden-brown hair in a half-updo with a sunflower hairpin, wearing a warm golden blouse with an orange accent scarf, standing confidently with a radiant open smile and arms extended in a welcoming embrace gesture, golden sparkle and sun-ray accents, warm inspiring uplifting atmosphere; negative: chibi, super-deformed, 2-3 head ratio, mascot, flat vector style, photorealistic, 3D render, dark, horror, occult, astrology mysticism, fortune-telling, real brand logos, watermark, in-image text, uncanny valley, gritty texture, cluttered background`
 
 ---
+
 
 ### MBTI - ENFP 広報運動家（情熱家）
 
-- 性格要Arab: 外向的直観×内向的感情。感染力のある熱意で周囲を鼓舞する情熱家。人の可能性を信じ、あらゆる場所に輝きを見出す。
-- キャラ要件: モチーフ=花火・虹・吹き出し多数。表情=最高の笑顔・目をキラキラさせている。ポーズ=両手を上げる・ジャンプ。小物=花火・カラフルな吹き出し。テーマカラー: コーラルピンク (#f472b6) + マルチカラー
+- 性格要約: 人の可能性を信じる情熱的な運動家。外向的直観（Ne）×内向的感情（Fi）で感染力のある熱意と深い共感で周囲を鼓舞する。
+- テーマカラー: コーラルピンク / スカイブルー
+- 小物: カラフルなバルーン・カメラ・ポスター
+- 表情: 全開の笑顔・キラキラした瞳・弾けるような明るさ
+- ポーズ: ジャンプしている / 両手でカメラを持って撮影
 
-- 画像生成プロンプト(EN):
-```
-Modern flat 2D mascot illustration, chibi deformed character (2-3 head ratio), clean uniform line art, friendly round shapes, soft flat color with subtle gradient, centered composition fitting in a circular icon frame, simple background with pastel solid color or light gradient plus small thematic decorations, expressive facial features, SNS-ready kawaii style, consistent with a unified character collection, ENFP campaigner enthusiast chibi mascot, jumping excited pose with arms raised, firework and colorful speech bubble props, maximum happiness expression, coral pink (#f472b6) with multicolor accent scheme, small rainbow and confetti decorations on background
-```
+【男性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, male high-school to college student, energetic athletic cheerful build, coral pink and sky blue color scheme, sparkling warm brown eyes brimming with excitement, light wavy hair, wearing a colorful graphic tee, open jacket in sky blue and coral chino pants, mid-air jumping pose with a huge bright smile and arms raised, colorful bokeh balloons floating in background, vibrant coral and sky blue sparkle confetti accents, joyful bubbly atmosphere; negative: chibi, super-deformed, 2-3 head ratio, mascot, flat vector style, photorealistic, 3D render, dark, horror, occult, astrology mysticism, fortune-telling, real brand logos, watermark, in-image text, uncanny valley, gritty texture, cluttered background`
 
----
-
-## 3. MBTI 16タイプ（SJ保護者グループ）
-
-テーマカラー系統: スカイブルー系（#0ea5e9）
+【女性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, female high-school to college student, energetic lively cheerful figure, coral pink and sky blue color scheme, sparkling bright eyes full of joy, curly or wavy hair with colorful hair ties, wearing a coral pink flared top and light blue wide-leg pants, mid-air jumping pose with a brilliant wide smile, one hand holding a colorful camera, colorful bokeh balloons in background, coral and sky blue sparkle confetti accents, joyful bubbly atmosphere; negative: chibi, super-deformed, 2-3 head ratio, mascot, flat vector style, photorealistic, 3D render, dark, horror, occult, astrology mysticism, fortune-telling, real brand logos, watermark, in-image text, uncanny valley, gritty texture, cluttered background`
 
 ---
+
 
 ### MBTI - ISTJ 管理者（検査官）
 
-- 性格要約: 内向的感覚×外向的思考。圧倒的な信頼性と責任感の守護者。伝統と確立した手順を守り、組織の基盤を支える。
-- キャラ要件: モチーフ=神殿柱・チェックリスト・盾。表情=真剣で誠実な表情、落ち着いた目。ポーズ=背筋を伸ばした立ち姿・チェックリストを持つ。小物=盾・クリップボード。テーマカラー: ネイビー (#1e40af) + グレー
+- 性格要約: 責任感と信頼性の守護者。内向的感覚（Si）×外向的思考（Te）で確立された手順を着実に実行し、組織の基盤を支える堅実型。
+- テーマカラー: ネイビーブルー / ストーングレー
+- 小物: チェックリスト・印鑑・手帳・定規
+- 表情: 真剣な表情・誠実さがにじむ穏やかな眼差し
+- ポーズ: チェックリストを確認している / 書類を整理している
 
-- 画像生成プロンプト(EN):
-```
-Modern flat 2D mascot illustration, chibi deformed character (2-3 head ratio), clean uniform line art, friendly round shapes, soft flat color with subtle gradient, centered composition fitting in a circular icon frame, simple background with pastel solid color or light gradient plus small thematic decorations, expressive facial features, SNS-ready kawaii style, consistent with a unified character collection, ISTJ logistician inspector chibi mascot, upright responsible standing pose, clipboard checklist and shield props, serious dependable expression, navy blue (#1e40af) and gray color scheme, small checkmark and pillar decorations on background
-```
+【男性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, male high-school to college student, sturdy reliable build, navy blue and stone grey color scheme, steady honest dark eyes, neatly combed short dark hair, wearing a crisp navy school uniform or button-down shirt with a tie, standing at a desk carefully checking items off a detailed clipboard checklist with a ruler nearby, earnest focused expression, navy and silver sparkle accents, orderly dependable atmosphere; negative: chibi, super-deformed, 2-3 head ratio, mascot, flat vector style, photorealistic, 3D render, dark, horror, occult, astrology mysticism, fortune-telling, real brand logos, watermark, in-image text, uncanny valley, gritty texture, cluttered background`
+
+【女性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, female high-school to college student, composed reliable figure, navy blue and stone grey color scheme, steady earnest dark eyes, neat dark hair in a tidy bun or low ponytail, wearing a crisp navy blazer with a subtle grey plaid skirt and white blouse, seated at a perfectly organized desk carefully going through a detailed checklist with a pen, a neatly stacked folder beside her, earnest focused expression, navy and silver sparkle accents, orderly dependable atmosphere; negative: chibi, super-deformed, 2-3 head ratio, mascot, flat vector style, photorealistic, 3D render, dark, horror, occult, astrology mysticism, fortune-telling, real brand logos, watermark, in-image text, uncanny valley, gritty texture, cluttered background`
 
 ---
+
 
 ### MBTI - ISFJ 擁護者（保護者）
 
-- 性格要約: 内向的感覚×外向的感情。思いやりと献身性が高い縁の下の力持ち。大切な人を静かに支え、温かみと実用性を兼ね備える。
-- キャラ要件: モチーフ=緑の葉・盾・ハート。表情=温かく優しい微笑み、安心させる目。ポーズ=両手を胸に・包み込む。小物=葉・小さなハート。テーマカラー: ソフトブルー (#38bdf8) + ミントグリーン
+- 性格要約: 縁の下の力持ちの献身的守護者。内向的感覚（Si）×外向的感情（Fe）で大切な人のニーズを細かく覚えて応える温かさの塊。
+- テーマカラー: ミントグリーン / ウォームクリーム
+- 小物: ハーブ・手作りクッキー・かわいい手帳・エプロン
+- 表情: 温かく優しい微笑み・安心させる穏やかな眼差し
+- ポーズ: 両手にクッキーを持って差し出している / 植物に水やりをしている
 
-- 画像生成プロンプト(EN):
-```
-Modern flat 2D mascot illustration, chibi deformed character (2-3 head ratio), clean uniform line art, friendly round shapes, soft flat color with subtle gradient, centered composition fitting in a circular icon frame, simple background with pastel solid color or light gradient plus small thematic decorations, expressive facial features, SNS-ready kawaii style, consistent with a unified character collection, ISFJ defender protector chibi mascot, gentle hands on chest nurturing pose, leaf and small heart props, warm caring smile, soft sky blue (#38bdf8) and mint green color scheme, small clover and heart decorations on background
-```
+【男性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, male high-school to college student, gentle warm reliable build, mint green and warm cream color scheme, soft warm brown eyes with a reassuring gaze, neatly parted light brown hair, wearing a cozy mint-green apron over a cream button-up shirt, holding out a plate of homemade cookies with both hands and a warm gentle smile, soft herb plants and a tidy kitchen visible in background, mint green and cream sparkle accents, nurturing cozy atmosphere; negative: chibi, super-deformed, 2-3 head ratio, mascot, flat vector style, photorealistic, 3D render, dark, horror, occult, astrology mysticism, fortune-telling, real brand logos, watermark, in-image text, uncanny valley, gritty texture, cluttered background`
+
+【女性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, female high-school to college student, gentle warm nurturing figure, mint green and warm cream color scheme, soft warm eyes with a reassuring tender gaze, light brown hair in a soft braid with small herb sprigs tucked in, wearing a mint-green blouse with a cream pinafore apron, holding a small watering can tending to potted herbs on a sunlit windowsill, gentle warm smile, mint and cream sparkle accents, cozy nurturing atmosphere; negative: chibi, super-deformed, 2-3 head ratio, mascot, flat vector style, photorealistic, 3D render, dark, horror, occult, astrology mysticism, fortune-telling, real brand logos, watermark, in-image text, uncanny valley, gritty texture, cluttered background`
 
 ---
+
 
 ### MBTI - ESTJ 幹部（監督者）
 
-- 性格要約: 外向的思考×内向的感覚。組織の秩序と効率を維持するリーダー。明確なルールと責任感で組織を運営する。
-- キャラ要件: モチーフ=建設クレーン・組織図・トロフィー。表情=自信に満ちた真剣な表情。ポーズ=指揮を執る・手を前に出す。小物=組織図ボード・トロフィー。テーマカラー: スカイブルー (#0ea5e9) + シルバー
+- 性格要約: 組織の秩序と効率を守る幹部。外向的思考（Te）×内向的感覚（Si）で明確なルールと目標のもとチームをリードする責任型。
+- テーマカラー: フォレストグリーン / ブロンズゴールド
+- 小物: 会議資料・腕時計・名刺入れ・プロジェクト計画書
+- 表情: 力強く頼もしい眼差し・決断力のある表情
+- ポーズ: 腕時計を確認しながら計画書を持っている / 会議でリードしている
 
-- 画像生成プロンプト(EN):
-```
-Modern flat 2D mascot illustration, chibi deformed character (2-3 head ratio), clean uniform line art, friendly round shapes, soft flat color with subtle gradient, centered composition fitting in a circular icon frame, simple background with pastel solid color or light gradient plus small thematic decorations, expressive facial features, SNS-ready kawaii style, consistent with a unified character collection, ESTJ executive supervisor chibi mascot, authoritative directing pose hand forward, org chart board and trophy props, confident competent expression, sky blue (#0ea5e9) and silver color scheme, small building and chart decorations on background
-```
+【男性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, male high-school to college student, strong dependable athletic build, forest green and bronze gold color scheme, decisive steady dark eyes, neatly styled short dark hair, wearing a formal forest-green blazer with a bronze tie and white shirt, standing confidently glancing at a classic wristwatch while holding a detailed project plan, firm decisive expression, bronze sparkle and green accents, authoritative organized atmosphere; negative: chibi, super-deformed, 2-3 head ratio, mascot, flat vector style, photorealistic, 3D render, dark, horror, occult, astrology mysticism, fortune-telling, real brand logos, watermark, in-image text, uncanny valley, gritty texture, cluttered background`
+
+【女性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, female high-school to college student, strong composed authoritative figure, forest green and bronze gold color scheme, decisive steady dark eyes, dark hair in a polished updo with a gold hairpin, wearing a tailored forest-green jacket and pencil skirt with a bronze scarf, standing at the head of a table with a project plan in one hand and gesturing decisively with the other, firm confident expression, bronze sparkle and green accents, authoritative organized atmosphere; negative: chibi, super-deformed, 2-3 head ratio, mascot, flat vector style, photorealistic, 3D render, dark, horror, occult, astrology mysticism, fortune-telling, real brand logos, watermark, in-image text, uncanny valley, gritty texture, cluttered background`
 
 ---
+
 
 ### MBTI - ESFJ 領事（世話焼き）
 
-- 性格要約: 外向的感情×内向的感覚。コミュニティの調和を守る社交的な世話焼き。他者への気配りと温かいサポートが自然に出る。
-- キャラ要件: モチーフ=握手・花束・テーブル。表情=明るく温かい歓迎の笑顔。ポーズ=両手を広げる・何かを差し出す。小物=花束・お茶。テーマカラー: ライトブルー (#7dd3fc) + ピンク
+- 性格要約: コミュニティの調和を守る世話焼きの領事。外向的感情（Fe）×内向的感覚（Si）で全員のニーズを把握し温かい絆を作る。
+- テーマカラー: ウォームローズ / ピーチ
+- 小物: デコレーションケーキ・アルバム・みんなへのプレゼント
+- 表情: 満面の笑顔・みんなを大切にする温かな眼差し
+- ポーズ: 両手でケーキを持って差し出す / 友達に囲まれてにぎやかに話している
 
-- 画像生成プロンプト(EN):
-```
-Modern flat 2D mascot illustration, chibi deformed character (2-3 head ratio), clean uniform line art, friendly round shapes, soft flat color with subtle gradient, centered composition fitting in a circular icon frame, simple background with pastel solid color or light gradient plus small thematic decorations, expressive facial features, SNS-ready kawaii style, consistent with a unified character collection, ESFJ consul caregiver chibi mascot, welcoming arms spread offering pose, bouquet of flowers and teacup props, warm hospitable smile, light blue (#7dd3fc) and soft pink color scheme, small flower and handshake decorations on background
-```
+【男性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, male high-school to college student, warm cheerful social build, warm rose and peach color scheme, bright warm caring brown eyes, neatly styled hair with a friendly approachable look, wearing a warm rose-pink sweater and light trousers, holding out a beautifully decorated cake with both hands and a big warm smile, soft peach bokeh with confetti sparkle accents, cheerful community warmth atmosphere; negative: chibi, super-deformed, 2-3 head ratio, mascot, flat vector style, photorealistic, 3D render, dark, horror, occult, astrology mysticism, fortune-telling, real brand logos, watermark, in-image text, uncanny valley, gritty texture, cluttered background`
 
----
-
-## 4. MBTI 16タイプ（SP職人グループ）
-
-テーマカラー系統: アンバー・オレンジ系（#f59e0b）
+【女性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, female high-school to college student, warm bubbly social figure, warm rose and peach color scheme, bright caring warm eyes, light hair with rose-colored ribbon bow or flower clip, wearing a rosy pink blouse and peach skirt, arms wrapped around a nicely wrapped gift box with a huge warm smile, soft confetti and sparkle bokeh accents, cheerful community warmth atmosphere; negative: chibi, super-deformed, 2-3 head ratio, mascot, flat vector style, photorealistic, 3D render, dark, horror, occult, astrology mysticism, fortune-telling, real brand logos, watermark, in-image text, uncanny valley, gritty texture, cluttered background`
 
 ---
+
 
 ### MBTI - ISTP 巨匠（職人）
 
-- 性格要約: 内向的思考×外向的感覚。システムの仕組みを直観的に理解する技術者。実践的な問題解決と危機対応に際立つ冷静さ。
-- キャラ要件: モチーフ=レンチ・歯車・工具箱。表情=クールで集中した表情、鋭い目。ポーズ=工具を持つ・修理している。小物=レンチ・歯車・工具箱。テーマカラー: ダークオレンジ (#b45309) + グレー
+- 性格要約: 仕組みを直観的に理解する実践の職人。内向的思考（Ti）×外向的感覚（Se）で現場での即時問題解決と技術習得を楽しむ。
+- テーマカラー: スチールグレー / シャープレッド
+- 小物: 工具箱・機械部品・バイクのヘルメット・手袋
+- 表情: 冷静でクールな表情・やや眠そうなリラックスした目
+- ポーズ: 機械を分解・点検している / 道具を手にして作業中
 
-- 画像生成プロンプト(EN):
-```
-Modern flat 2D mascot illustration, chibi deformed character (2-3 head ratio), clean uniform line art, friendly round shapes, soft flat color with subtle gradient, centered composition fitting in a circular icon frame, simple background with pastel solid color or light gradient plus small thematic decorations, expressive facial features, SNS-ready kawaii style, consistent with a unified character collection, ISTP virtuoso craftsman chibi mascot, focused working pose holding wrench, gear and toolbox props, cool concentrated expression, dark amber (#b45309) and gray color scheme, small wrench and gear decorations on background
-```
+【男性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, male high-school to college student, lean cool athletic build, steel grey and sharp red color scheme, calm half-lidded cool dark eyes, slightly tousled dark hair, wearing a dark grey mechanic jacket with red stitching and rolled-up sleeves, crouching beside a disassembled mechanical component examining it with a wrench, a motorcycle helmet and toolbox nearby, composed cool expression with a slight natural smirk, steel grey and red sparkle accents, cool practical workshop atmosphere; negative: chibi, super-deformed, 2-3 head ratio, mascot, flat vector style, photorealistic, 3D render, dark, horror, occult, astrology mysticism, fortune-telling, real brand logos, watermark, in-image text, uncanny valley, gritty texture, cluttered background`
+
+【女性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, female high-school to college student, lean cool composed figure, steel grey and sharp red color scheme, calm cool dark eyes, short practical hair or hair tied back out of the way, wearing a grey cargo jacket with red details and work gloves hanging from a pocket, holding up a small mechanical component and examining it closely with a cool focused expression, toolbox open nearby, steel grey and red sparkle accents, practical workshop atmosphere; negative: chibi, super-deformed, 2-3 head ratio, mascot, flat vector style, photorealistic, 3D render, dark, horror, occult, astrology mysticism, fortune-telling, real brand logos, watermark, in-image text, uncanny valley, gritty texture, cluttered background`
 
 ---
+
 
 ### MBTI - ISFP 冒険家（芸術家）
 
-- 性格要約: 内向的感情×外向的感覚。美と調和への繊細な感受性を持つ芸術家。現在の瞬間を大切にし、行動で温かい愛情を示す。
-- キャラ要件: モチーフ=パレット・花・羽。表情=穏やかで感受性豊かな表情、柔らかい目。ポーズ=絵を描く・花を愛でる。小物=絵具パレット・花。テーマカラー: アンバー (#f59e0b) + ローズ
+- 性格要約: 美と調和を愛する感覚派の芸術家。内向的感情（Fi）×外向的感覚（Se）で現在の瞬間の美しさを繊細に表現し温かいケアを自然に示す。
+- テーマカラー: テラコッタオレンジ / ウォームグリーン
+- 小物: カメラ・花束・スケッチブック・自然のもの（石・葉）
+- 表情: 穏やかで温かい笑顔・自然体でリラックスした表情
+- ポーズ: 野外で花を写真に撮っている / 自然の中でスケッチ
 
-- 画像生成プロンプト(EN):
-```
-Modern flat 2D mascot illustration, chibi deformed character (2-3 head ratio), clean uniform line art, friendly round shapes, soft flat color with subtle gradient, centered composition fitting in a circular icon frame, simple background with pastel solid color or light gradient plus small thematic decorations, expressive facial features, SNS-ready kawaii style, consistent with a unified character collection, ISFP adventurer artist chibi mascot, gentle painting or flower gazing pose, color palette and feather props, soft sensitive expression, amber (#f59e0b) and rose color scheme, small flower petal and paintbrush decorations on background
-```
+【男性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, male high-school to college student, gentle relaxed natural build, terracotta orange and warm green color scheme, soft warm brown eyes with a quiet open gaze, wavy natural light brown hair, wearing a warm terracotta oversized shirt and olive green cargo pants, crouching in a sunny garden holding a film camera up to photograph a wildflower, a small sketchbook and a handful of collected leaves nearby, natural relaxed warm smile, earthy terracotta and green bokeh sparkle accents, gentle nature-loving atmosphere; negative: chibi, super-deformed, 2-3 head ratio, mascot, flat vector style, photorealistic, 3D render, dark, horror, occult, astrology mysticism, fortune-telling, real brand logos, watermark, in-image text, uncanny valley, gritty texture, cluttered background`
+
+【女性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, female high-school to college student, gentle free-spirited natural figure, terracotta orange and warm green color scheme, soft warm eyes with a gentle open gaze, loose wavy hair adorned with small wildflowers, wearing a terracotta-toned flowy blouse and warm green wide-leg trousers, standing in a sunlit garden with a small bouquet of wildflowers in one hand and a sketchbook tucked under the other arm, natural soft warm smile, earthy bokeh and sparkle petal accents, gentle nature-loving atmosphere; negative: chibi, super-deformed, 2-3 head ratio, mascot, flat vector style, photorealistic, 3D render, dark, horror, occult, astrology mysticism, fortune-telling, real brand logos, watermark, in-image text, uncanny valley, gritty texture, cluttered background`
 
 ---
+
 
 ### MBTI - ESTP 起業家（行動者）
 
-- 性格要約: 外向的感覚×内向的思考。現在の状況を瞬時に読み取り即座に行動するエネルギッシュなリスクテイカー。説得力と機敏さが際立つ。
-- キャラ要件: モチーフ=ロケット・炎・ダッシュ跡。表情=挑戦的で活気のある笑顔、燃える目。ポーズ=ダッシュ・飛び出す。小物=ロケット・稲妻。テーマカラー: オレンジ (#ea580c) + レッド
+- 性格要約: 現在の瞬間を全力で生きる行動派起業家。外向的感覚（Se）×内向的思考（Ti）で状況を素早く読みリスクを恐れず即座に行動する。
+- テーマカラー: エレクトリックレッド / シャープホワイト
+- 小物: スポーツウェア・スケートボード・スマートフォン・交渉の握手
+- 表情: 自信たっぷりのニヤリ笑い・躍動感ある表情
+- ポーズ: スケートボードに乗っている / 力強い握手ポーズ
 
-- 画像生成プロンプト(EN):
-```
-Modern flat 2D mascot illustration, chibi deformed character (2-3 head ratio), clean uniform line art, friendly round shapes, soft flat color with subtle gradient, centered composition fitting in a circular icon frame, simple background with pastel solid color or light gradient plus small thematic decorations, expressive facial features, SNS-ready kawaii style, consistent with a unified character collection, ESTP entrepreneur action taker chibi mascot, dynamic dashing forward pose, rocket and lightning bolt props, bold energetic grin, orange (#ea580c) and red color scheme, small flame and speed line decorations on background
-```
+【男性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, male high-school to college student, athletic energetic confident build, electric red and sharp white color scheme, bold confident eyes with a sharp self-assured grin, spiky or windswept dark hair, wearing a sporty red and white jacket over a white tee with slim dark jeans and sneakers, dynamic pose riding a skateboard mid-trick or striking a bold power stance, electric red and white sparkle speed-line accents, high-energy action atmosphere; negative: chibi, super-deformed, 2-3 head ratio, mascot, flat vector style, photorealistic, 3D render, dark, horror, occult, astrology mysticism, fortune-telling, real brand logos, watermark, in-image text, uncanny valley, gritty texture, cluttered background`
+
+【女性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, female high-school to college student, athletic bold confident figure, electric red and sharp white color scheme, sharp confident eyes with a bold self-assured grin, short dynamic hair or ponytail, wearing a red and white sporty jacket, crop top and slim joggers with sneakers, dynamic bold pose on a skateboard or striding forward with confidence, electric red and white sparkle speed-line accents, high-energy action atmosphere; negative: chibi, super-deformed, 2-3 head ratio, mascot, flat vector style, photorealistic, 3D render, dark, horror, occult, astrology mysticism, fortune-telling, real brand logos, watermark, in-image text, uncanny valley, gritty texture, cluttered background`
 
 ---
+
 
 ### MBTI - ESFP エンターテイナー（パフォーマー）
 
-- 性格要約: 外向的感覚×内向的感情。現在の瞬間を全力で楽しみ周囲も楽しませる天性のパフォーマー。社交的で温かく、どんな集まりも明るくする。
-- キャラ要件: モチーフ=舞台・マイク・スポットライト。表情=満面の笑み・目が輝いている。ポーズ=舞台ポーズ・マイクを持つ。小物=マイク・紙吹雪・音符。テーマカラー: ゴールデンイエロー (#fbbf24) + ピンク
+- 性格要約: 場を明るくする天性のエンターテイナー。外向的感覚（Se）×内向的感情（Fi）で現在の喜びを全力で楽しみ周囲も巻き込む。
+- テーマカラー: ホットピンク / ライムグリーン
+- 小物: マイク・ステージスポット・カラフルな衣装・コンフェッティ
+- 表情: 弾けるような最高の笑顔・輝く瞳
+- ポーズ: ステージでマイクを持ってパフォーマンス中 / ダンスポーズ
 
-- 画像生成プロンプト(EN):
-```
-Modern flat 2D mascot illustration, chibi deformed character (2-3 head ratio), clean uniform line art, friendly round shapes, soft flat color with subtle gradient, centered composition fitting in a circular icon frame, simple background with pastel solid color or light gradient plus small thematic decorations, expressive facial features, SNS-ready kawaii style, consistent with a unified character collection, ESFP entertainer performer chibi mascot, spotlight stage pose holding microphone, confetti and music note props, biggest brightest smile, golden yellow (#fbbf24) and pink color scheme, small star and sparkle decorations on background
-```
+【男性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, male high-school to college student, lively vibrant expressive build, hot pink and lime green color scheme, sparkling joyful warm eyes, stylish expressive hair with a fun color streak, wearing a vibrant stage outfit with a hot pink and lime green graphic jacket, mid-performance dance pose holding a microphone with a huge glowing smile, colorful confetti and sparkle stage-light accents, electric fun performance atmosphere; negative: chibi, super-deformed, 2-3 head ratio, mascot, flat vector style, photorealistic, 3D render, dark, horror, occult, astrology mysticism, fortune-telling, real brand logos, watermark, in-image text, uncanny valley, gritty texture, cluttered background`
+
+【女性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, female high-school to college student, lively vibrant bubbly figure, hot pink and lime green color scheme, sparkling joyful bright eyes, colorful wavy hair with pink highlights, wearing a sparkly hot pink stage outfit with lime green accessories, dynamic dance pose holding a glittery microphone with an absolutely radiant smile, colorful confetti and stage sparkle accents, electric fun performance atmosphere; negative: chibi, super-deformed, 2-3 head ratio, mascot, flat vector style, photorealistic, 3D render, dark, horror, occult, astrology mysticism, fortune-telling, real brand logos, watermark, in-image text, uncanny valley, gritty texture, cluttered background`
+
+---
+
+# DiSC 4タイプ
 
 ---
 
-## 5. Big5動物 16体
 
-テーマカラー: 各動物に設定されたカラー（types.tsのcolor値を使用）
+### DiSC - D 主導型（Dominance）
+
+- 性格要約: 結果を出すために前に出るスピードと実行力の牽引者。課題に直接行動し、高い目標と競争でモチベーションが上がる。
+- テーマカラー: ファイアレッド / ダークチャコール
+- 小物: ゴールメダル・鍵（新オフィス）・スプリントするシューズ・腕時計
+- 表情: 鋭い眼差し・力強い意志が宿る表情
+- ポーズ: 前へ大きく踏み出すポーズ / フィニッシュラインを切る瞬間
+
+【男性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, male high-school to college student, powerfully built confident athletic figure, fire red and dark charcoal color scheme, sharp intense determined eyes, short neatly styled dark hair, wearing a sleek red and charcoal athletic jacket with performance trousers, bold dynamic stride-forward pose with one fist clenched and a gold medal visible, intense driven expression, fire red sparkle and speed-line accents, high-energy results-driven atmosphere; negative: chibi, super-deformed, 2-3 head ratio, mascot, flat vector style, photorealistic, 3D render, dark, horror, occult, astrology mysticism, fortune-telling, real brand logos, watermark, in-image text, uncanny valley, gritty texture, cluttered background`
+
+【女性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, female high-school to college student, powerfully confident athletic figure, fire red and dark charcoal color scheme, sharp intense determined eyes, sleek dark hair in a high ponytail, wearing a bold red athletic jacket and charcoal performance leggings with sharp sneakers, dynamic power-stride forward pose with one fist raised, fierce driven expression, fire red sparkle and speed-line accents, high-energy results-driven atmosphere; negative: chibi, super-deformed, 2-3 head ratio, mascot, flat vector style, photorealistic, 3D render, dark, horror, occult, astrology mysticism, fortune-telling, real brand logos, watermark, in-image text, uncanny valley, gritty texture, cluttered background`
 
 ---
+
+
+### DiSC - i 感化型（influence）
+
+- 性格要約: 人を巻き込み場を明るくする生まれながらのムードメーカー。楽観的な姿勢と高い説得力でチームに活気をもたらす。
+- テーマカラー: サンシャインイエロー / スカイブルー
+- 小物: メガホン・カラフルなフラッグ・スマートフォン（自撮り）・笑顔の集合写真
+- 表情: 太陽のような笑顔・人を引き寄せる輝く瞳
+- ポーズ: メガホンを持って呼びかけている / 人々に向かって手を振っている
+
+【男性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, male high-school to college student, lively friendly social build, sunshine yellow and sky blue color scheme, sparkling warm outgoing eyes, stylish wavy hair with natural volume, wearing a bright yellow bomber jacket and sky-blue shirt with casual trousers, holding a colorful megaphone and waving enthusiastically toward the viewer with a huge sunny smile, confetti and colorful flag bokeh in background, sunshine yellow and sky blue sparkle accents, energetic social crowd-engaging atmosphere; negative: chibi, super-deformed, 2-3 head ratio, mascot, flat vector style, photorealistic, 3D render, dark, horror, occult, astrology mysticism, fortune-telling, real brand logos, watermark, in-image text, uncanny valley, gritty texture, cluttered background`
+
+【女性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, female high-school to college student, lively bubbly energetic figure, sunshine yellow and sky blue color scheme, sparkling outgoing bright eyes, voluminous wavy hair with a yellow scrunchie, wearing a sunshine yellow off-shoulder top and blue wide-leg trousers, cheerfully holding a colorful flag and waving both hands at the viewer with a radiant magnetic smile, confetti and sparkle bokeh in background, sunshine yellow and sky blue sparkle accents, energetic social inspiring atmosphere; negative: chibi, super-deformed, 2-3 head ratio, mascot, flat vector style, photorealistic, 3D render, dark, horror, occult, astrology mysticism, fortune-telling, real brand logos, watermark, in-image text, uncanny valley, gritty texture, cluttered background`
+
+---
+
+
+### DiSC - S 安定型（Steadiness）
+
+- 性格要約: チームの土台を支える忍耐と協調の縁の下の力持ち。安定した環境で長期信頼関係を築き、サポート役として組織を支える。
+- テーマカラー: セージグリーン / ウォームベージュ
+- 小物: チームのノート・温かいマグカップ・サポートのメモ・植物
+- 表情: 穏やかで安心させる笑顔・柔らかな眼差し
+- ポーズ: 誰かに寄り添って話を聞いている / チームで作業している
+
+【男性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, male high-school to college student, gentle steady reliable build, sage green and warm beige color scheme, soft calm brown eyes with a reassuring gaze, neat tidy warm-toned hair, wearing a sage-green cable-knit sweater and beige trousers, seated beside a small plant with a warm mug on the table, leaning in slightly with an open supportive posture and a gentle calm smile, warm beige and sage green soft sparkle accents, cozy steady team-support atmosphere; negative: chibi, super-deformed, 2-3 head ratio, mascot, flat vector style, photorealistic, 3D render, dark, horror, occult, astrology mysticism, fortune-telling, real brand logos, watermark, in-image text, uncanny valley, gritty texture, cluttered background`
+
+【女性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, female high-school to college student, gentle steady nurturing figure, sage green and warm beige color scheme, soft calm warm eyes with a soothing gaze, light brown hair in a gentle side braid, wearing a sage-green cozy sweater and warm beige skirt, sitting calmly with a small potted plant on the desk and a warm mug in both hands, a quiet gentle smile, warm beige and sage green soft sparkle accents, cozy steady team-support atmosphere; negative: chibi, super-deformed, 2-3 head ratio, mascot, flat vector style, photorealistic, 3D render, dark, horror, occult, astrology mysticism, fortune-telling, real brand logos, watermark, in-image text, uncanny valley, gritty texture, cluttered background`
+
+---
+
+
+### DiSC - C 慎重型（Conscientiousness）
+
+- 性格要約: 正確性とデータで判断する品質と根拠の専門家。高い専門性を積み上げ、リスク管理と論理的分析でチームのミスを防ぐ。
+- テーマカラー: ミッドナイトネイビー / クールシルバー
+- 小物: データグラフ・拡大鏡・精密測定器・論文・メガネ
+- 表情: 集中した真剣な表情・鋭く緻密な眼差し
+- ポーズ: データを分析している / 拡大鏡でチェックしている
+
+【男性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, male high-school to college student, slim precise meticulous build, midnight navy and cool silver color scheme, sharp focused eyes behind silver-rimmed glasses, neatly combed dark hair, wearing a crisp navy button-up shirt and dark slacks, seated at a desk intently examining a data chart or graph with a magnifying glass, precise concentrated expression, cool silver and navy sparkle data-grid accents, analytical precision atmosphere; negative: chibi, super-deformed, 2-3 head ratio, mascot, flat vector style, photorealistic, 3D render, dark, horror, occult, astrology mysticism, fortune-telling, real brand logos, watermark, in-image text, uncanny valley, gritty texture, cluttered background`
+
+【女性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, female high-school to college student, slim precise meticulous figure, midnight navy and cool silver color scheme, sharp focused eyes with elegant silver-framed glasses, dark hair in a neat bun with a silver clip, wearing a navy and silver structured blazer and slim trousers, standing over a desk examining a detailed data chart with a magnifying glass, highly focused precise expression, cool silver and navy sparkle data-grid accents, analytical precision atmosphere; negative: chibi, super-deformed, 2-3 head ratio, mascot, flat vector style, photorealistic, 3D render, dark, horror, occult, astrology mysticism, fortune-telling, real brand logos, watermark, in-image text, uncanny valley, gritty texture, cluttered background`
+
+---
+
+# 完璧主義 4タイプ
+
+---
+
+
+### 完璧主義 - thorough 徹底型（Self-Oriented Perfectionist）
+
+- 性格要約: やるなら100%・自分への基準が誰よりも高い妥協なき完成追求者。自己志向型完璧主義で高品質な成果を生み続ける原動力を持つ。
+- テーマカラー: ディープスカーレット / オフホワイト
+- 小物: 赤ペン（添削）・何度も書き直したノート・目標リスト
+- 表情: 集中した鋭い表情・満足せずにもう一度見直す真剣顔
+- ポーズ: 完成物を手に取って再確認している / ノートを丁寧に書き直している
+
+【男性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, male high-school to college student, focused determined lean build, deep scarlet and off-white color scheme, sharp self-critical concentrated eyes, neat dark hair, wearing a clean white dress shirt with a deep red tie, seated at a tidy desk holding up a completed report and scrutinizing it again with a red pen, a crossed-out draft visible below, intense self-reviewing expression, deep scarlet and white sparkle precision accents, meticulous perfectionist atmosphere; negative: chibi, super-deformed, 2-3 head ratio, mascot, flat vector style, photorealistic, 3D render, dark, horror, occult, astrology mysticism, fortune-telling, real brand logos, watermark, in-image text, uncanny valley, gritty texture, cluttered background`
+
+【女性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, female high-school to college student, focused determined composed figure, deep scarlet and off-white color scheme, sharp self-critical concentrated eyes, dark hair in a neat high ponytail, wearing a crisp white blouse with a deep red ribbon, sitting at a spotless desk holding a completed paper with a red pen and reviewing it with intense focus, a discarded earlier draft and corrected notes visible nearby, precise self-reviewing expression, deep scarlet and white sparkle precision accents, meticulous perfectionist atmosphere; negative: chibi, super-deformed, 2-3 head ratio, mascot, flat vector style, photorealistic, 3D render, dark, horror, occult, astrology mysticism, fortune-telling, real brand logos, watermark, in-image text, uncanny valley, gritty texture, cluttered background`
+
+---
+
+
+### 完璧主義 - particular こだわり型（Organization-Oriented Perfectionist）
+
+- 性格要約: 細部にこそ本質が宿ると信じる秩序と精度の職人気質。Frost組織化志向が高く、整理された環境と手順で安定した高品質を実現する。
+- テーマカラー: ミュートブルー / ウォームグレー
+- 小物: カラーコードのファイル・ラベルメーカー・定規・整然としたデスク
+- 表情: 満足そうな穏やかな笑顔・整理できた達成感の表情
+- ポーズ: ファイルをきれいに並べている / ラベルを丁寧に貼っている
+
+【男性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, male high-school to college student, neat tidy organized build, muted blue and warm grey color scheme, calm satisfied focused eyes, neatly combed hair in a tidy style, wearing a muted blue sweater vest over a button-up with organized trousers, carefully aligning a row of color-coded labeled binders on a perfectly neat shelf with a gentle pleased smile, a label maker and ruler on the pristine desk below, warm grey and soft blue sparkle organization accents, satisfying orderly atmosphere; negative: chibi, super-deformed, 2-3 head ratio, mascot, flat vector style, photorealistic, 3D render, dark, horror, occult, astrology mysticism, fortune-telling, real brand logos, watermark, in-image text, uncanny valley, gritty texture, cluttered background`
+
+【女性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, female high-school to college student, neat tidy composed figure, muted blue and warm grey color scheme, calm satisfied eyes with a neat appearance, hair tied in a precise low ponytail with a subtle blue bow, wearing a muted blue cardigan and grey pleated skirt, neatly arranging color-coded labeled file folders on an immaculate desk with a gentle pleased smile, a label maker and perfectly aligned stationery nearby, warm grey and soft blue sparkle organization accents, satisfying orderly atmosphere; negative: chibi, super-deformed, 2-3 head ratio, mascot, flat vector style, photorealistic, 3D render, dark, horror, occult, astrology mysticism, fortune-telling, real brand logos, watermark, in-image text, uncanny valley, gritty texture, cluttered background`
+
+---
+
+
+### 完璧主義 - procrastinating 先延ばし型（Failure-Avoidant Perfectionist）
+
+- 性格要約: 完璧にできないなら始められない・失敗への恐れが生む慎重さの罠。Frost失敗懸念が高く、本気で取り組む誠実さが根底にある不適応的完璧主義。
+- テーマカラー: ソフトアンバー / ライトパープル
+- 小物: 積み上がった未着手の本・時計（時間切れ）・消しゴム・白紙のノート
+- 表情: 思い悩む表情・ためらいと「もう少し準備が必要」感
+- ポーズ: ペンを持ちながら紙を前に固まっている / 頭を抱えて考えている
+
+【男性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, male high-school to college student, thoughtful hesitant gentle build, soft amber and light purple color scheme, worried overthinking eyes with a slightly furrowed brow, soft wavy light hair, wearing a soft amber cardigan over a light shirt, seated at a desk with a blank notebook open and a pen held mid-air, stack of unstarted books and an eraser nearby, a clock visible in background, pensive conflicted expression with a trace of earnestness, amber and lavender soft sparkle accents, contemplative hesitant atmosphere; negative: chibi, super-deformed, 2-3 head ratio, mascot, flat vector style, photorealistic, 3D render, dark, horror, occult, astrology mysticism, fortune-telling, real brand logos, watermark, in-image text, uncanny valley, gritty texture, cluttered background`
+
+【女性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, female high-school to college student, thoughtful hesitant earnest figure, soft amber and light purple color scheme, worried overthinking eyes, soft hair loosely falling with a lavender hairclip, wearing a light purple knit cardigan and soft amber skirt, sitting at a desk staring at a blank open notebook with pen in hand but not yet writing, a pile of books and an eraser beside her, a small clock in background, pensive earnest conflicted expression, amber and lavender soft sparkle accents, contemplative hesitant sincere atmosphere; negative: chibi, super-deformed, 2-3 head ratio, mascot, flat vector style, photorealistic, 3D render, dark, horror, occult, astrology mysticism, fortune-telling, real brand logos, watermark, in-image text, uncanny valley, gritty texture, cluttered background`
+
+---
+
+
+### 完璧主義 - expecting 期待型（Socially-Prescribed Perfectionist）
+
+- 性格要約: 誰かの期待が私のプレッシャー・他者からの視線に揺れる承認の追求者。Hewitt & Flett社会規定型で他者への敏感さと共感力が表裏一体。
+- テーマカラー: ローズゴールド / ソフトピーチ
+- 小物: 承認の星マーク・SNSハート通知・人からのメッセージカード
+- 表情: 認められたときの輝く笑顔 / 少し不安そうに他者の反応を窺う表情
+- ポーズ: 評価結果を確認して嬉しそうにしている / 周囲の視線を意識しながら発表
+
+【男性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, male high-school to college student, sensitive empathetic pleasant build, rose gold and soft peach color scheme, warm expressive eyes that are bright when praised and slightly anxious otherwise, neat stylish light brown hair, wearing a soft rose-toned shirt and peach cardigan, holding a paper with a glowing approval stamp while looking up with a relieved radiant smile, subtle heart sparkle and star approval accents in background, rose gold soft sparkle accents, warm approval-seeking empathetic atmosphere; negative: chibi, super-deformed, 2-3 head ratio, mascot, flat vector style, photorealistic, 3D render, dark, horror, occult, astrology mysticism, fortune-telling, real brand logos, watermark, in-image text, uncanny valley, gritty texture, cluttered background`
+
+【女性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, female high-school to college student, sensitive empathetic warm figure, rose gold and soft peach color scheme, warm expressive eyes glowing with happiness when appreciated, light hair in a soft style with a rose gold hair clip, wearing a peach blouse with a rose-gold pendant necklace and a light cardigan, holding a paper with a glowing gold star approval stamp and beaming with a radiant relieved smile, soft heart and star bokeh sparkle accents, rose gold soft sparkle accents, warm approval-seeking empathetic atmosphere; negative: chibi, super-deformed, 2-3 head ratio, mascot, flat vector style, photorealistic, 3D render, dark, horror, occult, astrology mysticism, fortune-telling, real brand logos, watermark, in-image text, uncanny valley, gritty texture, cluttered background`
+
+---
+
+# 金銭感覚 4タイプ
+
+---
+
+
+### 金銭感覚 - avoidance 回避型（Money Avoidance）
+
+- 性格要約: お金より大切なものがある静かな価値観の持ち主。物質より精神的豊かさ・人間関係・体験を重視し、金銭管理を自然と後回しにしがち。
+- テーマカラー: ソフトオリーブ / アースブラウン
+- 小物: 自然の花・古本・手紙・シンプルなエコバッグ
+- 表情: 穏やかで自然体の笑顔・価値観に忠実な落ち着いた表情
+- ポーズ: 自然の中でのんびりしている / 本を読みながらリラックス
+
+【男性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, male high-school to college student, relaxed natural easygoing build, soft olive and earth brown color scheme, calm gentle warm eyes, slightly messy natural hair, wearing a soft olive linen shirt and loose earth-toned trousers, sitting barefoot on a sunny patch of grass reading a worn paperback book, a simple canvas tote bag and a few wildflowers nearby, relaxed genuine natural smile, earthy olive and warm brown soft sparkle and leaf petal accents, gentle nature-loving unhurried atmosphere; negative: chibi, super-deformed, 2-3 head ratio, mascot, flat vector style, photorealistic, 3D render, dark, horror, occult, astrology mysticism, fortune-telling, real brand logos, watermark, in-image text, uncanny valley, gritty texture, cluttered background`
+
+【女性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, female high-school to college student, relaxed natural free-spirited figure, soft olive and earth brown color scheme, calm gentle warm eyes, loose natural wavy hair with a small wildflower tucked in, wearing an olive green loose shirt dress and simple sandals, sitting cross-legged on a sunny grassy spot holding an open letter and a few wildflowers, a simple canvas tote bag beside her, peaceful natural genuine smile, earthy olive and warm brown soft sparkle and petal accents, gentle nature-loving unhurried atmosphere; negative: chibi, super-deformed, 2-3 head ratio, mascot, flat vector style, photorealistic, 3D render, dark, horror, occult, astrology mysticism, fortune-telling, real brand logos, watermark, in-image text, uncanny valley, gritty texture, cluttered background`
+
+---
+
+
+### 金銭感覚 - worship 崇拝型（Money Worship）
+
+- 性格要約: もっと稼げばもっと自由になれると信じる行動派。お金の力を信じ収入増への強い意欲と行動力でより豊かな生活を目指す。
+- テーマカラー: ゴールデンイエロー / リッチバーガンディ
+- 小物: 輝くコイン・上昇する株グラフ・新しいガジェット・高級感のあるバッグ
+- 表情: 意欲に溢れた輝く眼差し・成功を見据える前向きな笑顔
+- ポーズ: 上昇グラフを指して興奮している / 夢を語るように空を指さしている
+
+【男性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, male high-school to college student, energetic ambitious upbeat build, golden yellow and rich burgundy color scheme, bright ambitious glittering eyes, stylish well-groomed hair, wearing a burgundy open collar smart-casual shirt and well-fitted trousers, excitedly pointing up at a glowing rising chart or gold coins with a bold enthusiastic smile, sparkle golden coin and upward-arrow accents, golden yellow and burgundy shimmer, ambitious wealth-aspiring energetic atmosphere; negative: chibi, super-deformed, 2-3 head ratio, mascot, flat vector style, photorealistic, 3D render, dark, horror, occult, astrology mysticism, fortune-telling, real brand logos, watermark, in-image text, uncanny valley, gritty texture, cluttered background`
+
+【女性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, female high-school to college student, energetic ambitious confident figure, golden yellow and rich burgundy color scheme, bright ambitious sparkling eyes, stylish hair in a chic half-updo with a gold hair accessory, wearing a golden-yellow blouse with a burgundy blazer and tailored trousers, excitedly gesturing upward toward a glowing ascending chart or gold coins with a bold forward-looking smile, sparkle golden coin and upward-arrow accents, ambitious wealth-aspiring energetic atmosphere; negative: chibi, super-deformed, 2-3 head ratio, mascot, flat vector style, photorealistic, 3D render, dark, horror, occult, astrology mysticism, fortune-telling, real brand logos, watermark, in-image text, uncanny valley, gritty texture, cluttered background`
+
+---
+
+
+### 金銭感覚 - status 地位型（Money Status）
+
+- 性格要約: 洗練された暮らしで自分の価値を表現したい上昇志向の体現者。社会的立場・ブランド・生活水準への高い感度と印象管理力を持つ。
+- テーマカラー: シャンパンゴールド / ディープパープル
+- 小物: 高品質な時計・ブランドバッグ（ロゴなし）・洗練されたコーヒーカップ・タブレット
+- 表情: 自信と優雅さが滲む表情・品のある笑顔
+- ポーズ: カフェでタブレットを見ながら洗練された姿勢 / ラグジュアリーな空間でポーズ
+
+【男性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, male high-school to college student, polished elegant refined build, champagne gold and deep purple color scheme, confident composed eyes with a poised sophisticated air, neatly styled hair with a sleek finish, wearing a luxurious deep-purple high-quality turtleneck and tailored champagne-gold blazer, sitting at a stylish cafe table with a sleek tablet and an elegantly presented coffee cup, a classic quality wristwatch on the wrist, composed self-assured smile, champagne gold and purple shimmer sparkle accents, refined upscale stylish atmosphere; negative: chibi, super-deformed, 2-3 head ratio, mascot, flat vector style, photorealistic, 3D render, dark, horror, occult, astrology mysticism, fortune-telling, real brand logos, watermark, in-image text, uncanny valley, gritty texture, cluttered background`
+
+【女性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, female high-school to college student, elegant refined sophisticated figure, champagne gold and deep purple color scheme, confident composed eyes with poise and grace, glossy dark hair in a sleek style with a delicate gold hair ornament, wearing a deep-purple silk-like elegant blouse and champagne-gold tailored skirt, seated at a chic cafe with a high-quality sleek tablet and an artfully presented coffee, a refined quality handbag (no visible logo) beside her, composed graceful smile, champagne gold and purple shimmer sparkle accents, refined upscale stylish atmosphere; negative: chibi, super-deformed, 2-3 head ratio, mascot, flat vector style, photorealistic, 3D render, dark, horror, occult, astrology mysticism, fortune-telling, real brand logos, watermark, in-image text, uncanny valley, gritty texture, cluttered background`
+
+---
+
+
+### 金銭感覚 - vigilance 用心型（Money Vigilance）
+
+- 性格要約: 計画と節制で将来への安心を積み上げる堅実派。計画的・慎重・節制的な姿勢で長期資産形成を実現し将来のリスクに備える。
+- テーマカラー: ソリッドブルー / ピュアホワイト
+- 小物: 家計簿・貯金箱・カレンダー（予算計画）・シンプルな財布
+- 表情: 穏やかで安心感のある笑顔・計画が順調な満足の表情
+- ポーズ: 家計簿を丁寧につけている / 貯金箱に丁寧にお金を入れている
+
+【男性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, male high-school to college student, steady calm reliable build, solid blue and pure white color scheme, calm trustworthy steady eyes, neatly combed tidy hair, wearing a clean white shirt and solid blue vest or pullover, sitting at a clean desk carefully writing in a detailed household budget notebook with a simple pen, a small piggy bank and a neat monthly calendar with budget notes beside him, quiet satisfied content expression, solid blue and white soft sparkle accents, calm prudent financially-secure atmosphere; negative: chibi, super-deformed, 2-3 head ratio, mascot, flat vector style, photorealistic, 3D render, dark, horror, occult, astrology mysticism, fortune-telling, real brand logos, watermark, in-image text, uncanny valley, gritty texture, cluttered background`
+
+【女性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, female high-school to college student, steady calm composed figure, solid blue and pure white color scheme, calm trustworthy steady eyes, neat dark hair with a simple white ribbon or blue hairclip, wearing a white blouse and solid navy blue cardigan with a tidy pleated skirt, carefully writing in a detailed household budget planner at a clean organized desk, a small cute piggy bank and a neatly marked monthly calendar nearby, quiet satisfied calm expression, solid blue and white soft sparkle accents, calm prudent financially-secure atmosphere; negative: chibi, super-deformed, 2-3 head ratio, mascot, flat vector style, photorealistic, 3D render, dark, horror, occult, astrology mysticism, fortune-telling, real brand logos, watermark, in-image text, uncanny valley, gritty texture, cluttered background`
+
+---
+
+*end of part1 — 28タイプ × 男女 = 56体*
+
 
 ### Big5動物 - ライオン王（o-high_c-high_e-high_a-high）
 
-- 性格要約: 行動力・計画力・社交的・思いやり。仲間を引っ張る頼れるリーダー。開放性・誠実性・外向性・協調性すべてが高い。
-- キャラ要件: モチーフ=王冠・ライオン擬人化・仲間のシルエット。表情=頼もしい笑顔・温かみのある目。ポーズ=胸を張って立つ・手を差し伸べる。テーマカラー: アンバー (#f59e0b) + ゴールド
+- 性格要約: 行動力×計画力×社交性×思いやりを兼ね備えた万能リーダー
+- テーマカラー: アンバーゴールド #f59e0b / グラデ #fef3c7→#fde68a
+- 動物要素: ライオンの耳と短いたてがみ風の後ろ髪、金色の細い尾
+- 小物: 生徒手帳・リーダーバッジ、腕時計
+- 表情: 自信に満ちた温かい笑顔
+- ポーズ: 腕を広げて仲間を迎え入れるジェスチャー
 
-- 画像生成プロンプト(EN):
-```
-Modern flat 2D mascot illustration, chibi deformed character (2-3 head ratio), clean uniform line art, friendly round shapes, soft flat color with subtle gradient, centered composition fitting in a circular icon frame, simple background with pastel solid color or light gradient plus small thematic decorations, expressive facial features, SNS-ready kawaii style, consistent with a unified character collection, lion king chibi mascot character, majestic proud standing pose, small golden crown prop, warm reliable leader smile, amber gold (#f59e0b) color scheme, soft golden mane details, small star and paw print decorations on background
-```
+【男性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, male character, lion beastman traits (fluffy lion ears, short golden mane-like hair, slim gold tail), confident warm smile, arms open welcoming gesture, wearing amber-gold school blazer with leader badge and wristwatch, tall strong build, amber and warm cream color theme, golden sparkle accents, soft warm bokeh background in cream and gold tones`
+
+【女性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, female character, lion beastman traits (fluffy lion ears, flowing golden hair with mane-like volume, slim gold tail), confident warm smile, arms open welcoming gesture, wearing amber-gold school uniform blouse with leader badge, elegant build, amber and warm cream color theme, golden sparkle accents, soft warm bokeh background in cream and gold tones`
 
 ---
+
 
 ### Big5動物 - ハヤブサ（o-high_c-high_e-high_a-low）
 
-- 性格要約: 目標達成・決断力・行動力・独立心。目標に向かって突き進む鋭い先駆者。
-- キャラ要件: モチーフ=翼・矢・ターゲット。表情=鋭くも爽やかな眼差し、決意の表情。ポーズ=飛行姿勢・前傾。テーマカラー: インディゴ (#6366f1) + ブルー
+- 性格要約: 目標達成×決断力×行動力×独立心の鋭い先駆者
+- テーマカラー: インディゴ #6366f1 / グラデ #e0e7ff→#c7d2fe
+- 動物要素: ハヤブサの羽模様の耳飾り・肩に小さい翼のような装飾
+- 小物: タブレット・スピード感のある流線型のスニーカー
+- 表情: 前を見据える鋭く自信ある表情
+- ポーズ: 片足を踏み出す躍動感のある前傾姿勢
 
-- 画像生成プロンプト(EN):
-```
-Modern flat 2D mascot illustration, chibi deformed character (2-3 head ratio), clean uniform line art, friendly round shapes, soft flat color with subtle gradient, centered composition fitting in a circular icon frame, simple background with pastel solid color or light gradient plus small thematic decorations, expressive facial features, SNS-ready kawaii style, consistent with a unified character collection, falcon pioneer chibi mascot character, forward-leaning flight pose with spread wings, arrow and target props, sharp decisive expression, indigo blue (#6366f1) color scheme, feather detail accents, small wing and arrow decorations on background
-```
+【男性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, male character, falcon-inspired accessories (feather-patterned ear ornament, small wing-like shoulder decoration), sharp confident forward-gazing expression, dynamic forward-leaning stride pose, sleek indigo-blue jacket with streamlined sneakers and tablet in hand, athletic slim build, indigo and periwinkle color theme, speed-line sparkle accents, soft indigo-lavender bokeh background`
+
+【女性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, female character, falcon-inspired accessories (feather-patterned ear ornament, small wing-like shoulder cape), sharp confident forward-gazing expression, dynamic forward-leaning stride pose, sleek indigo-blue jacket with streamlined sneakers and tablet in hand, athletic slim build, indigo and periwinkle color theme, speed-line sparkle accents, soft indigo-lavender bokeh background`
 
 ---
+
 
 ### Big5動物 - フクロウ博士（o-high_c-high_e-low_a-high）
 
-- 性格要約: 知性・計画力・思いやり・洞察力。深く考え、静かに人を支える知者。
-- キャラ要件: モチーフ=本・眼鏡・フクロウ擬人化。表情=穏やかな知性的な微笑み。ポーズ=本を読む・指を立てて説明。テーマカラー: パープル (#7c5cff) + ラベンダー
+- 性格要約: 知性×計画力×思いやり×洞察力の静かな知者
+- テーマカラー: バイオレット #7c5cff / グラデ #ede9fe→#ddd6fe
+- 動物要素: フクロウの丸い耳と目に似た大きな瞳、背中に小さい翼のシルエット
+- 小物: 丸眼鏡・分厚い本・万年筆
+- 表情: 穏やかで洞察に満ちた微笑み
+- ポーズ: 本を持ちながら少し考え込む横顔気味の読書ポーズ
 
-- 画像生成プロンプト(EN):
-```
-Modern flat 2D mascot illustration, chibi deformed character (2-3 head ratio), clean uniform line art, friendly round shapes, soft flat color with subtle gradient, centered composition fitting in a circular icon frame, simple background with pastel solid color or light gradient plus small thematic decorations, expressive facial features, SNS-ready kawaii style, consistent with a unified character collection, owl professor scholar chibi mascot character, reading or explaining pose with finger up, open book and round glasses props, gentle wise smile, purple (#7c5cff) and lavender color scheme, small star and feather decorations on background
-```
+【男性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, male character, owl beastman traits (round tufted owl ears, large perceptive eyes, subtle wing texture on back), gentle insightful smile, three-quarter reading pose holding thick book and fountain pen, round glasses, violet-purple academic cardigan over collared shirt, slim scholarly build, violet and lavender color theme, soft glowing sparkle accents around books, misty lavender bokeh background`
+
+【女性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, female character, owl beastman traits (round tufted owl ears, large perceptive eyes, subtle wing texture on back), gentle insightful smile, three-quarter reading pose holding thick book and fountain pen, round glasses, violet-purple academic cardigan over blouse, slender scholarly build, violet and lavender color theme, soft glowing sparkle accents around books, misty lavender bokeh background`
 
 ---
+
 
 ### Big5動物 - タコ博士（o-high_c-high_e-low_a-low）
 
-- 性格要約: 分析力・計画力・独創性・集中力。緻密な戦略で問題を解き明かす孤高の研究者。
-- キャラ要件: モチーフ=タコ擬人化・試験管・データグラフ。表情=真剣な集中顔、知的な目。ポーズ=複数の腕で作業している（デフォルメ）。テーマカラー: バイオレット (#8b5cf6) + アクア
+- 性格要約: 分析力×計画力×独創性×集中力の孤高の研究者
+- テーマカラー: パープル #8b5cf6 / グラデ #f5f3ff→#ede9fe
+- 動物要素: タコのテンタクル模様のロングコート裾・頭部に小さなドットアクセサリー
+- 小物: 複数のビーカー・研究ノート、ルーペ
+- 表情: 研究に没頭した真剣な表情
+- ポーズ: 顎に手を当てて思考中の静的ポーズ
 
-- 画像生成プロンプト(EN):
-```
-Modern flat 2D mascot illustration, chibi deformed character (2-3 head ratio), clean uniform line art, friendly round shapes, soft flat color with subtle gradient, centered composition fitting in a circular icon frame, simple background with pastel solid color or light gradient plus small thematic decorations, expressive facial features, SNS-ready kawaii style, consistent with a unified character collection, octopus scientist researcher chibi mascot character, multitasking pose with multiple arms working, test tube and data chart props, focused analytical expression, violet (#8b5cf6) and aqua color scheme, small bubble and molecule decorations on background
-```
+【男性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, male character, octopus-inspired design (long lab coat with tentacle-pattern hem trim, small round dot accessories), focused analytical expression, chin-resting thinking pose, holding research notebook and magnifying glass with beakers nearby, deep purple long coat over turtleneck, slim methodical build, purple and pale lilac color theme, subtle glowing data-dot sparkles, cool pale purple bokeh background`
+
+【女性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, female character, octopus-inspired design (long lab coat with tentacle-pattern hem trim, small round dot hair accessories), focused analytical expression, chin-resting thinking pose, holding research notebook and magnifying glass with beakers nearby, deep purple long coat over blouse, slender methodical build, purple and pale lilac color theme, subtle glowing data-dot sparkles, cool pale purple bokeh background`
 
 ---
+
 
 ### Big5動物 - イルカ（o-high_c-low_e-high_a-high）
 
-- 性格要約: 社交的・共感力・自由・好奇心。遊び心と優しさで場を明るくする自由な社交家。
-- キャラ要件: モチーフ=波・イルカ擬人化・笑顔の泡。表情=最高の笑顔・エネルギッシュ。ポーズ=ジャンプ・跳びはねる。テーマカラー: スカイブルー (#0ea5e9) + アクア
+- 性格要約: 社交的×共感力×自由×好奇心の遊び心ある社交家
+- テーマカラー: スカイブルー #0ea5e9 / グラデ #e0f2fe→#bae6fd
+- 動物要素: イルカのフィン形の耳・背中にはイルカの滑らかな体表を思わせる光沢ジャケット
+- 小物: ビーチボール・サングラス（首にかけ）
+- 表情: 弾けるような明るい笑顔
+- ポーズ: ジャンプするような軽やかな躍動ポーズ
 
-- 画像生成プロンプト(EN):
-```
-Modern flat 2D mascot illustration, chibi deformed character (2-3 head ratio), clean uniform line art, friendly round shapes, soft flat color with subtle gradient, centered composition fitting in a circular icon frame, simple background with pastel solid color or light gradient plus small thematic decorations, expressive facial features, SNS-ready kawaii style, consistent with a unified character collection, dolphin social playful chibi mascot character, jumping leaping pose, wave and bubble props, biggest joyful smile, sky blue (#0ea5e9) and aqua color scheme, small wave and splash decorations on background
-```
+【男性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, male character, dolphin beastman traits (smooth fin-shaped ears, sleek glossy sky-blue jacket suggesting dolphin skin), radiant bright smile, light energetic jumping-leap pose, sunglasses hung around neck, sky-blue and white outfit, athletic playful build, sky blue and aqua color theme, bubble sparkle and water-light bokeh accents, bright aqua-sky bokeh background`
+
+【女性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, female character, dolphin beastman traits (smooth fin-shaped hair clip, sleek glossy sky-blue jacket suggesting dolphin skin), radiant bright smile, light energetic jumping-leap pose, sunglasses hung around neck, sky-blue and white outfit with flowing skirt, slender playful build, sky blue and aqua color theme, bubble sparkle and water-light bokeh accents, bright aqua-sky bokeh background`
 
 ---
+
 
 ### Big5動物 - キツネ（o-high_c-low_e-high_a-low）
 
-- 性格要約: 創造力・行動力・独創性・自由。ユニークな発想で場を席巻する自由な挑戦者。
-- キャラ要件: モチーフ=炎・電球・キツネ擬人化。表情=賢そうなにやり笑い・いたずら心。ポーズ=ひらめきポーズ・跳びはねる。テーマカラー: オレンジ (#f97316) + レッド
+- 性格要約: 創造力×行動力×独創性×自由のユニークな挑戦者
+- テーマカラー: オレンジ #f97316 / グラデ #fff7ed→#fed7aa
+- 動物要素: キツネの三角耳と、ふさふさのオレンジとクリーム色の尾
+- 小物: スケッチブック・カラフルなマーカーペン
+- 表情: いたずらっぽい自信に満ちたスマイル
+- ポーズ: 片目をつぶりウィンクしながらスケッチブックを掲げる
 
-- 画像生成プロンプト(EN):
-```
-Modern flat 2D mascot illustration, chibi deformed character (2-3 head ratio), clean uniform line art, friendly round shapes, soft flat color with subtle gradient, centered composition fitting in a circular icon frame, simple background with pastel solid color or light gradient plus small thematic decorations, expressive facial features, SNS-ready kawaii style, consistent with a unified character collection, fox creative challenger chibi mascot character, mischievous idea pose, lightbulb and flame props, clever smirking expression, orange (#f97316) and red color scheme, fluffy fox tail detail, small star and zigzag decorations on background
-```
+【男性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, male character, fox beastman traits (pointed orange fox ears, fluffy orange-and-cream bushy tail), mischievous confident wink smile, holding sketchbook up with colorful markers, casual streetwear in orange and white tones, energetic slim build, orange and warm peach color theme, star-burst sparkle accents, soft warm orange-cream bokeh background`
+
+【女性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, female character, fox beastman traits (pointed orange fox ears, fluffy orange-and-cream bushy tail), mischievous confident wink smile, holding sketchbook up with colorful markers, casual chic outfit with orange cardigan and cream skirt, slender energetic build, orange and warm peach color theme, star-burst sparkle accents, soft warm orange-cream bokeh background`
 
 ---
+
 
 ### Big5動物 - ネコ（o-high_c-low_e-low_a-high）
 
-- 性格要約: 独創性・共感力・自由・癒し。自分のペースで、大切な人を静かに支える。
-- キャラ要件: モチーフ=ネコ擬人化・月・クッション。表情=穏やかな癒し系の笑顔。ポーズ=まったり座る・ゆったり。テーマカラー: ピンク (#ec4899) + ラベンダー
+- 性格要約: 独創性×共感力×自由×癒しの自分ペース共感者
+- テーマカラー: ピンク #ec4899 / グラデ #fdf2f8→#fce7f3
+- 動物要素: ネコの丸い耳・細い尾・肉球模様のアクセサリー
+- 小物: 手作りのぬいぐるみ・スケッチノート
+- 表情: 穏やかで親しみやすいゆるい笑顔
+- ポーズ: 膝を抱えてゆったり座るくつろぎポーズ
 
-- 画像生成プロンプト(EN):
-```
-Modern flat 2D mascot illustration, chibi deformed character (2-3 head ratio), clean uniform line art, friendly round shapes, soft flat color with subtle gradient, centered composition fitting in a circular icon frame, simple background with pastel solid color or light gradient plus small thematic decorations, expressive facial features, SNS-ready kawaii style, consistent with a unified character collection, cat relaxed creative chibi mascot character, cozy sitting pose, soft cushion and crescent moon props, gentle healing smile, pink (#ec4899) and lavender color scheme, cat ear and paw detail, small star and moon decorations on background
-```
+【男性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, male character, cat beastman traits (round soft cat ears, slim elegant tail, paw-print accessories), gentle relaxed smile, sitting with knees hugged in cozy lounge pose, holding handmade plush toy, soft oversized pastel pink hoodie and comfortable pants, slender gentle build, rose pink and cream color theme, soft petal-fall sparkle accents, gentle pink bokeh background`
+
+【女性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, female character, cat beastman traits (round soft cat ears, slim elegant tail, paw-print accessories), gentle relaxed smile, sitting with knees hugged in cozy lounge pose, holding handmade plush toy, soft oversized pastel pink knit sweater and skirt, slender gentle build, rose pink and cream color theme, soft petal-fall sparkle accents, gentle pink bokeh background`
 
 ---
+
 
 ### Big5動物 - トラ（o-high_c-low_e-low_a-low）
 
-- 性格要約: 独創性・個性・自由・直感。独自の世界観を持つ孤独な芸術家。
-- キャラ要件: モチーフ=トラ擬人化・アート・炎。表情=クールで個性的・独特の眼差し。ポーズ=一人でアートに集中・ポーズ。テーマカラー: アンバー (#f59e0b) + ブラック
+- 性格要約: 独創性×個性×自由×直感の孤独な芸術家
+- テーマカラー: アンバー #f59e0b / グラデ #fffbeb→#fde68a
+- 動物要素: トラの縞柄の耳と縞模様の細い尾
+- 小物: ヘッドフォン・スケッチブック（黒表紙）
+- 表情: 遠くを見る神秘的・内向きの眼差し
+- ポーズ: 壁に背中を預けて腕を組む孤高の立ちポーズ
 
-- 画像生成プロンプト(EN):
-```
-Modern flat 2D mascot illustration, chibi deformed character (2-3 head ratio), clean uniform line art, friendly round shapes, soft flat color with subtle gradient, centered composition fitting in a circular icon frame, simple background with pastel solid color or light gradient plus small thematic decorations, expressive facial features, SNS-ready kawaii style, consistent with a unified character collection, tiger lone artist chibi mascot character, independent artistic solo pose, canvas and paintbrush props, cool unique artistic expression, amber (#f59e0b) and black stripe color scheme, tiger stripe pattern detail, small flame and art palette decorations on background
-```
+【男性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, male character, tiger beastman traits (striped orange-black cat ears, striped slender tail), distant mysterious gaze, standing arms-crossed lean against wall loner pose, large headphones around neck, black sketchbook tucked under arm, dark amber and black artistic outfit with distressed details, slim independent build, amber and warm yellow color theme, ember-spark sparkle accents, soft amber bokeh background`
+
+【女性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, female character, tiger beastman traits (striped orange-black cat ears, striped slender tail), distant mysterious gaze, standing arms-crossed lean against wall loner pose, large headphones around neck, black sketchbook tucked under arm, dark amber artistic dress with asymmetric hem, slender independent build, amber and warm yellow color theme, ember-spark sparkle accents, soft amber bokeh background`
 
 ---
+
 
 ### Big5動物 - イヌ（o-low_c-high_e-high_a-high）
 
-- 性格要約: 誠実さ・協調性・責任感・社交的。誰にでも誠実、チームの要となる頼れる存在。
-- キャラ要件: モチーフ=イヌ擬人化・ハート・仲間。表情=純粋で誠実な笑顔、信頼感のある目。ポーズ=元気に立つ・手を振る。テーマカラー: グリーン (#10b981) + ウォームイエロー
+- 性格要約: 誠実さ×協調性×責任感×社交性の頼れる存在
+- テーマカラー: エメラルドグリーン #10b981 / グラデ #ecfdf5→#d1fae5
+- 動物要素: イヌの丸い垂れ耳・ふわふわの短い尾
+- 小物: 部活のビブス・クリップボード
+- 表情: 誠実で明るいオープンスマイル
+- ポーズ: 右手でサムズアップしながら前に踏み出す
 
-- 画像生成プロンプト(EN):
-```
-Modern flat 2D mascot illustration, chibi deformed character (2-3 head ratio), clean uniform line art, friendly round shapes, soft flat color with subtle gradient, centered composition fitting in a circular icon frame, simple background with pastel solid color or light gradient plus small thematic decorations, expressive facial features, SNS-ready kawaii style, consistent with a unified character collection, dog loyal team player chibi mascot character, enthusiastic waving pose, heart and friendship badge props, sincere trustworthy smile, green (#10b981) and warm yellow color scheme, floppy ear detail, small heart and paw print decorations on background
-```
+【男性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, male character, dog beastman traits (floppy round dog ears, fluffy short tail), sincere bright open smile, stepping forward thumbs-up gesture, wearing sports team vest over white shirt and holding clipboard, sturdy reliable build, emerald green and mint color theme, four-pointed star sparkle accents, fresh green bokeh background`
+
+【女性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, female character, dog beastman traits (floppy round dog ears, fluffy short tail), sincere bright open smile, stepping forward thumbs-up gesture, wearing sports team vest over white blouse and holding clipboard, cheerful dependable build, emerald green and mint color theme, four-pointed star sparkle accents, fresh green bokeh background`
 
 ---
+
 
 ### Big5動物 - オオカミ（o-low_c-high_e-high_a-low）
 
-- 性格要約: 決断力・計画力・行動力・自立心。群れを率いる強さと規律のリーダー。
-- キャラ要件: モチーフ=オオカミ擬人化・旗・月。表情=力強い決意の表情、鋭い目。ポーズ=先頭に立つ・旗を掲げる。テーマカラー: スレートグレー (#64748b) + ブルー
+- 性格要約: 決断力×計画力×行動力×自立心の強さと規律のリーダー
+- テーマカラー: スレートブルー #64748b / グラデ #f8fafc→#e2e8f0
+- 動物要素: オオカミの尖った耳・銀灰色の流れる尾
+- 小物: 戦略ノート・万年筆
+- 表情: 鋭く決意に満ちた表情
+- ポーズ: 腕を組んで全体を見渡すリーダーポーズ
 
-- 画像生成プロンプト(EN):
-```
-Modern flat 2D mascot illustration, chibi deformed character (2-3 head ratio), clean uniform line art, friendly round shapes, soft flat color with subtle gradient, centered composition fitting in a circular icon frame, simple background with pastel solid color or light gradient plus small thematic decorations, expressive facial features, SNS-ready kawaii style, consistent with a unified character collection, wolf pack leader chibi mascot character, commanding forward pose with flag, crescent moon accent prop, determined strong expression, slate gray (#64748b) and blue color scheme, sharp wolf ear and tail detail, small moon and footprint decorations on background
-```
+【男性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, male character, wolf beastman traits (sharp pointed wolf ears, silver-grey flowing tail), sharp decisive expression with strong eye contact, arms-crossed commanding survey pose, slate-blue structured jacket with silver trim, holding strategy notebook, tall powerful athletic build, slate blue and silver-grey color theme, crisp moonlight-glint sparkle accents, cool blue-grey bokeh background`
+
+【女性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, female character, wolf beastman traits (sharp pointed wolf ears, silver-grey flowing tail), sharp decisive expression with strong eye contact, arms-crossed commanding survey pose, slate-blue structured blazer with silver trim, holding strategy notebook, tall confident athletic build, slate blue and silver-grey color theme, crisp moonlight-glint sparkle accents, cool blue-grey bokeh background`
 
 ---
+
 
 ### Big5動物 - ビーバー（o-low_c-high_e-low_a-high）
 
-- 性格要約: 堅実さ・計画力・思いやり・忍耐力。コツコツ積み上げ、みんなの土台を作る名職人。
-- キャラ要件: モチーフ=ビーバー擬人化・木材・ダム。表情=真剣で穏やかな職人の顔。ポーズ=工作中・物を作る。テーマカラー: ブラウン (#a16207) + ウォームイエロー
+- 性格要約: 堅実さ×計画力×思いやり×忍耐力のコツコツ名職人
+- テーマカラー: ゴールデンブラウン #a16207 / グラデ #fefce8→#fef9c3
+- 動物要素: ビーバーの丸い耳・平たいしっぽ（服の裾に平べったい尾の意匠）
+- 小物: 工具ベルト・設計図（丸めた紙）
+- 表情: 穏やかで誠実な微笑み
+- ポーズ: 設計図を広げて確認する職人ポーズ
 
-- 画像生成プロンプト(EN):
-```
-Modern flat 2D mascot illustration, chibi deformed character (2-3 head ratio), clean uniform line art, friendly round shapes, soft flat color with subtle gradient, centered composition fitting in a circular icon frame, simple background with pastel solid color or light gradient plus small thematic decorations, expressive facial features, SNS-ready kawaii style, consistent with a unified character collection, beaver craftsman builder chibi mascot character, diligent building working pose, wooden log and hammer props, steadfast reliable expression, brown (#a16207) and warm yellow color scheme, flat tail and buck teeth detail, small wood chip and leaf decorations on background
-```
+【男性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, male character, beaver beastman traits (round beaver ears, flat-paddle tail silhouette on jacket hem), calm sincere smile, craftsman pose unrolling blueprint design paper, tool belt over brown work jacket, sturdy reliable stocky build, golden brown and warm yellow color theme, wood-grain texture sparkle accents, soft warm amber bokeh background`
+
+【女性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, female character, beaver beastman traits (round beaver ears, flat-paddle tail silhouette on skirt hem), calm sincere smile, craftsman pose unrolling blueprint design paper, tool belt over warm brown apron-style outfit, sturdy dependable build, golden brown and warm yellow color theme, wood-grain texture sparkle accents, soft warm amber bokeh background`
 
 ---
+
 
 ### Big5動物 - ワシ（o-low_c-high_e-low_a-low）
 
-- 性格要約: 完璧主義・集中力・自立心・精度。高い目標を静かに追い続ける孤高の完璧主義者。
-- キャラ要件: モチーフ=鷲擬人化・高い山頂・スコープ。表情=鋭く集中した遠くを見つめる目。ポーズ=高所から見下ろす・翼を広げる。テーマカラー: ダークグレー (#475569) + ホワイト
+- 性格要約: 完璧主義×集中力×自立心×精度の孤高の完璧主義者
+- テーマカラー: スレートグレー #475569 / グラデ #f1f5f9→#e2e8f0
+- 動物要素: ワシの鋭い羽根の耳飾り・背中に羽根モチーフのコート
+- 小物: 精密定規・精密な手書きノート
+- 表情: 静かで鋭く集中した無表情気味の目
+- ポーズ: 高台から遠くを見渡す静の立ちポーズ
 
-- 画像生成プロンプト(EN):
-```
-Modern flat 2D mascot illustration, chibi deformed character (2-3 head ratio), clean uniform line art, friendly round shapes, soft flat color with subtle gradient, centered composition fitting in a circular icon frame, simple background with pastel solid color or light gradient plus small thematic decorations, expressive facial features, SNS-ready kawaii style, consistent with a unified character collection, eagle perfectionist soaring chibi mascot character, majestic wings spread or perched high pose, mountain peak and scope props, sharp focused distant gaze, dark gray (#475569) and white color scheme, feather detail accents, small mountain and wind line decorations on background
-```
+【男性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, male character, eagle-inspired design (sharp feather-quill ear accessory, coat with eagle-wing feather pattern on back), quiet piercing focused expression, static standing on elevated platform surveying distance, holding precise ruler and detailed handwritten notebook, slate-grey tailored long coat, tall refined solitary build, cool slate grey and ice-white color theme, precision-crisp crystal sparkle accents, clean minimal grey-white bokeh background`
+
+【女性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, female character, eagle-inspired design (sharp feather-quill ear accessory, long coat with eagle-wing feather pattern on back), quiet piercing focused expression, static standing on elevated platform surveying distance, holding precise ruler and detailed handwritten notebook, slate-grey tailored long coat with elegant fit, refined solitary build, cool slate grey and ice-white color theme, precision-crisp crystal sparkle accents, clean minimal grey-white bokeh background`
 
 ---
+
 
 ### Big5動物 - パンダ（o-low_c-low_e-high_a-high）
 
-- 性格要約: 社交的・癒し・共感力・明るさ。みんなに愛される場の雰囲気メーカー。
-- キャラ要件: モチーフ=パンダ擬人化・竹・ハート。表情=丸くて可愛い最高の笑顔。ポーズ=ふわっと抱きしめる・両手を広げる。テーマカラー: グリーン (#7ec79b) + ホワイト
+- 性格要約: 社交的×癒し×共感力×明るさの場の雰囲気メーカー
+- テーマカラー: ミントグリーン #7ec79b / グラデ #f0fdf4→#dcfce7
+- 動物要素: パンダの白黒まるい耳・ふわふわの丸い尾
+- 小物: マシュマロ入り飲み物・かわいいポーチ
+- 表情: みんなを和ませる満面の笑顔
+- ポーズ: 両手を振って嬉しそうにアピールするポーズ
 
-- 画像生成プロンプト(EN):
-```
-Modern flat 2D mascot illustration, chibi deformed character (2-3 head ratio), clean uniform line art, friendly round shapes, soft flat color with subtle gradient, centered composition fitting in a circular icon frame, simple background with pastel solid color or light gradient plus small thematic decorations, expressive facial features, SNS-ready kawaii style, consistent with a unified character collection, panda mood maker lovable chibi mascot character, fluffy welcoming hug pose, bamboo and heart props, roundest most adorable smile, green (#7ec79b) and white with black patch color scheme, panda ear and eye patch detail, small bamboo leaf and heart decorations on background
-```
+【男性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, male character, panda beastman traits (round black-and-white panda ears, fluffy round tail), full beaming smile that warms everyone, both hands waving cheerful appeal pose, holding cute mug with marshmallows, black-and-white soft outfit with mint green accents, chubby-cheeked friendly build, mint green and cream-white color theme, heart and star sparkle accents, fresh mint-green bokeh background`
+
+【女性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, female character, panda beastman traits (round black-and-white panda ears, fluffy round tail), full beaming smile that warms everyone, both hands waving cheerful appeal pose, holding cute mug with marshmallows, black-and-white soft blouse with mint green ribbon, cute pouch accessory, friendly cheerful build, mint green and cream-white color theme, heart and star sparkle accents, fresh mint-green bokeh background`
 
 ---
+
 
 ### Big5動物 - チーター（o-low_c-low_e-high_a-low）
 
-- 性格要約: 瞬発力・行動力・自由・決断力。直感と勢いで道を切り開く行動派のスプリンター。
-- キャラ要件: モチーフ=チーター擬人化・稲妻・ダッシュ線。表情=爽やかで俊敏な笑顔、速さを感じる。ポーズ=全力ダッシュ・スタートダッシュ。テーマカラー: アンバー (#d97706) + イエロー
+- 性格要約: 瞬発力×行動力×自由×決断力の行動派スプリンター
+- テーマカラー: アンバーオレンジ #d97706 / グラデ #fff7ed→#fde68a
+- 動物要素: チーターのスポット柄の耳・細くしなやかな尾
+- 小物: ストップウォッチ・スニーカー（ハイテク）
+- 表情: 直感に従った眩しいスピードスマイル
+- ポーズ: 疾走感のあるスタートダッシュポーズ
 
-- 画像生成プロンプト(EN):
-```
-Modern flat 2D mascot illustration, chibi deformed character (2-3 head ratio), clean uniform line art, friendly round shapes, soft flat color with subtle gradient, centered composition fitting in a circular icon frame, simple background with pastel solid color or light gradient plus small thematic decorations, expressive facial features, SNS-ready kawaii style, consistent with a unified character collection, cheetah speed sprinter chibi mascot character, full speed running dash pose, lightning bolt and speed line props, energetic dashing smile, amber (#d97706) and yellow with black spot color scheme, spotted pattern detail, small lightning and wind decorations on background
-```
+【男性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, male character, cheetah beastman traits (spotted cheetah ears, slim agile tail), dazzling speed-of-instinct smile, explosive sprint start pose mid-dash, stopwatch in hand, high-tech athletic sneakers, sporty amber-and-black racing jacket, lean aerodynamic build, amber orange and yellow color theme, motion-blur speed-line sparkle accents, warm golden bokeh background`
+
+【女性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, female character, cheetah beastman traits (spotted cheetah ears, slim agile tail), dazzling speed-of-instinct smile, explosive sprint start pose mid-dash, stopwatch in hand, high-tech athletic sneakers, sporty amber-and-black racing jacket with short skirt, lean aerodynamic build, amber orange and yellow color theme, motion-blur speed-line sparkle accents, warm golden bokeh background`
 
 ---
+
 
 ### Big5動物 - ウサギ（o-low_c-low_e-low_a-high）
 
-- 性格要約: 温かさ・共感力・穏やかさ・思いやり。穏やかで優しい、そっと寄り添う守り手。
-- キャラ要件: モチーフ=ウサギ擬人化・花・毛布。表情=優しく穏やかな癒し系の微笑み。ポーズ=寄り添う・柔らかいポーズ。テーマカラー: ピンク (#f472b6) + ラベンダー
+- 性格要約: 温かさ×共感力×穏やかさ×思いやりのそっと寄り添う守り手
+- テーマカラー: ライトピンク #f472b6 / グラデ #fdf2f8→#fbcfe8
+- 動物要素: ウサギの長い耳・綿のようなふわふわの白い尾
+- 小物: 温かいティーカップ・小花を束ねた花束
+- 表情: 安心させる穏やかな優しい微笑み
+- ポーズ: 両手でカップを包み込んで優しく微笑むポーズ
 
-- 画像生成プロンプト(EN):
-```
-Modern flat 2D mascot illustration, chibi deformed character (2-3 head ratio), clean uniform line art, friendly round shapes, soft flat color with subtle gradient, centered composition fitting in a circular icon frame, simple background with pastel solid color or light gradient plus small thematic decorations, expressive facial features, SNS-ready kawaii style, consistent with a unified character collection, rabbit gentle caretaker chibi mascot character, soft snuggling cozy pose, small flower and blanket props, warmest gentlest smile, pink (#f472b6) and lavender color scheme, long floppy ear detail, small flower and soft cloud decorations on background
-```
+【男性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, male character, rabbit beastman traits (long soft bunny ears, fluffy cotton-ball tail), gentle reassuring warm smile, both hands cupping warm teacup pose, small bouquet of flowers nearby, soft light-pink sweater over white shirt, gentle calm build, light pink and blush-white color theme, soft flower-petal sparkle accents, delicate pink bokeh background`
+
+【女性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, female character, rabbit beastman traits (long soft bunny ears, fluffy cotton-ball tail), gentle reassuring warm smile, both hands cupping warm teacup pose, small bouquet of wildflowers held, soft light-pink floral dress, gentle elegant build, light pink and blush-white color theme, soft flower-petal sparkle accents, delicate pink bokeh background`
 
 ---
+
 
 ### Big5動物 - ハリネズミ（o-low_c-low_e-low_a-low）
 
-- 性格要約: 個性・自立心・マイペース・内省。自分だけの世界をもつ、静かな一匹狼。
-- キャラ要件: モチーフ=ハリネズミ擬人化・本・月。表情=独特の静かな微笑み、深い目。ポーズ=一人で本を読む・丸まっている。テーマカラー: バイオレット (#a78bfa) + グレー
+- 性格要約: 個性×自立心×マイペース×内省の静かな一匹狼
+- テーマカラー: ラベンダー #a78bfa / グラデ #f5f3ff→#ede9fe
+- 動物要素: ハリネズミの丸い耳と背中に小さな針を思わせる短いスパイク装飾コート
+- 小物: ヘッドフォン・マイワールドを描いたスケッチブック
+- 表情: 静かで内向きな、世界観のある表情
+- ポーズ: 一人でヘッドフォンしながら空を見上げる内省ポーズ
 
-- 画像生成プロンプト(EN):
-```
-Modern flat 2D mascot illustration, chibi deformed character (2-3 head ratio), clean uniform line art, friendly round shapes, soft flat color with subtle gradient, centered composition fitting in a circular icon frame, simple background with pastel solid color or light gradient plus small thematic decorations, expressive facial features, SNS-ready kawaii style, consistent with a unified character collection, hedgehog lone wolf introvert chibi mascot character, cozy solo reading pose, small book and moon props, quiet unique independent expression, violet (#a78bfa) and gray color scheme, spiky back detail, small star and moon decorations on background
-```
+【男性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, male character, hedgehog beastman traits (round hedgehog ears, short spiked texture on hooded jacket back suggesting quills), quiet introspective expression, looking upward alone with headphones on, sketchbook of personal world-building art under arm, lavender-grey hooded jacket, compact independent build, lavender and soft purple color theme, dreamy star and moon sparkle accents, soft lavender bokeh background`
 
----
-
-## 6. 星座 12体（性格類型として擬人化・占い色NG）
-
-テーマカラー: 各星座のエレメントカラー系統を使用
-- 火のエレメント（牡羊・獅子・射手）: オレンジ〜レッド系
-- 地のエレメント（牡牛・乙女・山羊）: グリーン〜ブラウン系
-- 風のエレメント（双子・天秤・水瓶）: ブルー〜シアン系
-- 水のエレメント（蟹・蠍・魚）: インディゴ〜ティール系
-
-注意: 占い・運勢・神秘主義的演出は一切禁止。性格傾向キャラクターとして擬人化のみ。
+【女性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, female character, hedgehog beastman traits (round hedgehog ears, short spiked texture on cardigan back suggesting quills), quiet introspective expression, looking upward alone with headphones on, sketchbook of personal world-building art under arm, lavender-grey oversized cardigan, compact independent build, lavender and soft purple color theme, dreamy star and moon sparkle accents, soft lavender bokeh background`
 
 ---
 
-### 星座 - 牡羊座 Aries（3/21-4/19）
-
-- 性格要約: 新しいことへの挑戦を好む先駆者。高い行動力・率直さ・リーダーシップ・競争心。
-- キャラ要件: モチーフ=炎・矢・シールド（牡羊の角をデフォルメしたヘアバンド程度）。表情=エネルギッシュで自信に満ちた笑顔。ポーズ=前に飛び出す・先頭を走る。テーマカラー: ファイアレッド (#ef4444) + オレンジ
-
-- 画像生成プロンプト(EN):
-```
-Modern flat 2D mascot illustration, chibi deformed character (2-3 head ratio), clean uniform line art, friendly round shapes, soft flat color with subtle gradient, centered composition fitting in a circular icon frame, simple background with pastel solid color or light gradient plus small thematic decorations, expressive facial features, SNS-ready kawaii style, consistent with a unified character collection, Aries personality type pioneer chibi mascot character (NOT fortune telling, personality classification only), bold dashing forward pose, small flame and arrow props, energetic confident grin, fire red (#ef4444) and orange color scheme, cute small ram horn hair accessory detail, small flame and spark decorations on background
-```
-
----
-
-### 星座 - 牡牛座 Taurus（4/20-5/20）
-
-- 性格要約: 粘り強い持続力と忍耐力を持つ安定志向。誠実さ・美的センス・信頼性が際立つ。
-- キャラ要件: モチーフ=花・大地・宝石。表情=穏やかで温かい笑顔、安心感のある目。ポーズ=ゆったり座る・花を持つ。テーマカラー: ダークグリーン (#16a34a) + ゴールド
-
-- 画像生成プロンプト(EN):
-```
-Modern flat 2D mascot illustration, chibi deformed character (2-3 head ratio), clean uniform line art, friendly round shapes, soft flat color with subtle gradient, centered composition fitting in a circular icon frame, simple background with pastel solid color or light gradient plus small thematic decorations, expressive facial features, SNS-ready kawaii style, consistent with a unified character collection, Taurus personality type steadfast chibi mascot character (personality classification only), relaxed sitting pose, flower and gem props, calm warm trustworthy smile, dark green (#16a34a) and gold color scheme, small flower crown hair detail, small leaf and gemstone decorations on background
-```
-
----
-
-### 星座 - 双子座 Gemini（5/21-6/21）
-
-- 性格要約: 知的好奇心とコミュニケーション力の象徴。柔軟な適応力・多面的な思考・社交性。
-- キャラ要件: モチーフ=本2冊・吹き出し2つ・蝶。表情=知的でにこやかな表情・話しかけている。ポーズ=両手で話す・ジェスチャー豊か。テーマカラー: スカイブルー (#38bdf8) + イエロー
-
-- 画像生成プロンプト(EN):
-```
-Modern flat 2D mascot illustration, chibi deformed character (2-3 head ratio), clean uniform line art, friendly round shapes, soft flat color with subtle gradient, centered composition fitting in a circular icon frame, simple background with pastel solid color or light gradient plus small thematic decorations, expressive facial features, SNS-ready kawaii style, consistent with a unified character collection, Gemini personality type communicator chibi mascot character (personality classification only), animated talking gesturing pose, two speech bubbles and book props, lively curious smile, sky blue (#38bdf8) and yellow color scheme, butterfly accent detail, small dual book and wind decorations on background
-```
-
----
-
-### 星座 - 蟹座 Cancer（6/22-7/22）
-
-- 性格要約: 深い共感力と家族への愛情を持つ感情の守護者。直観力・献身性・思いやり。
-- キャラ要件: モチーフ=殻・月・ハート。表情=温かく包み込む優しい笑顔。ポーズ=抱きしめる・守る姿勢。テーマカラー: ティールブルー (#0d9488) + シルバー
-
-- 画像生成プロンプト(EN):
-```
-Modern flat 2D mascot illustration, chibi deformed character (2-3 head ratio), clean uniform line art, friendly round shapes, soft flat color with subtle gradient, centered composition fitting in a circular icon frame, simple background with pastel solid color or light gradient plus small thematic decorations, expressive facial features, SNS-ready kawaii style, consistent with a unified character collection, Cancer personality type guardian empathy chibi mascot character (personality classification only), protective embracing pose, crescent moon and heart props, warm nurturing smile, teal blue (#0d9488) and silver color scheme, shell motif hair accessory detail, small moon and wave decorations on background
-```
-
----
-
-### 星座 - 獅子座 Leo（7/23-8/22）
-
-- 性格要約: 存在感と創造性の象徴。情熱的なリーダーシップ・自己表現・寛大さ・誠実さ。
-- キャラ要件: モチーフ=王冠・スポットライト・たてがみデフォルメ。表情=輝くような自信の笑顔。ポーズ=舞台中央・腕を広げる。テーマカラー: ゴールド (#eab308) + オレンジ
-
-- 画像生成プロンプト(EN):
-```
-Modern flat 2D mascot illustration, chibi deformed character (2-3 head ratio), clean uniform line art, friendly round shapes, soft flat color with subtle gradient, centered composition fitting in a circular icon frame, simple background with pastel solid color or light gradient plus small thematic decorations, expressive facial features, SNS-ready kawaii style, consistent with a unified character collection, Leo personality type charisma leader chibi mascot character (personality classification only), center stage arms spread pose, small crown and spotlight props, radiant confident grin, gold (#eab308) and orange color scheme, fluffy mane hair detail, small sun and star decorations on background
-```
-
----
-
-### 星座 - 乙女座 Virgo（8/23-9/22）
-
-- 性格要約: 分析力と実務能力の象徴。細部への注意力・几帳面さ・サポート精神・謙虚さ。
-- キャラ要件: モチーフ=麦・虫眼鏡・チェックリスト。表情=真剣で丁寧な表情、細かいところに気づく目。ポーズ=チェックする・整理する。テーマカラー: ライトグリーン (#84cc16) + ベージュ
-
-- 画像生成プロンプト(EN):
-```
-Modern flat 2D mascot illustration, chibi deformed character (2-3 head ratio), clean uniform line art, friendly round shapes, soft flat color with subtle gradient, centered composition fitting in a circular icon frame, simple background with pastel solid color or light gradient plus small thematic decorations, expressive facial features, SNS-ready kawaii style, consistent with a unified character collection, Virgo personality type analyst detail-oriented chibi mascot character (personality classification only), careful checking organizing pose, magnifying glass and checklist props, precise attentive expression, light green (#84cc16) and beige color scheme, small wheat grain hair detail, small leaf and checkmark decorations on background
-```
-
----
-
-### 星座 - 天秤座 Libra（9/23-10/23）
-
-- 性格要約: 調和・公正・美の象徴。バランス感覚・美的センス・社交性・冷静な議論能力。
-- キャラ要件: モチーフ=天秤・花・羽。表情=優雅でバランスの取れた笑顔。ポーズ=バランスを取る・両腕を水平に。テーマカラー: ローズゴールド (#f0abfc) + ソフトブルー
-
-- 画像生成プロンプト(EN):
-```
-Modern flat 2D mascot illustration, chibi deformed character (2-3 head ratio), clean uniform line art, friendly round shapes, soft flat color with subtle gradient, centered composition fitting in a circular icon frame, simple background with pastel solid color or light gradient plus small thematic decorations, expressive facial features, SNS-ready kawaii style, consistent with a unified character collection, Libra personality type harmony balance chibi mascot character (personality classification only), graceful balancing arms horizontal pose, scale balance and flower props, elegant fair smile, rose gold (#f0abfc) and soft blue color scheme, small bow or feather hair detail, small scale and petal decorations on background
-```
-
----
-
-### 星座 - 蠍座 Scorpio（10/24-11/22）
-
-- 性格要約: 深さ・変革・洞察力の象徴。鋭い観察眼・深い感情・強い意志・深い忠誠心。
-- キャラ要件: モチーフ=水晶（クリア）・炎・深海カラー。表情=鋭く深みのある眼差し・静かな強さ。ポーズ=静かに佇む・腕を組む。テーマカラー: ディープティール (#134e4a) + クリムゾン
-
-- 画像生成プロンプト(EN):
-```
-Modern flat 2D mascot illustration, chibi deformed character (2-3 head ratio), clean uniform line art, friendly round shapes, soft flat color with subtle gradient, centered composition fitting in a circular icon frame, simple background with pastel solid color or light gradient plus small thematic decorations, expressive facial features, SNS-ready kawaii style, consistent with a unified character collection, Scorpio personality type insight depth chibi mascot character (personality classification only), quiet composed arms crossed pose, clear crystal and flame props (no occult symbolism), deep perceptive expression, deep teal (#134e4a) and crimson color scheme, simple water drop hair detail, small wave and depth line decorations on background
-```
-
----
-
-### 星座 - 射手座 Sagittarius（11/23-12/21）
-
-- 性格要約: 自由・冒険・哲学の象徴。楽観的な広い視野・冒険心・率直さ・挑戦精神。
-- キャラ要件: モチーフ=矢・地球儀・地図。表情=明るく前向きな笑顔、冒険への期待。ポーズ=矢を射る・旅の荷物・走る。テーマカラー: バーガンディ (#7c2d12) + ゴールデンイエロー
-
-- 画像生成プロンプト(EN):
-```
-Modern flat 2D mascot illustration, chibi deformed character (2-3 head ratio), clean uniform line art, friendly round shapes, soft flat color with subtle gradient, centered composition fitting in a circular icon frame, simple background with pastel solid color or light gradient plus small thematic decorations, expressive facial features, SNS-ready kawaii style, consistent with a unified character collection, Sagittarius personality type adventurer explorer chibi mascot character (personality classification only), bow shooting or exploring dynamic pose, arrow and world map props, optimistic adventurous grin, burgundy (#7c2d12) and golden yellow color scheme, small arrow quiver hair detail, small compass and map decorations on background
-```
-
----
-
-### 星座 - 山羊座 Capricorn（12/22-1/19）
-
-- 性格要約: 野心・自律・責任感の象徴。高い自律心・戦略的思考・忍耐力・信頼性。
-- キャラ要件: モチーフ=山・トロフィー・時計。表情=真剣で自律的な表情・目標を見つめる。ポーズ=山頂を目指す・着実な歩み。テーマカラー: ダークグリーン (#052e16) + アイスブルー
-
-- 画像生成プロンプト(EN):
-```
-Modern flat 2D mascot illustration, chibi deformed character (2-3 head ratio), clean uniform line art, friendly round shapes, soft flat color with subtle gradient, centered composition fitting in a circular icon frame, simple background with pastel solid color or light gradient plus small thematic decorations, expressive facial features, SNS-ready kawaii style, consistent with a unified character collection, Capricorn personality type disciplined achiever chibi mascot character (personality classification only), steady determined climbing pose, small trophy and clock props, serious goal-focused expression, dark green (#052e16) and ice blue color scheme, mountain peak hair detail, small mountain and step decorations on background
-```
-
----
-
-### 星座 - 水瓶座 Aquarius（1/20-2/18）
-
-- 性格要約: 革新・自由・人道主義の象徴。独創的な思考・客観的判断力・多様性への寛容さ。
-- キャラ要件: モチーフ=水差し・電球・ネットワーク。表情=知的で未来を見つめる表情。ポーズ=空を指す・アイデアを広げる。テーマカラー: シアンブルー (#0891b2) + ライトパープル
-
-- 画像生成プロンプト(EN):
-```
-Modern flat 2D mascot illustration, chibi deformed character (2-3 head ratio), clean uniform line art, friendly round shapes, soft flat color with subtle gradient, centered composition fitting in a circular icon frame, simple background with pastel solid color or light gradient plus small thematic decorations, expressive facial features, SNS-ready kawaii style, consistent with a unified character collection, Aquarius personality type innovator visionary chibi mascot character (personality classification only), pointing upward visionary pose, water jug and network node props, intellectual future-looking expression, cyan blue (#0891b2) and light purple color scheme, wave hair detail, small wave and dot network decorations on background
-```
-
----
-
-### 星座 - 魚座 Pisces（2/19-3/20）
-
-- 性格要約: 感受性・共感・想像力の象徴。豊かな創造性・直観力・献身的な思いやり・柔軟性。
-- キャラ要件: モチーフ=魚・泡・波。表情=夢見るような優しい笑顔・深い共感の目。ポーズ=水の中を泳ぐように・漂う。テーマカラー: ミスティックティール (#0f766e) + ラベンダー
-
-- 画像生成プロンプト(EN):
-```
-Modern flat 2D mascot illustration, chibi deformed character (2-3 head ratio), clean uniform line art, friendly round shapes, soft flat color with subtle gradient, centered composition fitting in a circular icon frame, simple background with pastel solid color or light gradient plus small thematic decorations, expressive facial features, SNS-ready kawaii style, consistent with a unified character collection, Pisces personality type dreamer empath chibi mascot character (personality classification only), flowing swimming gentle pose, small fish and bubble props, dreamy compassionate expression, mystic teal (#0f766e) and lavender color scheme, small fish scale or fin hair detail, small bubble and wave decorations on background
-```
-
----
-
-## 7. 多重知能 8体
-
-テーマカラー: 各タイプに定義されたCSSカラー変数を参考にポップなカラーで実装
-
----
 
 ### 多重知能 - 言語的知能タイプ（Linguistic）
 
-- 性格要約: 言葉を読む・書く・話す・聞く力が特に優れる知の探究者。複雑な考えを的確に言語化できる。キャラ名: フクロウ博士
-- キャラ要件: モチーフ=ペン・本・フキダシ多数。表情=語りかける知的な笑顔。ポーズ=話す・書く・本を持つ。テーマカラー: スクールブルー (#3b82f6) + ペーパーホワイト
+- 性格要約: 言葉で世界を切り拓く知の探究者。読書・文章・議論に優れる
+- テーマカラー: スクールブルー (var(--sn-scene-school) → 青系)
+- キャラ: フクロウ博士イメージ
+- 小物: 本の山・万年筆・ノート
+- 表情: 知的で内発的な喜びのある温かい目
+- ポーズ: 本を開きながら相手に語りかける伝道師ポーズ
 
-- 画像生成プロンプト(EN):
-```
-Modern flat 2D mascot illustration, chibi deformed character (2-3 head ratio), clean uniform line art, friendly round shapes, soft flat color with subtle gradient, centered composition fitting in a circular icon frame, simple background with pastel solid color or light gradient plus small thematic decorations, expressive facial features, SNS-ready kawaii style, consistent with a unified character collection, linguistic intelligence type scholar writer chibi mascot (owl-like wise character), speaking or writing pose, multiple speech bubble and open book props, articulate intelligent expression, school blue (#3b82f6) and paper white color scheme, quill pen accent prop, small letter and book decorations on background
-```
+【男性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, male character, owl-inspired intellectual imagery (books, quill pen accessories), warm intellectually-joyful expression, open book in hand gesturing to listener like a storyteller, stack of books and fountain pen, academic blue blazer over light shirt, glasses optional, slender scholarly build, deep blue and cream color theme, glowing letter and word sparkle accents, soft cerulean bokeh background`
+
+【女性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, female character, owl-inspired intellectual imagery (books, feather quill accessories), warm intellectually-joyful expression, open book in hand gesturing to listener like a storyteller, stack of books and fountain pen, academic blue cardigan over blouse, glasses optional, slender scholarly build, deep blue and cream color theme, glowing letter and word sparkle accents, soft cerulean bokeh background`
 
 ---
+
 
 ### 多重知能 - 論理数学的知能タイプ（Logical-Mathematical）
 
-- 性格要約: 数字・論理・パターン認識に優れる思考者。因果関係を追求し複雑な問題をステップに分解。キャラ名: チェスのキング
-- キャラ要件: モチーフ=チェス駒・数式・グラフ。表情=論理的な集中顔・鋭い目。ポーズ=計算する・駒を動かす。テーマカラー: ダークグリーン (#15803d) + シルバー
+- 性格要約: 論理という武器で謎を解き明かす思考者。分析・数字・パターン認識
+- テーマカラー: ワークブルー (var(--sn-scene-work) → 青紺系)
+- キャラ: チェスのキングイメージ
+- 小物: チェスの駒・計算式の浮かぶボード・タブレット
+- 表情: 冷静で自信に満ちた思考者の目
+- ポーズ: チェスの駒を片手で立てながら戦略を立てる思考ポーズ
 
-- 画像生成プロンプト(EN):
-```
-Modern flat 2D mascot illustration, chibi deformed character (2-3 head ratio), clean uniform line art, friendly round shapes, soft flat color with subtle gradient, centered composition fitting in a circular icon frame, simple background with pastel solid color or light gradient plus small thematic decorations, expressive facial features, SNS-ready kawaii style, consistent with a unified character collection, logical mathematical intelligence type analyst chibi mascot (chess king themed), strategic chess move or calculating pose, chess piece and equation props, focused analytical expression, dark green (#15803d) and silver color scheme, crown and chess board accent detail, small number and graph decorations on background
-```
+【男性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, male character, chess king imagery (chess piece as accessory, floating equation symbols), calm confident analytical expression, strategic thinking pose holding chess king piece upright, equations glowing in background, navy-blue structured jacket with geometric pattern, sleek data-tablet in other hand, logical composed build, dark navy and steel-blue color theme, circuit-line and formula sparkle accents, deep blue bokeh background`
+
+【女性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, female character, chess queen imagery (chess piece as accessory, floating equation symbols), calm confident analytical expression, strategic thinking pose holding chess queen piece upright, equations glowing in background, navy-blue blazer dress with geometric trim, sleek data-tablet in other hand, logical composed build, dark navy and steel-blue color theme, circuit-line and formula sparkle accents, deep blue bokeh background`
 
 ---
+
 
 ### 多重知能 - 視空間的知能タイプ（Spatial）
 
-- 性格要約: 空間・色・形・方向感覚に優れるビジョンの創造者。頭の中で三次元的なイメージを自由に操れる。キャラ名: カメレオン画家
-- キャラ要件: モチーフ=パレット・3Dキューブ・カメレオン要素。表情=色彩豊かなクリエイター笑顔。ポーズ=絵を描く・デザインする。テーマカラー: シアン (#06b6d4) + マルチカラー
+- 性格要約: 見えないものを見える形に変えるビジョンの創造者。色・形・空間認識
+- テーマカラー: スクールブルー (var(--sn-scene-school) → 芸術的青)
+- キャラ: カメレオン画家イメージ
+- 小物: 大きなスケッチパッド・絵の具パレット・細筆
+- 表情: 視覚的インスピレーションに輝く目
+- ポーズ: 空中を指先でなぞるように構図を測るアーティストポーズ
 
-- 画像生成プロンプト(EN):
-```
-Modern flat 2D mascot illustration, chibi deformed character (2-3 head ratio), clean uniform line art, friendly round shapes, soft flat color with subtle gradient, centered composition fitting in a circular icon frame, simple background with pastel solid color or light gradient plus small thematic decorations, expressive facial features, SNS-ready kawaii style, consistent with a unified character collection, spatial intelligence type visual artist designer chibi mascot (chameleon artist themed), painting or 3D designing pose, rainbow palette and 3D cube props, creative colorful expression, cyan (#06b6d4) and multicolor scheme, paintbrush and geometric shape detail, small color swatch and shape decorations on background
-```
+【男性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, male character, chameleon-painter imagery (color-shifting palette accessories, paint-brush prop), visually-inspired luminous expression, artist framing-composition gesture tracing through air with fingertip, large sketchpad under arm, colorful paint palette, paint-spattered creative casual outfit in teal and turquoise, lithe imaginative build, teal and rainbow-accent color theme, prismatic color-burst sparkle accents, soft painterly bokeh background`
+
+【女性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, female character, chameleon-painter imagery (color-shifting palette accessories, paint-brush in hair), visually-inspired luminous expression, artist framing-composition gesture tracing through air with fingertip, large sketchpad under arm, colorful paint palette, paint-spattered creative outfit with flowy dress in teal and turquoise, lithe imaginative build, teal and rainbow-accent color theme, prismatic color-burst sparkle accents, soft painterly bokeh background`
 
 ---
+
 
 ### 多重知能 - 身体運動的知能タイプ（Bodily-Kinesthetic）
 
-- 性格要約: 体の動き・手先の器用さ・運動感覚に優れる身体の達人。実践的な体験から素早く学ぶ。キャラ名: チーターアスリート
-- キャラ要件: モチーフ=トロフィー・ボール・ランニングシューズ。表情=アクティブで爽やかな笑顔。ポーズ=スポーツポーズ・ダッシュ・ジャンプ。テーマカラー: オレンジ (#f97316) + グリーン
+- 性格要約: 体が語る、動くことで世界と繋がる身体の達人。運動・手先・身体感覚
+- テーマカラー: フレンドグリーン (var(--sn-scene-friend) → 活動的緑)
+- キャラ: チーターアスリートイメージ
+- 小物: スポーツシューズ・バスケットボールや道具
+- 表情: 全力で輝くスポーツマンシップの表情
+- ポーズ: 躍動的なジャンプ・スポーツアクションポーズ
 
-- 画像生成プロンプト(EN):
-```
-Modern flat 2D mascot illustration, chibi deformed character (2-3 head ratio), clean uniform line art, friendly round shapes, soft flat color with subtle gradient, centered composition fitting in a circular icon frame, simple background with pastel solid color or light gradient plus small thematic decorations, expressive facial features, SNS-ready kawaii style, consistent with a unified character collection, kinesthetic intelligence type athlete mover chibi mascot, dynamic sports action pose, trophy and sports ball props, energetic sporty smile, orange (#f97316) and green color scheme, running shoe accent detail, small motion line and star decorations on background
-```
+【男性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, male character, cheetah-athlete imagery (speed lines, athletic energy), full-power sportsmanship expression, dynamic mid-jump sports action pose, athletic sneakers, basketball or sports equipment, vibrant green-and-white sportswear, muscular athletic build, green and white color theme, kinetic energy motion sparkle accents, fresh grass-green bokeh background`
+
+【女性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, female character, cheetah-athlete imagery (speed lines, athletic energy), full-power sportsmanship expression, dynamic mid-jump sports action pose, athletic sneakers, sports equipment nearby, vibrant green-and-white sporty outfit, toned athletic build, green and white color theme, kinetic energy motion sparkle accents, fresh grass-green bokeh background`
 
 ---
+
 
 ### 多重知能 - 音楽的知能タイプ（Musical）
 
-- 性格要約: 音・リズム・メロディーへの感受性が特に優れる表現者。感情を音楽で生きる。キャラ名: ナイチンゲール
-- キャラ要件: モチーフ=音符・楽器・マイク。表情=感情豊かな歌う表情。ポーズ=歌う・演奏する・指揮。テーマカラー: ローズ (#f43f5e) + ライトパープル
+- 性格要約: 音が世界を彩る、感情を音楽で生きる表現者。音・リズム・メロディー感受性
+- テーマカラー: ラブピンク (var(--sn-scene-love) → ロマンチックな赤紫)
+- キャラ: ナイチンゲールイメージ
+- 小物: ヘッドフォン・楽譜・音符が宙に舞う
+- 表情: 音楽に没入した恍惚とした表情
+- ポーズ: 目を閉じて音楽に浸りながら指揮するようなポーズ
 
-- 画像生成プロンプト(EN):
-```
-Modern flat 2D mascot illustration, chibi deformed character (2-3 head ratio), clean uniform line art, friendly round shapes, soft flat color with subtle gradient, centered composition fitting in a circular icon frame, simple background with pastel solid color or light gradient plus small thematic decorations, expressive facial features, SNS-ready kawaii style, consistent with a unified character collection, musical intelligence type performer singer chibi mascot (nightingale bird inspired), singing or playing instrument pose, musical note and microphone props, emotionally expressive singing face, rose (#f43f5e) and light purple color scheme, musical note hair detail, small note and rhythm wave decorations on background
-```
+【男性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, male character, nightingale-musician imagery (musical note accessories, floating sheet music), ecstatic music-immersed closed-eyes expression, conducting arms-raised pose as if directing an orchestra, premium headphones around neck, floating musical notes surrounding character, elegant rose-purple music jacket, slim artistic build, rose-purple and deep pink color theme, musical-note and sound-wave sparkle accents, romantic violet bokeh background`
+
+【女性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, female character, nightingale-musician imagery (musical note hair accessories, floating sheet music), ecstatic music-immersed closed-eyes expression, conducting arms-raised pose as if directing an orchestra, premium headphones around neck, floating musical notes surrounding character, elegant rose-purple flowy dress, slim artistic build, rose-purple and deep pink color theme, musical-note and sound-wave sparkle accents, romantic violet bokeh background`
 
 ---
+
 
 ### 多重知能 - 対人的知能タイプ（Interpersonal）
 
-- 性格要約: 他者の感情・動機・意図を読み取り円滑な人間関係を築く繋がりの達人。生まれながらのコミュニケーター。キャラ名: イルカリーダー
-- キャラ要件: モチーフ=手をつなぐ・笑顔のグループ・橋。表情=包容力のある大きな笑顔。ポーズ=人を引き寄せる・橋渡しポーズ。テーマカラー: スカイブルー (#0ea5e9) + ウォームイエロー
+- 性格要約: 人の心を読み共に前へ進む、繋がりの達人。共感・リーダーシップ・コミュニケーション
+- テーマカラー: フレンドグリーン (var(--sn-scene-friend) → 温かいグリーン系)
+- キャラ: イルカリーダーイメージ
+- 小物: 話し合いのテーブル・ペン・多様な人々へ手を差し伸べるジェスチャー
+- 表情: 開かれた温かさと信頼感あふれる笑顔
+- ポーズ: 手を差し伸べてチームを招き入れるリーダーポーズ
 
-- 画像生成プロンプト(EN):
-```
-Modern flat 2D mascot illustration, chibi deformed character (2-3 head ratio), clean uniform line art, friendly round shapes, soft flat color with subtle gradient, centered composition fitting in a circular icon frame, simple background with pastel solid color or light gradient plus small thematic decorations, expressive facial features, SNS-ready kawaii style, consistent with a unified character collection, interpersonal intelligence type connector leader chibi mascot (dolphin leader inspired), welcoming bridge-building pose, handshake and group icon props, warm inclusive smile, sky blue (#0ea5e9) and warm yellow color scheme, dolphin fin accent detail, small heart and connection dot decorations on background
-```
+【男性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, male character, dolphin-leader imagery (dolphin-wave accessories, connection-motif badge), open warm trustworthy leadership smile, hand extended outward welcoming team gesture, teal-green team leader jacket, clipboard with team notes, communicative confident build, teal green and aqua color theme, heart-connection and handshake sparkle accents, warm teal-green bokeh background`
+
+【女性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, female character, dolphin-leader imagery (dolphin-wave hair clip, connection-motif brooch), open warm trustworthy leadership smile, hand extended outward welcoming team gesture, teal-green blazer with skirt, clipboard with team notes, communicative confident build, teal green and aqua color theme, heart-connection and handshake sparkle accents, warm teal-green bokeh background`
 
 ---
+
 
 ### 多重知能 - 内省的知能タイプ（Intrapersonal）
 
-- 性格要約: 自分の感情・強み・弱み・価値観を深く理解する哲学者。深い自己理解が最大の強み。キャラ名: ひとり旅の猫
-- キャラ要件: モチーフ=日記・鏡・ランタン。表情=深みのある内省的な微笑み。ポーズ=日記を書く・考え込む・一人旅。テーマカラー: インディゴ (#4f46e5) + ウォームオレンジ
+- 性格要約: 自分を知ることが最大の強み。深い自己理解の哲学者。価値観・内省・自律性
+- テーマカラー: プライマリー (var(--sn-primary) → 診断ナビブランドカラー 青紫系)
+- キャラ: ひとり旅の猫イメージ
+- 小物: 日記帳・星空・ひとり旅のバッグ
+- 表情: 静かで深く自分と向き合う内省の目
+- ポーズ: 夜空を見上げながら日記を書く一人の時間ポーズ
 
-- 画像生成プロンプト(EN):
-```
-Modern flat 2D mascot illustration, chibi deformed character (2-3 head ratio), clean uniform line art, friendly round shapes, soft flat color with subtle gradient, centered composition fitting in a circular icon frame, simple background with pastel solid color or light gradient plus small thematic decorations, expressive facial features, SNS-ready kawaii style, consistent with a unified character collection, intrapersonal intelligence type self-aware philosopher chibi mascot (solo cat traveler inspired), journaling or quiet reflection pose, diary and small lantern props, thoughtful introspective expression, indigo (#4f46e5) and warm orange color scheme, small cat ear or traveling bag detail, small moon and journal decorations on background
-```
+【男性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, male character, solitary-traveler cat imagery (subtle cat-ear beanie, small travel backpack), quiet deep introspective expression gazing upward, sitting alone writing in personal journal diary, soft starlight around, indigo-blue and deep purple travel outfit, calm independent build, indigo and midnight-blue color theme, star and moon sparkle accents, tranquil deep night-sky bokeh background`
+
+【女性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, female character, solitary-traveler cat imagery (subtle cat-ear beanie, small travel backpack), quiet deep introspective expression gazing upward, sitting alone writing in personal journal diary, soft starlight around, indigo-blue and deep purple travel dress with cardigan, calm independent build, indigo and midnight-blue color theme, star and moon sparkle accents, tranquil deep night-sky bokeh background`
 
 ---
+
 
 ### 多重知能 - 博物的知能タイプ（Naturalist）
 
-- 性格要約: 自然・生き物・環境のパターンを見抜き分類する観察の達人。万物のつながりを読む。キャラ名: 森の賢者ふくろう
-- キャラ要件: モチーフ=葉・虫眼鏡・自然のサンプル瓶。表情=自然を愛する穏やかな笑顔。ポーズ=観察する・サンプルを調べる。テーマカラー: フォレストグリーン (#166534) + アース
+- 性格要約: 自然のパターンを読む万物を分類する観察の達人。自然・生き物・環境への深い洞察
+- テーマカラー: フレンドグリーン (var(--sn-scene-friend) → 自然の緑)
+- キャラ: 森の賢者ふくろうイメージ
+- 小物: 観察日誌・虫眼鏡・植物・押し花
+- 表情: 自然に対する純粋な好奇心と深い洞察の眼差し
+- ポーズ: 植物を手に持って観察する野外フィールドワークポーズ
 
-- 画像生成プロンプト(EN):
-```
-Modern flat 2D mascot illustration, chibi deformed character (2-3 head ratio), clean uniform line art, friendly round shapes, soft flat color with subtle gradient, centered composition fitting in a circular icon frame, simple background with pastel solid color or light gradient plus small thematic decorations, expressive facial features, SNS-ready kawaii style, consistent with a unified character collection, naturalist intelligence type nature observer chibi mascot (forest owl sage inspired), nature observation pose, magnifying glass and specimen jar props, calm nature-loving expression, forest green (#166534) and earth brown color scheme, leaf and feather detail, small plant and butterfly decorations on background
-```
+【男性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, male character, forest-sage owl imagery (nature leaf accessories, field observer outfit), pure curious nature-wonder expression, outdoor fieldwork pose holding plant specimen for observation, magnifying glass, field observation journal, earthy green field explorer jacket with lots of pockets, grounded nature-connected build, earthy green and brown color theme, leaf and firefly sparkle accents, soft forest-green dappled-light bokeh background`
 
----
-
-## 8. 恋愛スタイル 6体
-
-テーマカラー: 暖色系のポップカラー（恋愛テーマ）
-
----
-
-### 恋愛スタイル - 情熱型 Eros
-
-- 性格要約: 運命の出会いを信じ、強い情熱と直感で恋愛する情熱家。深く愛する力を持つ。
-- キャラ要件: モチーフ=炎のハート・バラ・稲妻。表情=情熱的で輝く笑顔・目がキラキラ。ポーズ=胸に手を当てる・情熱的なポーズ。テーマカラー: レッド (#ef4444) + ゴールド
-
-- 画像生成プロンプト(EN):
-```
-Modern flat 2D mascot illustration, chibi deformed character (2-3 head ratio), clean uniform line art, friendly round shapes, soft flat color with subtle gradient, centered composition fitting in a circular icon frame, simple background with pastel solid color or light gradient plus small thematic decorations, expressive facial features, SNS-ready kawaii style, consistent with a unified character collection, Eros romantic passion love style chibi mascot, passionate hand on heart pose, flaming heart and rose props, sparkling passionate smile, red (#ef4444) and gold color scheme, small heart and rose petal decorations on background
-```
+【女性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, female character, forest-sage owl imagery (pressed flower hair accessories, field observer outfit), pure curious nature-wonder expression, outdoor fieldwork pose holding plant specimen for observation, magnifying glass, field observation journal, earthy green field explorer dress with cargo pockets, grounded nature-connected build, earthy green and brown color theme, leaf and firefly sparkle accents, soft forest-green dappled-light bokeh background`
 
 ---
 
-### 恋愛スタイル - 遊戯型 Ludus
 
-- 性格要約: 自由に楽しむ恋愛の達人。軽やかさと自由を大切にし、恋愛をユーモアと余裕で楽しむ。
-- キャラ要件: モチーフ=トランプ・蝶々・風船。表情=余裕のあるウィンク・にやり笑い。ポーズ=軽やかなポーズ・カードを持つ。テーマカラー: パープル (#7c3aed) + シルバー
+### 血液型診断 - A型（几帳面な調和派）
 
-- 画像生成プロンプト(EN):
-```
-Modern flat 2D mascot illustration, chibi deformed character (2-3 head ratio), clean uniform line art, friendly round shapes, soft flat color with subtle gradient, centered composition fitting in a circular icon frame, simple background with pastel solid color or light gradient plus small thematic decorations, expressive facial features, SNS-ready kawaii style, consistent with a unified character collection, Ludus playful free-spirited love style chibi mascot, carefree winking pose, playing card and butterfly props, charming smirking expression, purple (#7c3aed) and silver color scheme, small card and swirl decorations on background
-```
+- 性格要約: 計画的・誠実・細部まで丁寧・調和を大切にする几帳面タイプ
+- テーマカラー: 赤系（血液型Aの定番カラー）→ クリムゾンレッド + ホワイト
+- 小物: 整理された手帳・チェックリスト・角のそろった書類
+- 表情: 誠実で真剣、細部にこだわる丁寧な表情
+- ポーズ: 手帳にペンを走らせるきっちりした書き物ポーズ
 
----
+【男性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, male character representing blood type A personality (meticulous harmonious type), sincere careful detail-oriented expression, organized writing-in-planner pose with perfectly aligned documents, neat crimson-red blazer over perfectly pressed white shirt, checklist clipboard nearby, tidy well-groomed build, crimson red and clean white color theme, check-mark and star sparkle accents, soft red-and-white bokeh background`
 
-### 恋愛スタイル - 友愛型 Storge
-
-- 性格要約: 信頼と時間が育む友情から始まる深い絆。穏やかで誠実なパートナーとして長期関係に強い。
-- キャラ要件: モチーフ=木の成長・緑の葉・時計。表情=穏やかで温かい笑顔・安心感。ポーズ=ゆったり座る・温かく手を添える。テーマカラー: グリーン (#22c55e) + ウォームブラウン
-
-- 画像生成プロンプト(EN):
-```
-Modern flat 2D mascot illustration, chibi deformed character (2-3 head ratio), clean uniform line art, friendly round shapes, soft flat color with subtle gradient, centered composition fitting in a circular icon frame, simple background with pastel solid color or light gradient plus small thematic decorations, expressive facial features, SNS-ready kawaii style, consistent with a unified character collection, Storge friendship-based love style chibi mascot, cozy steady sitting or gentle reaching pose, growing plant and clock props, calm trustworthy warm smile, green (#22c55e) and warm brown color scheme, small leaf and ring decorations on background
-```
+【女性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, female character representing blood type A personality (meticulous harmonious type), sincere careful detail-oriented expression, organized writing-in-planner pose with perfectly aligned documents, neat crimson-red blazer over white blouse with ribbon, checklist clipboard nearby, tidy elegant build, crimson red and clean white color theme, check-mark and star sparkle accents, soft red-and-white bokeh background`
 
 ---
 
-### 恋愛スタイル - 実利型 Pragma
 
-- 性格要約: 現実と感情を両立させる賢明な恋愛設計者。価値観・将来設計・現実的な相性を重視。
-- キャラ要件: モチーフ=鍵・設計図・電卓。表情=冷静で知的な笑顔・計算している。ポーズ=計画を立てる・鍵を持つ。テーマカラー: ブルーグレー (#475569) + ゴールド
+### 血液型診断 - B型（自由なマイペース探求派）
 
-- 画像生成プロンプト(EN):
-```
-Modern flat 2D mascot illustration, chibi deformed character (2-3 head ratio), clean uniform line art, friendly round shapes, soft flat color with subtle gradient, centered composition fitting in a circular icon frame, simple background with pastel solid color or light gradient plus small thematic decorations, expressive facial features, SNS-ready kawaii style, consistent with a unified character collection, Pragma practical love style planner chibi mascot, thoughtful planning pose, golden key and blueprint props, calm intelligent smile, blue gray (#475569) and gold color scheme, small key and chart decorations on background
-```
+- 性格要約: 好奇心旺盛・自由・マイペース・直感的・興味一直線の探求タイプ
+- テーマカラー: 青系（血液型Bの定番カラー）→ ロイヤルブルー + オレンジアクセント
+- 小物: 興味が多方向に広がる本・スマートフォン・趣味グッズ
+- 表情: 自由で無邪気な興味津々の表情
+- ポーズ: 思いつきで飛び出すような動きのある自由ポーズ
 
----
+【男性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, male character representing blood type B personality (free-spirited curious self-paced explorer), free uninhibited innocent curiosity expression, spontaneous action-impulse flying-leap free pose, various interest items (books, gadgets, hobby items) floating around, royal blue casual jacket with orange accent details, carefree energetic build, royal blue and bright orange color theme, burst-star and question-mark sparkle accents, vibrant blue bokeh background`
 
-### 恋愛スタイル - 感情型 Mania
-
-- 性格要約: 愛の深さを全力で感じる感情豊かな恋愛家。真剣さと豊かな感情表現が特徴。
-- キャラ要件: モチーフ=波・炎ハート・雨粒。表情=感情豊かな表情・目に感情が溢れる。ポーズ=感情表現豊かなポーズ・胸に手・波のような動き。テーマカラー: コーラル (#f97316) + ティール
-
-- 画像生成プロンプト(EN):
-```
-Modern flat 2D mascot illustration, chibi deformed character (2-3 head ratio), clean uniform line art, friendly round shapes, soft flat color with subtle gradient, centered composition fitting in a circular icon frame, simple background with pastel solid color or light gradient plus small thematic decorations, expressive facial features, SNS-ready kawaii style, consistent with a unified character collection, Mania deeply emotional love style chibi mascot, expressive emotional gesture pose, wave and heart props, sincere emotionally rich expression, coral (#f97316) and teal color scheme, small wave and teardrop-heart decorations on background
-```
+【女性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, female character representing blood type B personality (free-spirited curious self-paced explorer), free uninhibited innocent curiosity expression, spontaneous action-impulse spinning-free pose, various interest items (books, gadgets, hobby items) floating around, royal blue casual jacket with orange accent dress, carefree energetic build, royal blue and bright orange color theme, burst-star and question-mark sparkle accents, vibrant blue bokeh background`
 
 ---
 
-### 恋愛スタイル - 献身型 Agape
 
-- 性格要約: 見返りを求めない深く静かな無償の愛。相手の幸せを自分の喜びとする深い誠実さ。
-- キャラ要件: モチーフ=白い鳩・光・開いた両手。表情=温かく穏やかな包容力のある笑顔。ポーズ=両手を広げる・差し出す。テーマカラー: ホワイト + ソフトゴールド
+### 血液型診断 - O型（頼れる社交的リーダー派）
 
-- 画像生成プロンプト(EN):
-```
-Modern flat 2D mascot illustration, chibi deformed character (2-3 head ratio), clean uniform line art, friendly round shapes, soft flat color with subtle gradient, centered composition fitting in a circular icon frame, simple background with pastel solid color or light gradient plus small thematic decorations, expressive facial features, SNS-ready kawaii style, consistent with a unified character collection, Agape unconditional love style selfless chibi mascot, open arms offering gentle pose, white dove and soft glow props, serene unconditional warmth expression, white and soft gold color scheme, small dove and gentle light ray decorations on background
-```
+- 性格要約: 大らか・社交的・リーダーシップ・前向き・大局を見る頼れるタイプ
+- テーマカラー: 緑系（血液型Oの定番カラー）→ フォレストグリーン + ゴールドアクセント
+- 小物: チームのフラッグ・握手のジェスチャー・トロフィー
+- 表情: みんなを巻き込む明るく包容力のある笑顔
+- ポーズ: 前へ踏み出してチームを引っ張るリーダーポーズ
 
----
+【男性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, male character representing blood type O personality (reliable sociable leader type), bright encompassing inclusive smile that pulls everyone along, stepping-forward team-leader pull-ahead pose, team flag or banner, gold trophy visible, forest green athletic leadership jacket with gold accents, broad confident build, forest green and gold color theme, crown and star sparkle accents, warm forest-green bokeh background`
 
-## 9. 友達相性 6体
-
-テーマカラー: 明るいポップカラー（友情テーマ）
-
----
-
-### 友達相性 - ムードメーカー型
-
-- 性格要約: 場を明るくするみんなの太陽。グループを自然と盛り上げ、誰かが孤立しそうなとき声をかける行動力。
-- キャラ要件: モチーフ=太陽・拡声器・紙吹雪。表情=最高の笑顔・目が笑っている。ポーズ=両手を上げる・ジャンプ。テーマカラー: サンイエロー (#fbbf24) + オレンジ
-
-- 画像生成プロンプト(EN):
-```
-Modern flat 2D mascot illustration, chibi deformed character (2-3 head ratio), clean uniform line art, friendly round shapes, soft flat color with subtle gradient, centered composition fitting in a circular icon frame, simple background with pastel solid color or light gradient plus small thematic decorations, expressive facial features, SNS-ready kawaii style, consistent with a unified character collection, mood maker cheerful friend type chibi mascot, jumping arms raised energetic pose, megaphone and confetti props, biggest happiest grin, sun yellow (#fbbf24) and orange color scheme, small sun ray and party decoration on background
-```
+【女性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, female character representing blood type O personality (reliable sociable leader type), bright encompassing inclusive smile that pulls everyone along, stepping-forward team-leader pull-ahead pose, team pennant in hand, gold trophy visible, forest green blazer with gold accent skirt, confident tall build, forest green and gold color theme, crown and star sparkle accents, warm forest-green bokeh background`
 
 ---
 
-### 友達相性 - 聴き上手型
 
-- 性格要約: 話してよかったと思わせる安心の存在。深い共感力で友達が「安全な場所」と感じる聴き役。
-- キャラ要件: モチーフ=耳・ハート・ぬいぐるみ。表情=穏やかで受け止める笑顔・優しい目。ポーズ=耳を傾ける・膝を抱えて聞く。テーマカラー: ソフトグリーン (#86efac) + ピンク
+### 血液型診断 - AB型（独創的な合理派）
 
-- 画像生成プロンプト(EN):
-```
-Modern flat 2D mascot illustration, chibi deformed character (2-3 head ratio), clean uniform line art, friendly round shapes, soft flat color with subtle gradient, centered composition fitting in a circular icon frame, simple background with pastel solid color or light gradient plus small thematic decorations, expressive facial features, SNS-ready kawaii style, consistent with a unified character collection, compassionate listener friend type chibi mascot, leaning forward attentive listening pose, big ear and heart props, gentle accepting smile, soft green (#86efac) and pink color scheme, small heart and wave decorations on background
-```
+- 性格要約: 独創的・合理的・二面性・洞察力・冷静な分析と感性のバランスタイプ
+- テーマカラー: 黄色系（血液型ABの定番カラー）→ ゴールデンイエロー + ディープパープルアクセント
+- 小物: A面B面を表す二色のデザイン・哲学書・ユニークなアート作品
+- 表情: 独自の視点を持つ神秘的な謎めいた微笑み
+- ポーズ: 一歩引いて全体を俯瞰する思索家ポーズ
 
----
+【男性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, male character representing blood type AB personality (creative rational dual-natured type), mysterious enigmatic insightful smile with unique perspective, one-step-back bird's-eye-view philosopher stance, philosophy book, unique dual-tone outfit (golden yellow one side deep purple other side representing dual nature), composed intellectual build, golden yellow and deep purple color theme, dual-diamond sparkle accents, sophisticated golden-purple bokeh background`
 
-### 友達相性 - 仕切り屋型
-
-- 性格要約: みんなを動かす頼れる旗振り役。グループの方向性を決め、誰かがやらなければならないことを先に動く。
-- キャラ要件: モチーフ=旗・カレンダー・メガホン。表情=自信のある行動派の笑顔。ポーズ=旗を掲げる・前に出る。テーマカラー: コーラルレッド (#f87171) + イエロー
-
-- 画像生成プロンプト(EN):
-```
-Modern flat 2D mascot illustration, chibi deformed character (2-3 head ratio), clean uniform line art, friendly round shapes, soft flat color with subtle gradient, centered composition fitting in a circular icon frame, simple background with pastel solid color or light gradient plus small thematic decorations, expressive facial features, SNS-ready kawaii style, consistent with a unified character collection, natural leader organizer friend type chibi mascot, flag-raising confident leading pose, flag and schedule board props, decisive reliable smile, coral red (#f87171) and yellow color scheme, small flag and direction arrow decorations on background
-```
+【女性版】画像生成プロンプト(EN):
+`Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, female character representing blood type AB personality (creative rational dual-natured type), mysterious enigmatic insightful smile with unique perspective, one-step-back bird's-eye-view philosopher stance, philosophy book and unique art piece, dual-tone outfit (golden yellow blouse deep purple skirt representing dual nature), composed intellectual elegant build, golden yellow and deep purple color theme, dual-diamond sparkle accents, sophisticated golden-purple bokeh background`
 
 ---
 
-### 友達相性 - 一匹狼型
 
-- 性格要約: 少数の深い絆を大切にする自分軸の人。気が合う人とだけ深く関わり、本物の友情を育む。
-- キャラ要件: モチーフ=オオカミ・月・本。表情=静かで個性的な微笑み・深い目。ポーズ=一人で佇む・本を読む。テーマカラー: グレーブルー (#64748b) + ムーンホワイト
+### 星座 - 牡羊座（Aries）
 
-- 画像生成プロンプト(EN):
-```
-Modern flat 2D mascot illustration, chibi deformed character (2-3 head ratio), clean uniform line art, friendly round shapes, soft flat color with subtle gradient, centered composition fitting in a circular icon frame, simple background with pastel solid color or light gradient plus small thematic decorations, expressive facial features, SNS-ready kawaii style, consistent with a unified character collection, independent spirit lone wolf friend type chibi mascot, solo reading or quiet standing pose, crescent moon and book props, calm unique self-assured expression, gray blue (#64748b) and moon white color scheme, small moon and footprint decorations on background
-```
+- 性格要約: チャレンジが力の源・率直・行動力・先駆者・リーダーシップ
+- テーマカラー: 情熱的なスカーレットレッド (#E53935)
+- 小物: スポーツシューズ / ストップウォッチ / スケートボード
+- 表情: エネルギッシュな前向き笑顔・自信満々
+- ポーズ: 一歩前に踏み出している・拳を握って躍動感
 
----
+**【男性版】画像生成プロンプト(EN)**:
+Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, young male anime character representing Aries personality classification only (not astrology or fortune-telling), confident energetic high school boy with short spiky reddish-brown hair, wearing scarlet red sporty jacket and white athletic sneakers, bold forward-leaning pose with one fist clenched showing determination, bright excited smile with sparkling eyes, dynamic action lines around figure, warm scarlet red and orange accent tones, sporty stopwatch accessory, fresh energetic background with soft red-orange gradient bokeh,
 
-### 友達相性 - 同調型
-
-- 性格要約: 空気を読んでみんなをつなぐ縁の下の力持ち。グループの和を大切にし、橋渡し役を担う。
-- キャラ要件: モチーフ=天秤・橋・鳩。表情=穏やかで調和的な笑顔。ポーズ=橋渡しポーズ・両手をつなぐ。テーマカラー: ラベンダー (#c4b5fd) + ソフトイエロー
-
-- 画像生成プロンプト(EN):
-```
-Modern flat 2D mascot illustration, chibi deformed character (2-3 head ratio), clean uniform line art, friendly round shapes, soft flat color with subtle gradient, centered composition fitting in a circular icon frame, simple background with pastel solid color or light gradient plus small thematic decorations, expressive facial features, SNS-ready kawaii style, consistent with a unified character collection, empathetic harmonizer friend type chibi mascot, gentle bridge-connecting hands pose, balance scale and dove props, harmonious peaceful smile, lavender (#c4b5fd) and soft yellow color scheme, small ribbon and connecting dot decorations on background
-```
+**【女性版】画像生成プロンプト(EN)**:
+Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, young female anime character representing Aries personality classification only (not astrology or fortune-telling), confident energetic high school girl with short wavy auburn hair tied half-up, wearing scarlet red sporty hoodie and white sneakers, dynamic striding pose with arms swinging showing energy and confidence, bright excited smile with sparkling amber eyes, action sparkle effects around figure, warm scarlet and coral accent tones, sporty sketchbook and stopwatch at hip, fresh orange-red gradient soft background,
 
 ---
 
-### 友達相性 - 知性派型
 
-- 性格要約: 深く考え本質を語る静かなる洞察者。知的対話を楽しみ、冷静な分析で友達に新視点をもたらす。
-- キャラ要件: モチーフ=望遠鏡・本・思考バブル。表情=知的で考え込む表情・観察者の目。ポーズ=腕を組む・望遠鏡を覗く。テーマカラー: ディープブルー (#1d4ed8) + ライトグレー
+### 星座 - 牡牛座（Taurus）
 
-- 画像生成プロンプト(EN):
-```
-Modern flat 2D mascot illustration, chibi deformed character (2-3 head ratio), clean uniform line art, friendly round shapes, soft flat color with subtle gradient, centered composition fitting in a circular icon frame, simple background with pastel solid color or light gradient plus small thematic decorations, expressive facial features, SNS-ready kawaii style, consistent with a unified character collection, thoughtful analyst friend type chibi mascot, arms crossed observing pose, telescope and thought bubble props, calm insightful expression, deep blue (#1d4ed8) and light gray color scheme, small star and thought cloud decorations on background
-```
+- 性格要約: 安定・信頼・忍耐力・美的センス・誠実さ・大地の守り人
+- テーマカラー: アースグリーン (#558B2F) × ゴールドイエロー
+- 小物: スケッチブック / おしゃれなカフェカップ / 花束
+- 表情: 穏やかで温かい微笑み・落ち着いた目
+- ポーズ: ゆったりと座る・花や小物を丁寧に持つ
 
----
+**【男性版】画像生成プロンプト(EN)**:
+Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, young male anime character representing Taurus personality classification only (not astrology or fortune-telling), calm reliable high school boy with slightly wavy dark brown hair, wearing earth green knit sweater and beige chinos, relaxed seated pose holding a warm café cup with both hands, gentle warm smile with steady calm eyes, soft gold and green accent tones, sketchbook resting nearby, cozy soft green-cream gradient background with floating leaf bokeh,
 
-## 10. DiSC 4体
-
-テーマカラー: ビジネステーマで清潔感ある配色
-
----
-
-### DiSC - D型 主導型（Dominance）
-
-- 性格要約: 結果を出すために動くスピードと実行力の牽引者。率直・決断が速い・挑戦的なリーダー。
-- キャラ要件: モチーフ=ライオン・稲妻・ゴール。表情=力強い自信の表情・燃える目。ポーズ=前進・拳を握る。テーマカラー: ファイアレッド (#dc2626) + ブラック
-
-- 画像生成プロンプト(EN):
-```
-Modern flat 2D mascot illustration, chibi deformed character (2-3 head ratio), clean uniform line art, friendly round shapes, soft flat color with subtle gradient, centered composition fitting in a circular icon frame, simple background with pastel solid color or light gradient plus small thematic decorations, expressive facial features, SNS-ready kawaii style, consistent with a unified character collection, DiSC D Dominance type leader chibi mascot, powerful fist-clenched forward pose, lightning bolt and goal flag props, bold confident intense expression, fire red (#dc2626) and black color scheme, small lightning and winner medal decorations on background
-```
+**【女性版】画像生成プロンプト(EN)**:
+Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, young female anime character representing Taurus personality classification only (not astrology or fortune-telling), calm reliable high school girl with long wavy chestnut hair adorned with a small floral pin, wearing earth green floral dress with cream cardigan, graceful pose holding a small flower bouquet with a gentle nurturing expression, soft warm smile with steady calm eyes, gold and sage green accent tones, cozy green-cream bokeh background with petal sparkles,
 
 ---
 
-### DiSC - i型 感化型（influence）
 
-- 性格要約: 人を巻き込み場を明るくする生まれながらのムードメーカー。楽観的・説得力・人脈形成が得意。
-- キャラ要件: モチーフ=星・マイク・カラフルな吹き出し。表情=最高の笑顔・エネルギッシュ。ポーズ=手を広げる・プレゼン。テーマカラー: サンシャインイエロー (#facc15) + オレンジ
+### 星座 - 双子座（Gemini）
 
-- 画像生成プロンプト(EN):
-```
-Modern flat 2D mascot illustration, chibi deformed character (2-3 head ratio), clean uniform line art, friendly round shapes, soft flat color with subtle gradient, centered composition fitting in a circular icon frame, simple background with pastel solid color or light gradient plus small thematic decorations, expressive facial features, SNS-ready kawaii style, consistent with a unified character collection, DiSC i influence type social energizer chibi mascot, arms spread presenting engaging pose, star and microphone props, brightest charming smile, sunshine yellow (#facc15) and orange color scheme, small speech bubble and confetti decorations on background
-```
+- 性格要約: 知的好奇心・コミュニケーション力・柔軟性・社交的・情報の橋渡し役
+- テーマカラー: スカイブルー (#29B6F6) × イエロー
+- 小物: ノートPC / ヘッドフォン / 本2冊
+- 表情: 明るく楽しそうな表情・目が輝いている
+- ポーズ: 両手を広げ話しかけるような活発なポーズ
 
----
+**【男性版】画像生成プロンプト(EN)**:
+Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, young male anime character representing Gemini personality classification only (not astrology or fortune-telling), lively curious high school boy with tousled light brown hair and expressive bright eyes, wearing sky blue casual shirt layered under a yellow college jacket, animated talking pose with both arms open wide showing enthusiasm, cheerful wide grin, light blue and yellow accent tones, wireless headphones around neck and two books under arm, airy sky blue and white gradient background with floating sparkle confetti,
 
-### DiSC - S型 安定型（Steadiness）
-
-- 性格要約: チームの土台を支える忍耐と協調の縁の下の力持ち。協調性・サポート役・長期信頼構築。
-- キャラ要件: モチーフ=緑の木・盾・土台。表情=穏やかで安定感のある笑顔。ポーズ=しっかり立つ・支える。テーマカラー: グリーン (#16a34a) + アースブラウン
-
-- 画像生成プロンプト(EN):
-```
-Modern flat 2D mascot illustration, chibi deformed character (2-3 head ratio), clean uniform line art, friendly round shapes, soft flat color with subtle gradient, centered composition fitting in a circular icon frame, simple background with pastel solid color or light gradient plus small thematic decorations, expressive facial features, SNS-ready kawaii style, consistent with a unified character collection, DiSC S Steadiness type supportive stabilizer chibi mascot, grounded steady supporting pose, small tree and foundation stone props, calm reliable warm smile, green (#16a34a) and earth brown color scheme, small leaf and root decorations on background
-```
+**【女性版】画像生成プロンプト(EN)**:
+Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, young female anime character representing Gemini personality classification only (not astrology or fortune-telling), lively curious high school girl with medium-length light brown twin ponytails and sparkling eyes, wearing sky blue patterned blouse under bright yellow cardigan, animated expressive pose with hands raised showing enthusiasm, cheerful wide smile, light blue and sunny yellow accent tones, open book in one hand and phone in other, airy sky blue gradient background with glittering bokeh bubbles,
 
 ---
 
-### DiSC - C型 慎重型（Conscientiousness）
 
-- 性格要約: 正確性とデータで判断する品質と根拠の専門家。分析的・高い専門性・ルール遵守・品質管理。
-- キャラ要件: モチーフ=顕微鏡・データチャート・虫眼鏡。表情=集中した分析顔・鋭い目。ポーズ=データを調べる・ノートにメモ。テーマカラー: ブルーグレー (#1e40af) + ライトシルバー
+### 星座 - 蟹座（Cancer）
 
-- 画像生成プロンプト(EN):
-```
-Modern flat 2D mascot illustration, chibi deformed character (2-3 head ratio), clean uniform line art, friendly round shapes, soft flat color with subtle gradient, centered composition fitting in a circular icon frame, simple background with pastel solid color or light gradient plus small thematic decorations, expressive facial features, SNS-ready kawaii style, consistent with a unified character collection, DiSC C Conscientiousness type analyst quality expert chibi mascot, careful data examining pose, microscope and chart props, precise focused analytical expression, blue gray (#1e40af) and light silver color scheme, small data graph and checkmark decorations on background
-```
+- 性格要約: 深い共感・愛情深さ・感受性・家族愛・守護本能
+- テーマカラー: ソフトシルバー (#90CAF9) × パールホワイト
+- 小物: ニットブランケット / 温かいスープカップ / 家族写真立て
+- 表情: 温かく包み込むような柔らかい笑顔
+- ポーズ: 胸に手を当てる / 誰かを抱きしめるような優しいポーズ
 
----
+**【男性版】画像生成プロンプト(EN)**:
+Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, young male anime character representing Cancer personality classification only (not astrology or fortune-telling), warm-hearted empathetic high school boy with soft wavy dark navy hair and gentle eyes, wearing a pearl-white oversized sweater with light blue scarf, nurturing pose with one hand gently held to chest, tender warm smile radiating care and empathy, soft silver-blue and pearl accent tones, cozy knit blanket draped over arm and small photo frame in hand, gentle blue-white gradient background with soft glowing light orbs,
 
-## 11. 完璧主義 4体
-
-テーマカラー: 落ち着いたトーンで上品に
-
----
-
-### 完璧主義 - 徹底型
-
-- 性格要約: やるなら100%、自分への基準が誰よりも高い妥協なき完成追求者。高品質を生み続ける原動力。
-- キャラ要件: モチーフ=100点・星5・精密時計。表情=真剣でこだわりのある表情・完成への強い意志。ポーズ=完成品を丁寧に磨く・チェックする。テーマカラー: ダークネイビー (#1e293b) + ゴールド
-
-- 画像生成プロンプト(EN):
-```
-Modern flat 2D mascot illustration, chibi deformed character (2-3 head ratio), clean uniform line art, friendly round shapes, soft flat color with subtle gradient, centered composition fitting in a circular icon frame, simple background with pastel solid color or light gradient plus small thematic decorations, expressive facial features, SNS-ready kawaii style, consistent with a unified character collection, thorough perfectionist self-oriented type chibi mascot, polishing or carefully inspecting pose, gold star and precision clock props, determined meticulous expression, dark navy (#1e293b) and gold color scheme, small 100-point star and polish cloth decorations on background
-```
+**【女性版】画像生成プロンプト(EN)**:
+Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, young female anime character representing Cancer personality classification only (not astrology or fortune-telling), warm-hearted empathetic high school girl with long soft wavy dark blue hair adorned with a pearl hairpin, wearing pearl-white knit dress with light blue ribbon sash, gentle embracing pose with arms slightly open welcoming warmth, soft tender smile with kind expressive eyes, silver-blue and pearl white accent tones, cozy steaming cup in hand and small flower posy, dreamy pale blue-white gradient background with glowing soft bokeh,
 
 ---
 
-### 完璧主義 - こだわり型
 
-- 性格要約: 細部にこそ本質が宿る秩序と精度を愛する職人気質。整理整頓・精度・再現性への強いこだわり。
-- キャラ要件: モチーフ=定規・ラベル・整理棚。表情=几帳面で丁寧な表情・正確さを求める目。ポーズ=整理する・ラベルを貼る。テーマカラー: インディゴ (#312e81) + クリーンホワイト
+### 星座 - 獅子座（Leo）
 
-- 画像生成プロンプト(EN):
-```
-Modern flat 2D mascot illustration, chibi deformed character (2-3 head ratio), clean uniform line art, friendly round shapes, soft flat color with subtle gradient, centered composition fitting in a circular icon frame, simple background with pastel solid color or light gradient plus small thematic decorations, expressive facial features, SNS-ready kawaii style, consistent with a unified character collection, organization perfectionist detail-oriented type chibi mascot, carefully organizing labeling pose, ruler and label props, precise tidy satisfied expression, indigo (#312e81) and clean white color scheme, small ruler and organized shelf decorations on background
-```
+- 性格要約: 輝くリーダー・情熱・自己表現・創造性・寛大さ・存在感
+- テーマカラー: サンゴールド (#FFB300) × ロイヤルオレンジ
+- 小物: マイク / 舞台の花 / 金色のトロフィー
+- 表情: 堂々とした自信満々の笑顔・目力が強い
+- ポーズ: 胸を張って堂々と立つ / 観衆に向けてポーズ
 
----
+**【男性版】画像生成プロンプト(EN)**:
+Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, young male anime character representing Leo personality classification only (not astrology or fortune-telling), charismatic confident high school boy with voluminous golden-brown lion-like hair swept back, wearing a golden yellow blazer with orange accents and fitted dark trousers, proud chest-out standing pose radiating natural leadership, brilliant confident smile with intense golden eyes, warm golden and orange accent tones, small golden trophy prop and microphone, bright golden-orange radiant gradient background with warm light bloom sparkles,
 
-### 完璧主義 - 先延ばし型
-
-- 性格要約: 完璧にできないなら始められない失敗への恐れが生む慎重さの罠。本気で取り組む誠実さが根底にある。
-- キャラ要件: モチーフ=砂時計・立ち止まるシルエット・準備道具。表情=悩んでいるが誠実な表情。ポーズ=準備しながら立ち止まっている。テーマカラー: アンバー (#d97706) + グレー
-
-- 画像生成プロンプト(EN):
-```
-Modern flat 2D mascot illustration, chibi deformed character (2-3 head ratio), clean uniform line art, friendly round shapes, soft flat color with subtle gradient, centered composition fitting in a circular icon frame, simple background with pastel solid color or light gradient plus small thematic decorations, expressive facial features, SNS-ready kawaii style, consistent with a unified character collection, procrastinating perfectionist failure-avoidant type chibi mascot, hesitant pausing mid-preparation pose, hourglass and overprepared bag props, thoughtful cautious but sincere expression, amber (#d97706) and gray color scheme, small hourglass and preparation items decorations on background
-```
+**【女性版】画像生成プロンプト(EN)**:
+Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, young female anime character representing Leo personality classification only (not astrology or fortune-telling), charismatic confident high school girl with voluminous wavy golden amber hair with decorative gold flower clip, wearing a golden yellow off-shoulder top and flowing orange skirt, proud elegant standing pose with one hand on hip radiating natural starpower, brilliant wide smile with bright golden eyes, warm golden and amber accent tones, bouquet of stage flowers in arm, radiant golden-orange gradient background with shimmering light sparkle bokeh,
 
 ---
 
-### 完璧主義 - 期待型
 
-- 性格要約: 誰かの期待が私のプレッシャーとなる承認の追求者。他者の期待に敏感で、応えようとする共感力が高い。
-- キャラ要件: モチーフ=鏡・視線・承認のサムズアップ。表情=緊張しているが頑張る表情・周囲を意識している。ポーズ=鏡を気にする・反応を待つ。テーマカラー: ローズ (#e11d48) + ペールピンク
+### 星座 - 乙女座（Virgo）
 
-- 画像生成プロンプト(EN):
-```
-Modern flat 2D mascot illustration, chibi deformed character (2-3 head ratio), clean uniform line art, friendly round shapes, soft flat color with subtle gradient, centered composition fitting in a circular icon frame, simple background with pastel solid color or light gradient plus small thematic decorations, expressive facial features, SNS-ready kawaii style, consistent with a unified character collection, socially prescribed perfectionist approval seeker type chibi mascot, aware of surroundings checking mirror pose, mirror and thumbs up props, eager to please slightly anxious expression, rose (#e11d48) and pale pink color scheme, small eye and approval star decorations on background
-```
+- 性格要約: 緻密な分析・丁寧さ・完璧主義・サポート力・誠実さ
+- テーマカラー: セージグリーン (#A5D6A7) × クリームホワイト
+- 小物: 手帳・カラーペン / 整理された本棚 / チェックリスト
+- 表情: 真剣で誠実な表情・知的な眼差し
+- ポーズ: 手帳を開いてメモしている / 丁寧に作業している
 
----
+**【男性版】画像生成プロンプト(EN)**:
+Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, young male anime character representing Virgo personality classification only (not astrology or fortune-telling), diligent precise high school boy with neatly parted dark green-tinted black hair and focused intelligent eyes, wearing a sage green button-down shirt with cream vest, focused pose carefully writing in a detailed planner with multiple color pens, composed earnest smile showing sincerity, sage green and cream accent tones, organized stationery set and checklist nearby, clean soft sage-cream gradient background with gentle leaf motif bokeh,
 
-## 12. 金銭感覚 4体
-
-テーマカラー: マネーテーマでクリーンに
-
----
-
-### 金銭感覚 - 回避型
-
-- 性格要約: お金より大切なものがある静かな価値観の持ち主。精神的豊かさ・体験・人間関係を優先する。
-- キャラ要件: モチーフ=緑の葉・本・ハーブ。表情=穏やかで価値観のある笑顔。ポーズ=自然の中でゆったり・本を読む。テーマカラー: ミントグリーン (#34d399) + アース
-
-- 画像生成プロンプト(EN):
-```
-Modern flat 2D mascot illustration, chibi deformed character (2-3 head ratio), clean uniform line art, friendly round shapes, soft flat color with subtle gradient, centered composition fitting in a circular icon frame, simple background with pastel solid color or light gradient plus small thematic decorations, expressive facial features, SNS-ready kawaii style, consistent with a unified character collection, money avoidance type values-driven chibi mascot, relaxed nature reading pose, plant and herbal tea props, peaceful content expression, mint green (#34d399) and earth brown color scheme, small leaf and book decorations on background
-```
+**【女性版】画像生成プロンプト(EN)**:
+Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, young female anime character representing Virgo personality classification only (not astrology or fortune-telling), diligent precise high school girl with neatly braided dark green-tinted hair secured with a cream ribbon, wearing a sage green school-style blouse with cream pleated skirt, focused neat pose holding open planner with color-coded notes, composed earnest expression with intelligent clear eyes, sage green and cream accent tones, decorative stationery set and small potted herb plant beside her, clean sage-cream gradient background with subtle floral bokeh,
 
 ---
 
-### 金銭感覚 - 崇拝型
 
-- 性格要約: もっと稼げばもっと自由になれると信じる行動派。強い向上心と収入向上への行動力がある。
-- キャラ要件: モチーフ=ロケット・グラフ上昇・金貨。表情=前向きで意欲的な笑顔・目標を見つめる。ポーズ=ロケットに乗る・上昇するポーズ。テーマカラー: ゴールド (#ca8a04) + オレンジ
+### 星座 - 天秤座（Libra）
 
-- 画像生成プロンプト(EN):
-```
-Modern flat 2D mascot illustration, chibi deformed character (2-3 head ratio), clean uniform line art, friendly round shapes, soft flat color with subtle gradient, centered composition fitting in a circular icon frame, simple background with pastel solid color or light gradient plus small thematic decorations, expressive facial features, SNS-ready kawaii style, consistent with a unified character collection, money worship ambitious achiever type chibi mascot, riding rocket upward launch pose, rising graph and coin props, motivated ambitious smile, gold (#ca8a04) and orange color scheme, small rocket and upward arrow decorations on background
-```
+- 性格要約: 公正・調和・美的センス・社交性・バランスの達人
+- テーマカラー: ラベンダーピンク (#CE93D8) × アイボリー
+- 小物: 天秤のインテリア小物 / アートスケッチブック / おしゃれな鏡
+- 表情: 優雅で柔らかい笑顔・バランスのとれた表情
+- ポーズ: 両手を広げてバランスをとるポーズ / 優雅に立つ
 
----
+**【男性版】画像生成プロンプト(EN)**:
+Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, young male anime character representing Libra personality classification only (not astrology or fortune-telling), graceful diplomatic high school boy with stylishly swept lavender-tinted light brown hair and calm balanced eyes, wearing a lavender-pink pastel shirt with ivory vest and dress trousers, elegant balanced standing pose with hands lightly extended showing harmony, gentle charming smile, soft lavender and ivory accent tones, decorative art sketchbook and small aesthetic balance ornament, elegant pale lavender-cream gradient background with petal sparkle bokeh,
 
-### 金銭感覚 - 地位型
-
-- 性格要約: 洗練された暮らしで自分の価値を表現したい。社会的立場・ブランド・生活クオリティへの高い意識。
-- キャラ要件: モチーフ=クラウン・高級品・鏡。表情=洗練されたスマートな笑顔。ポーズ=エレガントなポーズ・見せる立ち方。テーマカラー: ダークゴールド (#92400e) + ブラック
-
-- 画像生成プロンプト(EN):
-```
-Modern flat 2D mascot illustration, chibi deformed character (2-3 head ratio), clean uniform line art, friendly round shapes, soft flat color with subtle gradient, centered composition fitting in a circular icon frame, simple background with pastel solid color or light gradient plus small thematic decorations, expressive facial features, SNS-ready kawaii style, consistent with a unified character collection, money status type sophisticated lifestyle chibi mascot, elegant refined confident pose, small crown and luxury accessory props, stylish polished expression, dark gold (#92400e) and black color scheme, small diamond and sparkle decorations on background
-```
+**【女性版】画像生成プロンプト(EN)**:
+Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, young female anime character representing Libra personality classification only (not astrology or fortune-telling), graceful diplomatic high school girl with elegant medium wavy lavender-tinted hair adorned with a small pearl barrette, wearing a lavender-pink chiffon blouse with ivory high-waist skirt, elegant poised standing pose with one hand lightly resting on hip and other open toward viewer, charming graceful smile with calm expressive eyes, soft lavender and ivory accent tones, fashion art sketchbook and aesthetic trinkets, elegant pale lavender gradient background with soft sparkle bokeh,
 
 ---
 
-### 金銭感覚 - 用心型
 
-- 性格要約: 計画と節制で将来への安心を積み上げる堅実派。計画的な資産管理と高い自制心。
-- キャラ要件: モチーフ=貯金箱・家計簿・盾。表情=堅実で安心感のある笑顔・信頼感。ポーズ=貯金箱を抱える・計画を立てる。テーマカラー: ダークグリーン (#065f46) + シルバー
+### 星座 - 蠍座（Scorpio）
 
-- 画像生成プロンプト(EN):
-```
-Modern flat 2D mascot illustration, chibi deformed character (2-3 head ratio), clean uniform line art, friendly round shapes, soft flat color with subtle gradient, centered composition fitting in a circular icon frame, simple background with pastel solid color or light gradient plus small thematic decorations, expressive facial features, SNS-ready kawaii style, consistent with a unified character collection, money vigilance frugal planner type chibi mascot, holding piggy bank careful planning pose, piggybank and household ledger props, reliable steady trustworthy expression, dark green (#065f46) and silver color scheme, small coin and shield decorations on background
-```
+- 性格要約: 深い洞察・強い意志・変革・忠誠心・探求者
+- テーマカラー: ディープクリムゾン (#880E4F) × ネイビー
+- 小物: 研究ノート / 虫眼鏡 / 深いワインレッドの薔薇
+- 表情: 鋭い眼差し・静かな強さ・ミステリアスだが親しみやすい
+- ポーズ: 腕を組んでじっと考える / 一点を見据える洞察ポーズ
+
+**【男性版】画像生成プロンプト(EN)**:
+Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, young male anime character representing Scorpio personality classification only (not astrology or fortune-telling), insightful intense high school boy with sleek dark navy-black hair partially covering one eye and sharp observant eyes, wearing a deep crimson turtleneck sweater with dark navy jacket, composed arms-crossed thinking pose exuding quiet inner strength, subtle confident half-smile with piercing focused gaze, deep crimson and dark navy accent tones, research notebook and magnifying glass accessory, moody but clean deep navy-plum soft gradient background with subtle dark bokeh sparkles,
+
+**【女性版】画像生成プロンプト(EN)**:
+Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, young female anime character representing Scorpio personality classification only (not astrology or fortune-telling), insightful intense high school girl with long sleek dark navy-black hair flowing past shoulders with a single crimson rose pin, wearing a deep crimson fitted turtleneck with dark navy pleated skirt, poised quiet standing pose with one arm crossed showing composed strength, subtle confident smile with sharp perceptive eyes, deep crimson and navy accent tones, research notebook and single dark red rose prop, deep navy-plum gradient background with elegant dark sparkle bokeh,
+
+---
+
+
+### 星座 - 射手座（Sagittarius）
+
+- 性格要約: 自由・冒険・楽観性・哲学・旅人
+- テーマカラー: ロイヤルパープル (#7B1FA2) × ターコイズ
+- 小物: バックパック / 世界地図 / カメラ
+- 表情: 開放的で楽しそうな表情・自由な笑顔
+- ポーズ: 空に向かって腕を広げる / 旅立ちを表す躍動感
+
+**【男性版】画像生成プロンプト(EN)**:
+Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, young male anime character representing Sagittarius personality classification only (not astrology or fortune-telling), adventurous free-spirited high school boy with windswept medium purple-tinted dark hair and bright enthusiastic eyes, wearing a turquoise travel jacket over casual purple hoodie with cargo pants, arms spread wide open in a joyful freedom pose as if embracing the horizon, broad carefree grin, royal purple and turquoise accent tones, vintage camera strap around neck and travel world map sticking out of backpack, breezy open sky gradient background in turquoise-purple with light cloud bokeh,
+
+**【女性版】画像生成プロンプト(EN)**:
+Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, young female anime character representing Sagittarius personality classification only (not astrology or fortune-telling), adventurous free-spirited high school girl with wavy medium purple-tinted brown hair tied loosely with a turquoise ribbon, wearing a turquoise travel vest over purple casual top with wide-leg trousers, energetic wind-in-hair pose with one arm pointing toward the sky full of joy and freedom, bright carefree smile, royal purple and turquoise accent tones, small camera and world-map postcard, breezy turquoise-purple sky gradient background with floating bokeh,
 
 ---
 
-## 13. 恋愛依存 4体
 
-愛着スタイル（Bowlby / Ainsworth理論ベース）のキャラクター化。
-テーマカラー: 暖色〜寒色のスペクトラム
+### 星座 - 山羊座（Capricorn）
+
+- 性格要約: 野心・自律・責任感・戦略的・着実な努力
+- テーマカラー: チャコールグレー (#546E7A) × ゴールド
+- 小物: 手帳（スケジュール） / ノートPC / 登山のイメージ（バッジ付きリュック）
+- 表情: 落ち着いて真剣な表情・信頼感がある
+- ポーズ: 目標を見据えて立つ / 計画書を持つ堂々としたポーズ
+
+**【男性版】画像生成プロンプト(EN)**:
+Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, young male anime character representing Capricorn personality classification only (not astrology or fortune-telling), disciplined ambitious high school boy with neat dark charcoal-black hair with a refined side part and steady confident eyes, wearing a charcoal grey blazer with gold pin on lapel and dark trousers, upright purposeful standing pose holding a detailed planner with calm resolute expression, composed reliable smile with sharp focused eyes, charcoal and gold accent tones, laptop and achievement badge backpack, clean charcoal-slate and gold-toned gradient background with subtle minimal sparkle,
+
+**【女性版】画像生成プロンプト(EN)**:
+Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, young female anime character representing Capricorn personality classification only (not astrology or fortune-telling), disciplined ambitious high school girl with sleek dark charcoal-black hair in a neat high bun secured with a gold hairpin, wearing a charcoal grey fitted blazer with gold button accents and pencil skirt, upright confident standing pose with planner tucked under arm and pen in hand, composed elegant smile with steady determined eyes, charcoal and gold accent tones, achievement badge and polished notebook, clean charcoal-cream gradient background with refined minimal bokeh,
 
 ---
+
+
+### 星座 - 水瓶座（Aquarius）
+
+- 性格要約: 革新・自由・人道主義・独創性・ビジョナリー
+- テーマカラー: エレクトリックブルー (#1E88E5) × ミントグリーン
+- 小物: タブレット（未来的デザイン） / ヘッドフォン / アイデアスケッチ
+- 表情: 知的で好奇心旺盛な表情・独特の存在感
+- ポーズ: 空中にアイデアを描くような未来的なポーズ
+
+**【男性版】画像生成プロンプト(EN)**:
+Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, young male anime character representing Aquarius personality classification only (not astrology or fortune-telling), innovative visionary high school boy with uniquely styled electric blue-tinted dark hair and bright curious intelligent eyes, wearing an electric blue futuristic casual jacket over mint-green t-shirt, dynamic pose sketching ideas in mid-air with glowing holographic-style lines around hands, enthusiastic curious grin with sparkling eyes, electric blue and mint green accent tones, holographic tablet and wireless headphones, vibrant electric blue-mint gradient background with floating light tech-style bokeh,
+
+**【女性版】画像生成プロンプト(EN)**:
+Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, young female anime character representing Aquarius personality classification only (not astrology or fortune-telling), innovative visionary high school girl with uniquely styled medium electric blue-streaked hair swept to one side and bright intelligent curious eyes, wearing an electric blue asymmetric top with mint green accents and wide-leg trousers, dynamic creative pose with one hand raised sketching glowing idea lines in air, enthusiastic curious smile with sparkle in eyes, electric blue and mint green accent tones, holographic tablet and wireless headphones, vibrant electric blue-mint soft gradient background with glowing tech-style bokeh,
+
+---
+
+
+### 星座 - 魚座（Pisces）
+
+- 性格要約: 共感・想像力・芸術性・感受性・夢見人
+- テーマカラー: アクアマリン (#26C6DA) × ラベンダー
+- 小物: 水彩画セット / イヤホン / 詩集 / 夢の世界を感じる小物
+- 表情: 夢見るような柔らかい表情・ふんわりした笑顔
+- ポーズ: 夢想するように空を見上げる / 絵を描いているポーズ
+
+**【男性版】画像生成プロンプト(EN)**:
+Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, young male anime character representing Pisces personality classification only (not astrology or fortune-telling), dreamy empathetic high school boy with soft wavy aqua-tinted dark hair and gentle soulful eyes with a faraway warm gaze, wearing an aquamarine loose knit sweater with lavender scarf, relaxed dreaming pose looking softly upward with paintbrush in hand and open watercolor sketchbook, soft whimsical smile, aquamarine and lavender accent tones, watercolor art supplies and poetry book, dreamy aquamarine-lavender gradient background with floating translucent bubble bokeh,
+
+**【女性版】画像生成プロンプト(EN)**:
+Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, young female anime character representing Pisces personality classification only (not astrology or fortune-telling), dreamy empathetic high school girl with long flowing soft aqua-lavender-tinted wavy hair adorned with a small shell hairpin, wearing an aquamarine chiffon top with lavender flowing skirt, gentle dreaming pose gazing softly upward while holding open watercolor sketchbook, soft whimsical smile with kind soulful eyes, aquamarine and lavender accent tones, watercolor brush and poetry journal, dreamy aquamarine-lavender gradient background with gentle floating bubble bokeh and translucent sparkles,
+
+---
+
+
+### 恋愛スタイル - Eros（情熱型）
+
+- 性格要約: 強い情熱・直感・ロマンチック・一目惚れ型・深く愛する
+- テーマカラー: バーミリオンレッド (#E53935) × ローズゴールド
+- 小物: 赤いバラ / ハートのメッセージカード / キラキラのラッピング
+- 表情: 情熱的で輝くような笑顔・目が燃えている
+- ポーズ: 胸に手を当てて感情を表現 / 誰かに向けて手を差し伸べる
+
+**【男性版】画像生成プロンプト(EN)**:
+Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, young male anime character representing Eros passionate love style personality type, romantic passionate college-aged boy with warm dark brown windswept hair and bright ardent expressive eyes, wearing a deep crimson casual blazer over white shirt, heartfelt pose with one hand over chest and other extended toward viewer as if confessing feelings, glowing confident romantic smile, vermilion red and rose gold accent tones, single red rose and heart message card prop, warm rose-red soft gradient background with floating heart sparkle bokeh,
+
+**【女性版】画像生成プロンプト(EN)**:
+Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, young female anime character representing Eros passionate love style personality type, romantic passionate college-aged girl with flowing warm auburn hair with a red rose accent clip, wearing a deep rose-red elegant off-shoulder blouse with flowing skirt, heartfelt pose with both hands clasped at chest and slightly leaning forward showing genuine emotion, glowing romantic smile with passionate bright eyes, vermilion and rose gold accent tones, bouquet of red roses and glittering heart card, warm rose-red gradient background with glowing heart sparkle bokeh,
+
+---
+
+
+### 恋愛スタイル - Ludus（遊戯型）
+
+- 性格要約: 軽やかで自由・恋愛を楽しむ・束縛を嫌う・ユーモア・距離感重視
+- テーマカラー: ビビッドオレンジ (#FB8C00) × イエロー
+- 小物: トランプカード / 遊び心のあるアクセサリー / サングラス
+- 表情: クールで余裕のある笑顔・チャーミングなウィンク
+- ポーズ: 気軽にもたれかかる / 余裕のある軽いポーズ
+
+**【男性版】画像生成プロンプト(EN)**:
+Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, young male anime character representing Ludus playful love style personality type, charming free-spirited college-aged boy with casually styled tousled amber-orange hair and relaxed confident eyes with a hint of playfulness, wearing a vibrant orange streetwear jacket over yellow tee, cool casual pose leaning back slightly with arms crossed and one eyebrow slightly raised in a charming playful expression, cool relaxed smirk with winking energy, orange and yellow accent tones, playing card fan held casually in one hand and stylish sunglasses on head, playful orange-yellow gradient background with card-suit motif bokeh,
+
+**【女性版】画像生成プロンプト(EN)**:
+Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, young female anime character representing Ludus playful love style personality type, charming free-spirited college-aged girl with bouncy medium amber-orange hair styled in a loose side ponytail, wearing a vibrant orange cropped jacket over yellow graphic tee with wide-leg jeans, cool playful pose leaning casually with one hand on hip and head tilted with a charming wink, confident relaxed smile with sparkling mischievous eyes, orange and sunny yellow accent tones, playful card fan and stylish oversized sunglasses, playful orange-yellow gradient background with sparkle bokeh and card motifs,
+
+---
+
+
+### 恋愛スタイル - Storge（友愛型）
+
+- 性格要約: 友情から育む愛・安定・信頼・ゆっくり深まる・誠実さ
+- テーマカラー: ウォームオリーブ (#8D6E63) × ソフトグリーン
+- 小物: 二人分のカフェカップ / 古い写真アルバム / 手書きレター
+- 表情: 穏やかで信頼感のある笑顔・温かい眼差し
+- ポーズ: 並んで座るように自然体 / 手紙を書いているポーズ
+
+**【男性版】画像生成プロンプト(EN)**:
+Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, young male anime character representing Storge friendship-based love style personality type, warm reliable college-aged boy with soft dark olive-brown hair with gentle natural waves and sincere kind eyes, wearing a warm olive green henley sweater with casual jeans, natural relaxed seated pose at a café table holding a warm mug with a photo album open beside him, genuine warm smile radiating trustworthiness, warm olive and soft green accent tones, handwritten letter and two matching café cups, cozy warm olive-green gradient background with soft warm bokeh,
+
+**【女性版】画像生成プロンプト(EN)**:
+Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, young female anime character representing Storge friendship-based love style personality type, warm reliable college-aged girl with medium-length soft dark olive-brown hair in a natural loose style with a small green leaf hairpin, wearing a warm olive knit cardigan over sage green blouse and comfortable skirt, natural cozy seated pose with a handwritten letter in hand and open photo album on the table, genuine warm smile with kind steady eyes, warm olive and soft green accent tones, two matching tea cups and small potted plant, cozy warm olive-green gradient background with soft warm bokeh,
+
+---
+
+
+### 恋愛スタイル - Pragma（実利型）
+
+- 性格要約: 現実的・価値観重視・将来設計・冷静な判断・賢明な恋愛設計者
+- テーマカラー: ティールグリーン (#00695C) × シルバーグレー
+- 小物: デイリープランナー / タブレット（ライフプラン） / シンプルな時計
+- 表情: 知的で冷静な笑顔・信頼感がある
+- ポーズ: 計画書を確認するポーズ / 腕を組んで考える姿
+
+**【男性版】画像生成プロンプト(EN)**:
+Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, young male anime character representing Pragma practical love style personality type, thoughtful pragmatic college-aged boy with neatly styled dark teal-toned black hair and calm intelligent eyes, wearing a teal-green collared shirt under a sleek gray blazer, composed thoughtful pose with arms lightly crossed reviewing a life-planning tablet, calm composed smile with steady analytical gaze, teal and silver-gray accent tones, slim designer planner and minimalist watch accessory, clean teal-slate gradient background with subtle geometric pattern bokeh,
+
+**【女性版】画像生成プロンプト(EN)**:
+Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, young female anime character representing Pragma practical love style personality type, thoughtful pragmatic college-aged girl with sleek dark teal-toned black hair in a polished low ponytail, wearing a teal-green structured blouse with silver-gray tailored skirt, composed professional pose holding a slim planner open with stylus in hand, calm intelligent smile with steady clear eyes, teal and silver-gray accent tones, slim designer tablet and elegant minimalist watch, clean teal-silver gradient background with subtle geometric bokeh,
+
+---
+
+
+### 恋愛スタイル - Mania（感情型）
+
+- 性格要約: 感情豊か・強い意識・愛の深さを全力で感じる・真剣さ・感情の波
+- テーマカラー: マゼンタピンク (#AD1457) × コーラル
+- 小物: 日記 / 感情を表すハートのチャーム / にぎやかなメッセージカード
+- 表情: 豊かな感情表現・どきどきした表情・目に感情が溢れる
+- ポーズ: 感情を込めて胸に手を当てる / 感情の波を表現する動きのあるポーズ
+
+**【男性版】画像生成プロンプト(EN)**:
+Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, young male anime character representing Mania emotionally intense love style personality type (sincere deeply feeling type, not negative depiction), emotionally expressive college-aged boy with tousled dark magenta-tinted brown hair and large soulful emotive eyes that show deep feeling, wearing a coral-pink casual jacket over white shirt, heartfelt emotional pose with both hands held to chest showing genuine deep sincerity, earnest heartfelt expression with slightly watery warm eyes full of emotion, magenta and coral accent tones, personal diary with heart charm bookmark, warm magenta-coral gradient background with soft glowing heart bokeh,
+
+**【女性版】画像生成プロンプト(EN)**:
+Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, young female anime character representing Mania emotionally intense love style personality type (sincere deeply feeling type, not negative depiction), emotionally expressive college-aged girl with flowing wavy dark magenta-tinted hair pinned with a coral flower clip, wearing a magenta-pink flutter-sleeve top and flowing coral skirt, expressive emotional pose with hands clasped at chest showing deep genuine sincerity, earnest heartfelt expression with emotive sparkling eyes, magenta and coral accent tones, personal diary decorated with heart stickers and heart charm, warm magenta-coral gradient background with gentle glowing heart bokeh,
+
+---
+
+
+### 恋愛スタイル - Agape（献身型）
+
+- 性格要約: 見返りを求めない・深く静かな無償の愛・包容力・誠実さ・相手の幸せを優先
+- テーマカラー: ピュアホワイト (#E3F2FD) × ソフトゴールド
+- 小物: 白い鳩のモチーフ / 手作りのプレゼント / 柔らかいブランケット
+- 表情: 穏やかで深い安心感を与える笑顔・慈愛に満ちた目
+- ポーズ: 両手を優しく広げる包み込むようなポーズ / 静かに佇む
+
+**【男性版】画像生成プロンプト(EN)**:
+Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, young male anime character representing Agape unconditional love style personality type, deeply devoted selfless college-aged boy with soft white-silver tinted gentle hair and warm caring eyes radiating quiet inner peace, wearing a pure white loose knit sweater with soft gold accents, gentle welcoming pose with both arms slightly open as if embracing the world with unconditional care, serene deeply warm smile showing selfless love, white and soft gold accent tones, handcrafted gift box wrapped with white ribbon and small dove motif ornament, serene pure white-gold gradient background with soft gentle light bloom bokeh,
+
+**【女性版】画像生成プロンプト(EN)**:
+Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, young female anime character representing Agape unconditional love style personality type, deeply devoted selfless college-aged girl with long flowing soft white-silver hair adorned with a small white flower crown, wearing a pure white flowing dress with delicate gold trim, gentle graceful pose with both arms slightly open and hands turned upward in a welcoming gesture of unconditional giving, serene deeply warm smile with kind luminous eyes, white and soft gold accent tones, handcrafted ribbon-wrapped gift and dove feather motif ornament, serene pure white-gold gradient background with soft glowing light bloom,
+
+---
+
+
+### 友達相性 - ムードメーカー型（Mood Maker）
+
+- 性格要約: 場を明るくする・みんなの太陽・外向的・盛り上げ役
+- テーマカラー: サニーイエロー (#FFEE58) × オレンジ
+- 小物: メガフォン / カラフルな風船 / パーティーハット
+- 表情: 爆発的な笑顔・目がキラキラ輝く
+- ポーズ: 両手を高く上げて盛り上げるポーズ / ジャンプしている躍動感
+
+**【男性版】画像生成プロンプト(EN)**:
+Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, young male anime character representing Mood Maker friend personality type, energetic upbeat college-aged boy with spiky bright yellow-tinted brown hair and hugely expressive laughing eyes, wearing a sunny yellow hoodie over an orange graphic shirt with jeans, explosive jump pose with both arms raised high and wide grin showing sheer joy and enthusiasm, radiant beaming smile with sparkling happy eyes, sunny yellow and orange accent tones, colorful balloons and small megaphone prop, vibrant sunny yellow-orange gradient background with confetti and sparkle bokeh burst,
+
+**【女性版】画像生成プロンプト(EN)**:
+Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, young female anime character representing Mood Maker friend personality type, energetic upbeat college-aged girl with voluminous bouncy bright yellow-orange highlighted hair in a high ponytail with colorful hair ties, wearing a sunny yellow cropped top over orange cardigan with bright jeans, dynamic jumping pose with arms up and wide ecstatic grin bursting with joy, radiant beaming smile with hugely expressive sparkling eyes, sunny yellow and orange accent tones, colorful balloons bouquet and party popper, vibrant yellow-orange gradient background with confetti sparkle burst bokeh,
+
+---
+
+
+### 友達相性 - 聴き上手型（Compassionate Listener）
+
+- 性格要約: 安心感・共感力・深い一対一の関係・友人の安全な場所
+- テーマカラー: スカイブルー (#80DEEA) × ソフトラベンダー
+- 小物: ティーカップ / やわらかいクッション / 日記帳
+- 表情: 温かく包み込む優しい笑顔・柔らかい眼差し
+- ポーズ: 耳を傾けるように少し前傾み / 膝に手をおいて穏やかに座る
+
+**【男性版】画像生成プロンプト(EN)**:
+Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, young male anime character representing Compassionate Listener friend personality type, gentle empathetic college-aged boy with soft wavy sky-blue tinted dark hair and deeply kind attentive eyes, wearing a soft sky blue knit sweater with lavender scarf, gentle seated pose leaning slightly forward with hands clasped on knees in an attentive listening posture, warm genuine soft smile radiating safety and trust, sky blue and soft lavender accent tones, steaming tea cup and small comfort journal on the side, tranquil sky blue-lavender gradient background with soft gentle bokeh,
+
+**【女性版】画像生成プロンプト(EN)**:
+Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, young female anime character representing Compassionate Listener friend personality type, gentle empathetic college-aged girl with soft medium-length sky-blue tinted dark hair tucked behind ear with a small lavender flower pin, wearing a soft sky blue loose blouse with lavender soft skirt, gentle seated pose leaning slightly forward in an attentive listening posture with hands softly resting on lap, warm genuine smile with deeply kind attentive eyes, sky blue and lavender accent tones, steaming tea cup on saucer and soft comfort journal, tranquil sky blue-lavender gradient background with soft gentle light bokeh,
+
+---
+
+
+### 友達相性 - 仕切り屋型（Natural Leader）
+
+- 性格要約: グループを動かす頼れるリーダー・計画力・決断力・行動力
+- テーマカラー: コバルトブルー (#1565C0) × ネオンイエロー
+- 小物: クリップボード / スケジュール表 / メガフォン
+- 表情: 頼りがいのある自信満々の笑顔・力強い目
+- ポーズ: 腕を伸ばして指示するリーダーポーズ / 自信を持って立つ
+
+**【男性版】画像生成プロンプト(EN)**:
+Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, young male anime character representing Natural Leader friend personality type, decisive commanding college-aged boy with neatly styled cobalt-navy hair with a confident undercut and sharp determined eyes, wearing a cobalt blue team jacket with yellow accent stripe, strong authoritative standing pose with one arm extended forward in a rallying leadership gesture, broad reliable smile radiating trustworthiness and confidence, cobalt blue and neon yellow accent tones, clipboard with event schedule and small whistle, bold cobalt blue-yellow gradient background with energetic light streak bokeh,
+
+**【女性版】画像生成プロンプト(EN)**:
+Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, young female anime character representing Natural Leader friend personality type, decisive commanding college-aged girl with sleek cobalt-navy hair in a sharp high ponytail with a yellow scrunchie, wearing a cobalt blue sporty blazer with yellow piping over white tee, strong confident standing pose with one hand on hip and other extended forward in a decisive rallying gesture, broad reliable smile with sharp determined eyes, cobalt blue and yellow accent tones, clipboard event planner and team megaphone, bold cobalt-yellow gradient background with energetic light streak bokeh,
+
+---
+
+
+### 友達相性 - 一匹狼型（Independent Spirit）
+
+- 性格要約: 自分軸・少数の深い絆・独自の視点・本物の友情を選ぶ
+- テーマカラー: スレートブルー (#455A64) × シルバー
+- 小物: ヘッドフォン / 本 / 独自のスケッチノート
+- 表情: クールで落ち着いた表情・芯の強さが見える眼差し
+- ポーズ: 壁にもたれて本を読む / 自分のペースで静かに立つ
+
+**【男性版】画像生成プロンプト(EN)**:
+Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, young male anime character representing Independent Spirit friend personality type, cool self-reliant college-aged boy with naturally styled slate-gray tinted dark hair with a confident inner strength look, wearing a slate blue-gray minimal jacket over dark tee, cool relaxed pose leaning against a soft background surface reading an open book with earphones in, subtle composed half-smile with steady self-assured eyes showing quiet inner strength, slate blue and silver accent tones, worn personal sketchbook and over-ear headphones, calm slate-silver gradient background with subtle quiet bokeh,
+
+**【女性版】画像生成プロンプト(EN)**:
+Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, young female anime character representing Independent Spirit friend personality type, cool self-reliant college-aged girl with straight slate-gray tinted dark hair cut at the shoulder with a small silver clip, wearing a slate blue-gray minimal longline coat over fitted black turtleneck, cool composed standing pose with book held under one arm and over-ear headphones resting on neck, subtle composed smile with steady self-assured eyes, slate blue and silver accent tones, personal sketchbook and wireless headphones, calm slate-silver gradient background with subtle quiet bokeh,
+
+---
+
+
+### 友達相性 - 同調型（Empathetic Harmonizer）
+
+- 性格要約: 空気を読む・縁の下の力持ち・グループの和を大切にする・穏やかな調整役
+- テーマカラー: ソフトミント (#B2DFDB) × ピーチ
+- 小物: 橋渡しを表す小物（手紙の束） / 平和のシンボル（花）/ 付箋ノート
+- 表情: 穏やかで包容力のある笑顔・安心感を与える目
+- ポーズ: 両手を前に出して和らげるポーズ / 柔らかく微笑んで立つ
+
+**【男性版】画像生成プロンプト(EN)**:
+Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, young male anime character representing Empathetic Harmonizer friend personality type, gentle peacekeeping college-aged boy with soft mint-tinted dark hair with a naturally peaceful expression, wearing a soft mint green casual sweater with peach scarf, calm mediating pose with both hands gently raised forward in a gentle calming gesture, soft warm reassuring smile with kind peaceful eyes, mint green and peach accent tones, small bundle of handwritten notes and a soft flower, serene mint-peach gradient background with soft gentle floating petal bokeh,
+
+**【女性版】画像生成プロンプト(EN)**:
+Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, young female anime character representing Empathetic Harmonizer friend personality type, gentle peacekeeping college-aged girl with soft wavy mint-tinted dark hair adorned with a peach flower hairpin, wearing a soft mint green flowy blouse and peach pleated skirt, calm graceful mediating pose with both hands gently extended forward in a welcoming calming gesture, soft warm reassuring smile with kind caring eyes, mint green and peach accent tones, small handwritten note bundle and small floral bouquet, serene mint-peach gradient background with soft floating petal bokeh,
+
+---
+
+
+### 友達相性 - 知性派型（Thoughtful Analyst）
+
+- 性格要約: 深い思考・洞察・本質を語る・静かなる知の探求者
+- テーマカラー: ディープパープル (#4527A0) × スレートグレー
+- 小物: 分厚い専門書 / 望遠鏡モチーフ / 思考を表すチェス駒
+- 表情: 思慮深い表情・静かな知的な眼差し
+- ポーズ: 顎に手を当てて考えているポーズ / 本を開いたまま空を見上げる
+
+**【男性版】画像生成プロンプト(EN)**:
+Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, young male anime character representing Thoughtful Analyst friend personality type, intellectually deep college-aged boy with neat deep purple-tinted dark hair and sharp thoughtful perceptive eyes behind thin wire-frame glasses, wearing a deep indigo-purple tailored shirt under a slate gray cardigan, composed thoughtful pose with one hand resting under chin in classic thinking gesture while holding an open academic book, subtle intelligent half-smile with deep observant eyes, deep purple and slate gray accent tones, thick academic book and small chess knight piece, sophisticated deep purple-slate gradient background with subtle geometric sparkle bokeh,
+
+**【女性版】画像生成プロンプト(EN)**:
+Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, young female anime character representing Thoughtful Analyst friend personality type, intellectually deep college-aged girl with sleek deep purple-tinted dark hair styled in a precise side-parted bun with thin wire-frame glasses, wearing a deep indigo-purple turtleneck under slate gray blazer, composed thoughtful seated pose with one hand under chin and open academic book on her lap, subtle intelligent smile with sharp perceptive eyes, deep purple and slate gray accent tones, thick hardcover book and chess bishop piece, sophisticated deep purple-slate gradient background with subtle geometric sparkle bokeh,
+
+---
+
 
 ### 恋愛依存 - 安定型（Secure）
 
-- 性格要約: 安心した愛着スタイルを持ち、健全な距離感で深い関係を築ける。自己信頼と相手への信頼を自然に持つ。
-- キャラ要件: モチーフ=錨・ハート・太陽。表情=安定した温かい笑顔・安心感のある目。ポーズ=ゆったり安定・手を添える。テーマカラー: スカイブルー (#0ea5e9) + サンイエロー
+- 性格要約（愛着理論ベース）: 自分と相手を信頼できる・安定した愛着パターン・健全な距離感・感情を適切に表現できる
+- テーマカラー: トラストグリーン (#43A047) × ウォームクリーム
+- 小物: コーヒーカップ（2つ） / バランスのとれた天秤のインテリア / 安定感を表す木のオブジェ
+- 表情: 穏やかで自信に満ちた温かい笑顔・安定感がある
+- ポーズ: ゆったりと落ち着いて立つ / 肩の力が抜けたリラックスポーズ
 
-- 画像生成プロンプト(EN):
-```
-Modern flat 2D mascot illustration, chibi deformed character (2-3 head ratio), clean uniform line art, friendly round shapes, soft flat color with subtle gradient, centered composition fitting in a circular icon frame, simple background with pastel solid color or light gradient plus small thematic decorations, expressive facial features, SNS-ready kawaii style, consistent with a unified character collection, secure attachment love style stable chibi mascot, grounded steady comfortable pose, anchor and heart props, confident warm secure smile, sky blue (#0ea5e9) and sun yellow color scheme, small anchor and sun decorations on background
-```
+**【男性版】画像生成プロンプト(EN)**:
+Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, young male anime character representing Secure attachment style personality type (based on Bowlby attachment theory, not medical diagnosis), emotionally secure grounded college-aged boy with naturally styled warm green-tinted dark hair and calm confident kind eyes, wearing a trust-green casual knit sweater with cream chinos, relaxed comfortable standing pose with shoulders naturally down showing inner security and ease, genuine warm confident smile radiating stability and trustworthiness, green and cream accent tones, two matching coffee cups and a small balanced wooden desk ornament, warm trust-green cream gradient background with gentle soft bokeh,
+
+**【女性版】画像生成プロンプト(EN)**:
+Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, young female anime character representing Secure attachment style personality type (based on Bowlby attachment theory, not medical diagnosis), emotionally secure grounded college-aged girl with naturally styled medium-length warm green-tinted dark hair with a cream scrunchie, wearing a trust-green soft blouse with cream cardigan and comfortable skirt, relaxed comfortable standing pose with a warm natural ease in her posture, genuine warm confident smile with calm steady eyes, green and cream accent tones, two matching mugs and small balanced wooden ornament, warm green-cream gradient background with gentle soft bokeh,
 
 ---
+
 
 ### 恋愛依存 - 不安型（Anxious）
 
-- 性格要約: 強い感情と愛情への切実さを持つ。関係への真剣さが高く、繋がりを大切にしたいという誠実な気持ちが根底にある。
-- キャラ要件: モチーフ=電話・ハート・波。表情=不安だが誠実な表情・感情が表れている。ポーズ=待つ・連絡を確認。テーマカラー: コーラル (#fb7185) + ラベンダー
+- 性格要約（愛着理論ベース）: 相手への強い意識・関係への敏感さ・確認欲求・深く愛したい気持ち・感情豊か
+- テーマカラー: コーラルオレンジ (#FF7043) × ソフトイエロー
+- 小物: スマートフォン（通知を見ている） / ハートのクッション / 感情日記
+- 表情: 少し心配そうだが愛情深い表情・不安の中にある温かさ
+- ポーズ: スマホを胸に当てて少し前かがみ / 待っているような不安とときめきが混在するポーズ
 
-- 画像生成プロンプト(EN):
-```
-Modern flat 2D mascot illustration, chibi deformed character (2-3 head ratio), clean uniform line art, friendly round shapes, soft flat color with subtle gradient, centered composition fitting in a circular icon frame, simple background with pastel solid color or light gradient plus small thematic decorations, expressive facial features, SNS-ready kawaii style, consistent with a unified character collection, anxious attachment love style caring earnest chibi mascot, waiting or reaching out pose, phone and heart props, sincere emotionally engaged expression, coral (#fb7185) and lavender color scheme, small heart and wave decorations on background
-```
+**【男性版】画像生成プロンプト(EN)**:
+Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, young male anime character representing Anxious attachment style personality type (based on Bowlby attachment theory, sympathetic positive depiction, not medical diagnosis), emotionally sensitive warmly caring college-aged boy with slightly tousled coral-tinted brown hair and large expressive eyes showing gentle concern mixed with warmth, wearing a coral-orange casual hoodie with soft yellow inner shirt, pose with phone held gently to chest and slight forward lean showing tender anticipation and caring, warm caring expression with slightly concerned but loving eyes, coral orange and soft yellow accent tones, heart-shaped decorative pillow and personal emotion journal, warm coral-yellow soft gradient background with gentle warm bokeh,
+
+**【女性版】画像生成プロンプト(EN)**:
+Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, young female anime character representing Anxious attachment style personality type (based on Bowlby attachment theory, sympathetic positive depiction, not medical diagnosis), emotionally sensitive warmly caring college-aged girl with slightly wavy coral-tinted auburn hair with a yellow flower clip, wearing a coral-orange ruffle blouse with soft yellow skirt, gentle pose hugging a heart-shaped cushion with phone in one hand and slightly forward-leaning tender expression mixing anticipation and care, warm caring expression with gentle expressive concerned-but-loving eyes, coral and soft yellow accent tones, heart cushion and decorated emotion diary, warm coral-yellow gradient background with gentle warm bokeh,
 
 ---
+
 
 ### 恋愛依存 - 回避型（Avoidant）
 
-- 性格要約: 自立を大切にし自分のペースを守る。深い関係よりも個人の自由と独立を重視する。
-- キャラ要件: モチーフ=本・空間・扉。表情=クールで独立した微笑み・距離を保つ目。ポーズ=一歩引いた立ち姿・本を持つ。テーマカラー: ミッドナイトブルー (#1e3a5f) + シルバー
+- 性格要約（愛着理論ベース）: 自立を大切にする・感情的距離の調整・個人空間を尊重・一人の時間も充実
+- テーマカラー: クールアイスブルー (#0288D1) × シルバーグレー
+- 小物: ヘッドフォン / 独自の趣味グッズ（本・アウトドア） / 一人用コーヒーカップ
+- 表情: 落ち着いてクールな表情・内面の豊かさが見える
+- ポーズ: 自分のスペースで快適にくつろぐ / 少し距離を置いた自立したポーズ
 
-- 画像生成プロンプト(EN):
-```
-Modern flat 2D mascot illustration, chibi deformed character (2-3 head ratio), clean uniform line art, friendly round shapes, soft flat color with subtle gradient, centered composition fitting in a circular icon frame, simple background with pastel solid color or light gradient plus small thematic decorations, expressive facial features, SNS-ready kawaii style, consistent with a unified character collection, avoidant attachment love style independent chibi mascot, slightly stepped back self-sufficient pose, personal space book and small door props, cool composed independent expression, midnight blue (#1e3a5f) and silver color scheme, small key and space line decorations on background
-```
+**【男性版】画像生成プロンプト(EN)**:
+Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, young male anime character representing Avoidant attachment style personality type (based on Bowlby attachment theory, positive self-reliant depiction, not medical diagnosis), independent self-sufficient college-aged boy with sleek cool ice-blue tinted dark hair and calm composed self-contained eyes, wearing a cool sky-blue windbreaker with silver-gray joggers, comfortable self-contained standing pose with headphones around neck and one hand in pocket showing quiet self-sufficiency, cool composed half-smile showing inner contentment and independence, ice blue and silver-gray accent tones, over-ear headphones and solo travel paperback book, cool ice-blue silver gradient background with calm minimal crisp bokeh,
+
+**【女性版】画像生成プロンプト(EN)**:
+Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, young female anime character representing Avoidant attachment style personality type (based on Bowlby attachment theory, positive self-reliant depiction, not medical diagnosis), independent self-sufficient college-aged girl with sleek straight ice-blue tinted dark hair cut to shoulder with a simple silver pin, wearing a cool sky-blue longline jacket with silver-gray wide-leg trousers, comfortable self-contained standing pose with wireless earbuds in and slim book tucked under arm showing quiet independence, cool composed smile with calm self-assured eyes, ice blue and silver-gray accent tones, wireless earbuds and minimal solo travel book, cool ice-blue silver gradient background with calm crisp minimal bokeh,
 
 ---
+
 
 ### 恋愛依存 - 共依存型（Codependent）
 
-- 性格要約: 相手のために全力を尽くす深い献身性。思いやりが非常に深く、関係を守りたいという強い意志を持つ。
-- キャラ要件: モチーフ=絡み合うハート・手・糸。表情=温かく包み込む笑顔・全力の目。ポーズ=しっかり手をつなぐ・全力でサポート。テーマカラー: マゼンタ (#c026d3) + ウォームゴールド
+- 性格要約（愛着理論ベース）: 深い思いやり・献身性・相手中心の傾向・強い絆への欲求・自己ケアを学ぶ成長過程
+- テーマカラー: ウォームマゼンタ (#AD1457) × ソフトピーチ
+- 小物: 大きなハートのぬいぐるみ / お揃いのグッズ / 手作りのプレゼント
+- 表情: 思いやりに溢れた表情・相手を思う温かみ・少し頑張りすぎている
+- ポーズ: 大きなプレゼントや手作りグッズを抱える / 両手でハートを作る
 
-- 画像生成プロンプト(EN):
-```
-Modern flat 2D mascot illustration, chibi deformed character (2-3 head ratio), clean uniform line art, friendly round shapes, soft flat color with subtle gradient, centered composition fitting in a circular icon frame, simple background with pastel solid color or light gradient plus small thematic decorations, expressive facial features, SNS-ready kawaii style, consistent with a unified character collection, codependent love style deeply devoted chibi mascot, fully supportive holding hands nurturing pose, intertwined heart and helping hand props, warm whole-hearted expression, magenta (#c026d3) and warm gold color scheme, small heart chain and care symbol decorations on background
-```
+**【男性版】画像生成プロンプト(EN)**:
+Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, young male anime character representing Codependent attachment tendency personality type (based on attachment theory, compassionate positive depiction showing deep caring and ongoing growth, not medical diagnosis), deeply caring devoted college-aged boy with warm magenta-tinted brown hair and expressive eyes full of genuine heartfelt warmth and care for others, wearing a warm magenta casual sweater with peach inner shirt, earnest pose holding a large handmade gift with both arms showing deep devotion and giving spirit, caring devoted smile with warmth-filled eyes showing genuine affection, magenta and soft peach accent tones, large heart-shaped handmade gift wrap and matching friendship bracelet, warm magenta-peach gradient background with soft glowing heart bokeh,
 
----
-
-## 14. 血液型 4体
-
-テーマカラー: 各血液型のイメージカラー
+**【女性版】画像生成プロンプト(EN)**:
+Modern Japanese youth anime / light-novel illustration, semi-realistic anime art style, natural 6-7 head proportion, high-school to college-aged character, soft cel-shading with gentle gradients and subtle light bloom, clean delicate line art, bright fresh airy color palette, sparkle and soft bokeh accents, youthful friendly expressive face, polished anime finish; the character embodies the personality type through pose, outfit and expression; simple soft pastel background; SNS-ready; unified consistent illustration style across the entire collection, young female anime character representing Codependent attachment tendency personality type (based on attachment theory, compassionate positive depiction showing deep caring and ongoing growth, not medical diagnosis), deeply caring devoted college-aged girl with flowing warm magenta-tinted brown hair adorned with a peach flower clip, wearing a warm magenta ruffle blouse with peach soft skirt, earnest pose making a heart shape with both hands raised showing genuine devoted warmth, caring devoted smile with warmhearted expressive eyes full of genuine affection, magenta and soft peach accent tones, matching friendship bracelets and handmade decorated gift, warm magenta-peach gradient background with soft glowing heart bokeh,
 
 ---
 
-### 血液型 - A型（几帳面な調和派）
-
-- 性格要約: 几帳面で神経質・内省的。細部まで丁寧、ルールを守り、チームの調和を大切にする誠実派。
-- キャラ要件: モチーフ=チェックリスト・整理棚・時計。表情=丁寧で真剣な微笑み・信頼感。ポーズ=確認する・正確に整理。テーマカラー: スカーレット (#dc2626) + クリーンホワイト
-
-- 画像生成プロンプト(EN):
-```
-Modern flat 2D mascot illustration, chibi deformed character (2-3 head ratio), clean uniform line art, friendly round shapes, soft flat color with subtle gradient, centered composition fitting in a circular icon frame, simple background with pastel solid color or light gradient plus small thematic decorations, expressive facial features, SNS-ready kawaii style, consistent with a unified character collection, blood type A personality meticulous harmonious chibi mascot, carefully checking organizing pose, checklist and neatly organized shelf props, precise reliable expression, scarlet (#dc2626) and clean white color scheme, small checkmark and clock decorations on background
-```
-
----
-
-### 血液型 - B型（自由なマイペース探求派）
-
-- 性格要約: 積極的・社交的・マイペースで自分の感覚を大切にする。好奇心旺盛で興味を持ったことに没頭する。
-- キャラ要件: モチーフ=虫眼鏡・地図・アドベンチャーハット。表情=好奇心旺盛な笑顔・自由な目。ポーズ=我が道を行く・探索。テーマカラー: スカーレット (#dc2626) + イエロー
-
-- 画像生成プロンプト(EN):
-```
-Modern flat 2D mascot illustration, chibi deformed character (2-3 head ratio), clean uniform line art, friendly round shapes, soft flat color with subtle gradient, centered composition fitting in a circular icon frame, simple background with pastel solid color or light gradient plus small thematic decorations, expressive facial features, SNS-ready kawaii style, consistent with a unified character collection, blood type B personality free-spirited curious chibi mascot, independent exploring adventurous pose, magnifying glass and adventure map props, curious playful expression, scarlet (#dc2626) and yellow color scheme, small compass and footprint decorations on background
-```
-
----
-
-### 血液型 - O型（頼れる社交的リーダー派）
-
-- 性格要約: 積極的・大らか・社交的でリーダーシップが際立つ。目標に向かって前向きに行動し周囲を巻き込む。
-- キャラ要件: モチーフ=旗・仲間・太陽。表情=大らかで人懐っこい笑顔・明るい目。ポーズ=みんなをまとめる・前に出る。テーマカラー: スカーレット (#dc2626) + ウォームオレンジ
-
-- 画像生成プロンプト(EN):
-```
-Modern flat 2D mascot illustration, chibi deformed character (2-3 head ratio), clean uniform line art, friendly round shapes, soft flat color with subtle gradient, centered composition fitting in a circular icon frame, simple background with pastel solid color or light gradient plus small thematic decorations, expressive facial features, SNS-ready kawaii style, consistent with a unified character collection, blood type O personality sociable leader chibi mascot, rallying leading forward pose, flag and sun props, open-hearted energetic grin, scarlet (#dc2626) and warm orange color scheme, small crown and handshake decorations on background
-```
-
----
-
-### 血液型 - AB型（独創的な合理派）
-
-- 性格要約: 二面性・合理的・独創的。状況に応じて柔軟に対応できる知的なタイプ。独自の視点と論理的思考力。
-- キャラ要件: モチーフ=コイン表裏・本・パズル。表情=独特で知的な笑顔・少し謎めいた目。ポーズ=分析する・ユニークな視点のポーズ。テーマカラー: スカーレット (#dc2626) + パープル
-
-- 画像生成プロンプト(EN):
-```
-Modern flat 2D mascot illustration, chibi deformed character (2-3 head ratio), clean uniform line art, friendly round shapes, soft flat color with subtle gradient, centered composition fitting in a circular icon frame, simple background with pastel solid color or light gradient plus small thematic decorations, expressive facial features, SNS-ready kawaii style, consistent with a unified character collection, blood type AB personality creative rational dual-nature chibi mascot, unique thoughtful analytical pose, two-sided coin and puzzle piece props, clever enigmatic expression, scarlet (#dc2626) and purple color scheme, small yin-yang and puzzle decorations on background
-```
-
----
-
-## 発注・納品チェックリスト
-
-### 外注先への必須確認事項
-1. 全84体で共通スタイルプレフィックスを使用していること
-2. 共通ネガティブプロンプトを全体に適用していること
-3. 頭身は全体で2〜3頭身デフォルメで統一すること
-4. 占い・神秘主義・オカルト的演出が一切含まれないこと
-5. 星座キャラに「性格類型として」の注記を適用していること
-
-### 納品形式
-- 解像度: 1024×1024px 以上（正方形）
-- 形式: PNG（背景透過推奨） + JPG（白背景）
-- ファイル名: `{グループID}-{タイプID}.png`（例: `mbti-intj.png`, `big5-lion.png`）
-
-### サンプル確認推奨
-84体の前に代表サンプル3〜5体（例: INTJ・ライオン王・牡羊座・対人的知能・情熱型Eros）を確認し、
-スタイル・頭身・ブランド統一感をクライアントに確認してから全体発注すること。
-
----
-
-*作成日: 2026-06-06 | 診断ナビ（shindan-navi.jp）外注用キャラクタープロンプト集 | 全84体*
