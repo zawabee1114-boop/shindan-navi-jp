@@ -1,0 +1,1024 @@
+---
+/**
+ * 血液型サブタイプ診断 フローページ
+ * URL: /diagnosis/blood-type/diagnosis/
+ *
+ * フロー:
+ * Step 1: 血液型を選択（A/B/O/AB の4択）
+ * Step 2: 10問のリッカート質問（DiagnosisFlow コンポーネント）
+ * Step 3: 結果ページへ遷移 /diagnosis/blood-type/diagnosis/result/{typeId}/
+ *
+ * 学術根拠:
+ * - 古川竹二 (1927) 血液型による気質の研究
+ * - 能見正比古 (1971) 血液型でわかる相性（典型・変則・中間の概念）
+ * - McCrae RR, Costa PT (1987) Big Five Personality Factors
+ * - 日本心理学会 公式見解 (2014) 血液型と性格の無関連性
+ *
+ * YMYL回避: 医療・精神疾患言及ゼロ
+ * 科学的限界の注記: 必須表示
+ * ブラハラ警告: 必須表示
+ *
+ * 確認日: 2026-06-07
+ */
+
+import BaseLayout from '../../../../layouts/BaseLayout.astro';
+import Container from '../../../../components/Container.astro';
+import { meta } from '../../../../data/diagnoses/blood-subtype/meta';
+import { questions } from '../../../../data/diagnoses/blood-subtype/questions';
+import TldrBlock from '../../../../components/TldrBlock.astro';
+
+const SITE_URL = 'https://shindan-navi.jp';
+const PAGE_URL = `${SITE_URL}/diagnosis/blood-type/diagnosis/`;
+
+// JSON-LD: WebApplication
+const jsonLdWebApp = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  '@id': `${PAGE_URL}#webapp`,
+  name: '血液型サブタイプ診断【無料・12タイプ・学術根拠付】',
+  url: PAGE_URL,
+  applicationCategory: 'EducationalApplication',
+  operatingSystem: 'Web',
+  description: meta.description,
+  offers: {
+    '@type': 'Offer',
+    price: '0',
+    priceCurrency: 'JPY',
+    availability: 'https://schema.org/InStock',
+  },
+  author: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+    name: '診断ナビ',
+    url: SITE_URL,
+  },
+  mentions: [
+    {
+      '@type': 'Thing',
+      name: '血液型性格分類（古川竹二1927・能見正比古1971）',
+      sameAs: 'https://ja.wikipedia.org/wiki/%E8%A1%80%E6%B6%B2%E5%9E%8B%E6%80%A7%E6%A0%BC%E5%88%86%E9%A1%9E',
+    },
+    {
+      '@type': 'Thing',
+      name: 'Big Five Personality Factors（McCrae & Costa 1987）',
+      sameAs: 'https://en.wikipedia.org/wiki/Big_Five_personality_traits',
+    },
+  ],
+};
+
+// JSON-LD: FAQPage
+const faqs = [
+  {
+    question: '血液型サブタイプ診断とは何ですか？',
+    answer:
+      '血液型（A/B/O/AB）ごとに3つのサブタイプを設定し、Big5の外向性・協調性・神経症傾向・誠実性に基づく10問の質問で「あなたはどのサブタイプか」を判定する自己理解ツールです。古川竹二（1927）・能見正比古（1971）の傾向区分概念をBig5心理学で再解釈したものです。血液型と性格の科学的相関は限定的であり（日本心理学会2014年）、自己理解の参考情報としてご活用ください。',
+  },
+  {
+    question: '血液型サブタイプ診断に科学的根拠はありますか？',
+    answer:
+      '血液型による性格分類の原典は古川竹二（1927）の研究ですが、日本心理学会は2014年の公式見解で「血液型と性格の間に科学的に明確な統計的相関は認められない」としています（https://psych.or.jp/opinion/bl-personality/）。本診断は日本の文化的な血液型性格観を参考情報として提示するものであり、科学的測定ではありません。自己理解の話題としてお楽しみください。',
+  },
+  {
+    question: '12タイプはどのように決まりますか？',
+    answer:
+      '4血液型×3サブタイプ＝12タイプです。まず血液型を選択し、次に10問の質問でBig5の外向性（E）・協調性（A）・神経症傾向（N）・誠実性（C）の4軸スコアを測定します。血液型ごとの判定ロジックで3サブタイプのうち最もスコアが高いものを判定します。',
+  },
+  {
+    question: 'ブラッドハラスメント（ブラハラ）とは何ですか？',
+    answer:
+      '血液型を根拠にした差別・偏見・嫌がらせのことです。「B型だから自己中」「AB型だから変わっている」などのレッテルを貼ることは血液型ハラスメントにあたります。本診断は自己理解の参考情報であり、他者への決めつけや差別に使用しないでください。',
+  },
+  {
+    question: '何分かかりますか？',
+    answer:
+      '血液型選択（約10秒）+ 10問の質問（約2分）で、合計約3分で完了します。登録不要・スマートフォンでも快適に受診できます。',
+  },
+];
+
+const jsonLdFAQ = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  '@id': `${PAGE_URL}#faq`,
+  mainEntity: faqs.map(({ question, answer }) => ({
+    '@type': 'Question',
+    name: question,
+    acceptedAnswer: { '@type': 'Answer', text: answer },
+  })),
+};
+
+// JSON-LD: BreadcrumbList
+const jsonLdBreadcrumb = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'ホーム', item: SITE_URL },
+    { '@type': 'ListItem', position: 2, name: '診断一覧', item: `${SITE_URL}/diagnosis/` },
+    { '@type': 'ListItem', position: 3, name: '血液型性格診断', item: `${SITE_URL}/diagnosis/blood-type/` },
+    { '@type': 'ListItem', position: 4, name: '血液型サブタイプ診断', item: PAGE_URL },
+  ],
+};
+
+const jsonLdAll = [jsonLdWebApp, jsonLdFAQ, jsonLdBreadcrumb];
+
+// 血液型4択データ
+const bloodTypeOptions = [
+  { type: 'A', label: 'A型', color: '#e11d48', bg: '#fff1f4', emoji: '🩸' },
+  { type: 'B', label: 'B型', color: '#1565c0', bg: '#eff6ff', emoji: '🩸' },
+  { type: 'O', label: 'O型', color: '#e65100', bg: '#fff7ed', emoji: '🩸' },
+  { type: 'AB', label: 'AB型', color: '#4a148c', bg: '#f5f3ff', emoji: '🩸' },
+];
+
+// 12タイプ一覧（概要用）
+const subtypeOverview = [
+  { group: 'A型', color: '#e11d48', types: ['典型A型（几帳面・慎重）', '行動A型（外向寄り）', '内省A型（内向・繊細）'] },
+  { group: 'B型', color: '#1565c0', types: ['典型B型（自由・マイペース）', '協調B型（社交寄り）', '集中B型（職人気質）'] },
+  { group: 'O型', color: '#e65100', types: ['典型O型（社交リーダー）', '温和O型（協調・支援）', '探究O型（独立・知的）'] },
+  { group: 'AB型', color: '#4a148c', types: ['典型AB型（合理・独創）', '共感AB型（情緒寄り）', '分析AB型（論理寄り）'] },
+];
+---
+
+<BaseLayout
+  title={meta.title}
+  description={meta.description}
+  canonical={PAGE_URL}
+  jsonLd={jsonLdAll}
+  ogType="website"
+  publishDate={meta.publishedAt}
+  lastUpdated={meta.updatedAt}
+  breadcrumbs={[
+    { name: '診断一覧', url: '/diagnosis/' },
+    { name: '血液型性格診断', url: '/diagnosis/blood-type/' },
+    { name: '血液型サブタイプ診断', url: '/diagnosis/blood-type/diagnosis/' },
+  ]}
+>
+  {/* ========== ヒーロー ========== */}
+  <section class="bst-hero" aria-labelledby="bst-hero-h1">
+    <Container>
+      <div class="bst-hero-inner">
+        <div class="bst-hero-badge">
+          古川竹二（1927）・能見正比古（1971）傾向区分 × Big5 心理学で再解釈 |
+          血液型と性格の科学的相関は限定的（日本心理学会2014年）
+        </div>
+        <h1 id="bst-hero-h1" class="bst-hero-h1">
+          血液型サブタイプ診断
+          <span class="bst-hero-meta">【無料・12タイプ・学術根拠付】</span>
+        </h1>
+        <p class="bst-hero-catch">
+          A型・B型・O型・AB型を各3タイプに細分化。<br />
+          10問の質問であなたの血液型内サブタイプを判定します。
+        </p>
+        <div class="bst-hero-stats">
+          <span class="bst-stat"><strong>10</strong>問</span>
+          <span class="bst-stat-sep">・</span>
+          <span class="bst-stat">約<strong>3</strong>分</span>
+          <span class="bst-stat-sep">・</span>
+          <span class="bst-stat"><strong>12</strong>タイプ</span>
+          <span class="bst-stat-sep">・</span>
+          <span class="bst-stat">無料</span>
+        </div>
+        <a href="#diagnosis-start" class="bst-cta-btn">
+          診断スタート
+          <span class="bst-cta-arrow" aria-hidden="true">↓</span>
+        </a>
+        <p class="bst-hero-sub">登録不要・所要時間3分</p>
+      </div>
+    </Container>
+  </section>
+
+  <Container>
+    {/* ========== TL;DRブロック ========== */}
+    <TldrBlock
+      title="このページのポイント（3行まとめ）"
+      points={[
+        `血液型×3サブタイプ＝12タイプ。古川竹二（1927）・能見正比古（1971）の傾向区分概念をBig5の外向性・協調性・神経症傾向・誠実性の4軸で再解釈した自己理解ツールです`,
+        `血液型と性格の間に科学的に明確な統計的相関は認められていません（日本心理学会2014年公式見解: psych.or.jp）。ブラッドハラスメント（ブラハラ）を防ぐため、他者への決めつけや差別には使用しないでください`,
+        `10問に答えるだけで「あなたがA〜AB型の中のどのサブタイプか」を判定。相性を見たい場合は /diagnosis/blood-compat/ へどうぞ`,
+      ]}
+      updatedAt={meta.updatedAt}
+      sourceLabel="日本心理学会 公式見解（2014）"
+      sourceUrl="https://psych.or.jp/opinion/bl-personality/"
+    />
+
+    {/* ========== ブラハラ警告 ========== */}
+    <div class="bst-caution-block" role="alert" aria-label="ブラッドハラスメント注意">
+      <div class="bst-caution-icon" aria-hidden="true">⚠️</div>
+      <div class="bst-caution-body">
+        <p class="bst-caution-title">ブラッドハラスメント（ブラハラ）に注意</p>
+        <p class="bst-caution-text">
+          「B型だから自己中」「AB型だから変わっている」など、血液型を根拠にした
+          決めつけ・差別・嫌がらせは<strong>ブラッドハラスメント</strong>です。
+          本診断は自己理解の参考情報であり、他者へのレッテル貼りには使用しないでください。
+        </p>
+      </div>
+    </div>
+
+    {/* ========== 12タイプ一覧 ========== */}
+    <section class="bst-section" aria-labelledby="bst-types-h2">
+      <h2 id="bst-types-h2" class="bst-h2">12タイプ一覧</h2>
+      <p class="bst-lead">
+        4血液型×3サブタイプ＝12タイプ。Big5の外向性（E）と情緒安定性（N逆転）の2軸で各血液型を3分類します。
+      </p>
+      <div class="bst-types-grid">
+        {subtypeOverview.map((group) => (
+          <div class="bst-types-group" style={`--group-color: ${group.color}`}>
+            <h3 class="bst-types-group-title">{group.group}</h3>
+            <ul class="bst-types-list">
+              {group.types.map((t) => (
+                <li class="bst-types-item">{t}</li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+      <p class="bst-types-note">
+        ※ これは血液型イメージの傾向区分であり、科学的相関は限定的です（日本心理学会2014年公式見解）。
+        自己理解の参考情報としてお楽しみください。
+      </p>
+    </section>
+
+    {/* ========== 使い方 ========== */}
+    <section class="bst-section" aria-labelledby="bst-how-h2">
+      <h2 id="bst-how-h2" class="bst-h2">使い方（2ステップ）</h2>
+      <ol class="bst-steps">
+        <li class="bst-step">
+          <div class="bst-step-num" aria-hidden="true">1</div>
+          <div class="bst-step-body">
+            <h3 class="bst-step-title">血液型を選ぶ</h3>
+            <p class="bst-step-desc">A・B・O・ABから自分の血液型を選択します。不明な場合はO型を選んでください。</p>
+          </div>
+        </li>
+        <li class="bst-step">
+          <div class="bst-step-num" aria-hidden="true">2</div>
+          <div class="bst-step-body">
+            <h3 class="bst-step-title">10問に回答する（約2分）</h3>
+            <p class="bst-step-desc">
+              各質問に「1（全く当てはまらない）〜5（とても当てはまる）」で答えます。
+              「日常の自分」を意識しながら正直に答えると結果の参考度が上がります。
+            </p>
+          </div>
+        </li>
+      </ol>
+    </section>
+
+    {/* ========== 診断スタートセクション ========== */}
+    <section
+      id="diagnosis-start"
+      class="bst-section bst-section--diag"
+      aria-labelledby="bst-diag-h2"
+    >
+      <h2 id="bst-diag-h2" class="bst-h2 bst-h2--center">診断を始める</h2>
+      <p class="bst-diag-lead">まず血液型を選択してください。選択後に10問の質問が始まります。</p>
+
+      {/* ---- React島: 血液型選択 + 質問フロー ---- */}
+      <div id="blood-subtype-app" class="bst-app-wrapper">
+        {/* Step1: 血液型選択 UI（JS無効環境向けのフォールバックは非表示） */}
+        <div id="bst-step1" class="bst-step1-panel" aria-label="Step1: 血液型を選択">
+          <p class="bst-step1-label">あなたの血液型は？</p>
+          <div class="bst-blood-grid" role="radiogroup" aria-label="血液型を選んでください">
+            {bloodTypeOptions.map((opt) => (
+              <button
+                class="bst-blood-btn"
+                data-bloodtype={opt.type}
+                style={`--btn-color: ${opt.color}; --btn-bg: ${opt.bg}`}
+                aria-pressed="false"
+                type="button"
+              >
+                <span class="bst-blood-emoji" aria-hidden="true">{opt.emoji}</span>
+                <span class="bst-blood-label">{opt.label}</span>
+              </button>
+            ))}
+          </div>
+          <p class="bst-step1-note">
+            血液型が不明な場合は「O型」を選んでください。
+          </p>
+        </div>
+
+        {/* Step2: 質問フロー（血液型選択後にJS制御で表示） */}
+        <div id="bst-step2" class="bst-step2-panel" aria-hidden="true" hidden>
+          <div id="bst-question-area">
+            {/* JS制御でレンダリング */}
+          </div>
+        </div>
+      </div>
+    </section>
+
+    {/* ========== 参考文献 ========== */}
+    <section class="bst-section" aria-labelledby="bst-ref-h2">
+      <h2 id="bst-ref-h2" class="bst-h2">学術根拠・参考文献</h2>
+      <p class="bst-lead">
+        本診断は下記の文献・公式見解をもとに設計しています。
+        血液型と性格の科学的相関は限定的であり、傾向把握のための参考情報として提供しています。
+      </p>
+      <ul class="bst-ref-list">
+        {meta.references.map((ref) => (
+          <li class="bst-ref-item">
+            <a href={ref.url} target="_blank" rel="noopener noreferrer" class="bst-ref-link">
+              {ref.author} ({ref.year}). {ref.title}. {ref.publisher}.
+            </a>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    {/* ========== FAQ ========== */}
+    <section class="bst-section" aria-labelledby="bst-faq-h2">
+      <h2 id="bst-faq-h2" class="bst-h2">よくある質問</h2>
+      <dl class="bst-faq-list">
+        {faqs.map(({ question, answer }) => (
+          <div class="bst-faq-item">
+            <dt class="bst-faq-q">{question}</dt>
+            <dd class="bst-faq-a">{answer}</dd>
+          </div>
+        ))}
+      </dl>
+    </section>
+
+    {/* ========== 関連診断 ========== */}
+    <section class="bst-section" aria-labelledby="bst-related-h2">
+      <h2 id="bst-related-h2" class="bst-h2">関連診断</h2>
+      <ul class="bst-related-list">
+        <li class="bst-related-item">
+          <a href="/diagnosis/blood-compat/" class="bst-related-link">
+            <span class="bst-related-icon" aria-hidden="true">🩸</span>
+            <span class="bst-related-body">
+              <span class="bst-related-title">血液型相性診断</span>
+              <span class="bst-related-desc">A×B×O×ABの4×4相性を判定。気になる相手との相性をチェック</span>
+            </span>
+          </a>
+        </li>
+        <li class="bst-related-item">
+          <a href="/diagnosis/blood-type/" class="bst-related-link">
+            <span class="bst-related-icon" aria-hidden="true">📖</span>
+            <span class="bst-related-body">
+              <span class="bst-related-title">血液型性格解説</span>
+              <span class="bst-related-desc">A型・B型・O型・AB型の性格傾向を学術根拠とともに解説</span>
+            </span>
+          </a>
+        </li>
+        <li class="bst-related-item">
+          <a href="/diagnosis/mbti/" class="bst-related-link">
+            <span class="bst-related-icon" aria-hidden="true">🧠</span>
+            <span class="bst-related-body">
+              <span class="bst-related-title">MBTI診断</span>
+              <span class="bst-related-desc">16タイプで性格・コミュニケーションスタイルを分析</span>
+            </span>
+          </a>
+        </li>
+        <li class="bst-related-item">
+          <a href="/diagnosis/disc/" class="bst-related-link">
+            <span class="bst-related-icon" aria-hidden="true">📊</span>
+            <span class="bst-related-body">
+              <span class="bst-related-title">DiSC診断</span>
+              <span class="bst-related-desc">職場の行動スタイルをMarston(1928)理論で28問分析</span>
+            </span>
+          </a>
+        </li>
+      </ul>
+    </section>
+  </Container>
+</BaseLayout>
+
+<script>
+/**
+ * 血液型サブタイプ診断 クライアントサイドロジック
+ *
+ * Step1: 血液型選択 → selectedBloodType を保持
+ * Step2: 10問のリッカート質問を順次表示 → 回答収集
+ * Step3: スコア計算 → 結果ページへリダイレクト
+ *
+ * LocalStorage:
+ * - sn_blood_type: 選択した血液型
+ * - sn_scores_bloodSubtype: 診断結果
+ */
+
+type BloodType = 'A' | 'B' | 'O' | 'AB';
+type Big5Axis = 'E' | 'A' | 'N' | 'C';
+
+interface QuestionData {
+  id: number;
+  text: string;
+  axis: Big5Axis;
+}
+
+// 質問データ（サーバーサイドと同一）
+const QUESTIONS: QuestionData[] = [
+  { id: 1, text: '初対面の人と話すときも、自分から積極的に話しかける方だ', axis: 'E' },
+  { id: 2, text: '細かいことが気になって、ちょっとしたミスや言葉のズレを引きずりやすい', axis: 'N' },
+  { id: 3, text: '物事を始める前に、手順や段取りを考えてから動くことが多い', axis: 'C' },
+  { id: 4, text: '誰かが困っていると、気づかないふりができず、つい助けてしまう', axis: 'A' },
+  { id: 5, text: '複数の人がいる場の中心にいることが心地よく、会話が弾むと元気が出る', axis: 'E' },
+  { id: 6, text: '気分の浮き沈みがあり、調子のよい日と悪い日の差が出やすい', axis: 'N' },
+  { id: 7, text: '決めたことはきちんと守りたいと思い、自分への約束も大切にしている', axis: 'C' },
+  { id: 8, text: '人との会話や交流がエネルギーの源になっており、一人より誰かといる方が楽しい', axis: 'E' },
+  { id: 9, text: '意見が対立したとき、自分の主張より関係の調和を優先することが多い', axis: 'A' },
+  { id: 10, text: '他人の評価や反応が気になって、言いたいことを言えないことがある', axis: 'N' },
+];
+
+const SCALE_LABELS = [
+  { value: 1, label: '全く当てはまらない' },
+  { value: 2, label: 'あまり当てはまらない' },
+  { value: 3, label: 'どちらともいえない' },
+  { value: 4, label: 'やや当てはまる' },
+  { value: 5, label: 'とても当てはまる' },
+];
+
+interface AxisScores { E: number; A: number; N: number; C: number; }
+
+function calculateAxisScores(answers: Record<number, number>): AxisScores {
+  const raw: AxisScores = { E: 0, A: 0, N: 0, C: 0 };
+  const counts: AxisScores = { E: 0, A: 0, N: 0, C: 0 };
+
+  for (const q of QUESTIONS) {
+    const val = answers[q.id];
+    if (val === undefined) continue;
+    raw[q.axis] += val;
+    counts[q.axis] += 1;
+  }
+
+  const normalized: AxisScores = { E: 50, A: 50, N: 50, C: 50 };
+  const axes: Big5Axis[] = ['E', 'A', 'N', 'C'];
+  for (const axis of axes) {
+    const count = counts[axis];
+    if (count === 0) continue;
+    const maxScore = count * 5;
+    const minScore = count * 1;
+    normalized[axis] = Math.round(((raw[axis] - minScore) / (maxScore - minScore)) * 100);
+  }
+  return normalized;
+}
+
+function determineSubtype(bloodType: BloodType, scores: AxisScores): string {
+  const stability = 100 - scores.N;
+  switch (bloodType) {
+    case 'A':
+      if (scores.E < 45 && scores.N >= 55) return 'A-inner';
+      if (scores.E >= 58) return 'A-active';
+      return 'A-typical';
+    case 'B':
+      if (scores.E < 45 && scores.A < 50) return 'B-focused';
+      if (scores.E >= 62 && scores.A >= 55) return 'B-social';
+      return 'B-typical';
+    case 'O':
+      if (scores.A >= 68) return 'O-gentle';
+      if (scores.E < 60 && scores.C >= 60) return 'O-explorer';
+      return 'O-typical';
+    case 'AB':
+      if (scores.N >= 62) return 'AB-empathy';
+      if (stability >= 62 && scores.C >= 65) return 'AB-analyst';
+      return 'AB-typical';
+    default:
+      return 'A-typical';
+  }
+}
+
+// ---- State ----
+let selectedBloodType: BloodType | null = null;
+let currentQuestionIndex = 0;
+const answers: Record<number, number> = {};
+
+// ---- DOM refs ----
+const step1Panel = document.getElementById('bst-step1') as HTMLDivElement | null;
+const step2Panel = document.getElementById('bst-step2') as HTMLDivElement | null;
+const questionArea = document.getElementById('bst-question-area') as HTMLDivElement | null;
+
+// ---- Step1: 血液型選択 ----
+const bloodBtns = document.querySelectorAll<HTMLButtonElement>('.bst-blood-btn');
+
+bloodBtns.forEach((btn) => {
+  btn.addEventListener('click', () => {
+    selectedBloodType = btn.dataset.bloodtype as BloodType;
+
+    // active状態の視覚フィードバック
+    bloodBtns.forEach((b) => b.setAttribute('aria-pressed', 'false'));
+    btn.setAttribute('aria-pressed', 'true');
+
+    // localStorage に血液型を保存
+    try {
+      localStorage.setItem('sn_blood_type', JSON.stringify({ type: selectedBloodType }));
+    } catch { /* ignore */ }
+
+    // Step2へ遷移（短いディレイでUX向上）
+    setTimeout(() => {
+      step1Panel?.setAttribute('aria-hidden', 'true');
+      if (step1Panel) step1Panel.style.display = 'none';
+      step2Panel?.removeAttribute('hidden');
+      step2Panel?.removeAttribute('aria-hidden');
+      currentQuestionIndex = 0;
+      renderQuestion(0);
+    }, 300);
+  });
+});
+
+// ---- Step2: 質問レンダリング ----
+function renderQuestion(index: number): void {
+  if (!questionArea) return;
+  const q = QUESTIONS[index];
+  if (!q) return;
+
+  const total = QUESTIONS.length;
+  const progressPct = Math.round((index / total) * 100);
+
+  questionArea.innerHTML = `
+    <div class="bst-qflow">
+      <div class="bst-qflow-header">
+        <span class="bst-qflow-progress-label" aria-live="polite">
+          質問 ${index + 1} / ${total}
+        </span>
+        <div class="bst-qflow-progress-bar" role="progressbar" aria-valuenow="${progressPct}" aria-valuemin="0" aria-valuemax="100">
+          <div class="bst-qflow-progress-fill" style="width: ${progressPct}%"></div>
+        </div>
+      </div>
+      <div class="bst-qflow-body">
+        <p class="bst-qflow-text">${q.text}</p>
+        <div class="bst-qflow-scale" role="group" aria-label="回答を選んでください">
+          ${SCALE_LABELS.map((sl) => `
+            <button
+              class="bst-scale-btn${answers[q.id] === sl.value ? ' bst-scale-btn--selected' : ''}"
+              data-value="${sl.value}"
+              type="button"
+              aria-pressed="${answers[q.id] === sl.value ? 'true' : 'false'}"
+            >
+              <span class="bst-scale-num">${sl.value}</span>
+              <span class="bst-scale-label">${sl.label}</span>
+            </button>
+          `).join('')}
+        </div>
+      </div>
+      ${index > 0 ? `
+        <div class="bst-qflow-nav">
+          <button class="bst-qflow-back" type="button" id="bst-back-btn">
+            ← 戻る
+          </button>
+        </div>
+      ` : ''}
+    </div>
+  `;
+
+  // スケールボタンのクリックイベント
+  const scaleBtns = questionArea.querySelectorAll<HTMLButtonElement>('.bst-scale-btn');
+  scaleBtns.forEach((sb) => {
+    sb.addEventListener('click', () => {
+      const val = Number(sb.dataset.value);
+      answers[q.id] = val;
+
+      // アニメーション後に次の質問へ
+      setTimeout(() => {
+        if (index + 1 < total) {
+          currentQuestionIndex = index + 1;
+          renderQuestion(currentQuestionIndex);
+        } else {
+          finishDiagnosis();
+        }
+      }, 250);
+    });
+  });
+
+  // 戻るボタン
+  const backBtn = document.getElementById('bst-back-btn');
+  if (backBtn) {
+    backBtn.addEventListener('click', () => {
+      currentQuestionIndex = index - 1;
+      renderQuestion(currentQuestionIndex);
+    });
+  }
+}
+
+// ---- 診断完了 ----
+function finishDiagnosis(): void {
+  if (!selectedBloodType || !questionArea) return;
+
+  const axisScores = calculateAxisScores(answers);
+  const subtypeId = determineSubtype(selectedBloodType, axisScores);
+
+  // LocalStorageに保存
+  try {
+    localStorage.setItem('sn_scores_bloodSubtype', JSON.stringify({
+      bloodType: selectedBloodType,
+      subtypeId,
+      axisScores,
+      emotionalStability: 100 - axisScores.N,
+      savedAt: new Date().toISOString(),
+    }));
+  } catch { /* ignore */ }
+
+  // ローディング表示
+  questionArea.innerHTML = `
+    <div class="bst-loading" aria-live="polite">
+      <p class="bst-loading-text">結果を計算中...</p>
+    </div>
+  `;
+
+  // 結果ページへリダイレクト
+  setTimeout(() => {
+    window.location.href = `/diagnosis/blood-type/diagnosis/result/${subtypeId}/`;
+  }, 600);
+}
+</script>
+
+<style>
+/* ========== ヒーロー ========== */
+.bst-hero {
+  background: linear-gradient(135deg, #fff1f4 0%, #fce4ec 50%, #f3e5f5 100%);
+  padding-block: 3.5rem 4rem;
+  text-align: center;
+}
+.bst-hero-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+.bst-hero-badge {
+  display: inline-block;
+  background: rgba(225, 29, 72, 0.1);
+  border: 1px solid rgba(225, 29, 72, 0.3);
+  border-radius: 2rem;
+  padding: 0.25rem 1rem;
+  font-size: 0.68rem;
+  letter-spacing: 0.04em;
+  color: #9b1c3a;
+  max-width: 600px;
+  line-height: 1.5;
+}
+.bst-hero-h1 {
+  font-size: clamp(1.75rem, 5vw, 2.5rem);
+  font-weight: 700;
+  line-height: 1.3;
+  margin: 0;
+}
+.bst-hero-meta {
+  display: block;
+  font-size: clamp(0.9rem, 3vw, 1.2rem);
+  color: #6b7280;
+}
+.bst-hero-catch {
+  font-size: clamp(0.9rem, 2.5vw, 1.05rem);
+  color: #374151;
+  line-height: 1.7;
+  margin: 0;
+}
+.bst-hero-stats {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  font-size: 0.9rem;
+}
+.bst-stat strong { font-size: 1.4em; font-weight: 700; }
+.bst-stat-sep { color: #d1d5db; }
+.bst-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: linear-gradient(180deg, #f472b6 0%, #e11d48 100%);
+  color: #fff;
+  font-weight: 700;
+  font-size: 1.1rem;
+  padding: 0.85rem 2.5rem;
+  border-radius: 3rem;
+  text-decoration: none;
+  transition: transform 0.15s, box-shadow 0.15s;
+  margin-top: 0.5rem;
+}
+.bst-cta-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0 0 0 / 0.15);
+}
+.bst-cta-arrow { font-size: 1.2em; }
+.bst-hero-sub {
+  font-size: 0.8rem;
+  color: #6b7280;
+  margin: 0;
+}
+
+/* ========== ブラハラ警告 ========== */
+.bst-caution-block {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  border-left: 4px solid #ea580c;
+  border-radius: 0 0.75rem 0.75rem 0;
+  padding: 1rem 1.25rem;
+  margin-block: 2rem;
+}
+.bst-caution-icon { font-size: 1.5rem; flex-shrink: 0; }
+.bst-caution-title {
+  font-weight: 700;
+  color: #9a3412;
+  margin: 0 0 0.25rem;
+  font-size: 0.95rem;
+}
+.bst-caution-text {
+  font-size: 0.875rem;
+  color: #7c2d12;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* ========== セクション共通 ========== */
+.bst-section { margin-block: 3rem; }
+.bst-section--diag {
+  background: #fdf2f8;
+  padding: 2rem 1.5rem;
+  border-radius: 1rem;
+  margin-inline: -1rem;
+}
+.bst-h2 {
+  font-size: clamp(1.3rem, 4vw, 1.75rem);
+  font-weight: 700;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #e11d48;
+}
+.bst-h2--center { text-align: center; border-bottom: none; }
+.bst-lead {
+  font-size: 1rem;
+  line-height: 1.8;
+  margin-bottom: 1rem;
+  color: #374151;
+}
+
+/* ========== 12タイプグリッド ========== */
+.bst-types-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-block: 1.5rem;
+}
+.bst-types-group {
+  border: 2px solid #e5e7eb;
+  border-top: 4px solid var(--group-color, #e11d48);
+  border-radius: 0.75rem;
+  padding: 1rem 1.1rem;
+}
+.bst-types-group-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--group-color, #e11d48);
+  margin: 0 0 0.75rem;
+}
+.bst-types-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.bst-types-item {
+  font-size: 0.83rem;
+  line-height: 1.5;
+  color: #374151;
+  padding-left: 0.75rem;
+  border-left: 2px solid var(--group-color, #e11d48);
+}
+.bst-types-note {
+  font-size: 0.8rem;
+  color: #6b7280;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+  margin-top: 1rem;
+}
+
+/* ========== ステップ ========== */
+.bst-steps {
+  list-style: none;
+  padding: 0;
+  margin: 1.5rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+.bst-step { display: flex; gap: 1rem; align-items: flex-start; }
+.bst-step-num {
+  flex-shrink: 0;
+  width: 2.5rem;
+  height: 2.5rem;
+  background: #e11d48;
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+.bst-step-title { font-size: 1rem; font-weight: 700; margin: 0 0 0.25rem; }
+.bst-step-desc { font-size: 0.9rem; line-height: 1.6; color: #4b5563; margin: 0; }
+
+/* ========== 血液型選択 ========== */
+.bst-step1-label {
+  text-align: center;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #374151;
+  margin-bottom: 1.25rem;
+}
+.bst-blood-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.75rem;
+  max-width: 480px;
+  margin: 0 auto 1rem;
+}
+@media (max-width: 480px) {
+  .bst-blood-grid { grid-template-columns: repeat(2, 1fr); }
+}
+.bst-blood-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  background: var(--btn-bg, #fff1f4);
+  border: 2px solid var(--btn-color, #e11d48);
+  border-radius: 1rem;
+  padding: 1rem 0.75rem;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s, background 0.15s;
+  font-family: inherit;
+}
+.bst-blood-btn:hover,
+.bst-blood-btn[aria-pressed="true"] {
+  background: var(--btn-color, #e11d48);
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0 0 0 / 0.15);
+}
+.bst-blood-emoji { font-size: 1.5rem; }
+.bst-blood-label { font-size: 1rem; font-weight: 700; }
+.bst-step1-note {
+  text-align: center;
+  font-size: 0.8rem;
+  color: #6b7280;
+  margin-top: 0.5rem;
+}
+
+/* ========== 質問フロー ========== */
+.bst-app-wrapper { max-width: 640px; margin: 0 auto; }
+.bst-step2-panel { padding-top: 0.5rem; }
+.bst-qflow {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+.bst-qflow-header { display: flex; flex-direction: column; gap: 0.5rem; }
+.bst-qflow-progress-label { font-size: 0.8rem; color: #6b7280; }
+.bst-qflow-progress-bar {
+  height: 6px;
+  background: #e5e7eb;
+  border-radius: 3px;
+  overflow: hidden;
+}
+.bst-qflow-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #f472b6, #e11d48);
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+.bst-qflow-text {
+  font-size: 1.05rem;
+  line-height: 1.7;
+  font-weight: 600;
+  color: #111827;
+  margin: 0;
+}
+.bst-qflow-scale {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.bst-scale-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  background: #f9fafb;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  transition: background 0.12s, border-color 0.12s;
+}
+.bst-scale-btn:hover,
+.bst-scale-btn--selected {
+  background: #fff1f4;
+  border-color: #e11d48;
+}
+.bst-scale-num {
+  flex-shrink: 0;
+  width: 1.75rem;
+  height: 1.75rem;
+  background: #e11d48;
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+.bst-scale-label { font-size: 0.9rem; color: #374151; }
+.bst-qflow-nav { display: flex; justify-content: flex-start; }
+.bst-qflow-back {
+  background: none;
+  border: 1px solid #d1d5db;
+  border-radius: 2rem;
+  padding: 0.4rem 1rem;
+  font-size: 0.85rem;
+  cursor: pointer;
+  color: #6b7280;
+  font-family: inherit;
+  transition: background 0.12s;
+}
+.bst-qflow-back:hover { background: #f3f4f6; }
+.bst-loading {
+  text-align: center;
+  padding: 2rem;
+}
+.bst-loading-text {
+  font-size: 1rem;
+  color: #6b7280;
+  animation: bst-pulse 1s ease-in-out infinite;
+}
+@keyframes bst-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* ========== 参考文献 ========== */
+.bst-ref-list {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.bst-ref-item { font-size: 0.8rem; line-height: 1.5; }
+.bst-ref-link { color: #1d4ed8; text-decoration: none; word-break: break-word; }
+.bst-ref-link:hover { text-decoration: underline; }
+
+/* ========== FAQ ========== */
+.bst-faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  margin-top: 1rem;
+}
+.bst-faq-item {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 1rem 1.25rem;
+}
+.bst-faq-q {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #e11d48;
+  margin: 0 0 0.5rem;
+}
+.bst-faq-q::before { content: 'Q. '; }
+.bst-faq-a {
+  font-size: 0.875rem;
+  line-height: 1.7;
+  color: #374151;
+  margin: 0;
+}
+
+/* ========== 関連リンク ========== */
+.bst-related-list {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.bst-related-link {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  text-decoration: none;
+  color: inherit;
+  transition: background 0.12s, box-shadow 0.12s;
+}
+.bst-related-link:hover {
+  background: #fff1f4;
+  box-shadow: 0 2px 8px rgba(0 0 0 / 0.08);
+}
+.bst-related-icon { font-size: 1.5rem; flex-shrink: 0; }
+.bst-related-body { display: flex; flex-direction: column; gap: 0.2rem; }
+.bst-related-title { font-weight: 700; font-size: 0.95rem; color: #111827; }
+.bst-related-desc { font-size: 0.8rem; color: #6b7280; }
+</style>

@@ -272,6 +272,10 @@ const typeLabels: Record<string, string> = { A: 'A型', B: 'B型', O: 'O型', AB
   <section class="bc-hero" aria-labelledby="bc-hero-h1">
     <Container>
       <div class="bc-hero-inner">
+        <p class="bc-compat-origin-note">
+          <a href="/diagnosis/blood-type/">血液型診断（自己理解）</a> の派生として、相性活用ページです。
+          まず自分のタイプを知りたい方は<a href="/diagnosis/blood-type/">血液型診断ハブ</a>からどうぞ。
+        </p>
         <div class="bc-hero-badge">古川竹二（1927）・能見正比古（1971）研究 + 日本心理学会見解</div>
         <h1 id="bc-hero-h1" class="bc-hero-h1">
           血液型相性診断<br />
@@ -756,6 +760,24 @@ const typeLabels: Record<string, string> = { A: 'A型', B: 'B型', O: 'O型', AB
     --bc-border: var(--sn-border, #e5e7eb);
     --bc-surface: var(--sn-surface, #f9fafb);
     --bc-radius: 12px;
+  }
+
+  /* ========== 自己理解ページ派生注記 ========== */
+  .bc-compat-origin-note {
+    font-size: 0.82rem;
+    color: #6b7280;
+    background: rgba(255,255,255,0.7);
+    border: 1px solid rgba(232,67,147,0.2);
+    border-radius: 8px;
+    padding: 0.5rem 1rem;
+    margin-bottom: 1rem;
+    display: inline-block;
+    line-height: 1.6;
+  }
+  .bc-compat-origin-note a {
+    color: #e84393;
+    font-weight: 600;
+    text-decoration: underline;
   }
 
   /* ========== ヒーロー ========== */

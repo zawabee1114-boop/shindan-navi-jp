@@ -1,0 +1,853 @@
+---
+/**
+ * 血液型サブタイプ診断 結果ページ（動的ルート）
+ * URL: /diagnosis/blood-type/diagnosis/result/{typeId}/
+ * 12タイプ分を getStaticPaths で静的生成
+ *
+ * 例: /diagnosis/blood-type/diagnosis/result/A-typical/
+ *
+ * 表示構成:
+ * 1. 血液型本体解説へのリンク（親コンテキスト）
+ * 2. サブタイプ詳細（特徴・強み・気をつけたい傾向）
+ * 3. 相性誘導（/diagnosis/blood-compat/）
+ * 4. 8診断統合プロファイルへの誘導
+ *
+ * 学術根拠:
+ * - 古川竹二 (1927) 血液型による気質の研究
+ * - 能見正比古 (1971) 血液型でわかる相性
+ * - McCrae RR, Costa PT (1987) Big Five Personality Factors
+ * - 日本心理学会 公式見解 (2014)
+ *
+ * YMYL回避: 医療・精神疾患言及ゼロ
+ * 占い色NG・架空監修者NG・ブラハラ警告必須
+ * disclaimer: 科学的相関は限定的 必須表示
+ * 8診断統合: localStorage 「sn_scores_bloodSubtype」キーで保存済み
+ *
+ * 確認日: 2026-06-07
+ */
+
+import BaseLayout from '../../../../../../layouts/BaseLayout.astro';
+import Container from '../../../../../../components/Container.astro';
+import { types, getSubtypesByBloodType } from '../../../../../../data/diagnoses/blood-subtype/types';
+import { meta } from '../../../../../../data/diagnoses/blood-subtype/meta';
+import type { BloodSubtypeId } from '../../../../../../data/diagnoses/blood-subtype/meta';
+import TldrBlock from '../../../../../../components/TldrBlock.astro';
+import ReferenceList from '../../../../../../components/ReferenceList.astro';
+
+export function getStaticPaths() {
+  return Object.keys(types).map((typeId) => ({
+    params: { type: typeId },
+    props: {
+      typeId: typeId as BloodSubtypeId,
+      typeData: types[typeId as BloodSubtypeId],
+    },
+  }));
+}
+
+const { typeId, typeData } = Astro.props;
+
+const SITE_URL = 'https://shindan-navi.jp';
+const PAGE_URL = `${SITE_URL}/diagnosis/blood-type/diagnosis/result/${typeId}/`;
+
+// 血液型別の詳細ページURL
+const bloodTypePageMap: Record<string, string> = {
+  A: '/diagnosis/blood-type/a/',
+  B: '/diagnosis/blood-type/b/',
+  O: '/diagnosis/blood-type/o/',
+  AB: '/diagnosis/blood-type/ab/',
+};
+const bloodTypePageUrl = bloodTypePageMap[typeData.parentBloodType] ?? '/diagnosis/blood-type/';
+
+// 血液型別ラベル
+const bloodTypeLabel: Record<string, string> = {
+  A: 'A型',
+  B: 'B型',
+  O: 'O型',
+  AB: 'AB型',
+};
+
+// 血液型別テーマカラー
+const bloodTypeColor: Record<string, string> = {
+  A: '#e11d48',
+  B: '#1565c0',
+  O: '#e65100',
+  AB: '#4a148c',
+};
+
+const parentColor = bloodTypeColor[typeData.parentBloodType] ?? '#e11d48';
+
+// 同じ血液型の他サブタイプ
+const siblingsAll = getSubtypesByBloodType(typeData.parentBloodType);
+const siblings = siblingsAll.filter((s) => s.id !== typeId);
+
+// JSON-LD: WebApplication
+const jsonLdWebApp = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  '@id': `${PAGE_URL}#webapp`,
+  name: `血液型サブタイプ診断 結果：${typeData.name}`,
+  url: PAGE_URL,
+  applicationCategory: 'EducationalApplication',
+  operatingSystem: 'Web',
+  description: `血液型サブタイプ診断の結果は「${typeData.name}（${typeData.parentBloodType}型）」。${typeData.catchphrase}`,
+  author: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+    name: '診断ナビ',
+    url: SITE_URL,
+  },
+};
+
+// JSON-LD: Article（サブタイプ解説）
+const jsonLdArticle = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  '@id': `${PAGE_URL}#article`,
+  headline: `${typeData.name}の特徴・強み・傾向｜血液型サブタイプ診断`,
+  description: `${typeData.catchphrase}。${typeData.description.substring(0, 120)}`,
+  datePublished: meta.publishedAt,
+  dateModified: meta.updatedAt,
+  inLanguage: 'ja',
+  url: PAGE_URL,
+  publisher: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+    name: '診断ナビ',
+    url: SITE_URL,
+  },
+  citation: meta.references.slice(0, 3).map((ref) => ({
+    '@type': 'CreativeWork',
+    name: ref.title,
+    author: ref.author,
+    datePublished: String(ref.year),
+    url: ref.url,
+  })),
+};
+
+// JSON-LD: FAQPage（サブタイプ別）
+const faqs = [
+  {
+    question: `${typeData.name}の主な特徴は何ですか？`,
+    answer: typeData.characteristics.join('。') + '。',
+  },
+  {
+    question: `${typeData.name}の強みは何ですか？`,
+    answer: typeData.strengths.join('。また、') + '。',
+  },
+  {
+    question: `${typeData.name}が気をつけたい傾向は何ですか？`,
+    answer: typeData.cautions.join('。また、') + '。',
+  },
+  {
+    question: `${typeData.parentBloodType}型の他のサブタイプとの違いは何ですか？`,
+    answer: `${typeData.parentBloodType}型には${siblingsAll.map((s) => s.name).join('・')}の3サブタイプがあります。${typeData.name}は「${typeData.catchphrase}」という特徴が最も際立ちます。なお、これは血液型イメージの傾向区分であり、科学的相関は限定的です（日本心理学会2014年）。`,
+  },
+  {
+    question: '血液型サブタイプ診断の結果は変わることがありますか？',
+    answer: '回答時の状況や気分によって変わることがあります。同じサブタイプが安定して出る場合はその傾向が強いと言えますが、あくまで参考情報です。血液型と性格の科学的相関は限定的であることをご理解ください（日本心理学会2014年公式見解: https://psych.or.jp/opinion/bl-personality/）。',
+  },
+];
+
+const jsonLdFAQ = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  '@id': `${PAGE_URL}#faq`,
+  mainEntity: faqs.map(({ question, answer }) => ({
+    '@type': 'Question',
+    name: question,
+    acceptedAnswer: { '@type': 'Answer', text: answer },
+  })),
+};
+
+// JSON-LD: BreadcrumbList
+const jsonLdBreadcrumb = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'ホーム', item: SITE_URL },
+    { '@type': 'ListItem', position: 2, name: '診断一覧', item: `${SITE_URL}/diagnosis/` },
+    { '@type': 'ListItem', position: 3, name: '血液型性格診断', item: `${SITE_URL}/diagnosis/blood-type/` },
+    { '@type': 'ListItem', position: 4, name: '血液型サブタイプ診断', item: `${SITE_URL}/diagnosis/blood-type/diagnosis/` },
+    { '@type': 'ListItem', position: 5, name: typeData.name, item: PAGE_URL },
+  ],
+};
+
+const jsonLdAll = [jsonLdWebApp, jsonLdArticle, jsonLdFAQ, jsonLdBreadcrumb];
+
+const pageTitle = `${typeData.name}（${typeData.parentBloodType}型）の特徴・強み｜血液型サブタイプ診断 | 診断ナビ`;
+const pageDescription = `${typeData.catchphrase}。血液型サブタイプ診断の結果「${typeData.name}」の特徴・強み・気をつけたい傾向を解説。${typeData.parentBloodType}型の中のどんなタイプかがわかります。`;
+---
+
+<BaseLayout
+  title={pageTitle}
+  description={pageDescription}
+  canonical={PAGE_URL}
+  jsonLd={jsonLdAll}
+  ogType="article"
+  publishDate={meta.publishedAt}
+  lastUpdated={meta.updatedAt}
+  breadcrumbs={[
+    { name: '診断一覧', url: '/diagnosis/' },
+    { name: '血液型性格診断', url: '/diagnosis/blood-type/' },
+    { name: '血液型サブタイプ診断', url: '/diagnosis/blood-type/diagnosis/' },
+    { name: typeData.name, url: `/diagnosis/blood-type/diagnosis/result/${typeId}/` },
+  ]}
+>
+  {/* ========== ヒーロー ========== */}
+  <section
+    class="bsr-hero"
+    aria-labelledby="bsr-type-name"
+    style={`--parent-color: ${parentColor}`}
+  >
+    <Container>
+      <div class="bsr-hero-inner">
+        <div class="bsr-hero-badges">
+          <span class="bsr-badge bsr-badge--blood">
+            {typeData.parentBloodType}型
+          </span>
+          <span class="bsr-badge bsr-badge--result">
+            血液型サブタイプ診断 結果
+          </span>
+        </div>
+
+        {/* キャラクター画像エリア（仮プレースホルダ） */}
+        <div class="bsr-character-area" aria-hidden="true">
+          <div class="bsr-character-placeholder">
+            <span class="bsr-char-emoji">🩸</span>
+          </div>
+        </div>
+
+        <h1 id="bsr-type-name" class="bsr-type-name">{typeData.name}</h1>
+        <p class="bsr-type-name-en">{typeData.nameEn}</p>
+        <p class="bsr-tagline">{typeData.catchphrase}</p>
+
+        <div class="bsr-hero-actions">
+          <a href="/diagnosis/blood-type/diagnosis/" class="bsr-retry-btn">
+            もう一度診断する
+          </a>
+          <a href="/diagnosis/blood-compat/" class="bsr-compat-btn">
+            相性を見る →
+          </a>
+        </div>
+
+        <p class="bsr-disclaimer-short">
+          ※ これは血液型イメージの傾向区分であり、科学的相関は限定的です（日本心理学会2014年）
+        </p>
+      </div>
+    </Container>
+  </section>
+
+  <Container>
+    {/* ========== TL;DRブロック ========== */}
+    <TldrBlock
+      title={`${typeData.name}の3行まとめ`}
+      points={[
+        `${typeData.name}（${typeData.nameEn}）は${typeData.parentBloodType}型の中で「${typeData.catchphrase}」という傾向が際立つサブタイプです`,
+        `主な強み: ${typeData.strengths[0]}。${typeData.strengths[1]}`,
+        `気をつけたい傾向: ${typeData.cautions[0]}。相性を見たい場合は /diagnosis/blood-compat/ へどうぞ`,
+      ]}
+      updatedAt={meta.updatedAt}
+      sourceLabel="日本心理学会 公式見解（2014）"
+      sourceUrl="https://psych.or.jp/opinion/bl-personality/"
+    />
+
+    {/* ========== ブラハラ警告 ========== */}
+    <div class="bsr-caution-block" role="alert" aria-label="科学的限界と注意事項">
+      <p class="bsr-caution-text">
+        <strong>重要:</strong>
+        本結果は日本の文化的な血液型性格観に基づく傾向区分です。
+        血液型と性格の間に科学的に明確な統計的相関は認められていません（<a
+          href="https://psych.or.jp/opinion/bl-personality/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >日本心理学会2014年公式見解</a>）。
+        他者への決めつけや差別（ブラッドハラスメント）には使用しないでください。
+        自己理解の参考情報としてお楽しみください。
+      </p>
+    </div>
+
+    {/* ========== 血液型本体解説への導線 ========== */}
+    <section class="bsr-section" aria-labelledby="bsr-parent-h2">
+      <h2 id="bsr-parent-h2" class="bsr-h2" style={`border-color: ${parentColor}`}>
+        {typeData.parentBloodType}型 全体の傾向
+      </h2>
+      <p class="bsr-lead">
+        あなたは <strong>{typeData.parentBloodType}型</strong> の中の <strong>{typeData.name}</strong> です。
+        まず {typeData.parentBloodType}型全体の傾向を確認したい場合は下記をご覧ください。
+      </p>
+      <a href={bloodTypePageUrl} class="bsr-parent-link" style={`--link-color: ${parentColor}`}>
+        <span class="bsr-parent-link-icon" aria-hidden="true">📖</span>
+        {bloodTypeLabel[typeData.parentBloodType]}の性格・特徴を詳しく見る →
+      </a>
+    </section>
+
+    {/* ========== サブタイプ詳細 ========== */}
+    <section class="bsr-section" aria-labelledby="bsr-detail-h2">
+      <h2 id="bsr-detail-h2" class="bsr-h2" style={`border-color: ${parentColor}`}>
+        {typeData.name}の詳細解説
+      </h2>
+      <div class="bsr-description">
+        {typeData.description.split('\n').filter((line) => line.trim()).map((line) => (
+          <p class="bsr-desc-para">{line}</p>
+        ))}
+      </div>
+    </section>
+
+    {/* ========== 特徴 ========== */}
+    <section class="bsr-section" aria-labelledby="bsr-char-h2">
+      <h2 id="bsr-char-h2" class="bsr-h2" style={`border-color: ${parentColor}`}>
+        {typeData.name}の特徴（4項目）
+      </h2>
+      <ul class="bsr-char-list">
+        {typeData.characteristics.map((c) => (
+          <li class="bsr-char-item" style={`--item-color: ${parentColor}`}>{c}</li>
+        ))}
+      </ul>
+    </section>
+
+    {/* ========== 強み / 気をつけたい傾向 ========== */}
+    <section class="bsr-section" aria-labelledby="bsr-strength-h2">
+      <h2 id="bsr-strength-h2" class="bsr-h2" style={`border-color: ${parentColor}`}>
+        強み・気をつけたい傾向
+      </h2>
+      <div class="bsr-sw-grid">
+        <div class="bsr-sw-card bsr-sw-card--strength">
+          <h3 class="bsr-sw-title">
+            <span aria-hidden="true">💪</span> 強み
+          </h3>
+          <ul class="bsr-sw-list">
+            {typeData.strengths.map((s) => (
+              <li class="bsr-sw-item">{s}</li>
+            ))}
+          </ul>
+        </div>
+        <div class="bsr-sw-card bsr-sw-card--caution">
+          <h3 class="bsr-sw-title">
+            <span aria-hidden="true">⚡</span> 気をつけたい傾向
+          </h3>
+          <ul class="bsr-sw-list">
+            {typeData.cautions.map((c) => (
+              <li class="bsr-sw-item">{c}</li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    {/* ========== 相性診断への誘導 ========== */}
+    <section class="bsr-section" aria-labelledby="bsr-compat-h2">
+      <h2 id="bsr-compat-h2" class="bsr-h2" style={`border-color: ${parentColor}`}>
+        相性を見るには
+      </h2>
+      <div class="bsr-compat-cta">
+        <p class="bsr-compat-desc">
+          気になる相手との血液型相性を確認したい場合は、
+          血液型相性診断をご利用ください。A×B×O×ABの4×4相性を詳しく解説しています。
+        </p>
+        <a href="/diagnosis/blood-compat/" class="bsr-compat-link" style={`--link-color: ${parentColor}`}>
+          血液型相性診断を見る →
+        </a>
+      </div>
+    </section>
+
+    {/* ========== 同じ血液型の他サブタイプ ========== */}
+    {siblings.length > 0 && (
+      <section class="bsr-section" aria-labelledby="bsr-siblings-h2">
+        <h2 id="bsr-siblings-h2" class="bsr-h2" style={`border-color: ${parentColor}`}>
+          {typeData.parentBloodType}型の他のサブタイプ
+        </h2>
+        <p class="bsr-lead">
+          {typeData.parentBloodType}型には3つのサブタイプがあります。他のサブタイプも確認してみましょう。
+        </p>
+        <div class="bsr-siblings-grid">
+          {siblings.map((s) => (
+            <a
+              href={`/diagnosis/blood-type/diagnosis/result/${s.id}/`}
+              class="bsr-sibling-card"
+              style={`--card-color: ${s.themeColor}`}
+            >
+              <span class="bsr-sibling-name">{s.name}</span>
+              <span class="bsr-sibling-catch">{s.catchphrase}</span>
+              <span class="bsr-sibling-arrow" aria-hidden="true">→</span>
+            </a>
+          ))}
+        </div>
+      </section>
+    )}
+
+    {/* ========== 8診断統合プロファイルへの誘導 ========== */}
+    <section class="bsr-section" aria-labelledby="bsr-profile-h2">
+      <h2 id="bsr-profile-h2" class="bsr-h2" style={`border-color: ${parentColor}`}>
+        8診断統合プロファイルで自己理解を深める
+      </h2>
+      <p class="bsr-lead">
+        この診断結果（{typeData.name}）は自動的に統合プロファイルに記録されます。
+        MBTI・DiSC・多重知能など他の診断と組み合わせることで、多角的な自己理解が深まります。
+      </p>
+      <div class="bsr-profile-cards">
+        <a href="/diagnosis/mbti/" class="bsr-profile-card">
+          <span class="bsr-profile-icon" aria-hidden="true">🧠</span>
+          <span class="bsr-profile-label">MBTI診断</span>
+          <span class="bsr-profile-desc">16タイプで性格を分析</span>
+        </a>
+        <a href="/diagnosis/disc/" class="bsr-profile-card">
+          <span class="bsr-profile-icon" aria-hidden="true">📊</span>
+          <span class="bsr-profile-label">DiSC診断</span>
+          <span class="bsr-profile-desc">職場の行動スタイルを分析</span>
+        </a>
+        <a href="/diagnosis/multi-int/" class="bsr-profile-card">
+          <span class="bsr-profile-icon" aria-hidden="true">🎓</span>
+          <span class="bsr-profile-label">多重知能テスト</span>
+          <span class="bsr-profile-desc">8つの知能から強みを発見</span>
+        </a>
+      </div>
+      <a href="/diagnosis/" class="bsr-all-diag-link">
+        全診断一覧を見る →
+      </a>
+    </section>
+
+    {/* ========== FAQ ========== */}
+    <section class="bsr-section" aria-labelledby="bsr-faq-h2">
+      <h2 id="bsr-faq-h2" class="bsr-h2" style={`border-color: ${parentColor}`}>
+        よくある質問
+      </h2>
+      <dl class="bsr-faq-list">
+        {faqs.map(({ question, answer }) => (
+          <div class="bsr-faq-item">
+            <dt class="bsr-faq-q">{question}</dt>
+            <dd class="bsr-faq-a">{answer}</dd>
+          </div>
+        ))}
+      </dl>
+    </section>
+
+    {/* ========== 参考文献 ========== */}
+    <ReferenceList references={meta.references} confirmedAt={meta.updatedAt} />
+
+    {/* ========== 商標・科学的限界フッター ========== */}
+    <p class="bsr-footer-note">
+      本診断は古川竹二（1927）・能見正比古（1971）の傾向区分概念と
+      Big5心理学の外向性・協調性・神経症傾向・誠実性の4軸を参考に設計した自己理解ツールです。
+      血液型と性格の間に科学的に明確な統計的相関は認められていません
+      （日本心理学会 公式見解 2014年 <a
+        href="https://psych.or.jp/opinion/bl-personality/"
+        target="_blank"
+        rel="noopener noreferrer"
+      >psych.or.jp</a>）。
+      採用・評価・選考への使用は推奨しません。
+      最終確認日: <time datetime={meta.updatedAt}>{meta.updatedAt}</time>。
+    </p>
+  </Container>
+</BaseLayout>
+
+<script>
+/**
+ * 統合プロファイル保存（クライアントサイド）
+ * ページロード時にLocalStorageの blood_subtype 結果を確認し、
+ * 必要に応じて保存済みであることを確認する。
+ */
+(function() {
+  try {
+    const raw = localStorage.getItem('sn_scores_bloodSubtype');
+    if (!raw) {
+      // 直接URLアクセスの場合、血液型はpathから推定してデフォルト保存
+      const pathParts = window.location.pathname.split('/');
+      const typeIdFromPath = pathParts[pathParts.length - 2] || '';
+      if (typeIdFromPath) {
+        const bloodType = typeIdFromPath.split('-')[0];
+        if (['A', 'B', 'O', 'AB'].includes(bloodType)) {
+          localStorage.setItem('sn_blood_type', JSON.stringify({ type: bloodType }));
+        }
+      }
+    }
+  } catch { /* localStorage 不可環境は無視 */ }
+})();
+</script>
+
+<style>
+/* ========== ヒーロー ========== */
+.bsr-hero {
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--parent-color, #e11d48) 8%, #fff) 0%,
+    color-mix(in srgb, var(--parent-color, #e11d48) 15%, #fff) 100%
+  );
+  padding-block: 3rem 3.5rem;
+  text-align: center;
+}
+.bsr-hero-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.875rem;
+}
+.bsr-hero-badges {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.bsr-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.2rem 0.75rem;
+  border-radius: 2rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+.bsr-badge--blood {
+  background: var(--parent-color, #e11d48);
+  color: #fff;
+}
+.bsr-badge--result {
+  background: rgba(0 0 0 / 0.08);
+  color: #374151;
+}
+
+/* キャラクター */
+.bsr-character-area { margin-block: 0.5rem; }
+.bsr-character-placeholder {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--parent-color, #e11d48) 15%, #fff);
+  border: 3px solid var(--parent-color, #e11d48);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+}
+.bsr-char-emoji { font-size: 3rem; }
+
+.bsr-type-name {
+  font-size: clamp(1.75rem, 5vw, 2.5rem);
+  font-weight: 700;
+  margin: 0;
+  color: var(--parent-color, #e11d48);
+}
+.bsr-type-name-en {
+  font-size: 0.9rem;
+  color: #6b7280;
+  margin: 0;
+}
+.bsr-tagline {
+  font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+  color: #374151;
+  line-height: 1.6;
+  margin: 0;
+  max-width: 480px;
+}
+.bsr-hero-actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 0.5rem;
+}
+.bsr-retry-btn {
+  display: inline-flex;
+  align-items: center;
+  background: #f3f4f6;
+  border: 1px solid #d1d5db;
+  color: #374151;
+  font-weight: 600;
+  font-size: 0.9rem;
+  padding: 0.6rem 1.25rem;
+  border-radius: 2rem;
+  text-decoration: none;
+  transition: background 0.12s;
+}
+.bsr-retry-btn:hover { background: #e5e7eb; }
+.bsr-compat-btn {
+  display: inline-flex;
+  align-items: center;
+  background: var(--parent-color, #e11d48);
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.9rem;
+  padding: 0.6rem 1.25rem;
+  border-radius: 2rem;
+  text-decoration: none;
+  transition: opacity 0.12s;
+}
+.bsr-compat-btn:hover { opacity: 0.85; }
+.bsr-disclaimer-short {
+  font-size: 0.72rem;
+  color: #9ca3af;
+  margin: 0;
+  max-width: 480px;
+}
+
+/* ========== 警告ブロック ========== */
+.bsr-caution-block {
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  border-left: 4px solid #ea580c;
+  border-radius: 0 0.75rem 0.75rem 0;
+  padding: 1rem 1.25rem;
+  margin-block: 2rem;
+}
+.bsr-caution-text {
+  font-size: 0.875rem;
+  line-height: 1.7;
+  color: #7c2d12;
+  margin: 0;
+}
+.bsr-caution-text a { color: #92400e; }
+
+/* ========== セクション共通 ========== */
+.bsr-section { margin-block: 2.5rem; }
+.bsr-h2 {
+  font-size: clamp(1.2rem, 4vw, 1.6rem);
+  font-weight: 700;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--parent-color, #e11d48);
+}
+.bsr-lead {
+  font-size: 0.95rem;
+  line-height: 1.8;
+  color: #374151;
+  margin-bottom: 1rem;
+}
+
+/* ========== 血液型解説リンク ========== */
+.bsr-parent-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: color-mix(in srgb, var(--link-color, #e11d48) 8%, #fff);
+  border: 1.5px solid var(--link-color, #e11d48);
+  color: var(--link-color, #e11d48);
+  font-weight: 700;
+  font-size: 0.9rem;
+  padding: 0.65rem 1.25rem;
+  border-radius: 0.5rem;
+  text-decoration: none;
+  transition: background 0.12s;
+}
+.bsr-parent-link:hover {
+  background: color-mix(in srgb, var(--link-color, #e11d48) 15%, #fff);
+}
+.bsr-parent-link-icon { font-size: 1rem; }
+
+/* ========== 詳細解説 ========== */
+.bsr-description { display: flex; flex-direction: column; gap: 0.75rem; }
+.bsr-desc-para {
+  font-size: 0.95rem;
+  line-height: 1.8;
+  color: #374151;
+  margin: 0;
+}
+
+/* ========== 特徴リスト ========== */
+.bsr-char-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.bsr-char-item {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: #374151;
+  padding: 0.65rem 1rem;
+  border-left: 3px solid var(--item-color, #e11d48);
+  background: #f9fafb;
+  border-radius: 0 0.5rem 0.5rem 0;
+}
+
+/* ========== 強み・注意点グリッド ========== */
+.bsr-sw-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+.bsr-sw-card {
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+}
+.bsr-sw-card--strength {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+}
+.bsr-sw-card--caution {
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+}
+.bsr-sw-title {
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 0 0 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.bsr-sw-card--strength .bsr-sw-title { color: #15803d; }
+.bsr-sw-card--caution .bsr-sw-title { color: #c2410c; }
+.bsr-sw-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.bsr-sw-item {
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: #374151;
+  padding-left: 1rem;
+  position: relative;
+}
+.bsr-sw-item::before {
+  content: '•';
+  position: absolute;
+  left: 0;
+  color: #9ca3af;
+}
+
+/* ========== 相性CTA ========== */
+.bsr-compat-cta {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.bsr-compat-desc { font-size: 0.9rem; line-height: 1.7; color: #4b5563; margin: 0; }
+.bsr-compat-link {
+  display: inline-flex;
+  align-items: center;
+  background: var(--link-color, #e11d48);
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.9rem;
+  padding: 0.65rem 1.25rem;
+  border-radius: 0.5rem;
+  text-decoration: none;
+  align-self: flex-start;
+  transition: opacity 0.12s;
+}
+.bsr-compat-link:hover { opacity: 0.85; }
+
+/* ========== 同型サブタイプ ========== */
+.bsr-siblings-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+.bsr-sibling-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 1rem 1.1rem;
+  background: #f9fafb;
+  border: 1.5px solid var(--card-color, #e11d48);
+  border-radius: 0.75rem;
+  text-decoration: none;
+  color: inherit;
+  transition: background 0.12s, transform 0.12s;
+  position: relative;
+}
+.bsr-sibling-card:hover {
+  background: color-mix(in srgb, var(--card-color, #e11d48) 6%, #fff);
+  transform: translateY(-1px);
+}
+.bsr-sibling-name {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--card-color, #e11d48);
+}
+.bsr-sibling-catch { font-size: 0.8rem; color: #6b7280; line-height: 1.5; }
+.bsr-sibling-arrow {
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--card-color, #e11d48);
+  font-size: 0.9rem;
+}
+
+/* ========== 統合プロファイル ========== */
+.bsr-profile-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 0.75rem;
+  margin-block: 1rem;
+}
+.bsr-profile-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 1rem;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  text-decoration: none;
+  color: inherit;
+  text-align: center;
+  transition: background 0.12s, transform 0.12s;
+}
+.bsr-profile-card:hover { background: #f3f4f6; transform: translateY(-1px); }
+.bsr-profile-icon { font-size: 1.75rem; }
+.bsr-profile-label { font-weight: 700; font-size: 0.85rem; color: #111827; }
+.bsr-profile-desc { font-size: 0.75rem; color: #6b7280; }
+.bsr-all-diag-link {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #1d4ed8;
+  text-decoration: none;
+  margin-top: 0.5rem;
+}
+.bsr-all-diag-link:hover { text-decoration: underline; }
+
+/* ========== FAQ ========== */
+.bsr-faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  margin-top: 1rem;
+}
+.bsr-faq-item {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 1rem 1.25rem;
+}
+.bsr-faq-q {
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: #111827;
+  margin: 0 0 0.5rem;
+}
+.bsr-faq-q::before { content: 'Q. '; color: #6b7280; }
+.bsr-faq-a {
+  font-size: 0.85rem;
+  line-height: 1.7;
+  color: #4b5563;
+  margin: 0;
+}
+
+/* ========== フッターノート ========== */
+.bsr-footer-note {
+  font-size: 0.78rem;
+  color: #9ca3af;
+  line-height: 1.7;
+  margin-block: 2rem;
+  border-top: 1px solid #e5e7eb;
+  padding-top: 1rem;
+}
+.bsr-footer-note a { color: #6b7280; }
+</style>
