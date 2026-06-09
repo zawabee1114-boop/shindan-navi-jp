@@ -1,0 +1,499 @@
+---
+/**
+ * IntegratedProgressBar.astro - 統合プロファイル達成バー
+ *
+ * 全結果ページの上部（ヒーロー直後）に常設する。
+ * LocalStorage から受診済み診断数を読み取り、8診断分のプログレスバーを表示する。
+ *
+ * 仕様:
+ * - LocalStorage キー: sn_scores_multi-int / sn_scores_perfectionism / sn_scores_disc /
+ *   sn_scores_love_style / sn_scores_money_style / sn_scores_friend_compat /
+ *   zodiac_result_* / sn_blood_type または sn_scores_blood_compat
+ *   + MBTI は sn_mbti_result キーで保存済みを検知（mbtiは選択型のためスコアキー異なる）
+ * - 8/8 到達時: "達成！すべての特性プロファイルを見る" CTA → /profile/
+ * - 未達成時: "あとN個でフルプロファイル達成" + AIプロンプトカードCTA
+ * - is:inline script でクライアントサイド計算（SSR不可）
+ * - Big5/OCEAN 表記ユーザー向け完全NG
+ *
+ * a11y: role="progressbar" / aria-valuenow / aria-valuemax / フォーカス対応
+ * CWV: 外部JS・画像なし。CLS対策として最小高さを確保
+ *
+ * 作成: 2026-06-10
+ */
+
+interface Props {
+  /** 現在見ている診断のID（例: 'mbti'）。受診済みマーク強調に使用 */
+  currentDiagnosisId?: string;
+}
+
+const { currentDiagnosisId = '' } = Astro.props;
+---
+
+<div class="ipb-wrapper" id="integrated-progress-bar" aria-label="フルプロファイル達成状況" role="region">
+  <div class="ipb-inner">
+    <!-- アイコン + テキスト -->
+    <div class="ipb-header">
+      <span class="ipb-icon" aria-hidden="true">🧬</span>
+      <div class="ipb-text">
+        <p class="ipb-label" id="ipb-label-text">フルプロファイルを作ろう</p>
+        <p class="ipb-sub" id="ipb-sub-text">あと <strong id="ipb-remaining">?</strong> 個の診断でフルプロファイル達成</p>
+      </div>
+    </div>
+
+    <!-- プログレスバー -->
+    <div class="ipb-bar-wrap">
+      <div
+        class="ipb-bar"
+        role="progressbar"
+        aria-valuenow="0"
+        aria-valuemin="0"
+        aria-valuemax="8"
+        aria-labelledby="ipb-label-text"
+        id="ipb-bar"
+      >
+        <div class="ipb-fill" id="ipb-fill" style="width: 0%;"></div>
+      </div>
+      <span class="ipb-count" id="ipb-count" aria-live="polite">
+        <strong id="ipb-done">0</strong><span class="ipb-total"> / 8</span>
+      </span>
+    </div>
+
+    <!-- ドット指標（8診断ぶん） -->
+    <div class="ipb-dots" aria-hidden="true" id="ipb-dots">
+      <span class="ipb-dot" data-dot="multi-int" title="多重知能"></span>
+      <span class="ipb-dot" data-dot="mbti" title="MBTI"></span>
+      <span class="ipb-dot" data-dot="perfectionism" title="完璧主義"></span>
+      <span class="ipb-dot" data-dot="disc" title="DiSC"></span>
+      <span class="ipb-dot" data-dot="love_style" title="恋愛スタイル"></span>
+      <span class="ipb-dot" data-dot="money_style" title="金銭感覚"></span>
+      <span class="ipb-dot" data-dot="friend_compat" title="友達相性"></span>
+      <span class="ipb-dot" data-dot="zodiac_blood" title="星座・血液型"></span>
+    </div>
+
+    <!-- CTA エリア（JS が書き換える） -->
+    <div class="ipb-cta-wrap" id="ipb-cta">
+      <!-- 未達成時デフォルト: AIプロンプトカードへの誘導 -->
+      <a href="/profile/#ai-prompt" class="ipb-btn ipb-btn--ai" aria-label="AIプロンプトカード生成ページへ">
+        <span aria-hidden="true">🤖</span>
+        ChatGPT / Claude にこの結果を渡す
+      </a>
+      <a href="/diagnosis/" class="ipb-btn ipb-btn--diag" aria-label="他の診断一覧ページへ">
+        <span aria-hidden="true">+</span>
+        他の診断を受ける
+      </a>
+    </div>
+  </div>
+</div>
+
+<style>
+  /* ================================================================
+     IntegratedProgressBar
+     ================================================================ */
+
+  .ipb-wrapper {
+    background: linear-gradient(135deg, var(--brand-50, #f6f3ff) 0%, #eef4ff 100%);
+    border-bottom: 1px solid var(--brand-200, #e0d8ff);
+    padding: var(--sn-space-4, 1rem) 0;
+    /* CLS対策: 最小高さを確保 */
+    min-height: 80px;
+  }
+
+  .ipb-inner {
+    max-width: var(--sn-container-max, 1100px);
+    margin: 0 auto;
+    padding-inline: var(--sn-space-4, 1rem);
+    display: flex;
+    flex-direction: column;
+    gap: var(--sn-space-3, 0.75rem);
+  }
+
+  @media (min-width: 768px) {
+    .ipb-inner {
+      padding-inline: var(--sn-space-6, 1.5rem);
+    }
+  }
+
+  /* ---- ヘッダー ---- */
+  .ipb-header {
+    display: flex;
+    align-items: center;
+    gap: var(--sn-space-3, 0.75rem);
+  }
+
+  .ipb-icon {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+    line-height: 1;
+  }
+
+  .ipb-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  .ipb-label {
+    font-family: var(--sn-font-rounded);
+    font-size: var(--sn-text-sm, 0.875rem);
+    font-weight: 700;
+    color: var(--ink-900, #1f2235);
+    margin: 0;
+    line-height: 1.3;
+  }
+
+  .ipb-sub {
+    font-size: var(--sn-text-xs, 0.75rem);
+    color: var(--ink-500, #6e6e89);
+    margin: 0;
+    line-height: 1.4;
+  }
+
+  .ipb-sub strong {
+    color: var(--brand-600, #6a47ff);
+    font-weight: 700;
+  }
+
+  /* ---- プログレスバー ---- */
+  .ipb-bar-wrap {
+    display: flex;
+    align-items: center;
+    gap: var(--sn-space-3, 0.75rem);
+  }
+
+  .ipb-bar {
+    flex: 1;
+    height: 10px;
+    background: var(--brand-100, #efeaff);
+    border-radius: var(--radius-pill, 999px);
+    overflow: hidden;
+  }
+
+  .ipb-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--brand-500, #7c5cff) 0%, #9b85ff 100%);
+    border-radius: var(--radius-pill, 999px);
+    transition: width 600ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* 8/8 達成時のグロー */
+  .ipb-fill--complete {
+    background: linear-gradient(90deg, #7c5cff 0%, #ff7ab3 50%, #9b85ff 100%);
+    box-shadow: 0 0 8px rgba(124, 92, 255, 0.5);
+  }
+
+  .ipb-count {
+    font-size: var(--sn-text-xs, 0.75rem);
+    font-weight: 700;
+    color: var(--ink-500, #6e6e89);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .ipb-count strong {
+    font-size: var(--sn-text-base, 1rem);
+    color: var(--brand-600, #6a47ff);
+  }
+
+  .ipb-total {
+    color: var(--ink-400, #9b9bb3);
+  }
+
+  /* ---- ドット指標 ---- */
+  .ipb-dots {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .ipb-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--brand-100, #efeaff);
+    border: 1.5px solid var(--brand-200, #e0d8ff);
+    transition: background 300ms ease, border-color 300ms ease, transform 200ms ease;
+    display: inline-block;
+  }
+
+  .ipb-dot--done {
+    background: var(--brand-500, #7c5cff);
+    border-color: var(--brand-500, #7c5cff);
+    transform: scale(1.15);
+  }
+
+  /* 現在の診断ドットを強調 */
+  .ipb-dot--current {
+    background: var(--brand-500, #7c5cff);
+    border-color: var(--brand-500, #7c5cff);
+    transform: scale(1.3);
+    box-shadow: 0 0 0 3px rgba(124, 92, 255, 0.3);
+  }
+
+  /* ---- CTAエリア ---- */
+  .ipb-cta-wrap {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sn-space-2, 0.5rem);
+    align-items: center;
+  }
+
+  .ipb-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 44px;
+    padding: 8px 16px;
+    border-radius: var(--radius-pill, 999px);
+    font-family: var(--sn-font-rounded);
+    font-size: var(--sn-text-sm, 0.875rem);
+    font-weight: 700;
+    text-decoration: none;
+    white-space: nowrap;
+    transition:
+      background 150ms ease,
+      box-shadow 150ms ease,
+      transform 150ms ease;
+    cursor: pointer;
+  }
+
+  .ipb-btn:hover {
+    text-decoration: none;
+    transform: translateY(-1px);
+  }
+
+  .ipb-btn:focus-visible {
+    outline: 2px solid var(--brand-400, #9b85ff);
+    outline-offset: 3px;
+  }
+
+  /* AIプロンプトカードCTA（メイン） */
+  .ipb-btn--ai {
+    background: var(--brand-500, #7c5cff);
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(124, 92, 255, 0.3);
+  }
+
+  .ipb-btn--ai:hover {
+    background: var(--brand-600, #6a47ff);
+    box-shadow: 0 6px 18px rgba(124, 92, 255, 0.4);
+    color: #fff;
+  }
+
+  /* 他の診断を受けるCTA（サブ） */
+  .ipb-btn--diag {
+    background: var(--surface, #fff);
+    color: var(--brand-700, #5435e8);
+    border: 1.5px solid var(--brand-300, #c2b3ff);
+  }
+
+  .ipb-btn--diag:hover {
+    background: var(--brand-50, #f6f3ff);
+    border-color: var(--brand-400, #9b85ff);
+    box-shadow: 0 4px 10px rgba(124, 92, 255, 0.12);
+    color: var(--brand-700, #5435e8);
+  }
+
+  /* 達成時の特別CTA */
+  .ipb-btn--complete {
+    background: linear-gradient(135deg, #7c5cff 0%, #ff7ab3 100%);
+    color: #fff;
+    box-shadow: 0 4px 16px rgba(124, 92, 255, 0.4);
+    font-size: var(--sn-text-base, 1rem);
+    padding: 10px 20px;
+  }
+
+  .ipb-btn--complete:hover {
+    box-shadow: 0 6px 22px rgba(124, 92, 255, 0.5);
+    color: #fff;
+  }
+
+  /* 達成時の背景グロー */
+  .ipb-wrapper--complete {
+    background: linear-gradient(135deg, #f6f3ff 0%, #fff0f7 50%, #eef4ff 100%);
+    border-bottom-color: var(--brand-300, #c2b3ff);
+  }
+</style>
+
+<script is:inline data-current-diag-id={currentDiagnosisId}>
+(function () {
+  /* ---- LocalStorage から受診済み診断を検出 ---- */
+  function getCompletedDiagnoses() {
+    var completed = {};
+    if (typeof window === 'undefined' || !window.localStorage) return completed;
+
+    // multi-int
+    try {
+      var raw = localStorage.getItem('sn_scores_multi-int');
+      if (raw) { var d = JSON.parse(raw); if (d && d.dominantType) completed['multi-int'] = true; }
+    } catch (e) {}
+
+    // mbti（MBTI は sn_mbti_result または sn_scores_mbti キーを使用）
+    try {
+      var mbtiRaw = localStorage.getItem('sn_mbti_result') || localStorage.getItem('sn_scores_mbti');
+      if (mbtiRaw) {
+        var md = JSON.parse(mbtiRaw);
+        if (md && (md.type || md.typeId || md.result)) completed['mbti'] = true;
+      }
+    } catch (e) {}
+
+    // perfectionism
+    try {
+      var perfRaw = localStorage.getItem('sn_scores_perfectionism');
+      if (perfRaw) { var pd = JSON.parse(perfRaw); if (pd && (pd.type || pd.typeId)) completed['perfectionism'] = true; }
+    } catch (e) {}
+
+    // disc
+    try {
+      var discRaw = localStorage.getItem('sn_scores_disc');
+      if (discRaw) { var dd = JSON.parse(discRaw); if (dd && (dd.type || dd.dominantType || dd.typeId)) completed['disc'] = true; }
+    } catch (e) {}
+
+    // love_style
+    try {
+      var loveRaw = localStorage.getItem('sn_scores_love_style');
+      if (loveRaw) { var ld = JSON.parse(loveRaw); if (ld && (ld.dominantStyle || ld.type || ld.typeId)) completed['love_style'] = true; }
+    } catch (e) {}
+
+    // money_style
+    try {
+      var moneyRaw = localStorage.getItem('sn_scores_money_style');
+      if (moneyRaw) { var mod = JSON.parse(moneyRaw); if (mod && (mod.dominantType || mod.type || mod.typeId)) completed['money_style'] = true; }
+    } catch (e) {}
+
+    // friend_compat
+    try {
+      var friendRaw = localStorage.getItem('sn_scores_friend_compat');
+      if (friendRaw) { var fd = JSON.parse(friendRaw); if (fd && (fd.friendType || fd.type || fd.typeId)) completed['friend_compat'] = true; }
+    } catch (e) {}
+
+    // zodiac または blood_compat（いずれか1つでドット点灯。8診断目としてカウント）
+    try {
+      var zodiacFound = false;
+      for (var i = 0; i < localStorage.length; i++) {
+        var key = localStorage.key(i);
+        if (key && key.startsWith('zodiac_result_')) {
+          var zRaw = localStorage.getItem(key);
+          if (zRaw) {
+            var zd = JSON.parse(zRaw);
+            var zdata = zd.value || zd;
+            if (zdata && (zdata.zodiacType || zdata.sign || zdata.type)) {
+              zodiacFound = true;
+              break;
+            }
+          }
+        }
+      }
+      if (!zodiacFound) {
+        var bRaw = localStorage.getItem('sn_blood_type') || localStorage.getItem('sn_scores_blood_compat');
+        if (bRaw) zodiacFound = true;
+      }
+      if (zodiacFound) completed['zodiac_blood'] = true;
+    } catch (e) {}
+
+    return completed;
+  }
+
+  /* ---- DOM 更新 ---- */
+  function updateUI() {
+    var wrapper = document.getElementById('integrated-progress-bar');
+    if (!wrapper) return;
+
+    var completed = getCompletedDiagnoses();
+
+    // 現在見ている診断のID（data属性から取得）
+    var scriptEl = document.querySelector('script[data-current-diag-id]');
+    var currentDiagId = scriptEl ? (scriptEl.getAttribute('data-current-diag-id') || '') : '';
+
+    var DIAG_IDS = ['multi-int', 'mbti', 'perfectionism', 'disc', 'love_style', 'money_style', 'friend_compat', 'zodiac_blood'];
+    var doneCount = 0;
+    for (var di = 0; di < DIAG_IDS.length; di++) {
+      if (completed[DIAG_IDS[di]]) doneCount++;
+    }
+
+    var total = 8;
+    var remaining = total - doneCount;
+    var pct = Math.round((doneCount / total) * 100);
+    var isComplete = doneCount >= total;
+
+    /* プログレスバー更新 */
+    var fill = document.getElementById('ipb-fill');
+    var bar = document.getElementById('ipb-bar');
+    if (fill) {
+      fill.style.width = pct + '%';
+      if (isComplete) fill.classList.add('ipb-fill--complete');
+    }
+    if (bar) {
+      bar.setAttribute('aria-valuenow', String(doneCount));
+    }
+
+    /* カウント表示 */
+    var doneEl = document.getElementById('ipb-done');
+    if (doneEl) doneEl.textContent = String(doneCount);
+
+    /* サブテキスト更新 */
+    var subEl = document.getElementById('ipb-sub-text');
+    var remainingEl = document.getElementById('ipb-remaining');
+    var labelEl = document.getElementById('ipb-label-text');
+    if (isComplete) {
+      if (labelEl) labelEl.textContent = 'フルプロファイル達成！';
+      if (subEl) subEl.textContent = '8診断すべての特性プロファイルが揃いました';
+      if (remainingEl) remainingEl.parentElement && (remainingEl.parentElement.textContent = '8診断すべての特性プロファイルが揃いました');
+    } else {
+      if (remainingEl) remainingEl.textContent = String(remaining);
+    }
+
+    /* ドット更新 */
+    var dots = wrapper.querySelectorAll('.ipb-dot');
+    for (var di2 = 0; di2 < dots.length; di2++) {
+      var dot = dots[di2];
+      var dotId = dot.getAttribute('data-dot');
+      dot.classList.remove('ipb-dot--done', 'ipb-dot--current');
+      if (dotId && completed[dotId]) {
+        dot.classList.add('ipb-dot--done');
+      }
+      // 現在の診断に対応するドットを強調
+      if (currentDiagId && dotId) {
+        var isCurrent = false;
+        if (currentDiagId === dotId) isCurrent = true;
+        // 複合キー対応: zodiac / blood_compat → zodiac_blood ドット
+        if (dotId === 'zodiac_blood' && (currentDiagId === 'zodiac' || currentDiagId === 'blood_compat' || currentDiagId === 'blood-compat' || currentDiagId === 'blood-type')) isCurrent = true;
+        // ハイフン→アンダースコア正規化
+        if (!isCurrent && dotId.replace(/-/g, '_') === currentDiagId.replace(/-/g, '_')) isCurrent = true;
+        if (isCurrent) dot.classList.add('ipb-dot--current');
+      }
+    }
+
+    /* CTA更新 */
+    var ctaWrap = document.getElementById('ipb-cta');
+    if (ctaWrap) {
+      if (isComplete) {
+        wrapper.classList.add('ipb-wrapper--complete');
+        ctaWrap.innerHTML =
+          '<a href="/profile/" class="ipb-btn ipb-btn--complete" aria-label="統合プロファイルページへ">' +
+          '<span aria-hidden="true">✨</span>' +
+          'あなたの完全プロファイルを見る → /profile/' +
+          '</a>';
+      } else {
+        /* 未達成: AIプロンプトカード + 他の診断 CTAを保持（初期HTML通り）*/
+        /* 診断が1つ以上ある場合のみAIプロンプトカードCTAを有効化 */
+        if (doneCount === 0) {
+          ctaWrap.innerHTML =
+            '<a href="/diagnosis/" class="ipb-btn ipb-btn--diag" aria-label="診断一覧ページへ">' +
+            '<span aria-hidden="true">+</span>' +
+            '診断を受けてフルプロファイルを作る' +
+            '</a>';
+        }
+        /* doneCount >= 1 なら初期HTMLのAI+診断ボタンをそのまま残す */
+      }
+    }
+  }
+
+  /* DOM 準備完了後に実行 */
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', updateUI);
+  } else {
+    updateUI();
+  }
+})();
+</script>

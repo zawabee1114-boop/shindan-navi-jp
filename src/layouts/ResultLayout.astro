@@ -1,6 +1,6 @@
 ---
 /**
- * ResultLayout.astro - 診断結果ページ共通レイアウト v3
+ * ResultLayout.astro - 診断結果ページ共通レイアウト v4
  *
  * フェーズ2 新デザイン対応:
  * - ヒーロー: 診断カラーグラデーション + スパークル装飾
@@ -13,6 +13,10 @@
  * - RelatedDiagnoses コンポーネント統合
  * - 統合プロファイル CTA を RelatedDiagnoses 内に集約
  * - 既存 relatedDiagnoses prop は後方互換で残す（廃止予定）
+ *
+ * v4 追加（2026-06-10）:
+ * - IntegratedProgressBar: 統合プロファイル達成バー常設
+ * - AIプロンプトカードCTA常設
  */
 
 import BaseLayout from './BaseLayout.astro';
@@ -20,6 +24,7 @@ import ShareButtons from '../components/ShareButtons.astro';
 import Container from '../components/Container.astro';
 import PassCta from '../components/PassCta.astro';
 import RelatedDiagnoses from '../components/RelatedDiagnoses.astro';
+import IntegratedProgressBar from '../components/IntegratedProgressBar.astro';
 
 interface RelatedDiagnosis {
   title: string;
@@ -167,6 +172,9 @@ const tabs = [
         </div>
       </Container>
     </section>
+
+    {/* ---- 統合プロファイル達成バー（v4）---- */}
+    <IntegratedProgressBar currentDiagnosisId={diagnosisId} />
 
     {/* ---- タブナビゲーション ---- */}
     <div class="rl-tab-nav-wrapper" role="navigation" aria-label="結果セクション">
@@ -357,7 +365,7 @@ const tabs = [
 
 <style>
   /* ================================================================
-     ResultLayout v3
+     ResultLayout v4
      ================================================================ */
 
   .rl-page {
@@ -365,6 +373,14 @@ const tabs = [
     flex-direction: column;
     gap: var(--sn-space-12);
     padding-bottom: var(--sn-space-16);
+  }
+
+  /*
+   * 達成バー（IntegratedProgressBar）はヒーローに密着させる。
+   * flex gap で生じる余白を打ち消す。
+   */
+  .rl-page > :global(#integrated-progress-bar) {
+    margin-top: calc(-1 * var(--sn-space-12, 3rem));
   }
 
   /* ---- ヒーロー ---- */

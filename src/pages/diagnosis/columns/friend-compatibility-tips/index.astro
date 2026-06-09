@@ -1,0 +1,781 @@
+---
+/**
+ * 友達相性診断で深まる関係：6タイプ別の付き合い方
+ * KW: 友達 相性 / 友達相性診断 / 友達 相性 タイプ別
+ * 学術根拠: 愛着理論（Bowlby 1969）+ 友人関係研究（Fehr 1996）
+ * 確認日: 2026-06-10
+ */
+import BaseLayout from '../../../../layouts/BaseLayout.astro';
+import Container from '../../../../components/Container.astro';
+import TldrBlock from '../../../../components/TldrBlock.astro';
+import ReferenceList from '../../../../components/ReferenceList.astro';
+import ScienceNote from '../../../../components/ScienceNote.astro';
+
+const SITE_URL = 'https://shindan-navi.jp';
+const PAGE_URL = `${SITE_URL}/diagnosis/columns/friend-compatibility-tips/`;
+const UPDATED_AT = '2026-06-10';
+
+const title = '友達相性診断で深まる関係｜6タイプ別の付き合い方・摩擦の解消法';
+const description =
+  '友達相性を深める6タイプ別の付き合い方を解説。診断ナビの友達相性診断（6タイプ）の活用法・タイプ別コミュニケーション・摩擦解消法・関係を深める3ステップを収録。2026-06-10確認。';
+
+const jsonLdArticle = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  '@id': `${PAGE_URL}#article`,
+  headline: title,
+  description: description,
+  url: PAGE_URL,
+  datePublished: '2026-06-10',
+  dateModified: UPDATED_AT,
+  inLanguage: 'ja',
+  author: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+    name: '診断ナビ',
+    url: SITE_URL,
+  },
+  publisher: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+    name: '診断ナビ',
+    url: SITE_URL,
+  },
+};
+
+const faqs = [
+  {
+    question: '友達相性診断は科学的に正確ですか？',
+    answer:
+      '友達相性診断は行動傾向・コミュニケーションスタイルの分類を参考情報として提供するものであり、「このタイプ同士は必ず相性が良い」と保証するものではありません。友人関係の質は性格の類似よりも「互いへの関心・共有体験・開示の相互性」に大きく依存することが心理学研究で示されています（Fehr 1996, Friendship Processes）。相性診断は「自分と相手の違い」を理解するきっかけとして活用することを推奨します。',
+  },
+  {
+    question: '友達相性が悪いと感じたらどうすればいい？',
+    answer:
+      '相性が悪いと感じる場合、その多くはコミュニケーションスタイルの違いから来ます。「話すペース・情報量・感情表現の量」がズレているだけで関係が改善できることがあります。まず「自分はどんなコミュニケーションが心地よいか」「相手はどんなスタイルを好むか」を確認し、相手のスタイルに少し合わせてみることで変化が生まれます。',
+  },
+  {
+    question: '新しい友達との相性を早く知るにはどうすればいい？',
+    answer:
+      '相性を早く把握する最善の方法は「自己開示の深さと速度」を観察することです。相手が感情・価値観・失敗談をどれくらいオープンに話すかを観察し、同等のペースで自分も開示することで相互理解が加速します。また診断ナビの友達相性診断（/diagnosis/friend-compat/）を二人で一緒に受けてタイプを共有するのも効果的です（2026-06-10確認）。',
+  },
+  {
+    question: '友達関係が長続きする人の特徴は？',
+    answer:
+      '心理学研究（Rawlins 1992, Friendship Matters）によると、長続きする友達関係に共通する特徴は「①一定の連絡頻度の維持、②互いの違いへの許容、③困ったときの実質的なサポート、④相手への肯定的な感情表現」の4点です。性格の一致よりも「関係に投資する意志と行動」が長続きの決め手になります。',
+  },
+  {
+    question: '友達相性診断と統合プロファイルを組み合わせるとどう使える？',
+    answer:
+      '診断ナビの統合プロファイル（/me/）では、MBTI・友達相性・多重知能・完璧主義・お金スタイルなど複数の診断結果を組み合わせた「多面的な自己理解」が確認できます（2026-06-10確認）。友達相性診断と統合プロファイルを組み合わせることで、「なぜこのタイプの友達と波長が合うのか」「どんな関係でどんな役割を担いやすいか」がより深く理解できます。',
+  },
+];
+
+const jsonLdFAQ = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  '@id': `${PAGE_URL}#faq`,
+  mainEntity: faqs.map(({ question, answer }) => ({
+    '@type': 'Question',
+    name: question,
+    acceptedAnswer: { '@type': 'Answer', text: answer },
+  })),
+};
+
+const jsonLdBreadcrumb = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'ホーム', item: SITE_URL },
+    { '@type': 'ListItem', position: 2, name: '診断一覧', item: `${SITE_URL}/diagnosis/` },
+    { '@type': 'ListItem', position: 3, name: 'コラム', item: `${SITE_URL}/diagnosis/columns/` },
+    { '@type': 'ListItem', position: 4, name: '友達相性診断で深まる関係', item: PAGE_URL },
+  ],
+};
+
+const jsonLdAll = [jsonLdArticle, jsonLdFAQ, jsonLdBreadcrumb];
+
+// 友達相性の6タイプ
+const friendTypes = [
+  {
+    id: 'planner',
+    name: 'プランナー型',
+    icon: '📋',
+    color: '#1d4ed8',
+    bg: '#eff6ff',
+    desc: '計画・約束・段取りを重視。信頼性が高くリードしてくれる友達。',
+    strengths: ['約束を守る・信頼性が高い', '一緒に旅行・イベントを企画するとスムーズ', '具体的な困り事を相談すると解決策を提示してくれる'],
+    communication: '「いつ・どこで・何を」を明確にして連絡する。突然の誘いより事前の予定調整が◎。',
+    friction: '急なキャンセル・ドタキャンが最大の摩擦要因。変更するときは早めに伝える。',
+  },
+  {
+    id: 'free',
+    name: 'フリースタイル型',
+    icon: '🌊',
+    color: '#0891b2',
+    bg: '#ecfeff',
+    desc: '自由・直感・その場の流れを重視。一緒にいると楽しい予測不能な友達。',
+    strengths: ['新しい体験・場所に一緒に飛び込める', '制約なく話せる自由な雰囲気', 'アドリブ・即興での行動が得意'],
+    communication: '細かいルールより「何となく楽しもう」のトーンが合う。ゆるい誘いの方が集まりやすい。',
+    friction: '時間・約束が曖昧になりやすい。大切な予定は丁寧に確認する。',
+  },
+  {
+    id: 'supporter',
+    name: 'サポーター型',
+    icon: '🤝',
+    color: '#16a34a',
+    bg: '#f0fdf4',
+    desc: '相手の気持ちに寄り添う・話を聞くことが得意な友達。',
+    strengths: ['どんな話でも受け止めてくれる安心感', '弱音・悩みを打ち明けやすい', '長い沈黙でも苦にならない穏やかな関係'],
+    communication: '感情・近況を率直に話す。「聞いてほしいだけ」「アドバイスが欲しい」を最初に伝えると◎。',
+    friction: '自分ばかり話して相手の話を聞かないと関係が偏る。相手の話に耳を傾ける意識を持つ。',
+  },
+  {
+    id: 'thinker',
+    name: 'シンカー型',
+    icon: '🔭',
+    color: '#7c3aed',
+    bg: '#faf5ff',
+    desc: '深い議論・知識の共有・知的好奇心が刺激される友達。',
+    strengths: ['一つのテーマを深く話せる', '知識・情報・視点を交換できる', '本・映画・哲学など共通の興味で繋がれる'],
+    communication: '興味深いトピック・疑問を持ち込むと盛り上がる。「面白いと思った話があって」から入るのが◎。',
+    friction: '感情的なサポートより分析・論評をしてくる傾向がある。悩み相談には「共感」を先に求めると伝える。',
+  },
+  {
+    id: 'performer',
+    name: 'パフォーマー型',
+    icon: '🌟',
+    color: '#d97706',
+    bg: '#fffbeb',
+    desc: '場を盛り上げる・明るい雰囲気を作る・人を惹きつける友達。',
+    strengths: ['一緒にいると楽しい・テンションが上がる', '人との繋がりを広げてくれる', '体験・エンタメを共有するのが楽しい'],
+    communication: '楽しさ・体験・感情を共有する話題が合う。「面白かった！」「見て！」系の連絡に乗ってあげると◎。',
+    friction: '深い話・真面目な相談が後回しになりやすい。大切な話は別途落ち着いた場を作る。',
+  },
+  {
+    id: 'mentor',
+    name: 'メンター型',
+    icon: '🧭',
+    color: '#dc2626',
+    bg: '#fef2f2',
+    desc: '成長・目標・チャレンジを共有する友達。互いを引き上げ合う関係。',
+    strengths: ['目標・夢を話すと本気で考えてくれる', '厳しいフィードバックを正直にくれる', '一緒に成長・挑戦できる刺激がある'],
+    communication: '目標・進捗・学びを率直に共有する。「どう思う？」「改善点を教えて」という姿勢が関係を深める。',
+    friction: '常にアドバイス・提案をしてくる場合がある。「聞いてほしいだけ」の場面では事前に伝える。',
+  },
+];
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  canonical={PAGE_URL}
+  jsonLd={jsonLdAll}
+  ogType="article"
+  publishDate="2026-06-10"
+  lastUpdated={UPDATED_AT}
+  breadcrumbs={[
+    { name: '診断一覧', url: '/diagnosis/' },
+    { name: 'コラム', url: '/diagnosis/columns/' },
+    { name: '友達相性診断で深まる関係', url: '/diagnosis/columns/friend-compatibility-tips/' },
+  ]}
+>
+  <section class="fct-hero" aria-labelledby="fct-h1">
+    <Container>
+      <div class="fct-hero-inner">
+        <p class="fct-hero-badge">友人関係研究（Fehr 1996 / Rawlins 1992）参考 | 2026-06-10 確認</p>
+        <h1 id="fct-h1" class="fct-h1">友達相性診断で深まる関係</h1>
+        <p class="fct-hero-sub">6タイプ別の付き合い方・コミュニケーションのコツ・摩擦の解消法を解説。相性の良い友達関係を長続きさせる3ステップ</p>
+        <div class="fct-hero-tags">
+          <span class="fct-tag">6タイプ別付き合い方</span>
+          <span class="fct-tag">摩擦解消法</span>
+          <span class="fct-tag">関係を深める3ステップ</span>
+          <span class="fct-tag">FAQ 5問</span>
+        </div>
+      </div>
+    </Container>
+  </section>
+
+  <Container>
+    <TldrBlock
+      title="このページでわかること"
+      points={[
+        "友達相性の6タイプ（プランナー・フリースタイル・サポーター・シンカー・パフォーマー・メンター）別の付き合い方・コミュニケーションのコツ",
+        "友達相性診断の科学的な位置づけと限界。相性の良さを決める本当の要因（研究根拠付き）",
+        "友達関係を深める3ステップと、摩擦が起きたときの解消アプローチ",
+      ]}
+      updatedAt={UPDATED_AT}
+      sourceLabel="診断ナビ 友達相性診断"
+      sourceUrl="https://shindan-navi.jp/diagnosis/friend-compat/"
+    />
+
+    <section class="fct-section" aria-labelledby="fct-science-h2">
+      <h2 id="fct-science-h2" class="fct-h2">友達相性を決める本当の要因：心理学研究から</h2>
+      <p class="fct-lead">
+        友達関係の質を研究してきた心理学者 Beverly Fehr（1996, Friendship Processes）は、
+        友達関係が深まる3つの核心的要素を明らかにしています。
+      </p>
+      <div class="fct-factor-grid">
+        <div class="fct-factor-card">
+          <span class="fct-factor-num">1</span>
+          <div>
+            <h3 class="fct-factor-title">自己開示の相互性</h3>
+            <p class="fct-factor-desc">
+              自分の経験・感情・価値観を開示すると、相手も同等の開示をしやすくなります（自己開示の互恵性）。
+              一方が常に話すだけ・一方が常に聞くだけの関係は長続きしにくい。
+            </p>
+          </div>
+        </div>
+        <div class="fct-factor-card">
+          <span class="fct-factor-num">2</span>
+          <div>
+            <h3 class="fct-factor-title">共有体験の蓄積</h3>
+            <p class="fct-factor-desc">
+              一緒に笑った・困難を乗り越えた・新しい体験をした記憶が関係の土台を作ります。
+              オンラインでの繋がりより、実際に一緒に「何かをした」体験が絆を強化します。
+            </p>
+          </div>
+        </div>
+        <div class="fct-factor-card">
+          <span class="fct-factor-num">3</span>
+          <div>
+            <h3 class="fct-factor-title">困ったときの実質的サポート</h3>
+            <p class="fct-factor-desc">
+              楽しいときだけでなく、困難な場面での一言・行動が友達関係を深く定義します。
+              Rawlins（1992, Friendship Matters）は「信頼性」が長期的友達関係の最重要因子と述べています。
+            </p>
+          </div>
+        </div>
+      </div>
+      <p class="fct-lead" style="margin-top: 1.25rem;">
+        つまり、友達相性の良さは「性格タイプの一致」より「互いへの関心と投資」が決め手です。
+        相性診断はあくまで「コミュニケーションの傾向を理解するためのヒント」として活用してください。
+      </p>
+    </section>
+
+    <section class="fct-section" aria-labelledby="fct-types-h2">
+      <h2 id="fct-types-h2" class="fct-h2">友達相性6タイプ別の付き合い方ガイド</h2>
+      <p class="fct-lead">
+        診断ナビの友達相性診断（<a href="/diagnosis/friend-compat/">無料・登録不要</a>）で判定される6タイプそれぞれの特徴・コミュニケーションのコツ・摩擦の解消法を解説します。
+      </p>
+      {friendTypes.map((t) => (
+        <article
+          class="fct-type-card"
+          id={`fct-type-${t.id}`}
+          style={`border-top-color: ${t.color}; background: ${t.bg};`}
+          aria-labelledby={`fct-type-${t.id}-h3`}
+        >
+          <div class="fct-type-header">
+            <span class="fct-type-icon" aria-hidden="true">{t.icon}</span>
+            <div>
+              <h3 id={`fct-type-${t.id}-h3`} class="fct-type-name" style={`color: ${t.color}`}>{t.name}</h3>
+              <p class="fct-type-desc">{t.desc}</p>
+            </div>
+          </div>
+          <div class="fct-type-detail-grid">
+            <div class="fct-detail-col">
+              <span class="fct-detail-label" style={`color: ${t.color};`}>一緒にいる良さ</span>
+              <ul class="fct-detail-list">
+                {t.strengths.map((s) => <li>{s}</li>)}
+              </ul>
+            </div>
+            <div class="fct-detail-col">
+              <span class="fct-detail-label" style={`color: ${t.color};`}>コミュニケーションのコツ</span>
+              <p class="fct-detail-text">{t.communication}</p>
+            </div>
+            <div class="fct-detail-col fct-detail-col--friction">
+              <span class="fct-detail-label" style="color: #b45309;">摩擦になりやすいポイント</span>
+              <p class="fct-detail-text">{t.friction}</p>
+            </div>
+          </div>
+        </article>
+      ))}
+    </section>
+
+    <section class="fct-section" aria-labelledby="fct-deepen-h2">
+      <h2 id="fct-deepen-h2" class="fct-h2">友達関係を深める3ステップ</h2>
+      <p class="fct-lead">
+        友達相性診断を活用して関係を深めるための実践的な3ステップです。
+      </p>
+      <ol class="fct-steps">
+        <li class="fct-step">
+          <span class="fct-step-num">1</span>
+          <div class="fct-step-body">
+            <h3 class="fct-step-title">二人で診断を受けてタイプを共有する</h3>
+            <p>
+              友達相性診断（<a href="/diagnosis/friend-compat/">/diagnosis/friend-compat/</a>）を二人で一緒に受け、
+              それぞれのタイプを共有します。「こんな傾向があるんだね」という自己開示の会話が
+              関係をワンランク深くします。
+            </p>
+          </div>
+        </li>
+        <li class="fct-step">
+          <span class="fct-step-num">2</span>
+          <div class="fct-step-body">
+            <h3 class="fct-step-title">「摩擦」をタイプの違いとして客観視する</h3>
+            <p>
+              過去の「なんかうまく噛み合わなかった」場面をタイプの違いで振り返ります。
+              「相手が悪い」ではなく「スタイルが違うだけ」と気づくことで、
+              不必要な怒り・傷つきが和らぎます。
+            </p>
+          </div>
+        </li>
+        <li class="fct-step">
+          <span class="fct-step-num">3</span>
+          <div class="fct-step-body">
+            <h3 class="fct-step-title">相手のスタイルに少し合わせてみる</h3>
+            <p>
+              完全に相手に合わせる必要はありません。
+              「次の連絡では相手のコミュニケーションスタイルに少し近づけてみる」という小さな行動が
+              関係の質を変えていきます。
+              統合プロファイル（<a href="/me/">/me/</a>）で多診断を統合して見ると、
+              さらに深い自己・相手理解が得られます。
+            </p>
+          </div>
+        </li>
+      </ol>
+    </section>
+
+    <section class="fct-section" aria-labelledby="fct-conflict-h2">
+      <h2 id="fct-conflict-h2" class="fct-h2">友達間の摩擦：タイプ別の代表パターンと解消法</h2>
+      <p class="fct-lead">
+        タイプの違いが引き起こしやすい摩擦パターンと、その解消のポイントを整理します。
+      </p>
+      <div class="fct-conflict-table-wrap">
+        <table class="fct-conflict-table">
+          <caption class="fct-table-caption">友達相性 代表的な摩擦パターン（2026-06-10時点）</caption>
+          <thead>
+            <tr>
+              <th scope="col">摩擦パターン</th>
+              <th scope="col">原因のタイプ的背景</th>
+              <th scope="col">解消のポイント</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">約束・時間のズレ</th>
+              <td>プランナー型 × フリースタイル型のスタイル差</td>
+              <td>「ゆるめの予定」と「固定の予定」を区別して管理。大切な日は事前確認を丁寧に</td>
+            </tr>
+            <tr>
+              <th scope="row">悩み相談での温度差</th>
+              <td>サポーター型（共感優先）× シンカー型（分析優先）のズレ</td>
+              <td>「共感してほしい」か「解決策が欲しい」かを最初に伝える</td>
+            </tr>
+            <tr>
+              <th scope="row">連絡頻度の差</th>
+              <td>パフォーマー型（高頻度）× シンカー型・プランナー型（低頻度でも深い）の違い</td>
+              <td>連絡が少なくても関係は続くと言葉で確認し合う</td>
+            </tr>
+            <tr>
+              <th scope="row">深い話 vs 楽しい話</th>
+              <td>シンカー型・サポーター型 × パフォーマー型の話題ニーズの違い</td>
+              <td>「今日は楽しく過ごしたい」「少し真剣に話したい」を最初に伝える</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="fct-section" aria-labelledby="fct-faq-h2">
+      <h2 id="fct-faq-h2" class="fct-h2">よくある質問（FAQ）</h2>
+      <dl class="fct-faq-list">
+        {faqs.map(({ question, answer }) => (
+          <div class="fct-faq-item">
+            <dt class="fct-faq-q">{question}</dt>
+            <dd class="fct-faq-a">{answer}</dd>
+          </div>
+        ))}
+      </dl>
+    </section>
+
+    <ScienceNote
+      basisText="Beverly Fehr (1996) Friendship Processes（Sage Publications）+ William K. Rawlins (1992) Friendship Matters（Aldine de Gruyter）+ 診断ナビ友達相性診断データ（2026年）。科学的相関は限定的との指摘があります。"
+      basisUrl="https://shindan-navi.jp/diagnosis/friend-compat/"
+      basisLabel="診断ナビ 友達相性診断"
+      notMedical={true}
+      updatedAt={UPDATED_AT}
+      additionalNote="本ページの6タイプ分類は診断ナビの友達相性診断に基づく自己理解コンテンツです。科学的に厳密な分類ではなく、コミュニケーション傾向の参考情報としてご活用ください。"
+    />
+
+    <section class="fct-section" aria-labelledby="fct-related-h2">
+      <h2 id="fct-related-h2" class="fct-h2">関連ページ</h2>
+      <ul class="fct-related-list">
+        <li>
+          <a href="/diagnosis/friend-compat/" class="fct-related-link">
+            <span class="fct-related-icon" aria-hidden="true">👫</span>
+            <span class="fct-related-body">
+              <span class="fct-related-title">友達相性診断【無料・登録不要】</span>
+              <span class="fct-related-desc">6タイプの相性を今すぐ無料診断</span>
+            </span>
+          </a>
+        </li>
+        <li>
+          <a href="/diagnosis/mbti-compat/" class="fct-related-link">
+            <span class="fct-related-icon" aria-hidden="true">💑</span>
+            <span class="fct-related-body">
+              <span class="fct-related-title">MBTI相性診断【無料・16×16対応】</span>
+              <span class="fct-related-desc">MBTIタイプから友達・恋愛相性を確認</span>
+            </span>
+          </a>
+        </li>
+        <li>
+          <a href="/diagnosis/columns/mbti-compatibility-real/" class="fct-related-link">
+            <span class="fct-related-icon" aria-hidden="true">🔬</span>
+            <span class="fct-related-body">
+              <span class="fct-related-title">MBTI相性は本当に当たる？科学的根拠と限界</span>
+              <span class="fct-related-desc">相性診断の「当たる理由」を心理学から解説</span>
+            </span>
+          </a>
+        </li>
+        <li>
+          <a href="/me/" class="fct-related-link">
+            <span class="fct-related-icon" aria-hidden="true">🧩</span>
+            <span class="fct-related-body">
+              <span class="fct-related-title">統合プロファイル</span>
+              <span class="fct-related-desc">複数診断を統合した多面的な自己理解</span>
+            </span>
+          </a>
+        </li>
+        <li>
+          <a href="/diagnosis/" class="fct-related-link">
+            <span class="fct-related-icon" aria-hidden="true">📋</span>
+            <span class="fct-related-body">
+              <span class="fct-related-title">全診断一覧</span>
+              <span class="fct-related-desc">MBTI・DiSC・多重知能・血液型など8種類の診断</span>
+            </span>
+          </a>
+        </li>
+      </ul>
+    </section>
+
+    <ReferenceList
+      references={[
+        {
+          title: 'Friendship Processes',
+          author: 'Fehr B',
+          year: 1996,
+          publisher: 'Sage Publications',
+          url: 'https://doi.org/10.4135/9781483327440',
+        },
+        {
+          title: 'Friendship Matters: Communication, Dialectics, and the Life Course',
+          author: 'Rawlins WK',
+          year: 1992,
+          publisher: 'Aldine de Gruyter',
+          url: 'https://www.worldcat.org/title/friendship-matters',
+        },
+      ]}
+      confirmedAt={UPDATED_AT}
+    />
+
+    <p class="fct-trademark-note">
+      本ページの6タイプ分類は診断ナビの友達相性診断に基づく自己理解コンテンツです。
+      科学的に厳密な分類ではありません。コミュニケーション傾向の参考情報としてご活用ください。
+    </p>
+  </Container>
+</BaseLayout>
+
+<style>
+.fct-hero {
+  background: linear-gradient(135deg, #065f46 0%, #059669 50%, #34d399 100%);
+  color: #fff;
+  padding-block: 2.5rem 3rem;
+  text-align: center;
+}
+.fct-hero-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.875rem;
+}
+.fct-hero-badge {
+  display: inline-block;
+  background: rgba(255 255 255 / 0.15);
+  border: 1px solid rgba(255 255 255 / 0.3);
+  border-radius: 2rem;
+  padding: 0.25rem 1rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.03em;
+}
+.fct-h1 {
+  font-size: clamp(1.4rem, 4vw, 2rem);
+  font-family: var(--sn-font-rounded, sans-serif);
+  font-weight: 700;
+  margin: 0;
+  line-height: 1.3;
+}
+.fct-hero-sub {
+  font-size: clamp(0.83rem, 2.2vw, 0.95rem);
+  opacity: 0.9;
+  margin: 0;
+  line-height: 1.6;
+  max-width: 600px;
+}
+.fct-hero-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+}
+.fct-tag {
+  background: rgba(255 255 255 / 0.2);
+  border: 1px solid rgba(255 255 255 / 0.35);
+  border-radius: 1rem;
+  padding: 0.2rem 0.75rem;
+  font-size: 0.75rem;
+}
+.fct-section { margin-block: 3rem; }
+.fct-h2 {
+  font-size: clamp(1.1rem, 3vw, 1.5rem);
+  font-family: var(--sn-font-rounded, sans-serif);
+  font-weight: 700;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #059669;
+}
+.fct-lead {
+  font-size: 1rem;
+  line-height: 1.8;
+  margin-bottom: 1.25rem;
+  color: #374151;
+}
+.fct-table-caption {
+  font-size: 0.78rem;
+  color: #6b7280;
+  text-align: left;
+  padding: 0.25rem 0 0.5rem;
+}
+.fct-factor-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+@media (max-width: 700px) { .fct-factor-grid { grid-template-columns: 1fr; } }
+.fct-factor-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+}
+.fct-factor-num {
+  flex-shrink: 0;
+  width: 1.75rem;
+  height: 1.75rem;
+  background: #059669;
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+.fct-factor-title {
+  font-size: 0.9rem;
+  font-weight: 700;
+  margin: 0 0 0.4rem;
+  color: #065f46;
+}
+.fct-factor-desc {
+  font-size: 0.85rem;
+  line-height: 1.65;
+  color: #374151;
+  margin: 0;
+}
+.fct-type-card {
+  border: 1px solid #e5e7eb;
+  border-top: 4px solid;
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  margin-bottom: 1.25rem;
+}
+.fct-type-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+.fct-type-icon { font-size: 2rem; flex-shrink: 0; line-height: 1; }
+.fct-type-name {
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 0 0 0.3rem;
+}
+.fct-type-desc {
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: #4b5563;
+  margin: 0;
+}
+.fct-type-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.875rem;
+}
+@media (max-width: 700px) { .fct-type-detail-grid { grid-template-columns: 1fr; } }
+.fct-detail-col {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  padding: 0.875rem;
+}
+.fct-detail-col--friction { background: #fffbeb; border-color: #fcd34d; }
+.fct-detail-label {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 0.4rem;
+}
+.fct-detail-list {
+  margin: 0;
+  padding-left: 1.1rem;
+  font-size: 0.82rem;
+  line-height: 1.65;
+  color: #374151;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+.fct-detail-text {
+  font-size: 0.83rem;
+  line-height: 1.65;
+  color: #374151;
+  margin: 0;
+}
+.fct-steps {
+  list-style: none;
+  padding: 0;
+  margin: 1.25rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.fct-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.875rem;
+}
+.fct-step-num {
+  flex-shrink: 0;
+  width: 2rem;
+  height: 2rem;
+  background: #059669;
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+.fct-step-body {
+  flex: 1;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 1rem 1.25rem;
+}
+.fct-step-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin: 0 0 0.375rem;
+}
+.fct-step-body p {
+  font-size: 0.875rem;
+  line-height: 1.7;
+  color: #4b5563;
+  margin: 0;
+}
+.fct-conflict-table-wrap { overflow-x: auto; margin-top: 1.25rem; }
+.fct-conflict-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  min-width: 500px;
+}
+.fct-conflict-table th,
+.fct-conflict-table td {
+  padding: 0.6rem 0.875rem;
+  border: 1px solid #e5e7eb;
+  text-align: left;
+  vertical-align: top;
+  line-height: 1.5;
+}
+.fct-conflict-table thead th {
+  background: #059669;
+  color: #fff;
+  font-weight: 600;
+}
+.fct-conflict-table tbody tr:nth-child(even) { background: #f9fafb; }
+.fct-faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+.fct-faq-item {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+.fct-faq-q {
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 0.875rem 1.25rem;
+  background: #f0fdf4;
+  margin: 0;
+  display: block;
+}
+.fct-faq-q::before { content: 'Q. '; color: #059669; }
+.fct-faq-a {
+  font-size: 0.875rem;
+  line-height: 1.75;
+  padding: 0.875rem 1.25rem;
+  margin: 0;
+  color: #4b5563;
+}
+.fct-faq-a::before {
+  content: 'A. ';
+  font-weight: 700;
+  color: #16a34a;
+}
+.fct-related-list {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.fct-related-link {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.15s;
+}
+.fct-related-link:hover { border-color: #059669; }
+.fct-related-icon { font-size: 1.75rem; flex-shrink: 0; }
+.fct-related-body { display: flex; flex-direction: column; gap: 0.2rem; }
+.fct-related-title { font-weight: 700; font-size: 0.95rem; }
+.fct-related-desc { font-size: 0.8rem; color: var(--sn-muted, #6b7280); }
+.fct-trademark-note {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  border-top: 1px solid #e5e7eb;
+  padding-top: 1.5rem;
+  margin-top: 2rem;
+  line-height: 1.6;
+}
+</style>

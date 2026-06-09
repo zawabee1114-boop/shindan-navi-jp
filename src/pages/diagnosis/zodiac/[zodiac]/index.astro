@@ -71,7 +71,7 @@ const CATEGORY_BG: Record<string, string> = {
 const pageTitle = `【${detail.japaneseName}】性格特性 完全ガイド｜全11星座との相性付 | 診断ナビ`;
 const pageDesc = `${detail.japaneseName}（${detail.dateRange}）の伝統的な性格特性・強み・弱み・仕事スタイル・恋愛傾向を解説。全11星座との相性ランキングも完全収録。科学的位置付け（Carlson 1985 Nature）も明示した信頼できるガイド。`;
 
-// FAQ（3問）
+// FAQ（5問・2026-06-10拡充）
 const faqs = [
   {
     question: `${detail.japaneseName}の性格特性で最も代表的なものは何ですか？`,
@@ -87,6 +87,14 @@ const faqs = [
   {
     question: `${detail.japaneseName}の性格を就職・転職の判断に使っていいですか？`,
     answer: `推奨しません。科学的根拠のない星座分類で就職・転職を判断することは、適切な選択の機会を逃すリスクがあります。本サイトは自己理解のヒントとして提供しており、重要な人生の決断には使えません。就職では実際のスキル・価値観・職場環境への適合性を基準にしてください。`,
+  },
+  {
+    question: `${detail.japaneseName}の強みを仕事で活かすには？`,
+    answer: `${detail.japaneseName}の伝統的な性格分類では「${detail.strengths.slice(0, 2).join('」「')}」という強みが挙げられます。これらはあくまで文化的な傾向であり、実際の仕事での強みは個人のスキル・経験・職場環境によって異なります。自己理解のヒントとして活用しつつ、具体的な行動・スキル向上を並行して進めることを推奨します。`,
+  },
+  {
+    question: '星座性格診断と血液型・MBTIの違いは？',
+    answer: `星座性格診断は西洋占星術（プトレマイオス 2世紀）の伝統的分類に基づく文化的フレームワークです。血液型性格分類は日本固有の文化（古川竹二 1927年）、MBTIはCG Jung（1921）の認知タイプ理論を起源とします。三者ともCarlson（1985 Nature）・日本心理学会（2014年）等の科学的検証では性格との統計的相関が限定的とされています。それぞれ「自己理解と対話のきっかけ」として楽しむことを推奨します。`,
   },
 ];
 
@@ -580,4 +588,3 @@ const jsonLdBreadcrumb = {
     .zd-type-name { font-size: clamp(1.4rem, 6vw, 1.8rem); }
   }
 </style>
-</BaseLayout>

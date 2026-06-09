@@ -357,14 +357,23 @@ const jsonLdAll = [jsonLdWebApp, jsonLdQuiz, jsonLdHowTo, jsonLdArticle, jsonLdF
       </div>
     </section>
 
+    {/* ========== この診断の学術的背景 ========== */}
+    <section class="mi-section" aria-labelledby="mi-academic-h2">
+      <h2 id="mi-academic-h2" class="mi-h2">この診断の学術的背景</h2>
+      <p class="mi-lead">
+        本テストはHarvard大学Howard Gardner（1983）の多重知能理論（MI理論）に基づく参考ツールです。
+        ハーバード大学 Project Zero（2024年現在継続研究中）を学術的根拠として設計しています。
+      </p>
+    </section>
+
     {/* ========== ScienceNote（科学的位置付け） ========== */}
     <ScienceNote
-      basisText="Howard Gardner（1983）の著書「Frames of Mind: The Theory of Multiple Intelligences」（Basic Books）。2024年現在、ハーバード大学 Project Zero が継続研究中。"
+      basisText="Howard Gardner（1983）'Frames of Mind: The Theory of Multiple Intelligences' Basic Books・Gardner（1999）'Intelligence Reframed'・Harvard Project Zero（2024年現在継続研究中 https://www.pz.harvard.edu/projects/multiple-intelligences）を参照"
       basisUrl="https://www.pz.harvard.edu/projects/multiple-intelligences"
       basisLabel="Project Zero 公式（2026-05-21確認）"
       notMedical={true}
       updatedAt={meta.updatedAt}
-      additionalNote="本テストは自己報告式の傾向把握ツールです。学習障害・発達障害等の医学的評価には使用できません。"
+      additionalNote="本テストは自己報告式の傾向把握ツールです。学習障害・発達障害等の医学的評価には使用できません。知能の高低ではなく、得意領域の傾向把握のためにご活用ください。"
     />
 
     {/* ========== 8つの知能 ========== */}

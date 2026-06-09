@@ -470,10 +470,23 @@ const temperamentIds: Array<'NT' | 'NF' | 'SJ' | 'SP'> = ['NT', 'NF', 'SJ', 'SP'
       ))}
     </section>
 
+    {/* ========== この診断の学術的背景 ========== */}
+    <section class="mbti-section" aria-labelledby="mbti-academic-h2">
+      <h2 id="mbti-academic-h2" class="mbti-h2">この診断の学術的背景</h2>
+      <p class="mbti-lead">
+        本診断はCarl Jung（1921）の心理機能論とIsabel Briggs Myers（1962）の4軸分類理論に基づく参考ツールです。
+        科学的限界を含む学術的背景を確認した上でご活用ください。
+      </p>
+    </section>
+
     {/* ========== ScienceNote（批判的視点を含む） ========== */}
     <ScienceNote
-      title="MBTI®の科学的位置付け"
-      body={`MBTI®の理論的根拠はCarl Jung（1921）の著書「Psychological Types」（プリンストン大学出版）とIsabel Briggs Myers（1962）のMBTI Manualです。世界で広く用いられる性格分類ツールですが、Pittenger（1993、Journal of Career Planning and Employment）はテスト再検査信頼性や測定の精度について批判的な見解を示しています。本診断は「傾向把握のための参考ツール」として設計されており、医学的・臨床的な診断を行うものではありません。複数の診断を組み合わせた立体的な自己理解を推奨します。`}
+      basisText="Jung CG（1921）'Psychological Types' Princeton University Press・Myers IB, McCaulley MH（1998）'MBTI Manual 3rd ed.'・Keirsey D（1998）'Please Understand Me II'・Pittenger DJ（1993）Journal of Career Planning and Employment（批判的検討）を参照"
+      basisUrl="https://press.princeton.edu/books/paperback/9780691018133/psychological-types"
+      basisLabel="Jung（1921）Psychological Types（Princeton UP）"
+      notMedical={true}
+      updatedAt={meta.updatedAt}
+      additionalNote="MBTI®はThe Myers-Briggs Companyの登録商標です。本診断は学術理論に基づく無料の自己理解ツールであり、公式MBTI認定検査ではありません。Pittenger（1993）の再検査信頼性批判を踏まえ、結果は傾向の参考として活用してください。"
     />
 
     {/* ========== FAQ 12問 ========== */}
@@ -522,7 +535,7 @@ const temperamentIds: Array<'NT' | 'NF' | 'SJ' | 'SP'> = ['NT', 'NF', 'SJ', 'SP'
         year: ref.year,
         url: ref.url,
       }))}
-      updatedAt={meta.updatedAt}
+      confirmedAt={meta.updatedAt}
     />
   </Container>
 </BaseLayout>

@@ -26,6 +26,8 @@ import Container from '../../../../components/Container.astro';
 import { meta } from '../../../../data/diagnoses/blood-subtype/meta';
 import { questions } from '../../../../data/diagnoses/blood-subtype/questions';
 import TldrBlock from '../../../../components/TldrBlock.astro';
+import ScienceNote from '../../../../components/ScienceNote.astro';
+import ReferenceList from '../../../../components/ReferenceList.astro';
 
 const SITE_URL = 'https://shindan-navi.jp';
 const PAGE_URL = `${SITE_URL}/diagnosis/blood-type/diagnosis/`;
@@ -302,9 +304,9 @@ const subtypeOverview = [
       </div>
     </section>
 
-    {/* ========== 参考文献 ========== */}
+    {/* ========== この診断の学術的背景 ========== */}
     <section class="bst-section" aria-labelledby="bst-ref-h2">
-      <h2 id="bst-ref-h2" class="bst-h2">学術根拠・参考文献</h2>
+      <h2 id="bst-ref-h2" class="bst-h2">この診断の学術的背景</h2>
       <p class="bst-lead">
         本診断は下記の文献・公式見解をもとに設計しています。
         血液型と性格の科学的相関は限定的であり、傾向把握のための参考情報として提供しています。
@@ -319,6 +321,19 @@ const subtypeOverview = [
         ))}
       </ul>
     </section>
+
+    {/* ========== ScienceNote ========== */}
+    <ScienceNote
+      basisText="古川竹二（1927）「血液型による気質の研究」心理学研究・能見正比古（1971）『血液型でわかる相性』青春出版社・Sakamoto A & Yamazaki K（2004）International Journal of Psychology 39(4)・日本心理学会公式見解（2014）・McCrae & Costa（1987）Big Five性格特性モデルを参照"
+      basisUrl="https://psych.or.jp/opinion/bl-personality/"
+      basisLabel="日本心理学会公式見解（2014）"
+      notMedical={true}
+      updatedAt={meta.updatedAt}
+      additionalNote="血液型と性格の科学的相関は限定的であり（日本心理学会2014年公式見解）、本診断は文化的な傾向区分を参考として提供します。ブラハラ（血液型ハラスメント）防止のため、診断結果を他者の評価・採用・排除の根拠に使わないでください。"
+    />
+
+    {/* ========== ReferenceList ========== */}
+    <ReferenceList references={meta.references} confirmedAt={meta.updatedAt} />
 
     {/* ========== FAQ ========== */}
     <section class="bst-section" aria-labelledby="bst-faq-h2">

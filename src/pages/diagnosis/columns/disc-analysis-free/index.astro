@@ -1,0 +1,772 @@
+---
+/**
+ * DiSC分析を無料で受けられるツール比較・選び方
+ * KW: disc 分析 無料（VOL高）/ DiSC 診断 無料 / DiSC テスト 無料
+ * 学術根拠: Marston (1928) + Wiley DiSC公式 (2024)
+ * 確認日: 2026-06-10
+ *
+ * DiSC® はJohn Wiley & Sons, Inc. の登録商標。
+ * 本ページはWiley社の公式アセスメントではありません。
+ */
+import BaseLayout from '../../../../layouts/BaseLayout.astro';
+import Container from '../../../../components/Container.astro';
+import TldrBlock from '../../../../components/TldrBlock.astro';
+import ReferenceList from '../../../../components/ReferenceList.astro';
+import ScienceNote from '../../../../components/ScienceNote.astro';
+
+const SITE_URL = 'https://shindan-navi.jp';
+const PAGE_URL = `${SITE_URL}/diagnosis/columns/disc-analysis-free/`;
+const UPDATED_AT = '2026-06-10';
+
+const title = 'DiSC分析を無料で受けられるツール比較・選び方ガイド【2026年版】';
+const description =
+  'DiSC分析を無料で受けられるツールを比較。診断ナビ（28問・登録不要）・各種無料サービスの特徴・精度・使いどころを解説。Marston（1928）根拠付き。2026-06-10時点の情報。';
+
+const jsonLdArticle = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  '@id': `${PAGE_URL}#article`,
+  headline: title,
+  description: description,
+  url: PAGE_URL,
+  datePublished: '2026-06-10',
+  dateModified: UPDATED_AT,
+  inLanguage: 'ja',
+  author: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+    name: '診断ナビ',
+    url: SITE_URL,
+  },
+  publisher: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+    name: '診断ナビ',
+    url: SITE_URL,
+  },
+};
+
+const faqs = [
+  {
+    question: 'DiSC分析は完全無料で受けられますか？',
+    answer:
+      'はい、診断ナビのDiSC診断は28問・約3分・登録不要・完全無料で受けられます（https://shindan-navi.jp/diagnosis/disc/、2026-06-10確認）。Wiley社の公式アセスメント（Everything DiSC®）は有料（1人あたり約$100〜$200）ですが、自己理解の入口として無料ツールで十分に活用できます。',
+  },
+  {
+    question: '無料のDiSC診断と有料の公式アセスメントの違いは？',
+    answer:
+      'Wiley社の公式DiSC®アセスメント（https://www.discprofile.com/）は適応型テスト・詳細なパーソナライズドレポート・認定ファシリテーターによる研修サポートが含まれます。無料ツールはDiSC理論の学術根拠に基づくタイプ傾向の把握に適しています。自己理解の入口・チームでの話題づくりには無料ツールで十分です。組織研修・本格導入には有料の公式プログラムをご検討ください。',
+  },
+  {
+    question: 'DiSC診断は何問くらいが適切ですか？',
+    answer:
+      '20〜40問程度が自己理解ツールとして適切な範囲です。問題数が少なすぎると分類精度が落ち、多すぎると回答者の疲労でスコアが安定しなくなります。診断ナビは28問でD/i/S/Cの4タイプをバランスよく測定しています。',
+  },
+  {
+    question: 'DiSC診断の結果は毎回変わりますか？',
+    answer:
+      '状況や体調・回答時の心理状態によってスコアが多少変動することがあります。Wiley社の研究によると、DiSCの行動スタイルはある程度安定していますが、役割・環境・ストレスレベルによって変化することがあります（https://www.discprofile.com/what-is-disc/overview、2026-06-10確認）。3〜6ヶ月おきに再診断して変化を追うことも自己理解に有効です。',
+  },
+  {
+    question: 'DiSC診断を職場のチームで活用するには？',
+    answer:
+      '職場で活用する手順は「①全員が無料診断を受ける→②タイプを共有するワークショップを実施→③タイプ別コミュニケーション設計を話し合う」の3ステップです。DiSCはWiley社が世界75か国・年間100万人以上の組織研修で活用しているツールです（https://www.everythingdisc.com/、2026-06-10確認）。本格的な組織研修には公式プログラムの導入が推奨されます。',
+  },
+];
+
+const jsonLdFAQ = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  '@id': `${PAGE_URL}#faq`,
+  mainEntity: faqs.map(({ question, answer }) => ({
+    '@type': 'Question',
+    name: question,
+    acceptedAnswer: { '@type': 'Answer', text: answer },
+  })),
+};
+
+const jsonLdBreadcrumb = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'ホーム', item: SITE_URL },
+    { '@type': 'ListItem', position: 2, name: '診断一覧', item: `${SITE_URL}/diagnosis/` },
+    { '@type': 'ListItem', position: 3, name: 'DiSCコラム', item: `${SITE_URL}/diagnosis/columns/` },
+    { '@type': 'ListItem', position: 4, name: 'DiSC分析を無料で受ける', item: PAGE_URL },
+  ],
+};
+
+const jsonLdAll = [jsonLdArticle, jsonLdFAQ, jsonLdBreadcrumb];
+
+const toolComparison = [
+  {
+    name: '診断ナビ（当サイト）',
+    url: '/diagnosis/disc/',
+    questions: '28問',
+    time: '約3分',
+    registration: '不要',
+    result: 'D/i/S/C 4タイプ判定＋詳細解説',
+    basis: 'Marston (1928) 学術根拠付き',
+    cost: '完全無料',
+    highlight: true,
+  },
+  {
+    name: 'Wiley DiSC公式（Everything DiSC®）',
+    url: 'https://www.everythingdisc.com/',
+    questions: '適応型（可変）',
+    time: '約15〜20分',
+    registration: '要（有料）',
+    result: '詳細パーソナライズドレポート＋ファシリテーターサポート',
+    basis: 'Wiley社公式認定',
+    cost: '有料（約$100〜$200/人）',
+    highlight: false,
+  },
+  {
+    name: '各種SNS・まとめサイト型DiSC診断',
+    url: '',
+    questions: '5〜15問程度',
+    time: '1〜2分',
+    registration: '不要が多い',
+    result: 'タイプ名のみ（解説なし・根拠不明な場合が多い）',
+    basis: '根拠・出典不明が多い',
+    cost: '無料',
+    highlight: false,
+  },
+];
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  canonical={PAGE_URL}
+  jsonLd={jsonLdAll}
+  ogType="article"
+  publishDate="2026-06-10"
+  lastUpdated={UPDATED_AT}
+  breadcrumbs={[
+    { name: '診断一覧', url: '/diagnosis/' },
+    { name: 'DiSCコラム', url: '/diagnosis/columns/' },
+    { name: 'DiSC分析を無料で受ける', url: '/diagnosis/columns/disc-analysis-free/' },
+  ]}
+>
+  <section class="col-hero" aria-labelledby="col-h1">
+    <Container>
+      <div class="col-hero-inner">
+        <p class="col-hero-badge">DiSC&#174; Wiley社登録商標 | Marston (1928) 学術根拠 | 2026-06-10 確認</p>
+        <h1 id="col-h1" class="col-h1">DiSC分析を無料で受けられるツール比較・選び方ガイド</h1>
+        <p class="col-hero-sub">「disc 分析 無料」で探している方へ。診断ナビの28問無料診断と有料公式ツールを比較し、目的に合った選び方を解説します。</p>
+        <div class="col-hero-tags">
+          <span class="col-tag">無料vs有料 比較表</span>
+          <span class="col-tag">選び方ガイド</span>
+          <span class="col-tag">FAQ 5問</span>
+        </div>
+      </div>
+    </Container>
+  </section>
+
+  <Container>
+    <TldrBlock
+      title="このページでわかること"
+      points={[
+        "DiSC分析を無料で受けられるツールの比較（診断ナビ28問・Wiley公式有料・SNS型の違い）",
+        "無料ツールと有料公式アセスメントの使い分け方。自己理解の入口なら無料で十分な理由",
+        "職場・チームでDiSCを活用する3ステップと、本格研修への移行タイミング",
+      ]}
+      updatedAt={UPDATED_AT}
+      sourceLabel="Wiley DiSC公式"
+      sourceUrl="https://www.discprofile.com/what-is-disc/overview"
+    />
+
+    <section class="col-section" aria-labelledby="col-what-h2">
+      <h2 id="col-what-h2" class="col-h2">DiSC分析とは何か（基礎知識）</h2>
+      <p class="col-lead">
+        DiSC分析とは、心理学者 William Moulton Marston が1928年に著書
+        「Emotions of Normal People」（Routledge）で提唱した行動スタイル理論に基づく自己理解ツールです。
+        D（Dominance・主導型）・i（influence・感化型）・S（Steadiness・安定型）・C（Conscientiousness・慎重型）
+        の4タイプに分類し、職場でのコミュニケーション・リーダーシップ・チームビルディングへの応用が世界中で行われています
+        （<a href="https://www.discprofile.com/what-is-disc/overview" target="_blank" rel="noopener noreferrer">Wiley DiSC公式・What is DiSC?</a>、2026-06-10確認）。
+      </p>
+      <div class="col-type-grid">
+        <div class="col-type-card" style="border-top-color: #dc2626;">
+          <span class="col-type-label" style="color: #dc2626;">D型（主導型）</span>
+          <p>結果・スピード・挑戦を重視。意思決定が速くリーダーシップを発揮する。</p>
+        </div>
+        <div class="col-type-card" style="border-top-color: #d97706;">
+          <span class="col-type-label" style="color: #d97706;">i型（感化型）</span>
+          <p>人・楽観・巻き込みを重視。社交的で熱意ある巻き込み力が強み。</p>
+        </div>
+        <div class="col-type-card" style="border-top-color: #16a34a;">
+          <span class="col-type-label" style="color: #16a34a;">S型（安定型）</span>
+          <p>協調・忍耐・信頼を重視。チームの調和と継続性を支える存在。</p>
+        </div>
+        <div class="col-type-card" style="border-top-color: #2563eb;">
+          <span class="col-type-label" style="color: #2563eb;">C型（慎重型）</span>
+          <p>正確性・データ・品質を重視。根拠に基づく高品質な成果を出す。</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="col-section" aria-labelledby="col-compare-h2">
+      <h2 id="col-compare-h2" class="col-h2">無料DiSC診断ツールの比較表</h2>
+      <p class="col-lead">
+        2026年6月時点で代表的なDiSC分析ツールを比較します。
+        目的・用途によって最適なツールは異なります。
+      </p>
+      <div class="col-table-wrap">
+        <table class="col-table">
+          <caption class="col-table-caption">DiSC診断ツール比較（2026-06-10時点）</caption>
+          <thead>
+            <tr>
+              <th scope="col">ツール</th>
+              <th scope="col">問題数</th>
+              <th scope="col">所要時間</th>
+              <th scope="col">登録</th>
+              <th scope="col">結果</th>
+              <th scope="col">費用</th>
+            </tr>
+          </thead>
+          <tbody>
+            {toolComparison.map((t) => (
+              <tr class={t.highlight ? 'col-table-highlight' : ''}>
+                <th scope="row">
+                  {t.url && t.url.startsWith('/') ? (
+                    <a href={t.url} class="col-table-link">{t.name}</a>
+                  ) : t.url ? (
+                    <a href={t.url} target="_blank" rel="noopener noreferrer" class="col-table-link">{t.name}</a>
+                  ) : (
+                    t.name
+                  )}
+                  {t.highlight && <span class="col-badge-recommend">おすすめ</span>}
+                </th>
+                <td>{t.questions}</td>
+                <td>{t.time}</td>
+                <td>{t.registration}</td>
+                <td class="col-td-result">{t.result}</td>
+                <td><strong>{t.cost}</strong></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p class="col-note">
+        ※DiSC® はJohn Wiley &amp; Sons, Inc. の登録商標。診断ナビはWiley社の公式アセスメントではなく、DiSC理論に基づく自己理解ツールです。
+      </p>
+    </section>
+
+    <section class="col-section" aria-labelledby="col-choose-h2">
+      <h2 id="col-choose-h2" class="col-h2">目的別：どのツールを選ぶべきか</h2>
+      <p class="col-lead">
+        DiSC診断ツールの選び方は「何のために使うか」で決まります。
+        以下のフローを参考に選択してください。
+      </p>
+      <div class="col-choose-grid">
+        <div class="col-choose-card col-choose-card--primary">
+          <h3 class="col-choose-title">自己理解・入口として使いたい</h3>
+          <p class="col-choose-body">
+            診断ナビの無料診断（28問・約3分・登録不要）が最適です。
+            Marston（1928）の学術根拠に基づきD/i/S/Cの4タイプを判定し、
+            特徴・強み・弱み・向いている職種まで詳しく解説します。
+          </p>
+          <a href="/diagnosis/disc/" class="col-choose-btn">
+            無料DiSC診断を受ける（28問）→
+          </a>
+        </div>
+        <div class="col-choose-card">
+          <h3 class="col-choose-title">職場・チームで話題にしたい</h3>
+          <p class="col-choose-body">
+            まず全員が無料診断を受けてタイプを把握し、
+            1on1やチームミーティングでスタイルを共有するところから始めましょう。
+            コストゼロで始められるため、試験的な導入に最適です。
+          </p>
+        </div>
+        <div class="col-choose-card">
+          <h3 class="col-choose-title">組織研修・認定プログラムに使いたい</h3>
+          <p class="col-choose-body">
+            Wiley社の公式 Everything DiSC® アセスメント（有料）をご検討ください。
+            適応型テスト・詳細レポート・認定ファシリテーター研修が含まれ、
+            世界75か国での組織研修に対応しています
+            （<a href="https://www.everythingdisc.com/" target="_blank" rel="noopener noreferrer">公式サイト</a>、2026-06-10確認）。
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="col-section" aria-labelledby="col-howto-h2">
+      <h2 id="col-howto-h2" class="col-h2">無料DiSC診断の受け方・活用の3ステップ</h2>
+      <ol class="col-steps">
+        <li class="col-step">
+          <span class="col-step-num">1</span>
+          <div class="col-step-body">
+            <h3 class="col-step-title">診断を受ける（28問・約3分）</h3>
+            <p>
+              診断ナビのDiSC診断ページ（<a href="/diagnosis/disc/">/diagnosis/disc/</a>）で28問に回答します。
+              登録不要・完全無料。「職場での自分」を思い浮かべながら直感で答えるのがポイントです。
+            </p>
+          </div>
+        </li>
+        <li class="col-step">
+          <span class="col-step-num">2</span>
+          <div class="col-step-body">
+            <h3 class="col-step-title">結果を読み込む</h3>
+            <p>
+              D/i/S/Cのどのタイプかを確認し、自分の強み・弱み・コミュニケーションスタイルを言語化します。
+              「なるほど」「これが摩擦の原因か」と感じる部分がセルフ理解のヒントになります。
+            </p>
+          </div>
+        </li>
+        <li class="col-step">
+          <span class="col-step-num">3</span>
+          <div class="col-step-body">
+            <h3 class="col-step-title">職場・日常に活かす</h3>
+            <p>
+              上司・同僚・部下のスタイルを観察し、タイプ別コミュニケーション設計を実践します。
+              チームで共有するワークショップを開催すると、組織全体のコミュニケーション改善につながります。
+            </p>
+          </div>
+        </li>
+      </ol>
+    </section>
+
+    <section class="col-section" aria-labelledby="col-accuracy-h2">
+      <h2 id="col-accuracy-h2" class="col-h2">無料DiSC診断の精度・限界について</h2>
+      <p class="col-lead">
+        無料のDiSC診断ツールを使う際に知っておくべき精度の限界と、正しい活用の姿勢を解説します。
+      </p>
+      <ul class="col-accuracy-list">
+        <li>
+          <strong>信頼できる根拠：</strong>
+          Marston（1928）の理論は90年以上の研究蓄積があり、4タイプの行動スタイル分類は現代の職場心理学でも広く参照されています。
+        </li>
+        <li>
+          <strong>自己報告式の限界：</strong>
+          「職場での自分」を想定して答えると結果が安定しますが、体調・気分・回答時のコンテキストで多少変動します。
+          1回の結果を絶対視せず、傾向として参考にしてください。
+        </li>
+        <li>
+          <strong>タイプの優劣はない：</strong>
+          Wiley社も明示しているとおり（<a href="https://www.discprofile.com/what-is-disc/overview" target="_blank" rel="noopener noreferrer">公式URL</a>、2026-06-10確認）、
+          D/i/S/Cのいずれのタイプも優劣はありません。状況に応じて各タイプの強みが活きます。
+        </li>
+        <li>
+          <strong>採用・評価への使用は不適切：</strong>
+          DiSCを採用基準・人事評価・昇進判断に使うことはWiley社が非推奨としており、公平採用の観点からも問題になる可能性があります。
+          自己理解・チームコミュニケーション改善の目的のみで使用してください。
+        </li>
+      </ul>
+    </section>
+
+    <section class="col-section" aria-labelledby="col-faq-h2">
+      <h2 id="col-faq-h2" class="col-h2">よくある質問（FAQ）</h2>
+      <dl class="col-faq-list">
+        {faqs.map(({ question, answer }) => (
+          <div class="col-faq-item">
+            <dt class="col-faq-q">{question}</dt>
+            <dd class="col-faq-a" set:html={answer} />
+          </div>
+        ))}
+      </dl>
+    </section>
+
+    <ScienceNote
+      basisText="William Moulton Marston (1928) 「Emotions of Normal People」（Routledge）+ Walter Clarke (1956) Activity Vector Analysis + John Geier (1970年代) Personal Profile System。現代版はWiley社が「Everything DiSC®」として整備（世界75か国・年間100万人以上の組織研修で活用）。"
+      basisUrl="https://www.discprofile.com/what-is-disc/overview"
+      basisLabel="Wiley DiSC公式・What is DiSC?"
+      notMedical={true}
+      updatedAt={UPDATED_AT}
+      additionalNote="DiSC® はJohn Wiley & Sons, Inc. の登録商標です。本ページはWiley社の公式アセスメントではなく、DiSC理論に基づく自己理解コンテンツです。採用・評価・昇進判断への使用は推奨しません。"
+    />
+
+    <section class="col-section" aria-labelledby="col-related-h2">
+      <h2 id="col-related-h2" class="col-h2">関連ページ</h2>
+      <ul class="col-related-list">
+        <li>
+          <a href="/diagnosis/disc/" class="col-related-link">
+            <span class="col-related-icon" aria-hidden="true">🎯</span>
+            <span class="col-related-body">
+              <span class="col-related-title">DiSC診断【無料・28問・登録不要】</span>
+              <span class="col-related-desc">今すぐあなたのDiSCタイプを3分で判定</span>
+            </span>
+          </a>
+        </li>
+        <li>
+          <a href="/diagnosis/disc/types-summary/" class="col-related-link">
+            <span class="col-related-icon" aria-hidden="true">📊</span>
+            <span class="col-related-body">
+              <span class="col-related-title">DiSC 4タイプ完全まとめ</span>
+              <span class="col-related-desc">D/i/S/C の特徴・強み・相性を一覧解説</span>
+            </span>
+          </a>
+        </li>
+        <li>
+          <a href="/diagnosis/disc/business/" class="col-related-link">
+            <span class="col-related-icon" aria-hidden="true">💼</span>
+            <span class="col-related-body">
+              <span class="col-related-title">DiSC ビジネス活用完全ガイド</span>
+              <span class="col-related-desc">営業・マネジメント・1on1への実践的な活かし方</span>
+            </span>
+          </a>
+        </li>
+        <li>
+          <a href="/diagnosis/columns/disc-behavior-psychology/" class="col-related-link">
+            <span class="col-related-icon" aria-hidden="true">🧠</span>
+            <span class="col-related-body">
+              <span class="col-related-title">DiSC理論と行動心理学：Marston博士から現代まで</span>
+              <span class="col-related-desc">DiSCの誕生から現代への発展を学術根拠付きで解説</span>
+            </span>
+          </a>
+        </li>
+        <li>
+          <a href="/diagnosis/" class="col-related-link">
+            <span class="col-related-icon" aria-hidden="true">📋</span>
+            <span class="col-related-body">
+              <span class="col-related-title">全診断一覧</span>
+              <span class="col-related-desc">MBTI・多重知能・完璧主義・血液型など8種類の診断</span>
+            </span>
+          </a>
+        </li>
+      </ul>
+    </section>
+
+    <ReferenceList
+      references={[
+        {
+          title: 'Emotions of Normal People',
+          author: 'Marston WM',
+          year: 1928,
+          publisher: 'Routledge',
+          url: 'https://archive.org/details/emotionsofnormal00mars',
+        },
+        {
+          title: 'What is DiSC? – Overview',
+          author: 'Wiley',
+          year: 2024,
+          publisher: 'Wiley / DiSC Profile',
+          url: 'https://www.discprofile.com/what-is-disc/overview',
+        },
+        {
+          title: 'Everything DiSC – Official Site',
+          author: 'Wiley',
+          year: 2024,
+          publisher: 'Wiley',
+          url: 'https://www.everythingdisc.com/',
+        },
+      ]}
+      confirmedAt={UPDATED_AT}
+    />
+
+    <p class="col-trademark-note">
+      DiSC&#174; はJohn Wiley &amp; Sons, Inc. の登録商標です。
+      本ページはWiley社の公式アセスメントとは独立した、DiSC理論に基づく自己理解コンテンツです。
+      公式DiSCアセスメントについては
+      <a href="https://www.discprofile.com/" target="_blank" rel="noopener noreferrer">discprofile.com</a>
+      をご確認ください。
+    </p>
+  </Container>
+</BaseLayout>
+
+<style>
+.col-hero {
+  background: linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 50%, #3b82f6 100%);
+  color: #fff;
+  padding-block: 2.5rem 3rem;
+  text-align: center;
+}
+.col-hero-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.875rem;
+}
+.col-hero-badge {
+  display: inline-block;
+  background: rgba(255 255 255 / 0.15);
+  border: 1px solid rgba(255 255 255 / 0.3);
+  border-radius: 2rem;
+  padding: 0.25rem 1rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.03em;
+}
+.col-h1 {
+  font-size: clamp(1.4rem, 4vw, 2rem);
+  font-family: var(--sn-font-rounded, sans-serif);
+  font-weight: 700;
+  margin: 0;
+  line-height: 1.3;
+  max-width: 700px;
+}
+.col-hero-sub {
+  font-size: clamp(0.83rem, 2.2vw, 0.95rem);
+  opacity: 0.9;
+  margin: 0;
+  line-height: 1.6;
+  max-width: 600px;
+}
+.col-hero-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+}
+.col-tag {
+  background: rgba(255 255 255 / 0.2);
+  border: 1px solid rgba(255 255 255 / 0.35);
+  border-radius: 1rem;
+  padding: 0.2rem 0.75rem;
+  font-size: 0.75rem;
+}
+.col-section { margin-block: 3rem; }
+.col-h2 {
+  font-size: clamp(1.1rem, 3vw, 1.5rem);
+  font-family: var(--sn-font-rounded, sans-serif);
+  font-weight: 700;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #1d4ed8;
+}
+.col-lead {
+  font-size: 1rem;
+  line-height: 1.8;
+  margin-bottom: 1.25rem;
+  color: #374151;
+}
+.col-note {
+  font-size: 0.8rem;
+  color: #6b7280;
+  margin-top: 0.75rem;
+  line-height: 1.6;
+}
+.col-type-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+.col-type-card {
+  border: 1px solid #e5e7eb;
+  border-top: 3px solid;
+  border-radius: 0.75rem;
+  padding: 1rem;
+  background: #f9fafb;
+}
+.col-type-label {
+  display: block;
+  font-weight: 700;
+  font-size: 0.9rem;
+  margin-bottom: 0.4rem;
+}
+.col-type-card p {
+  font-size: 0.85rem;
+  line-height: 1.65;
+  color: #4b5563;
+  margin: 0;
+}
+.col-table-wrap { overflow-x: auto; margin-top: 1.25rem; }
+.col-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+  min-width: 600px;
+}
+.col-table th,
+.col-table td {
+  padding: 0.6rem 0.875rem;
+  border: 1px solid #e5e7eb;
+  text-align: left;
+  vertical-align: top;
+  line-height: 1.5;
+}
+.col-table thead th {
+  background: #1d4ed8;
+  color: #fff;
+  font-weight: 600;
+}
+.col-table-highlight { background: #eff6ff; }
+.col-table-highlight th { font-weight: 700; }
+.col-td-result { font-size: 0.82rem; }
+.col-table-link { color: #1d4ed8; text-decoration: underline; }
+.col-badge-recommend {
+  display: inline-block;
+  background: #1d4ed8;
+  color: #fff;
+  font-size: 0.68rem;
+  padding: 0.1rem 0.5rem;
+  border-radius: 0.5rem;
+  margin-left: 0.4rem;
+  font-weight: 600;
+  vertical-align: middle;
+}
+.col-table-caption {
+  font-size: 0.78rem;
+  color: #6b7280;
+  text-align: left;
+  padding: 0.25rem 0 0.5rem;
+}
+.col-choose-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+.col-choose-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  background: #f9fafb;
+}
+.col-choose-card--primary {
+  border-color: #1d4ed8;
+  background: #eff6ff;
+}
+.col-choose-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin: 0 0 0.625rem;
+  color: #1f2937;
+}
+.col-choose-body {
+  font-size: 0.875rem;
+  line-height: 1.7;
+  color: #374151;
+  margin: 0 0 0.875rem;
+}
+.col-choose-btn {
+  display: inline-flex;
+  align-items: center;
+  background: #1d4ed8;
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.875rem;
+  padding: 0.5rem 1.25rem;
+  border-radius: 0.5rem;
+  text-decoration: none;
+  transition: opacity 0.15s;
+}
+.col-choose-btn:hover { opacity: 0.85; }
+.col-steps {
+  list-style: none;
+  padding: 0;
+  margin: 1.25rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.col-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.875rem;
+}
+.col-step-num {
+  flex-shrink: 0;
+  width: 2rem;
+  height: 2rem;
+  background: #1d4ed8;
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+.col-step-body {
+  flex: 1;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 1rem 1.25rem;
+}
+.col-step-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin: 0 0 0.375rem;
+  color: #1f2937;
+}
+.col-step-body p {
+  font-size: 0.875rem;
+  line-height: 1.7;
+  color: #4b5563;
+  margin: 0;
+}
+.col-accuracy-list {
+  margin: 1rem 0;
+  padding-left: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  font-size: 0.9rem;
+  line-height: 1.7;
+  color: #374151;
+}
+.col-faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+.col-faq-item {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+.col-faq-q {
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 0.875rem 1.25rem;
+  background: #f9fafb;
+  margin: 0;
+  display: block;
+}
+.col-faq-q::before { content: 'Q. '; color: #1d4ed8; }
+.col-faq-a {
+  font-size: 0.875rem;
+  line-height: 1.75;
+  padding: 0.875rem 1.25rem;
+  margin: 0;
+  color: #4b5563;
+}
+.col-faq-a::before {
+  content: 'A. ';
+  font-weight: 700;
+  color: #16a34a;
+}
+.col-related-list {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.col-related-link {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.15s;
+}
+.col-related-link:hover { border-color: #1d4ed8; }
+.col-related-icon { font-size: 1.75rem; flex-shrink: 0; }
+.col-related-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+.col-related-title { font-weight: 700; font-size: 0.95rem; }
+.col-related-desc { font-size: 0.8rem; color: var(--sn-muted, #6b7280); }
+.col-trademark-note {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  border-top: 1px solid #e5e7eb;
+  padding-top: 1.5rem;
+  margin-top: 2rem;
+  line-height: 1.6;
+}
+@media (max-width: 640px) {
+  .col-type-grid { grid-template-columns: 1fr 1fr; }
+  .col-choose-grid { grid-template-columns: 1fr; }
+}
+</style>

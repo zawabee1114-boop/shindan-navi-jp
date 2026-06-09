@@ -1,0 +1,863 @@
+---
+/**
+ * 職場でのDiSC活用：4タイプの上司・部下対応マニュアル
+ * KW: DiSC 職場 / DiSC 上司 部下 / DiSC チームビルディング
+ * 学術根拠: Marston (1928) + Wiley DiSC公式 (2024)
+ * 確認日: 2026-06-10
+ *
+ * DiSC® はJohn Wiley & Sons, Inc. の登録商標。
+ * 本ページはWiley社の公式アセスメントではありません。
+ */
+import BaseLayout from '../../../../layouts/BaseLayout.astro';
+import Container from '../../../../components/Container.astro';
+import TldrBlock from '../../../../components/TldrBlock.astro';
+import ReferenceList from '../../../../components/ReferenceList.astro';
+import ScienceNote from '../../../../components/ScienceNote.astro';
+
+const SITE_URL = 'https://shindan-navi.jp';
+const PAGE_URL = `${SITE_URL}/diagnosis/columns/disc-business-application/`;
+const UPDATED_AT = '2026-06-10';
+
+const title = '職場でのDiSC活用マニュアル｜4タイプの上司・部下・同僚対応ガイド';
+const description =
+  'DiSCの4タイプ（D/i/S/C）別に職場での上司・部下・同僚への対応法を解説。Marston（1928）根拠付き。1on1・商談・チームビルディングの実践法をタイプ別コミュニケーション設計で網羅。2026-06-10確認。';
+
+const jsonLdArticle = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  '@id': `${PAGE_URL}#article`,
+  headline: title,
+  description: description,
+  url: PAGE_URL,
+  datePublished: '2026-06-10',
+  dateModified: UPDATED_AT,
+  inLanguage: 'ja',
+  author: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+    name: '診断ナビ',
+    url: SITE_URL,
+  },
+  publisher: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+    name: '診断ナビ',
+    url: SITE_URL,
+  },
+};
+
+const faqs = [
+  {
+    question: 'D型の上司への正しいアプローチは？',
+    answer:
+      'D型の上司には「結論から・簡潔に・ROIを示す」アプローチが効果的です。長い説明・感情的な話は避け、「何を・いつまでに・どう達成するか」を数字付きで提案します。D型上司は結果・速度・挑戦を重視するため、問題提起と同時に解決策を持参することが信頼を獲得する近道です（出典: Wiley DiSC公式 https://www.discprofile.com/what-is-disc/overview、2026-06-10確認）。',
+  },
+  {
+    question: 'i型の同僚とうまく仕事をするコツは？',
+    answer:
+      'i型の同僚には「感謝・承認・仕事の意義」を伝えることが関係構築の鍵です。雑談や感情共有から入り、「あなたのこの提案が助かった」と具体的に伝えると協力を引き出しやすくなります。細部の詰め・期限確認はi型が後回しにしやすいため、重要事項は文書で補足することで摩擦を防げます。',
+  },
+  {
+    question: 'S型の部下のモチベーションを上げる方法は？',
+    answer:
+      'S型の部下には「感謝・安定した環境・丁寧な変更説明」が最も効果的です。急な方針転換を伝えるときは「なぜ変わるのか・何は変わらないのか」を丁寧に説明するだけで受け入れがスムーズになります。月1回の1on1で「安心して働けているか」を確認する場を作ることも重要です。',
+  },
+  {
+    question: 'C型の部下に変化を受け入れてもらうには？',
+    answer:
+      'C型の部下には「データ・根拠・変更の論理的背景」を先に提示することが不可欠です。「こういうデータがあるからこの方向に変える」という根拠付きの説明をすると、C型は批判的に検討した上で受け入れやすくなります。変更の1週間前にドキュメントを共有し、質問の時間を確保することがポイントです。',
+  },
+  {
+    question: 'DiSCを採用面接で使ってもいいですか？',
+    answer:
+      'DiSCを採用選考・不採用の判断基準として使うことはWiley社が明示的に非推奨としています（https://www.discprofile.com/what-is-disc/overview、2026-06-10確認）。行動スタイルの多様性は組織の強みであり、特定のタイプを「適切」とすることは公平採用の観点からも問題になる可能性があります。採用面接でDiSCを使う場合は「応募者の自己理解を深める対話の参考」にとどめてください。',
+  },
+];
+
+const jsonLdFAQ = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  '@id': `${PAGE_URL}#faq`,
+  mainEntity: faqs.map(({ question, answer }) => ({
+    '@type': 'Question',
+    name: question,
+    acceptedAnswer: { '@type': 'Answer', text: answer },
+  })),
+};
+
+const jsonLdBreadcrumb = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'ホーム', item: SITE_URL },
+    { '@type': 'ListItem', position: 2, name: '診断一覧', item: `${SITE_URL}/diagnosis/` },
+    { '@type': 'ListItem', position: 3, name: 'DiSCコラム', item: `${SITE_URL}/diagnosis/columns/` },
+    { '@type': 'ListItem', position: 4, name: 'DiSC職場活用マニュアル', item: PAGE_URL },
+  ],
+};
+
+const jsonLdAll = [jsonLdArticle, jsonLdFAQ, jsonLdBreadcrumb];
+
+const typeGuides = [
+  {
+    id: 'D',
+    name: 'D型（主導型）',
+    emoji: '🦁',
+    color: '#dc2626',
+    bg: '#fef2f2',
+    border: '#fca5a5',
+    asManager: ['権限を委譲し、結果で評価する', '高い目標・チャレンジングな役割を与える', '意見を押さえつけない。「なぜか」を説明する', '即断即決を尊重し、プロセス管理は自分でフォロー'],
+    asSubordinate: ['結論から・数字で報告する（PREP法推奨）', '意思決定の機会を増やして主体性を発揮させる', '対立しても「事実」で議論する', '成果の承認は即座・具体的に'],
+    asColleague: ['結論から短く伝える', '理由・背景の説明は最小限に', '期限・成果物を明確にする', '意見の対立はデータで解決する'],
+    stress: 'コントロール喪失・非効率・無意味な会議',
+    motivation: '高い目標・成果の認証・競争環境・挑戦的な役割',
+  },
+  {
+    id: 'i',
+    name: 'i型（感化型）',
+    emoji: '🌟',
+    color: '#d97706',
+    bg: '#fffbeb',
+    border: '#fcd34d',
+    asManager: ['感謝・承認の言葉を具体的に伝える', '仕事の意義・誰のためになるかを共有する', '1on1の冒頭は近況・感情の共有から', '細部のフォローアップは静かにサポート'],
+    asSubordinate: ['感情と意義を先に伝え、次に具体的な依頼をする', '体験談・事例・成功事例を共有する', '感謝の言葉を惜しまない', 'i型の楽観的な見通しのリスクを補完する'],
+    asColleague: ['雑談・感情共有から入る', '体験談・成功事例を共有する', '期限・詳細は別途文書でフォロー', '批判は直接より「一緒に改善しよう」のトーンで'],
+    stress: '批判・孤立・感情的な無関心・単調な作業',
+    motivation: '承認・感謝の言葉・仕事の意義・人との繋がり',
+  },
+  {
+    id: 'S',
+    name: 'S型（安定型）',
+    emoji: '🌿',
+    color: '#16a34a',
+    bg: '#f0fdf4',
+    border: '#86efac',
+    asManager: ['方針変更は背景・理由を丁寧に説明する', '意見を言える十分な時間を確保する', '急な変更・優先順位変更を最小限にする', '長期的な信頼関係・安定した環境を重視する'],
+    asSubordinate: ['安心感・実績・継続サポートを強調する', '変更の「何は変わらないか」も伝える', '丁寧なフォローで信頼関係を構築する', 'S型の強みである「忍耐・協調性」を活かす役割を与える'],
+    asColleague: ['温かく・丁寧なコミュニケーションをとる', '意見を急かさない。十分な考える時間を与える', '変更は事前に予告する', 'S型の協調性に感謝を伝える'],
+    stress: '急な変更・環境の不安定・対立・押しつけられる急な意思決定',
+    motivation: '感謝・労いの言葉・安定した環境・長期的な信頼関係',
+  },
+  {
+    id: 'C',
+    name: 'C型（慎重型）',
+    emoji: '🔬',
+    color: '#2563eb',
+    bg: '#eff6ff',
+    border: '#93c5fd',
+    asManager: ['根拠・データに基づく具体的フィードバックをする', '専門性・正確さへの評価を言語化する', '1on1の前日にアジェンダを共有する', 'リスクへの懸念を丁寧に聞き、一緒に整理する'],
+    asSubordinate: ['データ・仕様・根拠を先に送付する', 'C型の「詳細質問」はリスク管理のサインと受け取る', '変更の論理的背景を文書で説明する', '完璧主義的傾向のある場合は「80点でGo」の基準を明確に共有する'],
+    asColleague: ['事実・データ中心のコミュニケーションをとる', '仕様書・議事録を丁寧に整備する', '質問への回答は文書で残す', '急かさない。C型には準備と分析の時間が必要'],
+    stress: '不正確な情報・ルール不在・準備不足での意思決定・根拠のない主張',
+    motivation: '専門知識・スキルの認証・正確さへの評価・品質への感謝',
+  },
+];
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  canonical={PAGE_URL}
+  jsonLd={jsonLdAll}
+  ogType="article"
+  publishDate="2026-06-10"
+  lastUpdated={UPDATED_AT}
+  breadcrumbs={[
+    { name: '診断一覧', url: '/diagnosis/' },
+    { name: 'DiSCコラム', url: '/diagnosis/columns/' },
+    { name: 'DiSC職場活用マニュアル', url: '/diagnosis/columns/disc-business-application/' },
+  ]}
+>
+  <section class="dba-hero" aria-labelledby="dba-h1">
+    <Container>
+      <div class="dba-hero-inner">
+        <p class="dba-hero-badge">DiSC&#174; Wiley社登録商標 | Marston (1928) 学術根拠 | 2026-06-10 確認</p>
+        <h1 id="dba-h1" class="dba-h1">職場でのDiSC活用マニュアル</h1>
+        <p class="dba-hero-sub">4タイプ（D/i/S/C）別の上司・部下・同僚対応ガイド。1on1・報告・フィードバック・チームビルディングの実践法をタイプ別に網羅</p>
+        <div class="dba-hero-tags">
+          <span class="dba-tag">上司対応</span>
+          <span class="dba-tag">部下マネジメント</span>
+          <span class="dba-tag">1on1設計</span>
+          <span class="dba-tag">採用NGの理由</span>
+          <span class="dba-tag">FAQ 5問</span>
+        </div>
+        <div class="dba-hero-caution">
+          採用・評価判定への使用は推奨しません（Wiley社非推奨・公平採用法リスク）
+        </div>
+      </div>
+    </Container>
+  </section>
+
+  <Container>
+    <TldrBlock
+      title="このページでわかること"
+      points={[
+        "DiSC 4タイプ別の「上司として・部下として・同僚として」3視点の対応法を網羅したマニュアル",
+        "タイプ別モチベーションの源泉とストレスの原因。1on1・報告・フィードバックへの応用法",
+        "DiSCを採用・評価に使ってはいけない理由と、正しい職場活用の3ステップ",
+      ]}
+      updatedAt={UPDATED_AT}
+      sourceLabel="Wiley DiSC公式"
+      sourceUrl="https://www.discprofile.com/what-is-disc/overview"
+    />
+
+    <section class="dba-section" aria-labelledby="dba-intro-h2">
+      <h2 id="dba-intro-h2" class="dba-h2">DiSCを職場で活かす前に：3つの前提</h2>
+      <p class="dba-lead">
+        DiSC® は世界75か国・年間100万人以上が活用する組織コミュニケーションツールです
+        （<a href="https://www.everythingdisc.com/" target="_blank" rel="noopener noreferrer">Everything DiSC公式</a>、2026-06-10確認）。
+        職場での活用を始める前に、以下の3つの前提を必ず確認してください。
+      </p>
+      <div class="dba-premise-grid">
+        <div class="dba-premise-card dba-premise-card--ok">
+          <h3 class="dba-premise-title">OK：自己理解・チームコミュニケーション改善</h3>
+          <ul class="dba-premise-list">
+            <li>自分の行動スタイルの強み・弱みを言語化する</li>
+            <li>メンバーのスタイルを把握して1on1・フィードバックを最適化する</li>
+            <li>チームビルディング研修の自己開示ツールとして活用する</li>
+          </ul>
+        </div>
+        <div class="dba-premise-card dba-premise-card--ng">
+          <h3 class="dba-premise-title">NG：採用・評価・昇進判断への使用</h3>
+          <ul class="dba-premise-list">
+            <li>採用選考・不採用理由としてDiSCタイプを使わない</li>
+            <li>特定タイプを「向いている/向いていない」と評価しない</li>
+            <li>昇進・降格の根拠にDiSCスコアを使わない</li>
+          </ul>
+          <p class="dba-premise-note">
+            Wiley社が明示的に非推奨（<a href="https://www.discprofile.com/what-is-disc/overview" target="_blank" rel="noopener noreferrer">公式URL</a>、2026-06-10確認）
+          </p>
+        </div>
+        <div class="dba-premise-card">
+          <h3 class="dba-premise-title">大前提：タイプで人を決めつけない</h3>
+          <p class="dba-premise-body">
+            DiSCは「現在の傾向」を示すものです。
+            「C型だから細かい」「D型だから強引」と固定的に見ることは誤りです。
+            個人差・成長・環境変化を常に念頭に置いてください。
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="dba-section" aria-labelledby="dba-guide-h2">
+      <h2 id="dba-guide-h2" class="dba-h2">4タイプ別 職場対応マニュアル</h2>
+      <p class="dba-lead">
+        各タイプへのアプローチを「上司として」「部下として」「同僚として」の3視点で解説します。
+        自分のタイプと相手のタイプの組み合わせを意識することで、スタイルの違いによる摩擦を減らすことができます。
+      </p>
+      {typeGuides.map((t) => (
+        <article
+          class="dba-type-card"
+          id={`type-${t.id}`}
+          style={`border-top-color: ${t.color}; background: ${t.bg};`}
+          aria-labelledby={`dba-type-${t.id}-h3`}
+        >
+          <div class="dba-type-header">
+            <span class="dba-type-emoji" aria-hidden="true">{t.emoji}</span>
+            <div>
+              <h3 id={`dba-type-${t.id}-h3`} class="dba-type-name" style={`color: ${t.color}`}>{t.name}</h3>
+              <p class="dba-type-meta">
+                <span class="dba-meta-item">
+                  <strong>ストレス:</strong> {t.stress}
+                </span>
+              </p>
+              <p class="dba-type-meta">
+                <span class="dba-meta-item">
+                  <strong>モチベーション:</strong> {t.motivation}
+                </span>
+              </p>
+            </div>
+          </div>
+          <div class="dba-type-guide-grid">
+            <div class="dba-guide-col">
+              <h4 class="dba-guide-col-title" style={`color: ${t.color};`}>上司として接するとき</h4>
+              <ul class="dba-guide-list">
+                {t.asManager.map((p) => <li>{p}</li>)}
+              </ul>
+            </div>
+            <div class="dba-guide-col">
+              <h4 class="dba-guide-col-title" style={`color: ${t.color};`}>部下・後輩として接するとき</h4>
+              <ul class="dba-guide-list">
+                {t.asSubordinate.map((p) => <li>{p}</li>)}
+              </ul>
+            </div>
+            <div class="dba-guide-col">
+              <h4 class="dba-guide-col-title" style={`color: ${t.color};`}>同僚として接するとき</h4>
+              <ul class="dba-guide-list">
+                {t.asColleague.map((p) => <li>{p}</li>)}
+              </ul>
+            </div>
+          </div>
+          <div class="dba-type-footer">
+            <a href={`/diagnosis/disc/result/${t.id}/`} class="dba-type-link" style={`color: ${t.color}; border-color: ${t.color};`}>
+              {t.name}の詳細結果を見る →
+            </a>
+          </div>
+        </article>
+      ))}
+    </section>
+
+    <section class="dba-section" aria-labelledby="dba-1on1-h2">
+      <h2 id="dba-1on1-h2" class="dba-h2">タイプ別 1on1設計チートシート</h2>
+      <p class="dba-lead">
+        月1回の1on1をDiSCタイプ別に最適化するためのクイックリファレンスです。
+        相手のタイプを意識した対話設計で、信頼関係の質が長期的に向上します。
+      </p>
+      <div class="dba-cheat-table-wrap">
+        <table class="dba-cheat-table">
+          <caption class="dba-table-caption">DiSCタイプ別 1on1チートシート（2026-06-10時点）</caption>
+          <thead>
+            <tr>
+              <th scope="col">タイプ</th>
+              <th scope="col">冒頭の入り方</th>
+              <th scope="col">フィードバックの伝え方</th>
+              <th scope="col">終わり方・次のアクション</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row" style="color: #dc2626; font-weight: 700; white-space: nowrap;">🦁 D型</th>
+              <td>成果確認→次の目標を即共有</td>
+              <td>直接・簡潔・改善点をストレートに</td>
+              <td>権限委譲を確認。次のチャレンジを決める</td>
+            </tr>
+            <tr>
+              <th scope="row" style="color: #d97706; font-weight: 700; white-space: nowrap;">🌟 i型</th>
+              <td>近況・感情の共有（雑談OK）</td>
+              <td>肯定→改善→再肯定（サンドイッチ）</td>
+              <td>意義を再確認。感謝の言葉で締める</td>
+            </tr>
+            <tr>
+              <th scope="row" style="color: #16a34a; font-weight: 700; white-space: nowrap;">🌿 S型</th>
+              <td>急かさず、十分な話す時間を確保</td>
+              <td>温かいトーン・背景説明→改善点</td>
+              <td>変化があれば丁寧に説明して不安を解消</td>
+            </tr>
+            <tr>
+              <th scope="row" style="color: #2563eb; font-weight: 700; white-space: nowrap;">🔬 C型</th>
+              <td>前日にアジェンダ送付。準備時間を確保</td>
+              <td>データ・事実・具体例で根拠を示す</td>
+              <td>次回の準備内容・期限を文書で共有</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="dba-section" aria-labelledby="dba-conflict-h2">
+      <h2 id="dba-conflict-h2" class="dba-h2">タイプ間の摩擦とその解消法</h2>
+      <p class="dba-lead">
+        DiSCタイプが異なると、コミュニケーション摩擦が生まれやすくなります。
+        代表的な摩擦パターンと解消法を解説します。
+      </p>
+      <ul class="dba-conflict-list">
+        <li>
+          <strong>D型 × S型の摩擦：</strong>
+          D型の「速さ・直接的な指示」に対し、S型は「急な変更・押しつけ感」を感じやすい。
+          D型が変更の背景を1〜2文で説明するだけで、S型の受け入れがスムーズになる。
+        </li>
+        <li>
+          <strong>D型 × C型の摩擦：</strong>
+          D型の「とにかくやってみよう」に対し、C型は「根拠なく動けない」と感じる。
+          D型が「こういうデータがあるから試す価値がある」と根拠を示すことで解決する。
+        </li>
+        <li>
+          <strong>i型 × C型の摩擦：</strong>
+          i型の「楽観的なアイデア出し」に対し、C型は「詳細がない・リスクを見落としている」と感じる。
+          i型がアイデアにC型のリスク管理を「補完してほしい」と明示することで協力関係に変わる。
+        </li>
+        <li>
+          <strong>S型 × D型の摩擦：</strong>
+          S型の「慎重に合意形成」に対し、D型は「遅い・決断できない」と感じる。
+          S型が「〇日までに決定する」という期限を提示することで、D型の苛立ちを和らげられる。
+        </li>
+      </ul>
+      <p class="dba-note">
+        Wiley社の研究では、多様なタイプが混在するチームが最も高いパフォーマンスを発揮するとされています
+        （<a href="https://www.everythingdisc.com/" target="_blank" rel="noopener noreferrer">Everything DiSC公式</a>、2026-06-10確認）。
+        摩擦は「理解不足」から生まれます。互いのスタイルを把握することで、多様性が強みに変わります。
+      </p>
+    </section>
+
+    <section class="dba-section" aria-labelledby="dba-steps-h2">
+      <h2 id="dba-steps-h2" class="dba-h2">チームでDiSCを活用する3ステップ</h2>
+      <ol class="dba-steps">
+        <li class="dba-step">
+          <span class="dba-step-num">1</span>
+          <div class="dba-step-body">
+            <h3 class="dba-step-title">全員が診断を受ける</h3>
+            <p>まず自分のタイプを把握することから始めます。診断ナビのDiSC診断（28問・約3分・無料）で全員がタイプを確認します。</p>
+            <a href="/diagnosis/disc/" class="dba-step-link">DiSC診断を受ける（無料・登録不要）→</a>
+          </div>
+        </li>
+        <li class="dba-step">
+          <span class="dba-step-num">2</span>
+          <div class="dba-step-body">
+            <h3 class="dba-step-title">チームでタイプを共有する</h3>
+            <p>チームミーティングや1on1でタイプを開示し合います。「タイプで人を決めつけない」というルールを最初に共有してから始めてください。過去の摩擦事例をDiSCの視点で振り返ると理解が深まります。</p>
+          </div>
+        </li>
+        <li class="dba-step">
+          <span class="dba-step-num">3</span>
+          <div class="dba-step-body">
+            <h3 class="dba-step-title">タイプ別コミュニケーション設計を実践する</h3>
+            <p>本ページの「4タイプ別対応マニュアル」を参考に、実際の1on1・報告・会議・フィードバックをタイプ別に調整します。3ヶ月後に変化をヒアリングして継続改善します。</p>
+          </div>
+        </li>
+      </ol>
+    </section>
+
+    <section class="dba-section" aria-labelledby="dba-faq-h2">
+      <h2 id="dba-faq-h2" class="dba-h2">よくある質問（FAQ）</h2>
+      <dl class="dba-faq-list">
+        {faqs.map(({ question, answer }) => (
+          <div class="dba-faq-item">
+            <dt class="dba-faq-q">{question}</dt>
+            <dd class="dba-faq-a">{answer}</dd>
+          </div>
+        ))}
+      </dl>
+    </section>
+
+    <ScienceNote
+      basisText="William Moulton Marston (1928) 「Emotions of Normal People」（Routledge）+ Walter Clarke (1956) Activity Vector Analysis + Wiley社「Everything DiSC®」（世界75か国・年間100万人以上の組織研修で活用）。"
+      basisUrl="https://www.discprofile.com/what-is-disc/overview"
+      basisLabel="Wiley DiSC公式"
+      notMedical={true}
+      updatedAt={UPDATED_AT}
+      additionalNote="DiSC® はJohn Wiley & Sons, Inc. の登録商標です。採用選考・人事評価・昇進判断の基準としての使用は推奨しません（Wiley社非推奨・公平採用法リスク）。"
+    />
+
+    <section class="dba-section" aria-labelledby="dba-related-h2">
+      <h2 id="dba-related-h2" class="dba-h2">関連ページ</h2>
+      <ul class="dba-related-list">
+        <li>
+          <a href="/diagnosis/disc/" class="dba-related-link">
+            <span class="dba-related-icon" aria-hidden="true">🎯</span>
+            <span class="dba-related-body">
+              <span class="dba-related-title">DiSC診断【無料・28問】</span>
+              <span class="dba-related-desc">まず自分のタイプを3分で確認</span>
+            </span>
+          </a>
+        </li>
+        <li>
+          <a href="/diagnosis/disc/types-summary/" class="dba-related-link">
+            <span class="dba-related-icon" aria-hidden="true">📊</span>
+            <span class="dba-related-body">
+              <span class="dba-related-title">DiSC 4タイプ完全まとめ</span>
+              <span class="dba-related-desc">特徴・強み・相性を一覧解説</span>
+            </span>
+          </a>
+        </li>
+        <li>
+          <a href="/diagnosis/disc/business/" class="dba-related-link">
+            <span class="dba-related-icon" aria-hidden="true">💼</span>
+            <span class="dba-related-body">
+              <span class="dba-related-title">DiSC ビジネス活用完全ガイド</span>
+              <span class="dba-related-desc">営業・マネジメント・研修への実践活用</span>
+            </span>
+          </a>
+        </li>
+        <li>
+          <a href="/diagnosis/columns/disc-behavior-psychology/" class="dba-related-link">
+            <span class="dba-related-icon" aria-hidden="true">🧠</span>
+            <span class="dba-related-body">
+              <span class="dba-related-title">DiSC理論と行動心理学</span>
+              <span class="dba-related-desc">Marston博士の理論誕生から現代まで</span>
+            </span>
+          </a>
+        </li>
+        <li>
+          <a href="/diagnosis/" class="dba-related-link">
+            <span class="dba-related-icon" aria-hidden="true">📋</span>
+            <span class="dba-related-body">
+              <span class="dba-related-title">全診断一覧</span>
+              <span class="dba-related-desc">MBTI・多重知能・完璧主義・血液型など8診断</span>
+            </span>
+          </a>
+        </li>
+      </ul>
+    </section>
+
+    <ReferenceList
+      references={[
+        {
+          title: 'Emotions of Normal People',
+          author: 'Marston WM',
+          year: 1928,
+          publisher: 'Routledge',
+          url: 'https://archive.org/details/emotionsofnormal00mars',
+        },
+        {
+          title: 'What is DiSC? – Overview',
+          author: 'Wiley',
+          year: 2024,
+          publisher: 'Wiley / DiSC Profile',
+          url: 'https://www.discprofile.com/what-is-disc/overview',
+        },
+        {
+          title: 'Everything DiSC – Official Site',
+          author: 'Wiley',
+          year: 2024,
+          publisher: 'Wiley',
+          url: 'https://www.everythingdisc.com/',
+        },
+      ]}
+      confirmedAt={UPDATED_AT}
+    />
+
+    <p class="dba-trademark-note">
+      DiSC&#174; / Everything DiSC&#174; はJohn Wiley &amp; Sons, Inc. の登録商標です。
+      本ページはWiley社の公式アセスメントとは独立した、DiSC理論に基づく自己理解・組織コミュニケーションコンテンツです。
+    </p>
+  </Container>
+</BaseLayout>
+
+<style>
+.dba-hero {
+  background: linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 40%, #6366f1 100%);
+  color: #fff;
+  padding-block: 2.5rem 3rem;
+  text-align: center;
+}
+.dba-hero-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.875rem;
+}
+.dba-hero-badge {
+  display: inline-block;
+  background: rgba(255 255 255 / 0.15);
+  border: 1px solid rgba(255 255 255 / 0.3);
+  border-radius: 2rem;
+  padding: 0.25rem 1rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.03em;
+}
+.dba-h1 {
+  font-size: clamp(1.4rem, 4vw, 2rem);
+  font-family: var(--sn-font-rounded, sans-serif);
+  font-weight: 700;
+  margin: 0;
+  line-height: 1.3;
+}
+.dba-hero-sub {
+  font-size: clamp(0.83rem, 2.2vw, 0.93rem);
+  opacity: 0.9;
+  margin: 0;
+  line-height: 1.6;
+  max-width: 640px;
+}
+.dba-hero-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+}
+.dba-tag {
+  background: rgba(255 255 255 / 0.2);
+  border: 1px solid rgba(255 255 255 / 0.35);
+  border-radius: 1rem;
+  padding: 0.2rem 0.75rem;
+  font-size: 0.75rem;
+}
+.dba-hero-caution {
+  background: rgba(251 191 36 / 0.25);
+  border: 1px solid rgba(251 191 36 / 0.5);
+  border-radius: 0.5rem;
+  padding: 0.4rem 1rem;
+  font-size: 0.75rem;
+  color: #fef3c7;
+}
+.dba-section { margin-block: 3rem; }
+.dba-h2 {
+  font-size: clamp(1.1rem, 3vw, 1.5rem);
+  font-family: var(--sn-font-rounded, sans-serif);
+  font-weight: 700;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #1d4ed8;
+}
+.dba-lead {
+  font-size: 1rem;
+  line-height: 1.8;
+  margin-bottom: 1.25rem;
+  color: #374151;
+}
+.dba-note {
+  font-size: 0.82rem;
+  color: #6b7280;
+  margin-top: 0.75rem;
+  line-height: 1.6;
+}
+.dba-table-caption {
+  font-size: 0.78rem;
+  color: #6b7280;
+  text-align: left;
+  padding: 0.25rem 0 0.5rem;
+}
+.dba-premise-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+@media (max-width: 700px) { .dba-premise-grid { grid-template-columns: 1fr; } }
+.dba-premise-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  background: #f9fafb;
+}
+.dba-premise-card:last-child {
+  grid-column: 1 / -1;
+}
+.dba-premise-card--ok { background: #f0fdf4; border-color: #bbf7d0; }
+.dba-premise-card--ng { background: #fff7ed; border-color: #fed7aa; border-left: 4px solid #f97316; }
+.dba-premise-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin: 0 0 0.75rem;
+  color: #1f2937;
+}
+.dba-premise-list {
+  margin: 0;
+  padding-left: 1.25rem;
+  font-size: 0.875rem;
+  line-height: 1.7;
+  color: #374151;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+.dba-premise-body {
+  font-size: 0.875rem;
+  line-height: 1.7;
+  color: #374151;
+  margin: 0;
+}
+.dba-premise-note {
+  font-size: 0.78rem;
+  color: #92400e;
+  margin-top: 0.5rem;
+  line-height: 1.5;
+}
+.dba-type-card {
+  border: 1px solid #e5e7eb;
+  border-top: 4px solid;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+.dba-type-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+.dba-type-emoji { font-size: 2.25rem; flex-shrink: 0; line-height: 1; }
+.dba-type-name {
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin: 0 0 0.3rem;
+}
+.dba-type-meta {
+  font-size: 0.82rem;
+  color: #4b5563;
+  margin: 0 0 0.2rem;
+  line-height: 1.5;
+}
+.dba-type-guide-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.875rem;
+  margin-bottom: 1rem;
+}
+@media (max-width: 768px) { .dba-type-guide-grid { grid-template-columns: 1fr; } }
+.dba-guide-col {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  padding: 0.875rem;
+}
+.dba-guide-col-title {
+  font-size: 0.82rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem;
+}
+.dba-guide-list {
+  margin: 0;
+  padding-left: 1.1rem;
+  font-size: 0.82rem;
+  line-height: 1.65;
+  color: #374151;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+.dba-type-footer {
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid #e5e7eb;
+}
+.dba-type-link {
+  font-size: 0.875rem;
+  font-weight: 700;
+  text-decoration: none;
+  padding: 0.4rem 1rem;
+  border: 2px solid;
+  border-radius: 0.5rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  transition: opacity 0.15s;
+}
+.dba-type-link:hover { opacity: 0.75; }
+.dba-cheat-table-wrap { overflow-x: auto; margin-top: 1.25rem; }
+.dba-cheat-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+  min-width: 540px;
+}
+.dba-cheat-table th,
+.dba-cheat-table td {
+  padding: 0.6rem 0.875rem;
+  border: 1px solid #e5e7eb;
+  text-align: left;
+  vertical-align: top;
+  line-height: 1.5;
+}
+.dba-cheat-table thead th {
+  background: #1d4ed8;
+  color: #fff;
+  font-weight: 600;
+}
+.dba-cheat-table tbody tr:nth-child(even) { background: #f9fafb; }
+.dba-conflict-list {
+  margin: 1rem 0;
+  padding-left: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+  font-size: 0.9rem;
+  line-height: 1.7;
+  color: #374151;
+}
+.dba-steps {
+  list-style: none;
+  padding: 0;
+  margin: 1.25rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.dba-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.875rem;
+}
+.dba-step-num {
+  flex-shrink: 0;
+  width: 2rem;
+  height: 2rem;
+  background: #1d4ed8;
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+.dba-step-body {
+  flex: 1;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 1rem 1.25rem;
+}
+.dba-step-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin: 0 0 0.375rem;
+}
+.dba-step-body p {
+  font-size: 0.875rem;
+  line-height: 1.7;
+  color: #4b5563;
+  margin: 0 0 0.5rem;
+}
+.dba-step-link {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #1d4ed8;
+  text-decoration: none;
+}
+.dba-step-link:hover { text-decoration: underline; }
+.dba-faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+.dba-faq-item {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+.dba-faq-q {
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 0.875rem 1.25rem;
+  background: #f9fafb;
+  margin: 0;
+  display: block;
+}
+.dba-faq-q::before { content: 'Q. '; color: #1d4ed8; }
+.dba-faq-a {
+  font-size: 0.875rem;
+  line-height: 1.75;
+  padding: 0.875rem 1.25rem;
+  margin: 0;
+  color: #4b5563;
+}
+.dba-faq-a::before {
+  content: 'A. ';
+  font-weight: 700;
+  color: #16a34a;
+}
+.dba-related-list {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.dba-related-link {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.15s;
+}
+.dba-related-link:hover { border-color: #1d4ed8; }
+.dba-related-icon { font-size: 1.75rem; flex-shrink: 0; }
+.dba-related-body { display: flex; flex-direction: column; gap: 0.2rem; }
+.dba-related-title { font-weight: 700; font-size: 0.95rem; }
+.dba-related-desc { font-size: 0.8rem; color: var(--sn-muted, #6b7280); }
+.dba-trademark-note {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  border-top: 1px solid #e5e7eb;
+  padding-top: 1.5rem;
+  margin-top: 2rem;
+  line-height: 1.6;
+}
+</style>

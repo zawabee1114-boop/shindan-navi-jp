@@ -1,0 +1,715 @@
+---
+/**
+ * 血液型と性格は本当に関係ある？古川竹二から現代心理学まで
+ * KW: 血液型 性格 / 血液型 性格 科学 / 血液型 根拠
+ * 学術根拠: 古川竹二 (1927) + 日本心理学会見解 (2014) + 縄田健悟 (2014) + Sakamoto & Yamazaki (2004)
+ * 確認日: 2026-06-10
+ */
+import BaseLayout from '../../../../layouts/BaseLayout.astro';
+import Container from '../../../../components/Container.astro';
+import TldrBlock from '../../../../components/TldrBlock.astro';
+import ReferenceList from '../../../../components/ReferenceList.astro';
+import ScienceNote from '../../../../components/ScienceNote.astro';
+
+const SITE_URL = 'https://shindan-navi.jp';
+const PAGE_URL = `${SITE_URL}/diagnosis/columns/blood-type-personality-science/`;
+const UPDATED_AT = '2026-06-10';
+
+const title = '血液型と性格は本当に関係ある？古川竹二から現代心理学の結論まで';
+const description =
+  '血液型と性格の関係を科学的に検証。古川竹二（1927）の研究・能見正比古の普及・日本心理学会公式見解（2014）・縄田健悟（2014）の大規模研究まで、学術根拠に基づき解説。2026-06-10確認。';
+
+const jsonLdArticle = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  '@id': `${PAGE_URL}#article`,
+  headline: title,
+  description: description,
+  url: PAGE_URL,
+  datePublished: '2026-06-10',
+  dateModified: UPDATED_AT,
+  inLanguage: 'ja',
+  author: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+    name: '診断ナビ',
+    url: SITE_URL,
+  },
+  publisher: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+    name: '診断ナビ',
+    url: SITE_URL,
+  },
+};
+
+const faqs = [
+  {
+    question: '血液型と性格は科学的に証明されていますか？',
+    answer:
+      '科学的に証明されていません。日本心理学会は2014年の公式見解で「血液型と性格の間に科学的に明確な統計的相関は認められない」と明示しています（https://psych.or.jp/opinion/bl-personality/、2026-06-10確認）。縄田健悟（2014, 心理学研究 85(2)）の大規模研究でも、日米6,000名以上のデータから「血液型と性格の間に有意な相関はない」という結論が得られています。',
+  },
+  {
+    question: '血液型性格論はなぜ「当たる」と感じるのですか？',
+    answer:
+      '主な理由は「バーナム効果」と「自己成就予言（自己刻印効果）」です。血液型の記述は多くの人に当てはまる曖昧な表現が多く、「自分のことだ」と感じやすい（バーナム効果）。さらに「B型は自由奔放」と教えられると、知らず知らずそう振る舞うようになる（自己成就予言）効果が研究されています（Sakamoto & Yamazaki 2004, International Journal of Psychology 39(4)）。',
+  },
+  {
+    question: '血液型でわかる相性は本当にないのですか？',
+    answer:
+      '血液型による相性を科学的に証明した研究はありません。血液型と性格に統計的相関がない以上、血液型による相性の科学的根拠も存在しません。ただし「血液型で相手を知る共通の話題」として使う分には社会的・文化的な楽しみとして許容できます。相性を真剣に考えるなら、MBTI・友達相性診断・DiSCなどコミュニケーションスタイルを基にしたツールの方が実用的です。',
+  },
+  {
+    question: '「血液型ハラスメント（ブラハラ）」とは何ですか？',
+    answer:
+      '「ブラハラ」とは、血液型を理由に人を決めつけたり、不当な扱いをすることです。例えば「B型だから採用しない」「O型だから大雑把でしょ」のような発言がこれに当たります。科学的根拠のない血液型性格論を採用・評価・人間関係の判断に使うことは、不当な差別につながる可能性があります。',
+  },
+  {
+    question: '血液型性格診断を楽しむ適切な方法は？',
+    answer:
+      '血液型性格診断は「日本独自の文化的な話題」として楽しむ分には問題ありません。適切な使い方は「話のきっかけ・アイスブレイク・コミュニケーションの入口」として使うことです。「血液型で人を決めない」「冗談の範囲を超えて批判しない」「科学的根拠がないことを理解した上で楽しむ」という3つを心がけてください。診断ナビの血液型相性診断も同様の姿勢でお使いいただくことを推奨します。',
+  },
+];
+
+const jsonLdFAQ = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  '@id': `${PAGE_URL}#faq`,
+  mainEntity: faqs.map(({ question, answer }) => ({
+    '@type': 'Question',
+    name: question,
+    acceptedAnswer: { '@type': 'Answer', text: answer },
+  })),
+};
+
+const jsonLdBreadcrumb = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'ホーム', item: SITE_URL },
+    { '@type': 'ListItem', position: 2, name: '診断一覧', item: `${SITE_URL}/diagnosis/` },
+    { '@type': 'ListItem', position: 3, name: 'コラム', item: `${SITE_URL}/diagnosis/columns/` },
+    { '@type': 'ListItem', position: 4, name: '血液型と性格の科学', item: PAGE_URL },
+  ],
+};
+
+const jsonLdAll = [jsonLdArticle, jsonLdFAQ, jsonLdBreadcrumb];
+
+const researchTimeline = [
+  {
+    year: '1927年',
+    researcher: '古川竹二（東京女子高等師範学校）',
+    title: '「血液型による気質の研究」心理学研究 第2巻第4号',
+    summary: 'A型・B型・O型・AB型の4分類と気質の関係を初めて体系的に研究・発表。日本の血液型性格論の嚆矢とされる。',
+    verdict: '当時の研究方法論・サンプル数の限界から、現代の基準では再現性・妥当性に問題があるとされる。',
+  },
+  {
+    year: '1971年',
+    researcher: '能見正比古',
+    title: '『血液型でわかる相性』（青春出版社）',
+    summary: 'A型・几帳面、B型・自由奔放、O型・大雑把、AB型・二重人格という日本の「血液型性格論」の基礎を形成。ベストセラーとなり一般に普及した。',
+    verdict: '学術的な検証を経ない一般書。以降の「ブラハラ」「血液型差別」問題の遠因ともなった。',
+  },
+  {
+    year: '2004年',
+    researcher: 'Sakamoto A, Yamazaki K',
+    title: '"Blood-typical Personality Stereotypes and Self-fulfilling Prophecy" International Journal of Psychology 39(4)',
+    summary: '血液型性格論の「当たる」感覚は「自己成就予言（自己刻印効果）」によるものだと実験的に示した。血液型を教えられた被験者が、ステレオタイプ通りの行動をとるようになる効果を確認。',
+    verdict: '血液型性格論が「当たる」のは科学的相関ではなく社会的・心理的効果による可能性を示した重要研究。',
+  },
+  {
+    year: '2014年（研究）',
+    researcher: '縄田健悟（九州大学）',
+    title: '「血液型と性格は無関係——血液型刻印効果の危険性」心理学研究 85(2)',
+    summary: '日米で計6,000名以上の大規模データを分析。血液型と性格の11尺度の間に有意な相関は認められないという結論。「血液型で人を判断することの危険性」を警告。',
+    verdict: '現代の血液型性格論への科学的批判として最も重要な研究の一つ（doi:10.4992/jjpsy.85.13E0025）。',
+  },
+  {
+    year: '2014年（学会声明）',
+    researcher: '日本心理学会',
+    title: '「血液型と性格」の関連についての公式見解',
+    summary: '「血液型と性格の間に科学的に明確な統計的相関は認められない」と公式に声明。血液型による差別・ハラスメントへの懸念も表明。',
+    verdict: '日本の心理学会としての公式見解（https://psych.or.jp/opinion/bl-personality/、2026-06-10確認）。',
+  },
+];
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  canonical={PAGE_URL}
+  jsonLd={jsonLdAll}
+  ogType="article"
+  publishDate="2026-06-10"
+  lastUpdated={UPDATED_AT}
+  breadcrumbs={[
+    { name: '診断一覧', url: '/diagnosis/' },
+    { name: 'コラム', url: '/diagnosis/columns/' },
+    { name: '血液型と性格の科学', url: '/diagnosis/columns/blood-type-personality-science/' },
+  ]}
+>
+  <section class="bts-hero" aria-labelledby="bts-h1">
+    <Container>
+      <div class="bts-hero-inner">
+        <p class="bts-hero-badge">日本心理学会公式見解 (2014) | 縄田健悟 (2014) | 2026-06-10 確認</p>
+        <h1 id="bts-h1" class="bts-h1">血液型と性格は本当に関係ある？</h1>
+        <p class="bts-hero-sub">古川竹二（1927）の誕生から現代心理学の結論まで。「当たる理由」と「当たらない理由」を学術根拠付きで正直に解説します。</p>
+        <div class="bts-hero-tags">
+          <span class="bts-tag">学術根拠と結論</span>
+          <span class="bts-tag">当たる理由の心理学</span>
+          <span class="bts-tag">ブラハラの問題</span>
+          <span class="bts-tag">FAQ 5問</span>
+        </div>
+        <div class="bts-hero-conclusion">
+          結論：科学的相関は認められない（日本心理学会公式見解 2014年）
+        </div>
+      </div>
+    </Container>
+  </section>
+
+  <Container>
+    <TldrBlock
+      title="このページでわかること"
+      points={[
+        "血液型と性格の関係：日本心理学会公式見解（2014）と縄田健悟（2014）の大規模研究の結論——科学的相関は認められない",
+        "「当たる」と感じる理由：バーナム効果・自己成就予言（Sakamoto & Yamazaki 2004）の心理学的メカニズム",
+        "古川竹二（1927）から現代まで。研究の歴史と血液型性格論の正しい楽しみ方",
+      ]}
+      updatedAt={UPDATED_AT}
+      sourceLabel="日本心理学会・血液型と性格の公式見解"
+      sourceUrl="https://psych.or.jp/opinion/bl-personality/"
+    />
+
+    <section class="bts-section" aria-labelledby="bts-conclusion-h2">
+      <h2 id="bts-conclusion-h2" class="bts-h2">結論：現代科学の答え</h2>
+      <div class="bts-conclusion-box">
+        <p class="bts-conclusion-main">
+          血液型と性格の間に科学的に明確な統計的相関は認められない。
+        </p>
+        <p class="bts-conclusion-source">
+          ——日本心理学会「血液型と性格の関連についての公式見解」（2014年）
+          （<a href="https://psych.or.jp/opinion/bl-personality/" target="_blank" rel="noopener noreferrer">https://psych.or.jp/opinion/bl-personality/</a>、2026-06-10確認）
+        </p>
+      </div>
+      <p class="bts-lead" style="margin-top: 1.25rem;">
+        この結論は2024年時点でも変わっていません。
+        ただし、「だから血液型の話は全て無意味だ」とは言えません。
+        文化的・社会的な現象として「なぜ日本人が血液型性格論を信じるのか」という問いには
+        興味深い心理学的答えがあります。
+      </p>
+    </section>
+
+    <section class="bts-section" aria-labelledby="bts-history-h2">
+      <h2 id="bts-history-h2" class="bts-h2">研究の歴史：1927年〜2014年</h2>
+      <p class="bts-lead">
+        血液型性格論がどのように生まれ、どのような科学的検証が行われてきたかを年表で解説します。
+      </p>
+      <ol class="bts-timeline">
+        {researchTimeline.map((r, i) => (
+          <li class="bts-timeline-item">
+            <span class="bts-timeline-year">{r.year}</span>
+            <div class="bts-timeline-body">
+              <h3 class="bts-timeline-researcher">{r.researcher}</h3>
+              <p class="bts-timeline-title"><em>{r.title}</em></p>
+              <p class="bts-timeline-summary">{r.summary}</p>
+              <div class="bts-timeline-verdict">
+                <span class="bts-verdict-label">科学的評価</span>
+                {r.verdict}
+              </div>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </section>
+
+    <section class="bts-section" aria-labelledby="bts-why-h2">
+      <h2 id="bts-why-h2" class="bts-h2">「当たる」と感じる3つの心理学的メカニズム</h2>
+      <p class="bts-lead">
+        血液型性格論が「当たる」と感じやすい理由には、以下の3つの心理学的効果が関係しています。
+        これらは血液型に限らず、占い・星座・タロットなど多くの性格分類に共通するメカニズムです。
+      </p>
+      <div class="bts-mechanism-grid">
+        <div class="bts-mechanism-card">
+          <h3 class="bts-mechanism-title">1. バーナム効果（Barnum Effect）</h3>
+          <p class="bts-mechanism-desc">
+            「几帳面な面もあるが、時に大胆に行動できる」のような曖昧な記述は、
+            ほぼ全員に当てはまります。
+            これを「自分のことだ」と感じる傾向を「バーナム効果」と呼びます。
+            心理学者 Bertram Forer（1949）が実験で初めて実証した現象です。
+          </p>
+        </div>
+        <div class="bts-mechanism-card">
+          <h3 class="bts-mechanism-title">2. 自己成就予言（自己刻印効果）</h3>
+          <p class="bts-mechanism-desc">
+            「B型は自由奔放」と繰り返し教えられると、
+            知らず知らずそう振る舞うようになる効果です。
+            Sakamoto &amp; Yamazaki（2004）は日米の実験で、
+            血液型情報を提示された被験者がステレオタイプ通りの行動を
+            取りやすくなることを確認しました
+            （<em>International Journal of Psychology</em> 39(4), 275-285）。
+          </p>
+        </div>
+        <div class="bts-mechanism-card">
+          <h3 class="bts-mechanism-title">3. 確証バイアス（Confirmation Bias）</h3>
+          <p class="bts-mechanism-desc">
+            「当たった」例は強く記憶に残り、
+            「外れた」例は「例外」として処理されます。
+            結果的に「血液型性格論は当たる」という信念が強化されていきます。
+            これは人間の情報処理の普遍的な傾向であり、血液型に限りません。
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="bts-section" aria-labelledby="bts-bulha-h2">
+      <h2 id="bts-bulha-h2" class="bts-h2">ブラハラ（血液型ハラスメント）とは何か</h2>
+      <p class="bts-lead">
+        「ブラハラ」とは血液型を理由に人を決めつけたり不当な扱いをするハラスメントです。
+        科学的根拠のない血液型性格論が職場・採用・日常生活での差別に使われる問題があります。
+      </p>
+      <div class="bts-bulha-examples">
+        <h3 class="bts-bulha-title">具体的なブラハラの例</h3>
+        <ul class="bts-bulha-list">
+          <li>「B型だから採用しない」という採用差別</li>
+          <li>「O型は大雑把だからこの仕事には向かない」という業務判断</li>
+          <li>「AB型はひねくれているから難しい」という一方的な人格評価</li>
+          <li>「A型だから几帳面でしょ」という押しつけ</li>
+        </ul>
+        <p class="bts-bulha-note">
+          日本心理学会は2014年の公式見解で、血液型による差別・ハラスメントへの懸念も表明しています
+          （<a href="https://psych.or.jp/opinion/bl-personality/" target="_blank" rel="noopener noreferrer">公式URL</a>、2026-06-10確認）。
+        </p>
+      </div>
+    </section>
+
+    <section class="bts-section" aria-labelledby="bts-enjoy-h2">
+      <h2 id="bts-enjoy-h2" class="bts-h2">血液型性格論を正しく楽しむ方法</h2>
+      <p class="bts-lead">
+        科学的根拠がないことを理解した上でも、血液型の話は日本の文化的なコミュニケーションとして楽しめます。
+        以下の姿勢を心がけることで、ブラハラにならない適切な楽しみ方ができます。
+      </p>
+      <div class="bts-enjoy-grid">
+        <div class="bts-enjoy-card bts-enjoy-card--ok">
+          <h3 class="bts-enjoy-title">適切な楽しみ方</h3>
+          <ul class="bts-enjoy-list">
+            <li>アイスブレイク・話のきっかけとして使う</li>
+            <li>「そういう傾向もあるかもね」とゆるく話題にする</li>
+            <li>科学的根拠がないことを前置きした上で楽しむ</li>
+            <li>血液型診断をコミュニケーションの入口にする</li>
+          </ul>
+        </div>
+        <div class="bts-enjoy-card bts-enjoy-card--ng">
+          <h3 class="bts-enjoy-title">やってはいけないこと</h3>
+          <ul class="bts-enjoy-list">
+            <li>採用・評価・昇進判断に血液型を使う</li>
+            <li>「あなたはA型だから〜でしょ」と決めつける</li>
+            <li>血液型を理由に人間関係を断ち切る</li>
+            <li>子どもに「あなたはB型だから自由奔放なの」と刷り込む</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="bts-section" aria-labelledby="bts-faq-h2">
+      <h2 id="bts-faq-h2" class="bts-h2">よくある質問（FAQ）</h2>
+      <dl class="bts-faq-list">
+        {faqs.map(({ question, answer }) => (
+          <div class="bts-faq-item">
+            <dt class="bts-faq-q">{question}</dt>
+            <dd class="bts-faq-a">{answer}</dd>
+          </div>
+        ))}
+      </dl>
+    </section>
+
+    <ScienceNote
+      basisText="古川竹二 (1927) 血液型による気質の研究（心理学研究）+ Sakamoto A & Yamazaki K (2004) Blood-typical Personality Stereotypes and Self-fulfilling Prophecy（International Journal of Psychology 39(4)）+ 縄田健悟 (2014) 血液型と性格は無関係（心理学研究 85(2)）+ 日本心理学会 (2014) 公式見解。"
+      basisUrl="https://psych.or.jp/opinion/bl-personality/"
+      basisLabel="日本心理学会・血液型と性格の公式見解"
+      notMedical={true}
+      updatedAt={UPDATED_AT}
+      additionalNote="本ページは血液型性格論の科学的検証に関するコンテンツです。診断ナビの血液型相性診断は日本の文化的分類として楽しむためのものであり、科学的な相性・性格判定ツールではありません。"
+    />
+
+    <section class="bts-section" aria-labelledby="bts-related-h2">
+      <h2 id="bts-related-h2" class="bts-h2">関連ページ</h2>
+      <ul class="bts-related-list">
+        <li>
+          <a href="/diagnosis/blood-compat/" class="bts-related-link">
+            <span class="bts-related-icon" aria-hidden="true">🩸</span>
+            <span class="bts-related-body">
+              <span class="bts-related-title">血液型相性診断【A/B/O/AB型 全10ペア対応】</span>
+              <span class="bts-related-desc">日本の血液型文化をもとにした相性診断（文化的楽しみとして）</span>
+            </span>
+          </a>
+        </li>
+        <li>
+          <a href="/diagnosis/blood-type/" class="bts-related-link">
+            <span class="bts-related-icon" aria-hidden="true">🔬</span>
+            <span class="bts-related-body">
+              <span class="bts-related-title">血液型別性格・特徴まとめ</span>
+              <span class="bts-related-desc">A型・B型・O型・AB型の特徴（科学的相関は限定的）</span>
+            </span>
+          </a>
+        </li>
+        <li>
+          <a href="/diagnosis/mbti/" class="bts-related-link">
+            <span class="bts-related-icon" aria-hidden="true">🧠</span>
+            <span class="bts-related-body">
+              <span class="bts-related-title">MBTI診断【無料・40問・Jung理論根拠付き】</span>
+              <span class="bts-related-desc">より科学的な根拠に基づく性格診断</span>
+            </span>
+          </a>
+        </li>
+        <li>
+          <a href="/diagnosis/" class="bts-related-link">
+            <span class="bts-related-icon" aria-hidden="true">📋</span>
+            <span class="bts-related-body">
+              <span class="bts-related-title">全診断一覧</span>
+              <span class="bts-related-desc">MBTI・DiSC・多重知能・友達相性など8種類</span>
+            </span>
+          </a>
+        </li>
+      </ul>
+    </section>
+
+    <ReferenceList
+      references={[
+        {
+          title: '血液型による気質の研究',
+          author: '古川竹二',
+          year: 1927,
+          publisher: '心理学研究 第2巻第4号',
+          url: 'https://www.jstage.jst.go.jp/browse/psycholres',
+        },
+        {
+          title: 'Blood-typical Personality Stereotypes and Self-fulfilling Prophecy: A, B, O, and AB Types',
+          author: 'Sakamoto A, Yamazaki K',
+          year: 2004,
+          publisher: 'International Journal of Psychology, 39(4), 275-285',
+          url: 'https://doi.org/10.1080/00207590344000248',
+        },
+        {
+          title: '血液型と性格は無関係——血液型刻印効果の危険性',
+          author: '縄田健悟',
+          year: 2014,
+          publisher: '心理学研究 85(2)',
+          url: 'https://doi.org/10.4992/jjpsy.85.13E0025',
+        },
+        {
+          title: '「血液型と性格」の関連についての公式見解',
+          author: '日本心理学会',
+          year: 2014,
+          publisher: '日本心理学会',
+          url: 'https://psych.or.jp/opinion/bl-personality/',
+        },
+      ]}
+      confirmedAt={UPDATED_AT}
+    />
+
+    <p class="bts-trademark-note">
+      本ページは血液型性格論の科学的背景に関するコンテンツです。
+      診断ナビの血液型関連診断は日本の文化的な血液型性格分類を楽しむためのものであり、
+      医学的・科学的な性格・気質の診断ツールではありません。
+      科学的に厳密な統計的相関は認められないことを理解の上でご活用ください。
+    </p>
+  </Container>
+</BaseLayout>
+
+<style>
+.bts-hero {
+  background: linear-gradient(135deg, #7f1d1d 0%, #dc2626 50%, #f87171 100%);
+  color: #fff;
+  padding-block: 2.5rem 3rem;
+  text-align: center;
+}
+.bts-hero-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.875rem;
+}
+.bts-hero-badge {
+  display: inline-block;
+  background: rgba(255 255 255 / 0.15);
+  border: 1px solid rgba(255 255 255 / 0.3);
+  border-radius: 2rem;
+  padding: 0.25rem 1rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.03em;
+}
+.bts-h1 {
+  font-size: clamp(1.4rem, 4vw, 2rem);
+  font-family: var(--sn-font-rounded, sans-serif);
+  font-weight: 700;
+  margin: 0;
+  line-height: 1.3;
+}
+.bts-hero-sub {
+  font-size: clamp(0.83rem, 2.2vw, 0.95rem);
+  opacity: 0.9;
+  margin: 0;
+  line-height: 1.6;
+  max-width: 600px;
+}
+.bts-hero-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+}
+.bts-tag {
+  background: rgba(255 255 255 / 0.2);
+  border: 1px solid rgba(255 255 255 / 0.35);
+  border-radius: 1rem;
+  padding: 0.2rem 0.75rem;
+  font-size: 0.75rem;
+}
+.bts-hero-conclusion {
+  background: rgba(255 255 255 / 0.15);
+  border: 1px solid rgba(255 255 255 / 0.4);
+  border-radius: 0.5rem;
+  padding: 0.5rem 1.25rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  max-width: 520px;
+}
+.bts-section { margin-block: 3rem; }
+.bts-h2 {
+  font-size: clamp(1.1rem, 3vw, 1.5rem);
+  font-family: var(--sn-font-rounded, sans-serif);
+  font-weight: 700;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #dc2626;
+}
+.bts-lead {
+  font-size: 1rem;
+  line-height: 1.8;
+  margin-bottom: 1.25rem;
+  color: #374151;
+}
+.bts-conclusion-box {
+  background: #fef2f2;
+  border: 2px solid #dc2626;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+}
+.bts-conclusion-main {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #7f1d1d;
+  margin: 0 0 0.75rem;
+  line-height: 1.5;
+}
+.bts-conclusion-source {
+  font-size: 0.85rem;
+  color: #92400e;
+  margin: 0;
+  line-height: 1.6;
+}
+.bts-timeline {
+  list-style: none;
+  padding: 0;
+  margin: 1.25rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.bts-timeline-item {
+  display: grid;
+  grid-template-columns: 7rem 1fr;
+  gap: 1rem;
+}
+@media (max-width: 640px) { .bts-timeline-item { grid-template-columns: 1fr; } }
+.bts-timeline-year {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #dc2626;
+  text-align: right;
+  padding-top: 0.5rem;
+}
+@media (max-width: 640px) { .bts-timeline-year { text-align: left; padding-top: 0; } }
+.bts-timeline-body {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-left: 4px solid #dc2626;
+  border-radius: 0 0.75rem 0.75rem 0;
+  padding: 1rem 1.25rem;
+}
+.bts-timeline-researcher {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #7f1d1d;
+  margin: 0 0 0.3rem;
+}
+.bts-timeline-title {
+  font-size: 0.85rem;
+  color: #374151;
+  margin: 0 0 0.4rem;
+  line-height: 1.6;
+}
+.bts-timeline-summary {
+  font-size: 0.85rem;
+  line-height: 1.65;
+  color: #4b5563;
+  margin: 0 0 0.5rem;
+}
+.bts-timeline-verdict {
+  font-size: 0.8rem;
+  color: #92400e;
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  border-radius: 0.4rem;
+  padding: 0.4rem 0.75rem;
+  line-height: 1.5;
+}
+.bts-verdict-label {
+  font-weight: 700;
+  display: inline-block;
+  margin-right: 0.4rem;
+}
+.bts-mechanism-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+@media (max-width: 700px) { .bts-mechanism-grid { grid-template-columns: 1fr; } }
+.bts-mechanism-card {
+  background: #fef2f2;
+  border: 1px solid #fca5a5;
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+}
+.bts-mechanism-title {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #7f1d1d;
+  margin: 0 0 0.625rem;
+}
+.bts-mechanism-desc {
+  font-size: 0.875rem;
+  line-height: 1.7;
+  color: #374151;
+  margin: 0;
+}
+.bts-bulha-examples {
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  border-left: 4px solid #f97316;
+  border-radius: 0 0.75rem 0.75rem 0;
+  padding: 1.25rem;
+  margin-top: 1.25rem;
+}
+.bts-bulha-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #92400e;
+  margin: 0 0 0.75rem;
+}
+.bts-bulha-list {
+  margin: 0 0 0.75rem;
+  padding-left: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-size: 0.875rem;
+  line-height: 1.65;
+  color: #374151;
+}
+.bts-bulha-note {
+  font-size: 0.82rem;
+  color: #92400e;
+  margin: 0;
+  line-height: 1.5;
+}
+.bts-enjoy-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+@media (max-width: 640px) { .bts-enjoy-grid { grid-template-columns: 1fr; } }
+.bts-enjoy-card {
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+}
+.bts-enjoy-card--ok { background: #f0fdf4; border: 1px solid #bbf7d0; }
+.bts-enjoy-card--ng { background: #fff7ed; border: 1px solid #fed7aa; }
+.bts-enjoy-title { font-size: 0.95rem; font-weight: 700; margin: 0 0 0.75rem; color: #1f2937; }
+.bts-enjoy-list {
+  margin: 0;
+  padding-left: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  font-size: 0.875rem;
+  line-height: 1.65;
+  color: #374151;
+}
+.bts-faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+.bts-faq-item {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+.bts-faq-q {
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 0.875rem 1.25rem;
+  background: #fef2f2;
+  margin: 0;
+  display: block;
+}
+.bts-faq-q::before { content: 'Q. '; color: #dc2626; }
+.bts-faq-a {
+  font-size: 0.875rem;
+  line-height: 1.75;
+  padding: 0.875rem 1.25rem;
+  margin: 0;
+  color: #4b5563;
+}
+.bts-faq-a::before {
+  content: 'A. ';
+  font-weight: 700;
+  color: #16a34a;
+}
+.bts-related-list {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.bts-related-link {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.15s;
+}
+.bts-related-link:hover { border-color: #dc2626; }
+.bts-related-icon { font-size: 1.75rem; flex-shrink: 0; }
+.bts-related-body { display: flex; flex-direction: column; gap: 0.2rem; }
+.bts-related-title { font-weight: 700; font-size: 0.95rem; }
+.bts-related-desc { font-size: 0.8rem; color: var(--sn-muted, #6b7280); }
+.bts-trademark-note {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  border-top: 1px solid #e5e7eb;
+  padding-top: 1.5rem;
+  margin-top: 2rem;
+  line-height: 1.6;
+}
+</style>

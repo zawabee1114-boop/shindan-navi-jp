@@ -1,0 +1,725 @@
+---
+/**
+ * MBTIタイプは変わる？年齢・環境による変化の科学的見解
+ * KW: MBTI 変わる / MBTI タイプ 変化 / MBTI 年齢
+ * 学術根拠: Myers & McCaulley (1985) + Costa & McCrae (1994) + Pittenger (2005)
+ * 確認日: 2026-06-10
+ *
+ * MBTI® は The Myers-Briggs Company の登録商標。
+ */
+import BaseLayout from '../../../../layouts/BaseLayout.astro';
+import Container from '../../../../components/Container.astro';
+import TldrBlock from '../../../../components/TldrBlock.astro';
+import ReferenceList from '../../../../components/ReferenceList.astro';
+import ScienceNote from '../../../../components/ScienceNote.astro';
+
+const SITE_URL = 'https://shindan-navi.jp';
+const PAGE_URL = `${SITE_URL}/diagnosis/columns/mbti-changes-over-time/`;
+const UPDATED_AT = '2026-06-10';
+
+const title = 'MBTIタイプは変わる？年齢・環境・経験による変化の科学的見解';
+const description =
+  'MBTIタイプが変わるかどうかを心理学研究から解説。再テスト信頼性・年齢による変化・ストレス状況下の変化・意図的な変化の可能性まで。Myers & McCaulley (1985) + Pittenger (2005) 学術根拠付き。2026-06-10確認。';
+
+const jsonLdArticle = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  '@id': `${PAGE_URL}#article`,
+  headline: title,
+  description: description,
+  url: PAGE_URL,
+  datePublished: '2026-06-10',
+  dateModified: UPDATED_AT,
+  inLanguage: 'ja',
+  author: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+    name: '診断ナビ',
+    url: SITE_URL,
+  },
+  publisher: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+    name: '診断ナビ',
+    url: SITE_URL,
+  },
+};
+
+const faqs = [
+  {
+    question: 'MBTIタイプは一生変わらないのですか？',
+    answer:
+      '一生変わらないわけではありません。The Myers-Briggs Companyの公式見解では「MBTIタイプはある程度安定しているが、成長・経験・環境変化によって変わりうる」とされています（https://www.themyersbriggs.com/、2026-06-10確認）。Pittenger（2005, Journal of Career Assessment 13(4)）の研究では、5週間以内の再テストで最大50%の人が少なくとも1軸のタイプが変わることが報告されています。',
+  },
+  {
+    question: 'MBTIが変わった場合、どちらが「本当の自分」ですか？',
+    answer:
+      '「本当の自分」を1つのMBTIタイプで定義することは推奨されません。MBTIは「現在の傾向・状態のスナップショット」として機能します。環境・役割・ストレスレベルによってスコアが変化するのは自然なことです。むしろ「なぜ変わったのか」を考えることが自己理解を深めます。The Myers-Briggs Companyも「タイプは固定的なラベルではない」という立場をとっています（https://www.themyersbriggs.com/、2026-06-10確認）。',
+  },
+  {
+    question: '年齢によってMBTIタイプが変わる傾向はありますか？',
+    answer:
+      '傾向として報告されているのは以下です。Myers & McCaulley（1985）の研究では、年齢とともにJ（判断型）の傾向が強まる・F（感情型）の傾向が強まるという変化が見られました。これは「加齢とともに計画性・感情への配慮が高まる」という生涯発達の傾向と一致しています。ただし個人差が大きく、年齢で一律に変化するわけではありません。',
+  },
+  {
+    question: '自分の意志でMBTIタイプを変えることはできますか？',
+    answer:
+      'MBTIタイプを意図的に「変える」より、劣等機能（自分の弱い軸）を「育てる・使いやすくする」という方向性が適切です。例えばI型（内向型）が意識的にコミュニケーションを増やすと、E型の行動パターンを学習することはできます。ただし根本的な傾向は変わりにくく、無理に変えようとすることは精神的な疲弊につながることがあります。',
+  },
+  {
+    question: '職場環境でMBTIが変わることはありますか？',
+    answer:
+      'あります。職場でのロール（管理職になる・転職するなど）はMBTIスコアに影響することが研究で示唆されています。特にJ/P軸は職場環境・業務の性質による影響を受けやすいです。また強いストレス下では、通常のタイプとは異なる「影（シャドウ）機能」が前面に出ることがあります（Jung 1921の機能理論）。3〜6ヶ月おきに再診断して変化を追うことも自己理解に有効です。',
+  },
+];
+
+const jsonLdFAQ = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  '@id': `${PAGE_URL}#faq`,
+  mainEntity: faqs.map(({ question, answer }) => ({
+    '@type': 'Question',
+    name: question,
+    acceptedAnswer: { '@type': 'Answer', text: answer },
+  })),
+};
+
+const jsonLdBreadcrumb = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'ホーム', item: SITE_URL },
+    { '@type': 'ListItem', position: 2, name: '診断一覧', item: `${SITE_URL}/diagnosis/` },
+    { '@type': 'ListItem', position: 3, name: 'コラム', item: `${SITE_URL}/diagnosis/columns/` },
+    { '@type': 'ListItem', position: 4, name: 'MBTIタイプは変わる？', item: PAGE_URL },
+  ],
+};
+
+const jsonLdAll = [jsonLdArticle, jsonLdFAQ, jsonLdBreadcrumb];
+
+const changeScenarios = [
+  {
+    scenario: '再テスト（短期間）',
+    axis: 'I/E・S/N・T/F・J/P 全軸',
+    changeRate: '5週間以内で1軸以上の変化が約50%の人に見られる（Pittenger 2005）',
+    reason: '回答時の気分・体調・社会的望ましさバイアスの影響',
+    significance: '通常',
+  },
+  {
+    scenario: '年齢による変化',
+    axis: '主にJ/P軸・T/F軸',
+    changeRate: '年齢とともにJ傾向・F傾向が強まる報告あり（Myers & McCaulley 1985）',
+    reason: '生涯発達における計画性・感情への配慮の増加',
+    significance: '緩やか',
+  },
+  {
+    scenario: '役割・環境変化',
+    axis: 'J/P軸・E/I軸',
+    changeRate: '管理職への昇進・転職などでJ/E傾向が強まることがある',
+    reason: '職場での要求行動スタイルへの適応',
+    significance: '文脈依存',
+  },
+  {
+    scenario: 'ストレス下の変化',
+    axis: '全軸（特に優位機能の反転）',
+    changeRate: '強いストレス下で通常と逆の行動パターン（影機能）が出る（Jung 1921）',
+    reason: '精神的なリソース枯渇による優位機能の「崩壊」',
+    significance: '一時的',
+  },
+  {
+    scenario: '成長・意図的な発達',
+    axis: '劣等機能の軸',
+    changeRate: '劣等機能の意識的な活用でスコアが動く（長期・ゆるやか）',
+    reason: '心理的成長・Jung個性化プロセス',
+    significance: '長期的',
+  },
+];
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  canonical={PAGE_URL}
+  jsonLd={jsonLdAll}
+  ogType="article"
+  publishDate="2026-06-10"
+  lastUpdated={UPDATED_AT}
+  breadcrumbs={[
+    { name: '診断一覧', url: '/diagnosis/' },
+    { name: 'コラム', url: '/diagnosis/columns/' },
+    { name: 'MBTIタイプは変わる？', url: '/diagnosis/columns/mbti-changes-over-time/' },
+  ]}
+>
+  <section class="mct-hero" aria-labelledby="mct-h1">
+    <Container>
+      <div class="mct-hero-inner">
+        <p class="mct-hero-badge">MBTI&#174; Myers-Briggs登録商標 | Myers & McCaulley (1985) + Pittenger (2005) | 2026-06-10 確認</p>
+        <h1 id="mct-h1" class="mct-h1">MBTIタイプは変わる？</h1>
+        <p class="mct-hero-sub">年齢・環境・ストレス・成長によるMBTIタイプの変化を、心理学研究の根拠から解説します。</p>
+        <div class="mct-hero-tags">
+          <span class="mct-tag">変化の科学的根拠</span>
+          <span class="mct-tag">5つの変化シナリオ</span>
+          <span class="mct-tag">「本当の自分」とは</span>
+          <span class="mct-tag">FAQ 5問</span>
+        </div>
+      </div>
+    </Container>
+  </section>
+
+  <Container>
+    <TldrBlock
+      title="このページでわかること"
+      points={[
+        "MBTIタイプは変わりうる：5週間以内の再テストで約50%の人が1軸以上変化（Pittenger 2005）。生涯を通じた変化も研究で確認されている",
+        "変化の5シナリオ：再テスト誤差・年齢変化・役割変化・ストレス下の変化・意図的成長を表で整理",
+        "タイプを「固定ラベル」として使わない理由と、変化を自己理解に活かす方法",
+      ]}
+      updatedAt={UPDATED_AT}
+      sourceLabel="The Myers-Briggs Company公式"
+      sourceUrl="https://www.themyersbriggs.com/"
+    />
+
+    <section class="mct-section" aria-labelledby="mct-stability-h2">
+      <h2 id="mct-stability-h2" class="mct-h2">MBTIタイプの安定性：研究が示す数字</h2>
+      <p class="mct-lead">
+        MBTIタイプはどの程度「安定している」のでしょうか。
+        心理測定学の観点から重要な研究データを整理します。
+      </p>
+      <div class="mct-data-grid">
+        <div class="mct-data-card mct-data-card--number">
+          <span class="mct-data-num">約50%</span>
+          <span class="mct-data-label">5週間以内の再テストで<br/>1軸以上が変化する人の割合</span>
+          <span class="mct-data-source">Pittenger DJ (2005) Journal of Career Assessment 13(4)</span>
+        </div>
+        <div class="mct-data-card mct-data-card--number">
+          <span class="mct-data-num">4軸</span>
+          <span class="mct-data-label">MBTIが測定する軸数<br/>（E/I・S/N・T/F・J/P）</span>
+          <span class="mct-data-source">Myers IB (1962/1998) MBTI Manual</span>
+        </div>
+        <div class="mct-data-card mct-data-card--number">
+          <span class="mct-data-num">長期</span>
+          <span class="mct-data-label">年齢とともにJ・Fの傾向が<br/>強まる変化の時間軸</span>
+          <span class="mct-data-source">Myers & McCaulley (1985)</span>
+        </div>
+      </div>
+      <p class="mct-lead" style="margin-top: 1.5rem;">
+        これらの数字は、MBTIが「完全に固定した性格の刻印」ではなく、
+        「現時点での傾向のスナップショット」として機能することを示しています。
+        The Myers-Briggs Companyも「タイプは固定的なラベルではない」という立場をとっており、
+        変化する可能性を認めています（<a href="https://www.themyersbriggs.com/" target="_blank" rel="noopener noreferrer">公式サイト</a>、2026-06-10確認）。
+      </p>
+    </section>
+
+    <section class="mct-section" aria-labelledby="mct-scenarios-h2">
+      <h2 id="mct-scenarios-h2" class="mct-h2">MBTIタイプが変わる5つのシナリオ</h2>
+      <p class="mct-lead">
+        MBTIタイプが変化するパターンを5つのシナリオに整理します。
+        「なぜ前と結果が違うのか」を理解するための参考にしてください。
+      </p>
+      <div class="mct-scenario-table-wrap">
+        <table class="mct-scenario-table">
+          <caption class="mct-table-caption">MBTIタイプ変化シナリオ比較（2026-06-10時点）</caption>
+          <thead>
+            <tr>
+              <th scope="col">シナリオ</th>
+              <th scope="col">影響を受ける軸</th>
+              <th scope="col">変化の程度</th>
+              <th scope="col">主な原因</th>
+            </tr>
+          </thead>
+          <tbody>
+            {changeScenarios.map((s) => (
+              <tr>
+                <th scope="row">{s.scenario}</th>
+                <td>{s.axis}</td>
+                <td>{s.changeRate}</td>
+                <td>{s.reason}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="mct-section" aria-labelledby="mct-stress-h2">
+      <h2 id="mct-stress-h2" class="mct-h2">ストレス下でのMBTIタイプ変化：影機能とは</h2>
+      <p class="mct-lead">
+        Jung（1921）の機能理論では、人はストレス下で普段使わない「劣等機能」が活性化し、
+        通常と全く異なる行動パターンが現れることがあります。これを「影（シャドウ）機能の発動」と呼びます。
+      </p>
+      <div class="mct-stress-grid">
+        <div class="mct-stress-card">
+          <h3 class="mct-stress-title">INFJのストレス下の例</h3>
+          <p class="mct-stress-desc">
+            普段は洞察力・先見性で動くINFJが、
+            極度のストレス下では「感覚的・衝動的・過度に批判的」な行動（ESTの影）を取ることがある。
+            「なんかいつもと違う自分が出てきた」という感覚がこれに相当します。
+          </p>
+        </div>
+        <div class="mct-stress-card">
+          <h3 class="mct-stress-title">ENTJのストレス下の例</h3>
+          <p class="mct-stress-desc">
+            普段は戦略的・決断力あるENTJが、
+            深いストレス下では「感情的・傷つきやすい・孤立したがる」行動（ISFの影）が出ることがある。
+            ストレス前後で別人のように見える変化がこれです。
+          </p>
+        </div>
+      </div>
+      <p class="mct-note">
+        ストレス下の「タイプ変化」は一時的なものです。
+        ストレスが解消されると通常のタイプに戻る傾向があります。
+        「ストレスを受けた後に性格が変わった」と感じた場合は、これが原因の可能性があります。
+      </p>
+    </section>
+
+    <section class="mct-section" aria-labelledby="mct-growth-h2">
+      <h2 id="mct-growth-h2" class="mct-h2">タイプの変化を自己理解に活かす方法</h2>
+      <p class="mct-lead">
+        MBTIタイプが変わること自体は、成長の証である場合があります。
+        以下の姿勢でタイプの変化を活かしてください。
+      </p>
+      <ul class="mct-growth-list">
+        <li>
+          <strong>定期的な再診断（3〜6ヶ月おき）：</strong>
+          診断ナビのMBTI診断（<a href="/diagnosis/mbti/">/diagnosis/mbti/</a>）を3〜6ヶ月おきに受け、
+          どの軸が変化したか追跡します。変化したタイミングに何があったかを振り返ることで、
+          自己理解の精度が上がります。
+        </li>
+        <li>
+          <strong>変化した軸を「今の状態」として受け入れる：</strong>
+          「昔はINTPだったのに今はINTJになった」という変化は、
+          J軸（計画性・決断力）が発達したサインかもしれません。
+          「どちらが本当の自分か」より「今の自分はどういう状態か」と捉えてください。
+        </li>
+        <li>
+          <strong>劣等機能を「育てる」視点：</strong>
+          自分の弱い軸（例：F型が苦手なT型）を意識的に使う機会を作ることで、
+          心理的な全体性（Jung個性化プロセス）が高まります。
+          スコアが変化するほどに発達するのが本来の成長です。
+        </li>
+        <li>
+          <strong>統合プロファイルで多角的に見る：</strong>
+          MBTI単独でなく、DiSC・多重知能・友達相性など複数の診断を組み合わせた
+          統合プロファイル（<a href="/me/">/me/</a>）で自己理解を多角的に深めることで、
+          「変化する自分」をより正確に把握できます。
+        </li>
+      </ul>
+    </section>
+
+    <section class="mct-section" aria-labelledby="mct-axes-h2">
+      <h2 id="mct-axes-h2" class="mct-h2">変化しやすい軸と変化しにくい軸</h2>
+      <p class="mct-lead">
+        4軸の中で、研究上「変化しやすい」「変化しにくい」傾向が報告されています。
+        ただしこれは傾向であり、個人差が大きいことを念頭に置いてください。
+      </p>
+      <div class="mct-axes-table-wrap">
+        <table class="mct-axes-table">
+          <caption class="mct-table-caption">MBTIの4軸 変化しやすさ比較（研究の傾向）</caption>
+          <thead>
+            <tr>
+              <th scope="col">軸</th>
+              <th scope="col">変化しやすさ</th>
+              <th scope="col">変化のパターン</th>
+              <th scope="col">根拠</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">E/I（外向/内向）</th>
+              <td>比較的安定</td>
+              <td>環境・役割変化でE方向へのシフトが起きやすい</td>
+              <td>Myers & McCaulley 1985</td>
+            </tr>
+            <tr>
+              <th scope="row">S/N（感覚/直観）</th>
+              <td>比較的安定</td>
+              <td>長期的な知的成長でN傾向が強まることがある</td>
+              <td>Costa & McCrae 1994</td>
+            </tr>
+            <tr>
+              <th scope="row">T/F（思考/感情）</th>
+              <td>変化しやすい</td>
+              <td>年齢・感情的経験の蓄積でF傾向が強まりやすい</td>
+              <td>Myers & McCaulley 1985</td>
+            </tr>
+            <tr>
+              <th scope="row">J/P（判断/知覚）</th>
+              <td>変化しやすい</td>
+              <td>職場・責任変化でJ傾向が強まりやすい</td>
+              <td>Pittenger 2005</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="mct-section" aria-labelledby="mct-faq-h2">
+      <h2 id="mct-faq-h2" class="mct-h2">よくある質問（FAQ）</h2>
+      <dl class="mct-faq-list">
+        {faqs.map(({ question, answer }) => (
+          <div class="mct-faq-item">
+            <dt class="mct-faq-q">{question}</dt>
+            <dd class="mct-faq-a">{answer}</dd>
+          </div>
+        ))}
+      </dl>
+    </section>
+
+    <ScienceNote
+      basisText="Carl Jung (1921) Psychological Types（Princeton University Press）+ Isabel Briggs Myers & Mary H. McCaulley (1985) Manual: MBTI（Consulting Psychologists Press）+ Pittenger DJ (2005) Cautionary Comments Regarding the Myers-Briggs Type Indicator（Journal of Career Assessment 13(4)）。"
+      basisUrl="https://www.themyersbriggs.com/"
+      basisLabel="The Myers-Briggs Company公式"
+      notMedical={true}
+      updatedAt={UPDATED_AT}
+      additionalNote="MBTI® は The Myers-Briggs Company の登録商標です。本ページはMBTI理論の科学的背景を解説する自己理解コンテンツです。採用・評価・意思決定の根拠としての使用は推奨しません。"
+    />
+
+    <section class="mct-section" aria-labelledby="mct-related-h2">
+      <h2 id="mct-related-h2" class="mct-h2">関連ページ</h2>
+      <ul class="mct-related-list">
+        <li>
+          <a href="/diagnosis/mbti/" class="mct-related-link">
+            <span class="mct-related-icon" aria-hidden="true">🧠</span>
+            <span class="mct-related-body">
+              <span class="mct-related-title">MBTI診断【無料・40問・16タイプ判定】</span>
+              <span class="mct-related-desc">今の自分のタイプを3〜6ヶ月おきに確認</span>
+            </span>
+          </a>
+        </li>
+        <li>
+          <a href="/diagnosis/columns/mbti-compatibility-real/" class="mct-related-link">
+            <span class="mct-related-icon" aria-hidden="true">💑</span>
+            <span class="mct-related-body">
+              <span class="mct-related-title">MBTI相性は本当に当たる？科学的根拠と限界</span>
+              <span class="mct-related-desc">相性表の「当たる理由」を心理学から解説</span>
+            </span>
+          </a>
+        </li>
+        <li>
+          <a href="/me/" class="mct-related-link">
+            <span class="mct-related-icon" aria-hidden="true">🧩</span>
+            <span class="mct-related-body">
+              <span class="mct-related-title">統合プロファイル</span>
+              <span class="mct-related-desc">MBTI・DiSC・多重知能を統合した多角的な自己理解</span>
+            </span>
+          </a>
+        </li>
+        <li>
+          <a href="/diagnosis/columns/integrated-profile-guide/" class="mct-related-link">
+            <span class="mct-related-icon" aria-hidden="true">🔭</span>
+            <span class="mct-related-body">
+              <span class="mct-related-title">8診断統合で本当の自分を知る：診断ナビ活用ガイド</span>
+              <span class="mct-related-desc">複数診断の統合活用法</span>
+            </span>
+          </a>
+        </li>
+        <li>
+          <a href="/diagnosis/" class="mct-related-link">
+            <span class="mct-related-icon" aria-hidden="true">📋</span>
+            <span class="mct-related-body">
+              <span class="mct-related-title">全診断一覧</span>
+              <span class="mct-related-desc">MBTI・DiSC・多重知能・血液型など8種類の診断</span>
+            </span>
+          </a>
+        </li>
+      </ul>
+    </section>
+
+    <ReferenceList
+      references={[
+        {
+          title: 'Psychological Types (Collected Works of C.G. Jung, Vol. 6)',
+          author: 'Jung CG',
+          year: 1921,
+          publisher: 'Princeton University Press',
+          url: 'https://press.princeton.edu/books/paperback/9780691018133/psychological-types',
+        },
+        {
+          title: 'Manual: A Guide to the Development and Use of the Myers-Briggs Type Indicator (1st ed.)',
+          author: 'Myers IB, McCaulley MH',
+          year: 1985,
+          publisher: 'Consulting Psychologists Press',
+          url: 'https://www.themyersbriggs.com/en-US/Products-and-Services/Myers-Briggs',
+        },
+        {
+          title: 'Cautionary Comments Regarding the Myers-Briggs Type Indicator',
+          author: 'Pittenger DJ',
+          year: 2005,
+          publisher: 'Journal of Career Assessment, 13(4), 441-457',
+          url: 'https://doi.org/10.1177/1069072705275416',
+        },
+        {
+          title: 'The Myers-Briggs Company 公式サイト',
+          author: 'The Myers-Briggs Company',
+          year: 2024,
+          url: 'https://www.themyersbriggs.com/',
+        },
+      ]}
+      confirmedAt={UPDATED_AT}
+    />
+
+    <p class="mct-trademark-note">
+      MBTI&#174; は The Myers-Briggs Company の登録商標です。
+      本ページはMBTI理論の科学的背景を解説するコンテンツであり、
+      The Myers-Briggs Companyの公式アセスメントとは独立しています。
+    </p>
+  </Container>
+</BaseLayout>
+
+<style>
+.mct-hero {
+  background: linear-gradient(135deg, #4c1d95 0%, #7c3aed 50%, #a855f7 100%);
+  color: #fff;
+  padding-block: 2.5rem 3rem;
+  text-align: center;
+}
+.mct-hero-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.875rem;
+}
+.mct-hero-badge {
+  display: inline-block;
+  background: rgba(255 255 255 / 0.15);
+  border: 1px solid rgba(255 255 255 / 0.3);
+  border-radius: 2rem;
+  padding: 0.25rem 1rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.03em;
+}
+.mct-h1 {
+  font-size: clamp(1.4rem, 4vw, 2rem);
+  font-family: var(--sn-font-rounded, sans-serif);
+  font-weight: 700;
+  margin: 0;
+  line-height: 1.3;
+}
+.mct-hero-sub {
+  font-size: clamp(0.83rem, 2.2vw, 0.95rem);
+  opacity: 0.9;
+  margin: 0;
+  line-height: 1.6;
+  max-width: 600px;
+}
+.mct-hero-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+}
+.mct-tag {
+  background: rgba(255 255 255 / 0.2);
+  border: 1px solid rgba(255 255 255 / 0.35);
+  border-radius: 1rem;
+  padding: 0.2rem 0.75rem;
+  font-size: 0.75rem;
+}
+.mct-section { margin-block: 3rem; }
+.mct-h2 {
+  font-size: clamp(1.1rem, 3vw, 1.5rem);
+  font-family: var(--sn-font-rounded, sans-serif);
+  font-weight: 700;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #7c3aed;
+}
+.mct-lead {
+  font-size: 1rem;
+  line-height: 1.8;
+  margin-bottom: 1.25rem;
+  color: #374151;
+}
+.mct-note {
+  font-size: 0.82rem;
+  color: #6b7280;
+  margin-top: 0.75rem;
+  line-height: 1.6;
+}
+.mct-table-caption {
+  font-size: 0.78rem;
+  color: #6b7280;
+  text-align: left;
+  padding: 0.25rem 0 0.5rem;
+}
+.mct-data-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+@media (max-width: 640px) { .mct-data-grid { grid-template-columns: 1fr; } }
+.mct-data-card {
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+}
+.mct-data-card--number {
+  background: #faf5ff;
+  border: 2px solid #a78bfa;
+}
+.mct-data-num {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: #7c3aed;
+  line-height: 1;
+}
+.mct-data-label {
+  font-size: 0.8rem;
+  color: #374151;
+  line-height: 1.5;
+  text-align: center;
+}
+.mct-data-source {
+  font-size: 0.7rem;
+  color: #9ca3af;
+  line-height: 1.4;
+  text-align: center;
+}
+.mct-scenario-table-wrap { overflow-x: auto; margin-top: 1.25rem; }
+.mct-scenario-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+  min-width: 540px;
+}
+.mct-scenario-table th,
+.mct-scenario-table td {
+  padding: 0.6rem 0.875rem;
+  border: 1px solid #e5e7eb;
+  text-align: left;
+  vertical-align: top;
+  line-height: 1.5;
+}
+.mct-scenario-table thead th {
+  background: #7c3aed;
+  color: #fff;
+  font-weight: 600;
+}
+.mct-scenario-table tbody tr:nth-child(even) { background: #faf5ff; }
+.mct-stress-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+@media (max-width: 640px) { .mct-stress-grid { grid-template-columns: 1fr; } }
+.mct-stress-card {
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  border-left: 4px solid #f97316;
+  border-radius: 0 0.75rem 0.75rem 0;
+  padding: 1.25rem;
+}
+.mct-stress-title {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #92400e;
+  margin: 0 0 0.5rem;
+}
+.mct-stress-desc {
+  font-size: 0.875rem;
+  line-height: 1.7;
+  color: #374151;
+  margin: 0;
+}
+.mct-growth-list {
+  margin: 1rem 0;
+  padding-left: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+  font-size: 0.9rem;
+  line-height: 1.7;
+  color: #374151;
+}
+.mct-axes-table-wrap { overflow-x: auto; margin-top: 1.25rem; }
+.mct-axes-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  min-width: 500px;
+}
+.mct-axes-table th,
+.mct-axes-table td {
+  padding: 0.6rem 0.875rem;
+  border: 1px solid #e5e7eb;
+  text-align: left;
+  vertical-align: top;
+  line-height: 1.5;
+}
+.mct-axes-table thead th {
+  background: #7c3aed;
+  color: #fff;
+  font-weight: 600;
+}
+.mct-axes-table tbody tr:nth-child(even) { background: #faf5ff; }
+.mct-faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+.mct-faq-item {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+.mct-faq-q {
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 0.875rem 1.25rem;
+  background: #faf5ff;
+  margin: 0;
+  display: block;
+}
+.mct-faq-q::before { content: 'Q. '; color: #7c3aed; }
+.mct-faq-a {
+  font-size: 0.875rem;
+  line-height: 1.75;
+  padding: 0.875rem 1.25rem;
+  margin: 0;
+  color: #4b5563;
+}
+.mct-faq-a::before {
+  content: 'A. ';
+  font-weight: 700;
+  color: #16a34a;
+}
+.mct-related-list {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.mct-related-link {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.15s;
+}
+.mct-related-link:hover { border-color: #7c3aed; }
+.mct-related-icon { font-size: 1.75rem; flex-shrink: 0; }
+.mct-related-body { display: flex; flex-direction: column; gap: 0.2rem; }
+.mct-related-title { font-weight: 700; font-size: 0.95rem; }
+.mct-related-desc { font-size: 0.8rem; color: var(--sn-muted, #6b7280); }
+.mct-trademark-note {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  border-top: 1px solid #e5e7eb;
+  padding-top: 1.5rem;
+  margin-top: 2rem;
+  line-height: 1.6;
+}
+</style>

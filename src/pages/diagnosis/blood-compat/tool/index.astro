@@ -10,7 +10,7 @@
  * 確認日: 2026-05-20
  *
  * SEO/AIO対応:
- * - JSON-LD: WebApplication + BreadcrumbList + HowTo
+ * - JSON-LD: WebApplication + BreadcrumbList + HowTo + FAQPage
  * - React Island: BloodCompatTool（client:load）
  * - URL パラメータ連動（?t1=A&t2=B）
  * - YMYL回避: 医学的診断・治療表記ゼロ
@@ -110,7 +110,42 @@ const jsonLdHowTo = {
   ],
 };
 
-const jsonLdAll = [jsonLdWebApp, jsonLdBreadcrumb, jsonLdHowTo];
+// FAQ（5問・AI Overview最適化・日本心理学会2014・Carlson1985・古川竹二1927根拠付き）
+const faqs = [
+  {
+    question: '血液型相性診断ツールの使い方は？',
+    answer: '2つの血液型（A・B・O・AB）をドロップダウンから選んで「相性を見る」をタップするだけです。相性スコア（0〜100点）・仕事相性・恋愛相性・友人相性・成長ポイント・コミュニケーションヒントが即座に表示されます。登録不要・無料・1分で確認できます。',
+  },
+  {
+    question: '血液型相性に科学的根拠はありますか？',
+    answer: '日本心理学会（2014年）は「血液型と性格の統計的相関は確認されていない」と公式に見解を示しています。古川竹二（1927）・能見正比古（1971）が日本での血液型性格分類を広めましたが、Sakamoto & Yamazaki（2004）の国際研究でも統計的相関は限定的とされています。本ツールは日本の血液型性格分類文化に基づく傾向値を提供するエンターテインメントツールです。',
+  },
+  {
+    question: 'A・B・O・AB型で最も相性が良いとされる組み合わせは？',
+    answer: '本ツールの日本の血液型性格分類文化に基づく傾向値では、A型×O型・O型×B型などが補完関係として高いスコアになりやすい傾向があります。ただし、これは科学的に確認された相性ではなく、日本固有の文化的分類に基づく参考値です。実際の人間関係は個人の性格・価値観・コミュニケーションによって大きく変わります。',
+  },
+  {
+    question: '相性スコアが低くても仲良くなれますか？',
+    answer: 'もちろんです。スコアは日本の血液型性格分類文化における傾向値であり、科学的な相性測定ではありません。スコアが低いペアでも「お互いの違いを理解して成長できる関係」という視点で捉えることができます。本ツールでは成長ポイントとコミュニケーションヒントを参考に対話のきっかけとして活用することを推奨しています。',
+  },
+  {
+    question: '血液型相性の結果を採用・結婚判断に使っていいですか？',
+    answer: '推奨しません。日本心理学会（2014年）が「血液型と性格の統計的相関は確認されていない」と明言しているとおり、血液型のみで人の性格や相性を判断することは科学的な根拠がありません。採用・結婚・重要な人間関係の判断には、実際の対話・価値観の確認・信頼関係の構築を基準にしてください。',
+  },
+];
+
+const jsonLdFAQ = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  '@id': `${PAGE_URL}#faq`,
+  mainEntity: faqs.map(({ question, answer }) => ({
+    '@type': 'Question',
+    name: question,
+    acceptedAnswer: { '@type': 'Answer', text: answer },
+  })),
+};
+
+const jsonLdAll = [jsonLdWebApp, jsonLdBreadcrumb, jsonLdHowTo, jsonLdFAQ];
 ---
 
 <BaseLayout
@@ -240,6 +275,19 @@ const jsonLdAll = [jsonLdWebApp, jsonLdBreadcrumb, jsonLdHowTo];
           </p>
         </div>
       </div>
+    </section>
+
+    {/* ========== よくある質問 ========== */}
+    <section class="bct-section" aria-labelledby="bct-faq-h2">
+      <h2 id="bct-faq-h2" class="bct-h2">よくある質問（FAQ）</h2>
+      <dl class="bct-faq-list">
+        {faqs.map(({ question, answer }) => (
+          <div class="bct-faq-item">
+            <dt class="bct-faq-q">{question}</dt>
+            <dd class="bct-faq-a">{answer}</dd>
+          </div>
+        ))}
+      </dl>
     </section>
 
     {/* ========== 関連ナビ ========== */}
@@ -425,6 +473,50 @@ const jsonLdAll = [jsonLdWebApp, jsonLdBreadcrumb, jsonLdHowTo];
   .bct-guide-icon { font-size: 1.4rem; margin-bottom: 0.4rem; }
   .bct-guide-title { font-size: 0.92rem; font-weight: 700; margin: 0 0 0.4rem; }
   .bct-guide-body { font-size: 0.87rem; line-height: 1.65; color: var(--bct-text); margin: 0; }
+
+  /* ========== FAQ ========== */
+  .bct-faq-list {
+    margin: 1rem 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .bct-faq-item {
+    background: #fdf2f8;
+    border: 1px solid rgba(232, 67, 147, 0.2);
+    border-radius: var(--bct-radius);
+    padding: 1.25rem 1.5rem;
+  }
+  .bct-faq-q {
+    font-weight: 700;
+    font-size: 0.97rem;
+    color: var(--bct-text);
+    margin: 0 0 0.6rem;
+    padding-left: 1.5rem;
+    position: relative;
+  }
+  .bct-faq-q::before {
+    content: 'Q';
+    position: absolute;
+    left: 0;
+    color: var(--bct-primary);
+    font-weight: 900;
+  }
+  .bct-faq-a {
+    font-size: 0.875rem;
+    line-height: 1.75;
+    color: var(--bct-muted);
+    margin: 0;
+    padding-left: 1.5rem;
+    position: relative;
+  }
+  .bct-faq-a::before {
+    content: 'A';
+    position: absolute;
+    left: 0;
+    color: #059669;
+    font-weight: 900;
+  }
 
   .bct-nav-grid {
     display: grid;

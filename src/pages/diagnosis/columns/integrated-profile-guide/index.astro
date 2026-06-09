@@ -1,0 +1,879 @@
+---
+/**
+ * 8診断統合で本当の自分を知る：診断ナビの活用ガイド
+ * KW: 性格診断 統合 / 複数診断 組み合わせ / 自己理解 診断
+ * 確認日: 2026-06-10
+ */
+import BaseLayout from '../../../../layouts/BaseLayout.astro';
+import Container from '../../../../components/Container.astro';
+import TldrBlock from '../../../../components/TldrBlock.astro';
+import ReferenceList from '../../../../components/ReferenceList.astro';
+import ScienceNote from '../../../../components/ScienceNote.astro';
+
+const SITE_URL = 'https://shindan-navi.jp';
+const PAGE_URL = `${SITE_URL}/diagnosis/columns/integrated-profile-guide/`;
+const UPDATED_AT = '2026-06-10';
+
+const title = '8診断統合で本当の自分を知る：診断ナビ完全活用ガイド';
+const description =
+  'MBTI・DiSC・多重知能・ストレングスファインダー系など8つの診断を組み合わせた統合プロファイルの活用法を解説。単一診断の限界・統合の科学的根拠・職場/人間関係/学習への活用ステップを網羅。2026-06-10確認。';
+
+const jsonLdArticle = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  '@id': `${PAGE_URL}#article`,
+  headline: title,
+  description: description,
+  url: PAGE_URL,
+  datePublished: '2026-06-10',
+  dateModified: UPDATED_AT,
+  inLanguage: 'ja',
+  author: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+    name: '診断ナビ',
+    url: SITE_URL,
+  },
+  publisher: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+    name: '診断ナビ',
+    url: SITE_URL,
+  },
+};
+
+const faqs = [
+  {
+    question: '複数の診断を受けた場合、どれを信じればいいですか？',
+    answer:
+      'どれか1つを「正解」として信じるより、複数の診断が共通して指摘することに注目してください。例えばMBTIでINTPと出て、DiSCでもCタイプ（分析重視）と出た場合、「論理的・客観的に物事を考えることが得意」という傾向は、異なる測定軸が収束して示す高信頼性の情報です。診断ナビの統合プロファイル（/me/）では、8診断の結果を自動で統合して共通傾向を抽出します。',
+  },
+  {
+    question: '診断結果が矛盾していた場合はどう考えればいいですか？',
+    answer:
+      '矛盾は「測定している側面が違う」ことが原因です。MBTIはコミュニケーションスタイル、DiSCは行動傾向、多重知能は認知の強みと、それぞれ異なる切り口で人格・行動を測定します。例えばMBTIでE型（外向）なのにDiSCでS型（安定・内省的）の要素が強い場合、「場に出ていくのは好きだが、感情的な安定・周囲への配慮も大切にする」という複合的な像が浮かびます。矛盾は豊かさのサインです。',
+  },
+  {
+    question: '診断ナビの統合プロファイルとはなんですか？',
+    answer:
+      '診断ナビ（https://shindan-navi.jp/me/）が提供する機能で、受けた診断の結果を1ページに統合表示するものです。MBTI・DiSC・多重知能・血液型・友達相性・エニアグラム等の結果を並べ、共通する強み・課題・行動傾向をまとめて確認できます。追加登録不要・無料で利用可能です（2026-06-10時点）。',
+  },
+  {
+    question: '診断をビジネス・就活に活用するときの注意点は？',
+    answer:
+      '採用・昇進・異動の判断基準として診断結果を使うことは、各社の公式見解でも推奨されていません（MBTI：The Myers-Briggs Company、DiSC：Wiley社）。診断は「自己理解ツール」であり、「能力評価ツール」ではありません。就活の自己PRや職種選びの参考にする場合は、「自分の傾向を言語化するヒント」として使うのが適切です。',
+  },
+  {
+    question: '診断結果は定期的に更新すべきですか？',
+    answer:
+      'はい。特にMBTIとDiSCは環境・役割・ストレスレベルによって結果が変わることが研究で示されています（Pittenger 2005）。3〜6ヶ月おきに主要な診断を受け直して、変化した部分を記録することで、自己理解の精度が高まります。診断ナビでは同一アカウントで複数回の診断結果を保存し、変化の履歴を確認できます（/me/）。',
+  },
+];
+
+const jsonLdFAQ = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  '@id': `${PAGE_URL}#faq`,
+  mainEntity: faqs.map(({ question, answer }) => ({
+    '@type': 'Question',
+    name: question,
+    acceptedAnswer: { '@type': 'Answer', text: answer },
+  })),
+};
+
+const jsonLdBreadcrumb = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'ホーム', item: SITE_URL },
+    { '@type': 'ListItem', position: 2, name: '診断一覧', item: `${SITE_URL}/diagnosis/` },
+    { '@type': 'ListItem', position: 3, name: 'コラム', item: `${SITE_URL}/diagnosis/columns/` },
+    { '@type': 'ListItem', position: 4, name: '8診断統合ガイド', item: PAGE_URL },
+  ],
+};
+
+const jsonLdAll = [jsonLdArticle, jsonLdFAQ, jsonLdBreadcrumb];
+
+const diagnoses = [
+  {
+    id: 'mbti',
+    name: 'MBTI（16タイプ）',
+    axis: 'コミュニケーション・情報処理スタイル',
+    strength: 'E/I・S/N・T/F・J/P の4軸で「情報の受け取り方・処理の仕方」を測定',
+    limit: '再テスト信頼性が約50%（Pittenger 2005）。気分・状況による変動が大きい',
+    useFor: '自分と他者のコミュニケーションの違いを理解する',
+    url: '/diagnosis/mbti/',
+  },
+  {
+    id: 'disc',
+    name: 'DiSC®（4タイプ）',
+    axis: '行動傾向・対人スタイル',
+    strength: 'D（主導）/ i（影響）/ S（安定）/ C（慎重）の4軸で「職場での行動パターン」を測定',
+    limit: '内面の動機・感情の深部には踏み込まない。状況依存が大きい',
+    useFor: '職場でのコミュニケーション・チーム内の役割分担',
+    url: '/diagnosis/disc/',
+  },
+  {
+    id: 'multiple-intelligence',
+    name: '多重知能（8種の知性）',
+    axis: '認知の強み・学習スタイル',
+    strength: 'Howard Gardner（1983）の理論。言語・論理数学・空間など8種の知的強みを可視化',
+    limit: '知能の「強み」であり、人格・行動スタイルとは別物',
+    useFor: '学習方法の最適化・得意分野への誘導・キャリア選択の参考',
+    url: '/diagnosis/multiple-intelligence/',
+  },
+  {
+    id: 'blood-type',
+    name: '血液型性格（4タイプ）',
+    axis: '文化的・社会的な自己理解の枠組み',
+    strength: '日本文化圏での自己開示・コミュニケーションのアイスブレーク',
+    limit: '科学的相関は認められていない（日本心理学会 2014）。参考程度での使用が適切',
+    useFor: '軽いコミュニケーション・文化的な自己理解',
+    url: '/diagnosis/columns/blood-type-personality-science/',
+  },
+  {
+    id: 'friend-compatibility',
+    name: '友達相性（6タイプ）',
+    axis: '対人関係スタイル・友情の維持パターン',
+    strength: '友人関係での行動傾向・関係構築のパターンを6タイプで分類',
+    limit: '診断ナビ独自の分類。学術的な標準化検証は継続中',
+    useFor: '友人関係の改善・相手に合わせたコミュニケーション',
+    url: '/diagnosis/columns/friend-compatibility-tips/',
+  },
+];
+
+const useCases = [
+  {
+    situation: '就職・転職活動',
+    recommendation: 'MBTI + DiSC + 多重知能',
+    how: [
+      'MBTIで「自分が得意とするコミュニケーションスタイル」を言語化',
+      'DiSCで「職場でどんな役割を自然に担うか」を確認',
+      '多重知能で「自分の認知の強みが活きる職種・業界」を絞り込む',
+    ],
+    note: '採用判断の根拠に使われるのはNGです。あくまで「自己PRの言語化」に使ってください。',
+  },
+  {
+    situation: '人間関係の改善',
+    recommendation: 'DiSC + MBTI + 友達相性',
+    how: [
+      'DiSCで「相手と自分の行動スタイルの差」を把握し摩擦の原因を理解',
+      'MBTIで「相手がどのように情報を処理するか」を理解',
+      '友達相性タイプで「関係を深めるためのアクション」を選択',
+    ],
+    note: '相手に診断を強要しないこと。自分の理解のために使う姿勢が大切です。',
+  },
+  {
+    situation: '学習・スキルアップ',
+    recommendation: '多重知能 + MBTI',
+    how: [
+      '多重知能で「自分はどのような学習形式が得意か」を把握（視覚型/言語型/身体型など）',
+      'MBTIで「S/N・J/P」を確認：S型は具体的・手順的学習が得意、N型は概念的理解から入ると吸収が早い',
+    ],
+    note: '学習スタイルは状況によって変わります。固定的に考えないことが大切です。',
+  },
+  {
+    situation: 'ストレスマネジメント',
+    recommendation: 'DiSC + MBTI',
+    how: [
+      'DiSCの「ストレス下の行動」を確認してリスクサインを把握',
+      'MBTI（J/P軸）で「環境のコントロール感の必要度」を理解：J型は不確実性がストレスになりやすい',
+    ],
+    note: 'ストレスの原因が複雑な場合は、心療内科・カウンセラーへの相談を優先してください。',
+  },
+];
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  canonical={PAGE_URL}
+  jsonLd={jsonLdAll}
+  ogType="article"
+  publishDate="2026-06-10"
+  lastUpdated={UPDATED_AT}
+  breadcrumbs={[
+    { name: '診断一覧', url: '/diagnosis/' },
+    { name: 'コラム', url: '/diagnosis/columns/' },
+    { name: '8診断統合ガイド', url: '/diagnosis/columns/integrated-profile-guide/' },
+  ]}
+>
+  <section class="ipg-hero" aria-labelledby="ipg-h1">
+    <Container>
+      <div class="ipg-hero-inner">
+        <p class="ipg-hero-badge">診断ナビ 完全活用ガイド | 全8診断対応 | 2026-06-10 確認</p>
+        <h1 id="ipg-h1" class="ipg-h1">8診断統合で本当の自分を知る</h1>
+        <p class="ipg-hero-sub">MBTI・DiSC・多重知能などを組み合わせた統合プロファイルで、単一診断では見えなかった自分の全体像をつかみます。</p>
+        <div class="ipg-hero-tags">
+          <span class="ipg-tag">単一診断の限界を超える</span>
+          <span class="ipg-tag">8診断の活用法</span>
+          <span class="ipg-tag">4シーン別組み合わせ</span>
+          <span class="ipg-tag">FAQ 5問</span>
+        </div>
+        <a href="/me/" class="ipg-hero-cta">統合プロファイルを見る（無料・登録不要）</a>
+      </div>
+    </Container>
+  </section>
+
+  <Container>
+    <TldrBlock
+      title="このページでわかること"
+      points={[
+        "単一診断の限界：MBTIの再テスト一致率は約50%（Pittenger 2005）。1つの診断を「正解」として使うリスクと回避方法",
+        "8診断それぞれが測定する「側面」の違い：MBTI=コミュニケーション、DiSC=行動、多重知能=認知の強みなど",
+        "4シーン別の活用法（転職・人間関係・学習・ストレス）と統合プロファイル(/me/)の使い方",
+      ]}
+      updatedAt={UPDATED_AT}
+      sourceLabel="診断ナビ 統合プロファイル"
+      sourceUrl="https://shindan-navi.jp/me/"
+    />
+
+    <section class="ipg-section" aria-labelledby="ipg-limit-h2">
+      <h2 id="ipg-limit-h2" class="ipg-h2">単一診断の限界：1つの診断で「本当の自分」は見えない</h2>
+      <p class="ipg-lead">
+        「MBTIで INFJ と出たから、これが本当の自分だ」と思ったことはありませんか。
+        しかし心理測定学の研究は、この考え方に注意を促しています。
+      </p>
+      <div class="ipg-limit-grid">
+        <div class="ipg-limit-card">
+          <h3 class="ipg-limit-title">問題1: 再テスト信頼性の低さ</h3>
+          <p class="ipg-limit-desc">
+            Pittenger（2005, Journal of Career Assessment 13(4)）の研究では、
+            MBTIを5週間以内に再受験すると、<strong>約50%の人が1軸以上のタイプが変わる</strong>ことが報告されています。
+            これは「気分・体調・社会的望ましさバイアス」の影響です。
+          </p>
+        </div>
+        <div class="ipg-limit-card">
+          <h3 class="ipg-limit-title">問題2: 測定できる側面が限定的</h3>
+          <p class="ipg-limit-desc">
+            MBTIはコミュニケーションスタイルを測りますが、
+            行動傾向（DiSCの得意分野）・認知の強み（多重知能の得意分野）・
+            対人関係の構築パターン（友達相性の得意分野）は測定できません。
+            人の行動は多軸で動いています。
+          </p>
+        </div>
+        <div class="ipg-limit-card">
+          <h3 class="ipg-limit-title">問題3: バーナム効果によるバイアス</h3>
+          <p class="ipg-limit-desc">
+            どんな診断でも「当たっている」と感じやすいのは、
+            記述が「誰にでも当てはまる一般的な表現」で書かれているためです（バーナム効果）。
+            複数の診断を比較することで、この効果を相殺できます。
+          </p>
+        </div>
+      </div>
+      <div class="ipg-solution-box">
+        <strong class="ipg-solution-label">解決策</strong>
+        <p class="ipg-solution-text">
+          複数の診断を受けて「共通して指摘される傾向」に注目する。
+          異なる測定軸が同じ傾向を示したときこそ、信頼性の高い自己理解の情報です。
+          診断ナビの<a href="/me/">統合プロファイル</a>は、この原則に基づいて設計されています。
+        </p>
+      </div>
+    </section>
+
+    <section class="ipg-section" aria-labelledby="ipg-diagnoses-h2">
+      <h2 id="ipg-diagnoses-h2" class="ipg-h2">診断ナビの8診断：それぞれが測定する「側面」</h2>
+      <p class="ipg-lead">
+        各診断は「異なる窓」から自分を見ています。
+        どの窓で何が見えるかを知ることが、統合活用の第一歩です。
+      </p>
+      <div class="ipg-diag-grid">
+        {diagnoses.map((d) => (
+          <div class="ipg-diag-card">
+            <h3 class="ipg-diag-name">
+              <a href={d.url} class="ipg-diag-link">{d.name}</a>
+            </h3>
+            <p class="ipg-diag-axis"><strong>測定軸：</strong>{d.axis}</p>
+            <p class="ipg-diag-strength"><strong>得意なこと：</strong>{d.strength}</p>
+            <p class="ipg-diag-limit"><strong>限界：</strong>{d.limit}</p>
+            <p class="ipg-diag-use"><strong>活用シーン：</strong>{d.useFor}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="ipg-section" aria-labelledby="ipg-usecase-h2">
+      <h2 id="ipg-usecase-h2" class="ipg-h2">4シーン別：最適な診断の組み合わせと使い方</h2>
+      <p class="ipg-lead">
+        「どの診断を組み合わせてどう使うか」をシーン別に整理します。
+        「全部受けてから考える」より「まず目的を決めて組み合わせを選ぶ」ほうが、活用精度が上がります。
+      </p>
+      <div class="ipg-usecase-list">
+        {useCases.map((uc, i) => (
+          <div class="ipg-usecase-card">
+            <div class="ipg-usecase-header">
+              <span class="ipg-usecase-num">{String(i + 1).padStart(2, '0')}</span>
+              <h3 class="ipg-usecase-title">{uc.situation}</h3>
+              <span class="ipg-usecase-combo">{uc.recommendation}</span>
+            </div>
+            <ol class="ipg-usecase-steps">
+              {uc.how.map((step) => (
+                <li class="ipg-usecase-step">{step}</li>
+              ))}
+            </ol>
+            <p class="ipg-usecase-note">
+              <strong>注意：</strong>{uc.note}
+            </p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="ipg-section" aria-labelledby="ipg-profile-h2">
+      <h2 id="ipg-profile-h2" class="ipg-h2">統合プロファイルの使い方：3ステップ</h2>
+      <p class="ipg-lead">
+        診断ナビの統合プロファイル（<a href="/me/">/me/</a>）で、受けた診断を一元管理できます。
+        以下の3ステップで活用してください。
+      </p>
+      <ol class="ipg-steps">
+        <li class="ipg-step-item">
+          <span class="ipg-step-num">Step 1</span>
+          <div class="ipg-step-body">
+            <h3 class="ipg-step-title">最低3つの診断を受ける</h3>
+            <p class="ipg-step-desc">
+              MBTI・DiSC・多重知能の3つをまず受けてください。
+              これで「コミュニケーション・行動・認知」の3軸がカバーされます。
+              各診断は登録不要・無料で受けられます（2026-06-10時点）。
+            </p>
+          </div>
+        </li>
+        <li class="ipg-step-item">
+          <span class="ipg-step-num">Step 2</span>
+          <div class="ipg-step-body">
+            <h3 class="ipg-step-title">統合プロファイルで共通傾向を確認する</h3>
+            <p class="ipg-step-desc">
+              <a href="/me/">/me/</a> にアクセスして、受けた診断の結果を統合表示します。
+              「複数の診断が共通して示す傾向」が、信頼度の高い自己理解データです。
+              矛盾する部分は「測定軸の違い」として記録しておきます。
+            </p>
+          </div>
+        </li>
+        <li class="ipg-step-item">
+          <span class="ipg-step-num">Step 3</span>
+          <div class="ipg-step-body">
+            <h3 class="ipg-step-title">3〜6ヶ月おきに更新する</h3>
+            <p class="ipg-step-desc">
+              MBTIは特に環境変化の影響を受けやすいため、定期的な再受験をおすすめします。
+              「3ヶ月前と今の自分の違い」を比較することで、
+              自己成長のプロセスを可視化できます。
+            </p>
+          </div>
+        </li>
+      </ol>
+    </section>
+
+    <section class="ipg-section" aria-labelledby="ipg-convergence-h2">
+      <h2 id="ipg-convergence-h2" class="ipg-h2">統合で見えてくる「収束パターン」の例</h2>
+      <p class="ipg-lead">
+        複数の診断を組み合わせると、単独では見えなかった傾向が「収束」として浮かび上がります。
+        以下は代表的なパターン例です。
+      </p>
+      <div class="ipg-conv-table-wrap">
+        <table class="ipg-conv-table">
+          <caption class="ipg-table-caption">診断収束パターン例（2026-06-10時点）</caption>
+          <thead>
+            <tr>
+              <th scope="col">MBTI</th>
+              <th scope="col">DiSC</th>
+              <th scope="col">多重知能（強み）</th>
+              <th scope="col">収束する自己理解</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>INTJ（内向・直観・思考・判断）</td>
+              <td>Cタイプ（慎重・分析型）</td>
+              <td>論理数学的知性・言語的知性</td>
+              <td>「独立して深く考え、体系的に問題を解く」傾向が強い</td>
+            </tr>
+            <tr>
+              <td>ENFJ（外向・直観・感情・判断）</td>
+              <td>iタイプ（影響・人間関係型）</td>
+              <td>対人的知性・言語的知性</td>
+              <td>「人を動かし、ビジョンで引っ張る」傾向が強い</td>
+            </tr>
+            <tr>
+              <td>ISFP（内向・感覚・感情・知覚）</td>
+              <td>Sタイプ（安定・サポート型）</td>
+              <td>空間的知性・身体運動的知性</td>
+              <td>「個人のペースで感性を活かして丁寧に作る」傾向が強い</td>
+            </tr>
+            <tr>
+              <td>ESTP（外向・感覚・思考・知覚）</td>
+              <td>Dタイプ（主導・行動型）</td>
+              <td>身体運動的知性・対人的知性</td>
+              <td>「その場で素早く判断して行動する」傾向が強い</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="ipg-note">
+        これらは例示であり、実際の診断結果は個人によって異なります。
+        各診断の測定誤差・文化バイアスを踏まえた上で参考にしてください。
+      </p>
+    </section>
+
+    <section class="ipg-section" aria-labelledby="ipg-faq-h2">
+      <h2 id="ipg-faq-h2" class="ipg-h2">よくある質問（FAQ）</h2>
+      <dl class="ipg-faq-list">
+        {faqs.map(({ question, answer }) => (
+          <div class="ipg-faq-item">
+            <dt class="ipg-faq-q">{question}</dt>
+            <dd class="ipg-faq-a">{answer}</dd>
+          </div>
+        ))}
+      </dl>
+    </section>
+
+    <ScienceNote
+      basisText="Howard Gardner (1983) Frames of Mind（Basic Books）+ Carl Jung (1921) Psychological Types（Princeton University Press）+ Pittenger DJ (2005) Cautionary Comments Regarding the Myers-Briggs Type Indicator（Journal of Career Assessment 13(4)）。各診断の科学的根拠は個別ページを参照。"
+      basisUrl="https://shindan-navi.jp/me/"
+      basisLabel="診断ナビ 統合プロファイル"
+      notMedical={true}
+      updatedAt={UPDATED_AT}
+      additionalNote="本ページで紹介するすべての診断は「自己理解ツール」です。医療診断・採用評価・法的判断の根拠としての使用は推奨しません。科学的相関は診断ごとに異なります。詳細は各診断ページの「学術根拠」セクションを参照してください。"
+    />
+
+    <section class="ipg-section" aria-labelledby="ipg-links-h2">
+      <h2 id="ipg-links-h2" class="ipg-h2">各診断ページへのリンク</h2>
+      <ul class="ipg-link-grid">
+        <li>
+          <a href="/diagnosis/mbti/" class="ipg-diag-nav-link">
+            <span class="ipg-diag-nav-title">MBTI診断【16タイプ・無料】</span>
+            <span class="ipg-diag-nav-desc">コミュニケーション・情報処理スタイル</span>
+          </a>
+        </li>
+        <li>
+          <a href="/diagnosis/disc/" class="ipg-diag-nav-link">
+            <span class="ipg-diag-nav-title">DiSC&#174;診断【4タイプ・無料】</span>
+            <span class="ipg-diag-nav-desc">職場での行動傾向・対人スタイル</span>
+          </a>
+        </li>
+        <li>
+          <a href="/diagnosis/multiple-intelligence/" class="ipg-diag-nav-link">
+            <span class="ipg-diag-nav-title">多重知能診断【8種の知性・無料】</span>
+            <span class="ipg-diag-nav-desc">認知の強み・学習スタイル</span>
+          </a>
+        </li>
+        <li>
+          <a href="/diagnosis/columns/mbti-compatibility-real/" class="ipg-diag-nav-link">
+            <span class="ipg-diag-nav-title">MBTI相性は本当に当たる？</span>
+            <span class="ipg-diag-nav-desc">16×16相性表の科学的根拠と限界</span>
+          </a>
+        </li>
+        <li>
+          <a href="/diagnosis/columns/disc-behavior-psychology/" class="ipg-diag-nav-link">
+            <span class="ipg-diag-nav-title">DiSC理論と行動心理学</span>
+            <span class="ipg-diag-nav-desc">Marston博士から現代まで</span>
+          </a>
+        </li>
+        <li>
+          <a href="/diagnosis/columns/blood-type-personality-science/" class="ipg-diag-nav-link">
+            <span class="ipg-diag-nav-title">血液型と性格の科学的見解</span>
+            <span class="ipg-diag-nav-desc">古川竹二から現代心理学まで</span>
+          </a>
+        </li>
+        <li>
+          <a href="/diagnosis/columns/mbti-changes-over-time/" class="ipg-diag-nav-link">
+            <span class="ipg-diag-nav-title">MBTIタイプは変わる？</span>
+            <span class="ipg-diag-nav-desc">年齢・環境による変化の科学的見解</span>
+          </a>
+        </li>
+        <li>
+          <a href="/me/" class="ipg-diag-nav-link ipg-diag-nav-link--highlight">
+            <span class="ipg-diag-nav-title">統合プロファイルを開く</span>
+            <span class="ipg-diag-nav-desc">受けた診断を一元管理（無料・登録不要）</span>
+          </a>
+        </li>
+      </ul>
+    </section>
+
+    <ReferenceList
+      references={[
+        {
+          title: 'Frames of Mind: The Theory of Multiple Intelligences',
+          author: 'Gardner H',
+          year: 1983,
+          publisher: 'Basic Books',
+          url: 'https://www.basicbooks.com/titles/howard-e-gardner/frames-of-mind/9780465024339/',
+        },
+        {
+          title: 'Psychological Types (Collected Works of C.G. Jung, Vol. 6)',
+          author: 'Jung CG',
+          year: 1921,
+          publisher: 'Princeton University Press',
+          url: 'https://press.princeton.edu/books/paperback/9780691018133/psychological-types',
+        },
+        {
+          title: 'Cautionary Comments Regarding the Myers-Briggs Type Indicator',
+          author: 'Pittenger DJ',
+          year: 2005,
+          publisher: 'Journal of Career Assessment, 13(4), 441-457',
+          url: 'https://doi.org/10.1177/1069072705275416',
+        },
+        {
+          title: 'The Myers-Briggs Company 公式サイト',
+          author: 'The Myers-Briggs Company',
+          year: 2024,
+          url: 'https://www.themyersbriggs.com/',
+        },
+        {
+          title: '日本心理学会「血液型と性格の無関連性」公式サイト',
+          author: '日本心理学会',
+          year: 2014,
+          url: 'https://psych.or.jp/interest/ff-04/',
+        },
+      ]}
+      confirmedAt={UPDATED_AT}
+    />
+  </Container>
+</BaseLayout>
+
+<style>
+.ipg-hero {
+  background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 40%, #065f46 100%);
+  color: #fff;
+  padding-block: 2.5rem 3rem;
+  text-align: center;
+}
+.ipg-hero-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.875rem;
+}
+.ipg-hero-badge {
+  display: inline-block;
+  background: rgba(255 255 255 / 0.15);
+  border: 1px solid rgba(255 255 255 / 0.3);
+  border-radius: 2rem;
+  padding: 0.25rem 1rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.03em;
+}
+.ipg-h1 {
+  font-size: clamp(1.4rem, 4vw, 2.2rem);
+  font-family: var(--sn-font-rounded, sans-serif);
+  font-weight: 700;
+  margin: 0;
+  line-height: 1.3;
+}
+.ipg-hero-sub {
+  font-size: clamp(0.83rem, 2.2vw, 0.95rem);
+  opacity: 0.9;
+  margin: 0;
+  line-height: 1.6;
+  max-width: 600px;
+}
+.ipg-hero-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+}
+.ipg-tag {
+  background: rgba(255 255 255 / 0.2);
+  border: 1px solid rgba(255 255 255 / 0.35);
+  border-radius: 1rem;
+  padding: 0.2rem 0.75rem;
+  font-size: 0.75rem;
+}
+.ipg-hero-cta {
+  display: inline-block;
+  background: #10b981;
+  color: #fff;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 0.75rem 2rem;
+  border-radius: 2rem;
+  transition: background 0.15s;
+  margin-top: 0.25rem;
+}
+.ipg-hero-cta:hover { background: #059669; }
+.ipg-section { margin-block: 3rem; }
+.ipg-h2 {
+  font-size: clamp(1.1rem, 3vw, 1.5rem);
+  font-family: var(--sn-font-rounded, sans-serif);
+  font-weight: 700;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #10b981;
+}
+.ipg-lead {
+  font-size: 1rem;
+  line-height: 1.8;
+  margin-bottom: 1.25rem;
+  color: #374151;
+}
+.ipg-note {
+  font-size: 0.82rem;
+  color: #6b7280;
+  margin-top: 0.75rem;
+  line-height: 1.6;
+}
+.ipg-table-caption {
+  font-size: 0.78rem;
+  color: #6b7280;
+  text-align: left;
+  padding: 0.25rem 0 0.5rem;
+}
+.ipg-limit-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+@media (max-width: 640px) { .ipg-limit-grid { grid-template-columns: 1fr; } }
+.ipg-limit-card {
+  background: #fff1f2;
+  border: 1px solid #fecdd3;
+  border-left: 4px solid #f43f5e;
+  border-radius: 0 0.75rem 0.75rem 0;
+  padding: 1.25rem;
+}
+.ipg-limit-title {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #9f1239;
+  margin: 0 0 0.5rem;
+}
+.ipg-limit-desc {
+  font-size: 0.875rem;
+  line-height: 1.7;
+  margin: 0;
+  color: #374151;
+}
+.ipg-solution-box {
+  background: #ecfdf5;
+  border: 1px solid #6ee7b7;
+  border-left: 4px solid #10b981;
+  border-radius: 0 0.75rem 0.75rem 0;
+  padding: 1.25rem;
+  margin-top: 1.25rem;
+}
+.ipg-solution-label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #065f46;
+  margin-bottom: 0.5rem;
+}
+.ipg-solution-text {
+  font-size: 0.9rem;
+  line-height: 1.7;
+  margin: 0;
+  color: #374151;
+}
+.ipg-diag-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+@media (max-width: 640px) { .ipg-diag-grid { grid-template-columns: 1fr; } }
+.ipg-diag-card {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.ipg-diag-name {
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 0 0 0.25rem;
+}
+.ipg-diag-link { color: #0f172a; text-decoration: none; }
+.ipg-diag-link:hover { text-decoration: underline; color: #10b981; }
+.ipg-diag-axis,
+.ipg-diag-strength,
+.ipg-diag-limit,
+.ipg-diag-use {
+  font-size: 0.83rem;
+  line-height: 1.6;
+  margin: 0;
+  color: #4b5563;
+}
+.ipg-usecase-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  margin-top: 1.25rem;
+}
+.ipg-usecase-card {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+.ipg-usecase-header {
+  background: #0f172a;
+  color: #fff;
+  padding: 0.875rem 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.ipg-usecase-num {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #10b981;
+  flex-shrink: 0;
+}
+.ipg-usecase-title {
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 0;
+  flex: 1;
+}
+.ipg-usecase-combo {
+  font-size: 0.78rem;
+  background: rgba(16 185 129 / 0.2);
+  border: 1px solid rgba(16 185 129 / 0.4);
+  border-radius: 1rem;
+  padding: 0.15rem 0.625rem;
+  white-space: nowrap;
+}
+.ipg-usecase-steps {
+  padding: 1rem 1.25rem 0.5rem;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.ipg-usecase-step {
+  font-size: 0.875rem;
+  line-height: 1.7;
+  color: #374151;
+}
+.ipg-usecase-note {
+  font-size: 0.8rem;
+  color: #6b7280;
+  padding: 0.5rem 1.25rem 1rem;
+  margin: 0;
+  line-height: 1.6;
+}
+.ipg-steps {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  counter-reset: none;
+}
+.ipg-step-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1.25rem;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+}
+.ipg-step-num {
+  flex-shrink: 0;
+  background: #10b981;
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+}
+.ipg-step-body { flex: 1; }
+.ipg-step-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin: 0 0 0.4rem;
+}
+.ipg-step-desc {
+  font-size: 0.875rem;
+  line-height: 1.7;
+  margin: 0;
+  color: #4b5563;
+}
+.ipg-conv-table-wrap { overflow-x: auto; margin-top: 1.25rem; }
+.ipg-conv-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+  min-width: 600px;
+}
+.ipg-conv-table th,
+.ipg-conv-table td {
+  padding: 0.6rem 0.875rem;
+  border: 1px solid #e5e7eb;
+  text-align: left;
+  vertical-align: top;
+  line-height: 1.5;
+}
+.ipg-conv-table thead th {
+  background: #0f172a;
+  color: #fff;
+  font-weight: 600;
+}
+.ipg-conv-table tbody tr:nth-child(even) { background: #f9fafb; }
+.ipg-faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+.ipg-faq-item {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+.ipg-faq-q {
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 0.875rem 1.25rem;
+  background: #f0fdf4;
+  margin: 0;
+  display: block;
+}
+.ipg-faq-q::before { content: 'Q. '; color: #10b981; }
+.ipg-faq-a {
+  font-size: 0.875rem;
+  line-height: 1.75;
+  padding: 0.875rem 1.25rem;
+  margin: 0;
+  color: #4b5563;
+}
+.ipg-faq-a::before {
+  content: 'A. ';
+  font-weight: 700;
+  color: #16a34a;
+}
+.ipg-link-grid {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+@media (max-width: 600px) { .ipg-link-grid { grid-template-columns: 1fr; } }
+.ipg-diag-nav-link {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding: 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.15s;
+  height: 100%;
+}
+.ipg-diag-nav-link:hover { border-color: #10b981; }
+.ipg-diag-nav-link--highlight {
+  background: #ecfdf5;
+  border-color: #6ee7b7;
+}
+.ipg-diag-nav-title { font-weight: 700; font-size: 0.9rem; }
+.ipg-diag-nav-desc { font-size: 0.78rem; color: var(--sn-muted, #6b7280); }
+</style>

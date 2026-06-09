@@ -9,7 +9,7 @@
  * 確認日: 2026-05-20
  *
  * SEO/AIO対応:
- * - JSON-LD: WebApplication + BreadcrumbList + HowTo
+ * - JSON-LD: WebApplication + BreadcrumbList + HowTo + FAQPage
  * - React Island: MbtiCompatTool（client:load）
  * - URL パラメータ連動（?t1=INTJ&t2=ENFP）
  * - YMYL回避: 医学的診断・治療表記ゼロ
@@ -106,7 +106,42 @@ const jsonLdHowTo = {
   ],
 };
 
-const jsonLdAll = [jsonLdWebApp, jsonLdBreadcrumb, jsonLdHowTo];
+// FAQ（5問・AI Overview最適化・Beebe 2017 / Keirsey 1998 / Jung 1921 根拠付き）
+const faqs = [
+  {
+    question: 'MBTI相性診断ツールの使い方は？',
+    answer: '2つのMBTIタイプをドロップダウンから選び「相性を見る」をタップするだけです。タイプ1に自分のMBTIタイプ、タイプ2に相性を調べたい相手のタイプを選択すると、相性スコア（0〜100点）・カテゴリ・仕事相性・恋愛相性・成長ポイント・コミュニケーションヒントが即座に表示されます。登録不要・無料で利用できます。',
+  },
+  {
+    question: 'MBTI相性スコアはどう計算されますか？',
+    answer: '機能スタック整合度（30点）・Keirsey気質一致（20点）・4文字中の一致数（20点）・J/P補完性（15点）・E/Iバランス（15点）の5軸合計100点で算出しています。90点以上をソウルメイト型・70〜89点を良好型・50〜69点をバランス型・30〜49点を成長機会型・29点以下を最大成長機会型と分類しています。Beebe（2017）機能スタック理論・Keirsey（1998）気質理論に基づきます。',
+  },
+  {
+    question: 'MBTI相性で最も高いスコアになりやすい組み合わせは？',
+    answer: '機能スタック理論（Beebe 2017）では、互いの主機能と劣等機能が補完し合うペアが高い相性スコアになりやすい傾向があります。代表例としてINFJ×ENTPやINTJ×ENFPが挙げられますが、個人差・関係の深さ・環境によって実際の相性は大きく異なります。全256組み合わせはこのツールで確認できます。',
+  },
+  {
+    question: '相性結果をURLで友達に共有できますか？',
+    answer: 'はい。結果が表示された後、URLに選択したタイプ情報（例: ?t1=INTJ&t2=ENFP）が自動で付加されます。そのURLをコピーしてLINEやSNSで送ると、相手が同じURLを開いたとき同じ相性結果を即座に確認できます。シェアボタン（X・LINE・URLコピー）も結果画面に表示されます。',
+  },
+  {
+    question: '相性スコアが低いペアは絶対うまくいかないのですか？',
+    answer: 'そうではありません。Jung（1921）の個性化理論では、最も異なる認知スタイルを持つ相手から最大の気づきと成長が得られると述べています。スコアが低いペアを「最大成長機会型」と表現しているのはこのためです。コミュニケーションの意識的な努力が必要ですが、深い相互理解に至れば強力な補完関係になれます。',
+  },
+];
+
+const jsonLdFAQ = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  '@id': `${PAGE_URL}#faq`,
+  mainEntity: faqs.map(({ question, answer }) => ({
+    '@type': 'Question',
+    name: question,
+    acceptedAnswer: { '@type': 'Answer', text: answer },
+  })),
+};
+
+const jsonLdAll = [jsonLdWebApp, jsonLdBreadcrumb, jsonLdHowTo, jsonLdFAQ];
 
 // よく見られる相性ペア TOP5
 const popularPairs = [
@@ -314,6 +349,19 @@ const popularPairs = [
           <li>MBTI® は The Myers-Briggs Company の登録商標です。</li>
         </ul>
       </div>
+    </section>
+
+    {/* ========== よくある質問 ========== */}
+    <section class="mct-section" aria-labelledby="mct-faq-h2">
+      <h2 id="mct-faq-h2" class="mct-h2">よくある質問（FAQ）</h2>
+      <dl class="mct-faq-list">
+        {faqs.map(({ question, answer }) => (
+          <div class="mct-faq-item">
+            <dt class="mct-faq-q">{question}</dt>
+            <dd class="mct-faq-a">{answer}</dd>
+          </div>
+        ))}
+      </dl>
     </section>
 
     {/* ========== 関連リンク ========== */}
@@ -604,6 +652,50 @@ const popularPairs = [
   font-size: 0.875rem;
   line-height: 1.6;
   color: #92400e;
+}
+
+/* ========== FAQ ========== */
+.mct-faq-list {
+  margin: 1rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.mct-faq-item {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 1.25rem 1.5rem;
+}
+.mct-faq-q {
+  font-weight: 700;
+  font-size: 0.97rem;
+  color: #374151;
+  margin: 0 0 0.6rem;
+  padding-left: 1.5rem;
+  position: relative;
+}
+.mct-faq-q::before {
+  content: 'Q';
+  position: absolute;
+  left: 0;
+  color: #6d28d9;
+  font-weight: 900;
+}
+.mct-faq-a {
+  font-size: 0.875rem;
+  line-height: 1.75;
+  color: #4b5563;
+  margin: 0;
+  padding-left: 1.5rem;
+  position: relative;
+}
+.mct-faq-a::before {
+  content: 'A';
+  position: absolute;
+  left: 0;
+  color: #059669;
+  font-weight: 900;
 }
 
 /* ========== 関連リンク ========== */

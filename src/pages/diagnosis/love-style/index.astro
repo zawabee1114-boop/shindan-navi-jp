@@ -20,6 +20,7 @@ import { questions } from '../../../data/diagnoses/love-style/questions';
 import { calculateResultTypeId } from '../../../data/diagnoses/love-style/results';
 import TldrBlock from '../../../components/TldrBlock.astro';
 import ReferenceList from '../../../components/ReferenceList.astro';
+import ScienceNote from '../../../components/ScienceNote.astro';
 
 const SITE_URL = 'https://shindan-navi.jp';
 const PAGE_URL = `${SITE_URL}/diagnosis/love-style/`;
@@ -511,7 +512,7 @@ const lifeImpacts = [
 
     {/* ========== 参考文献・根拠 ========== */}
     <section class="ls-section" aria-labelledby="ls-science-h2">
-      <h2 id="ls-science-h2" class="ls-h2">診断の根拠・参考文献</h2>
+      <h2 id="ls-science-h2" class="ls-h2">この診断の学術的背景</h2>
       <p class="ls-lead">
         本診断はJ.A.Lee（1973）の恋愛スタイル理論とHendrick & Hendrick（1986）のLove Attitudes Scaleをもとに設計した自己理解ツールです。
         傾向把握のための参考情報であり、医学的・臨床的な診断ではありません。
@@ -613,12 +614,16 @@ const lifeImpacts = [
       </dl>
     </section>
 
-    {/* ========== 学術注記 ========== */}
-    <p class="ls-academic-note">
-      本診断は J.A.Lee（1973）「Colours of Love」および Hendrick & Hendrick（1986）Love Attitudes Scale に基づく自己理解ツールです。
-      医学的・臨床的な診断ではありません。感情型（Mania）は恋愛への真剣さの傾向を示すスタイル分類であり、医学的な依存症・精神障害とは異なります。
-      確認日: 2026-05-21。
-    </p>
+    {/* ========== ScienceNote ========== */}
+    <ScienceNote
+      basisText="J.A.Lee（1973）'Colours of Love'・Hendrick & Hendrick（1986）Love Attitudes Scale (LAS)・Sternberg RJ（1986）'A triangular theory of love' Psychological Review 93(2)を参照"
+      basisUrl="https://doi.org/10.1037/0022-3514.50.2.392"
+      basisLabel="Hendrick & Hendrick（1986）JPSP"
+      notMedical={true}
+      updatedAt={meta.updatedAt}
+      additionalNote="感情型（Mania）は恋愛への真剣さの傾向を示すスタイル分類であり、医学的な依存症・精神障害とは異なります。恋愛スタイルは固定的なものではなく、相手や状況によって変化します。"
+    />
+
     {/* ========== 参考文献リスト（AIO/LLMO E-E-A-T強化） ========== */}
     <ReferenceList references={meta.references} confirmedAt={meta.updatedAt} />
 

@@ -1,0 +1,875 @@
+---
+/**
+ * DiSC理論と行動心理学：Marston博士から現代まで
+ * KW: disc 行動心理学 / DiSC 理論 / Marston DiSC 歴史
+ * 学術根拠: Marston (1928) + Clarke (1956) + Geier (1970s) + Wiley (2024)
+ * 確認日: 2026-06-10
+ *
+ * DiSC® はJohn Wiley & Sons, Inc. の登録商標。
+ * 本ページはWiley社の公式アセスメントではありません。
+ */
+import BaseLayout from '../../../../layouts/BaseLayout.astro';
+import Container from '../../../../components/Container.astro';
+import TldrBlock from '../../../../components/TldrBlock.astro';
+import ReferenceList from '../../../../components/ReferenceList.astro';
+import ScienceNote from '../../../../components/ScienceNote.astro';
+
+const SITE_URL = 'https://shindan-navi.jp';
+const PAGE_URL = `${SITE_URL}/diagnosis/columns/disc-behavior-psychology/`;
+const UPDATED_AT = '2026-06-10';
+
+const title = 'DiSC理論と行動心理学：Marston博士の誕生から現代の科学的位置づけまで';
+const description =
+  'DiSC理論の行動心理学的根拠を解説。Marston（1928）が提唱したDISC理論の誕生背景、Clarke・Geier・Wileyへの発展、現代心理学での評価・限界まで学術根拠付きで網羅。2026-06-10確認。';
+
+const jsonLdArticle = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  '@id': `${PAGE_URL}#article`,
+  headline: title,
+  description: description,
+  url: PAGE_URL,
+  datePublished: '2026-06-10',
+  dateModified: UPDATED_AT,
+  inLanguage: 'ja',
+  author: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+    name: '診断ナビ',
+    url: SITE_URL,
+  },
+  publisher: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+    name: '診断ナビ',
+    url: SITE_URL,
+  },
+};
+
+const faqs = [
+  {
+    question: 'DiSC理論はどこから生まれたのですか？',
+    answer:
+      'DiSC理論は心理学者 William Moulton Marston が1928年の著書「Emotions of Normal People」（Routledge）で初めて体系化しました。Marstonは「感情が行動にどう影響するか」を研究し、環境認識（有利/不利）と自己認識（強/弱）の2軸から4つの行動パターン（Dominance・Influence・Submission・Compliance）を導きました。現代のDiSCはWiley社がこの理論を整備したものです（https://www.discprofile.com/what-is-disc/history-of-disc、2026-06-10確認）。',
+  },
+  {
+    question: 'Marstonはライオン作者と同一人物ですか？',
+    answer:
+      'はい、William Moulton Marston（1893-1947）はDiSC理論の提唱者であると同時に、DCコミックスの「ワンダーウーマン」の原作者でもあります。また血圧に基づくポリグラフ（嘘発見器）の研究でも知られています。心理学・法学・大衆文化の三領域を横断した異才の人物です。',
+  },
+  {
+    question: 'DiSC理論は科学的に有効ですか？',
+    answer:
+      '行動スタイルの分類ツールとして職場コミュニケーションの改善に広く活用されていますが、臨床心理学的な診断ツールではありません。Wiley社の研究では、DiSCは信頼性・構成概念妥当性が確認されています（https://www.discprofile.com/what-is-disc/reliability-and-validity、2026-06-10確認）。ただし科学的検証は継続中であり、自己報告式ツールとしての限界（回答バイアス・状況依存性）も認識した上で活用することが推奨されます。',
+  },
+  {
+    question: 'DiSCとMBTI・ビッグファイブの違いは？',
+    answer:
+      'DiSCは「職場での行動スタイル（コミュニケーション・意思決定・課題対応の傾向）」を測ります。MBTIは「性格の認知スタイル（4軸・16タイプ）」を測り、対人関係・仕事の意思決定パターン全般を対象にします。ビッグファイブ（五因子モデル）は「開放性・誠実性・外向性・協調性・神経症傾向」という5つの特性次元を測り、現代心理学で最も広く研究されている性格モデルです。いずれも異なる切り口の自己理解ツールであり、目的に応じて組み合わせることで自己理解の精度が高まります。',
+  },
+  {
+    question: 'DiSCタイプは生まれつき決まっているのですか？',
+    answer:
+      'Marston（1928）の理論では行動スタイルは「環境との相互作用の中で形成される」とされており、生まれつき固定されるものではありません。Wiley社の研究でも、DiSCスタイルは成長・経験・役割変化によって変化し得ることが示されています。タイプは固定的なラベルではなく、「現在の傾向」として参考にしてください（https://www.discprofile.com/what-is-disc/overview、2026-06-10確認）。',
+  },
+];
+
+const jsonLdFAQ = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  '@id': `${PAGE_URL}#faq`,
+  mainEntity: faqs.map(({ question, answer }) => ({
+    '@type': 'Question',
+    name: question,
+    acceptedAnswer: { '@type': 'Answer', text: answer },
+  })),
+};
+
+const jsonLdBreadcrumb = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'ホーム', item: SITE_URL },
+    { '@type': 'ListItem', position: 2, name: '診断一覧', item: `${SITE_URL}/diagnosis/` },
+    { '@type': 'ListItem', position: 3, name: 'DiSCコラム', item: `${SITE_URL}/diagnosis/columns/` },
+    { '@type': 'ListItem', position: 4, name: 'DiSC理論と行動心理学', item: PAGE_URL },
+  ],
+};
+
+const jsonLdAll = [jsonLdArticle, jsonLdFAQ, jsonLdBreadcrumb];
+
+const historyTimeline = [
+  {
+    year: '1928年',
+    person: 'William Moulton Marston',
+    event: '著書「Emotions of Normal People」でDISC理論の原型を発表',
+    detail: '環境認識（有利/不利）×自己認識（強/弱）の2軸から4種の行動パターンを提唱。Dominance・Influence・Submission・Complianceを定義。',
+    url: 'https://archive.org/details/emotionsofnormal00mars',
+  },
+  {
+    year: '1956年',
+    person: 'Walter Vernon Clarke',
+    event: 'Activity Vector Analysis（AVA）を開発。Marstonの理論を職場適用に転換',
+    detail: 'Marstonの理論を職場での行動スタイル測定ツールに実用化。DiSCが職場コミュニケーションツールとして機能し始める契機。',
+    url: 'https://www.discprofile.com/what-is-disc/history-of-disc',
+  },
+  {
+    year: '1970年代',
+    person: 'John Geier',
+    event: 'Personal Profile System（Performax）を開発',
+    detail: '心理測定としての信頼性を高め、DiSCの普及を加速。4タイプの現代的な呼称（D/i/S/C）の確立に貢献。',
+    url: 'https://www.discprofile.com/what-is-disc/history-of-disc',
+  },
+  {
+    year: '1984年〜',
+    person: 'Wiley（旧Inscape Publishing）',
+    event: 'Everything DiSC® ブランドとして整備・グローバル展開',
+    detail: '適応型テスト・詳細レポート・認定ファシリテータープログラムを整備。現在、世界75か国・年間100万人以上の組織研修で活用。',
+    url: 'https://www.everythingdisc.com/',
+  },
+];
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  canonical={PAGE_URL}
+  jsonLd={jsonLdAll}
+  ogType="article"
+  publishDate="2026-06-10"
+  lastUpdated={UPDATED_AT}
+  breadcrumbs={[
+    { name: '診断一覧', url: '/diagnosis/' },
+    { name: 'DiSCコラム', url: '/diagnosis/columns/' },
+    { name: 'DiSC理論と行動心理学', url: '/diagnosis/columns/disc-behavior-psychology/' },
+  ]}
+>
+  <section class="bp-hero" aria-labelledby="bp-h1">
+    <Container>
+      <div class="bp-hero-inner">
+        <p class="bp-hero-badge">Marston (1928) 学術根拠 | DiSC&#174; Wiley社登録商標 | 2026-06-10 確認</p>
+        <h1 id="bp-h1" class="bp-h1">DiSC理論と行動心理学</h1>
+        <p class="bp-hero-sub">Marston博士（1928）の誕生から現代Wiley DiSCまで、理論の発展と科学的位置づけを解説</p>
+        <div class="bp-hero-tags">
+          <span class="bp-tag">誕生の歴史</span>
+          <span class="bp-tag">4タイプの学術定義</span>
+          <span class="bp-tag">現代心理学の評価</span>
+          <span class="bp-tag">FAQ 5問</span>
+        </div>
+      </div>
+    </Container>
+  </section>
+
+  <Container>
+    <TldrBlock
+      title="このページでわかること"
+      points={[
+        "DiSC理論の誕生（Marston 1928）から現代のWiley DiSC（世界75か国）までの発展史を年表で解説",
+        "行動心理学的根拠：環境認識×自己認識の2軸から4タイプが導かれる理論的枠組み",
+        "現代心理学での評価と限界。DiSCとMBTI・ビッグファイブの違いと使い分け方",
+      ]}
+      updatedAt={UPDATED_AT}
+      sourceLabel="Wiley DiSC公式・歴史ページ"
+      sourceUrl="https://www.discprofile.com/what-is-disc/history-of-disc"
+    />
+
+    <section class="bp-section" aria-labelledby="bp-marston-h2">
+      <h2 id="bp-marston-h2" class="bp-h2">William Moulton Marston と DiSC理論の誕生</h2>
+      <p class="bp-lead">
+        DiSC理論の父、William Moulton Marston（1893-1947）はハーバード大学で心理学・法学の博士号を取得した学者です。
+        1928年の著書「Emotions of Normal People」（Routledge）で、「正常な人間の感情と行動」を体系化しました
+        （<a href="https://archive.org/details/emotionsofnormal00mars" target="_blank" rel="noopener noreferrer">Internet Archive</a>、2026-06-10確認）。
+      </p>
+      <div class="bp-person-card">
+        <div class="bp-person-info">
+          <h3 class="bp-person-name">William Moulton Marston（1893-1947）</h3>
+          <dl class="bp-person-dl">
+            <div class="bp-person-row">
+              <dt>学歴</dt>
+              <dd>ハーバード大学 法学・心理学 Ph.D.</dd>
+            </div>
+            <div class="bp-person-row">
+              <dt>主著</dt>
+              <dd>Emotions of Normal People（Routledge, 1928）</dd>
+            </div>
+            <div class="bp-person-row">
+              <dt>その他の業績</dt>
+              <dd>ポリグラフ（嘘発見器）の原型研究 / ワンダーウーマン原作者（DCコミックス, 1941）</dd>
+            </div>
+            <div class="bp-person-row">
+              <dt>理論の核心</dt>
+              <dd>「感情は環境との相互作用から生まれる」——行動スタイルは外部環境と内的自己認識の組み合わせで説明できる</dd>
+            </div>
+          </dl>
+        </div>
+      </div>
+      <p class="bp-lead" style="margin-top: 1.25rem;">
+        Marstonの着眼点は「病理的な感情」ではなく「正常な人間の感情と行動」でした。
+        当時の心理学がフロイト・ユングの影響を受けて無意識・精神分析に集中していた時代に、
+        Marstonは「日常的な行動パターンの違い」を観察可能な形で分類しようとしました。
+        これがDiSCの行動心理学的特徴——「臨床診断ではなく行動スタイルの記述」——の原点です。
+      </p>
+    </section>
+
+    <section class="bp-section" aria-labelledby="bp-theory-h2">
+      <h2 id="bp-theory-h2" class="bp-h2">DiSC理論の行動心理学的枠組み</h2>
+      <p class="bp-lead">
+        Marstonは人間の行動を「2つの軸」で説明しました。
+        この枠組みが現代のDiSC 4タイプの理論的基盤です。
+      </p>
+      <div class="bp-axes-wrap">
+        <div class="bp-axis-card bp-axis-card--vertical">
+          <h3 class="bp-axis-title">軸1：環境の認識</h3>
+          <div class="bp-axis-scale">
+            <span class="bp-axis-label bp-axis-label--top">有利（Favorable）</span>
+            <div class="bp-axis-bar"></div>
+            <span class="bp-axis-label bp-axis-label--bottom">不利（Unfavorable）</span>
+          </div>
+          <p class="bp-axis-desc">
+            「今いる環境は自分に有利か不利か」という主観的評価。
+            有利と感じると行動が外向きに・積極的になる。
+            不利と感じると慎重・防御的になる。
+          </p>
+        </div>
+        <div class="bp-axis-card bp-axis-card--horizontal">
+          <h3 class="bp-axis-title">軸2：自己の力の認識</h3>
+          <div class="bp-axis-row-scale">
+            <span class="bp-axis-label">強い（Strong）</span>
+            <div class="bp-axis-row-bar"></div>
+            <span class="bp-axis-label">弱い（Weak）</span>
+          </div>
+          <p class="bp-axis-desc">
+            「自分には状況を変える力があるか」という主観的評価。
+            強いと感じると主体的・直接的に行動する。
+            弱いと感じると適応・協力的な行動をとる。
+          </p>
+        </div>
+      </div>
+      <div class="bp-matrix-wrap">
+        <table class="bp-matrix-table">
+          <caption class="bp-table-caption">Marstonの2軸×4タイプの対応（1928年原典）</caption>
+          <thead>
+            <tr>
+              <th scope="col"></th>
+              <th scope="col">環境：有利</th>
+              <th scope="col">環境：不利</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">自己：強い</th>
+              <td class="bp-cell-d"><strong>D型（Dominance）</strong><br/>主導・挑戦・直接行動</td>
+              <td class="bp-cell-c"><strong>C型（Compliance）</strong><br/>慎重・品質・正確性重視</td>
+            </tr>
+            <tr>
+              <th scope="row">自己：弱い</th>
+              <td class="bp-cell-i"><strong>i型（Influence）</strong><br/>感化・人との関係・楽観</td>
+              <td class="bp-cell-s"><strong>S型（Steadiness）</strong><br/>安定・協調・忍耐</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="bp-note">
+        ※原典（1928年）ではS型は「Submission（服従）」と表記されていましたが、
+        現代版Wiley DiSCでは「Steadiness（安定）」と改められています
+        （<a href="https://www.discprofile.com/what-is-disc/history-of-disc" target="_blank" rel="noopener noreferrer">Wiley DiSC・歴史ページ</a>、2026-06-10確認）。
+      </p>
+    </section>
+
+    <section class="bp-section" aria-labelledby="bp-history-h2">
+      <h2 id="bp-history-h2" class="bp-h2">DiSC理論の発展史：1928年〜現代</h2>
+      <p class="bp-lead">
+        Marstonの死後（1947年）、DiSC理論は複数の研究者・組織によって発展し、
+        現代の組織研修ツールとして整備されました。
+        以下の年表で主要な発展ポイントを確認できます。
+      </p>
+      <ol class="bp-timeline">
+        {historyTimeline.map((t) => (
+          <li class="bp-timeline-item">
+            <span class="bp-timeline-year">{t.year}</span>
+            <div class="bp-timeline-body">
+              <h3 class="bp-timeline-person">{t.person}</h3>
+              <p class="bp-timeline-event">{t.event}</p>
+              <p class="bp-timeline-detail">{t.detail}</p>
+              <a href={t.url} target="_blank" rel="noopener noreferrer" class="bp-timeline-link">
+                出典を確認 →
+              </a>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </section>
+
+    <section class="bp-section" aria-labelledby="bp-modern-h2">
+      <h2 id="bp-modern-h2" class="bp-h2">現代心理学でのDiSCの位置づけ</h2>
+      <p class="bp-lead">
+        現代の心理学において、DiSCはどのように評価されているのでしょうか。
+        信頼性・妥当性・他の性格モデルとの関係を整理します。
+      </p>
+      <div class="bp-eval-grid">
+        <div class="bp-eval-card bp-eval-card--positive">
+          <h3 class="bp-eval-title">強み・評価されている点</h3>
+          <ul class="bp-eval-list">
+            <li>職場コミュニケーション改善に特化した実用性が高い</li>
+            <li>Wiley社が信頼性・構成概念妥当性を公開している（<a href="https://www.discprofile.com/what-is-disc/reliability-and-validity" target="_blank" rel="noopener noreferrer">Wiley公式</a>、2026-06-10確認）</li>
+            <li>世界75か国・年間100万人以上の組織研修への導入実績（<a href="https://www.everythingdisc.com/" target="_blank" rel="noopener noreferrer">Everything DiSC公式</a>、2026-06-10確認）</li>
+            <li>タイプの優劣を設けず「多様性の理解」を促す設計</li>
+          </ul>
+        </div>
+        <div class="bp-eval-card bp-eval-card--caution">
+          <h3 class="bp-eval-title">限界・注意すべき点</h3>
+          <ul class="bp-eval-list">
+            <li>自己報告式のため、回答バイアス・社会的望ましさの影響を受けやすい</li>
+            <li>臨床診断・採用評価ツールとして使うことはWiley社が非推奨</li>
+            <li>独立した第三者の学術研究による検証は進行中であり、完全に確定した科学的理論ではない</li>
+            <li>4タイプへの簡略化は複雑な人間の行動を過度に単純化するリスクがある</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="bp-section" aria-labelledby="bp-compare-h2">
+      <h2 id="bp-compare-h2" class="bp-h2">DiSC・MBTI・ビッグファイブの違い</h2>
+      <p class="bp-lead">
+        主要な性格・行動スタイルモデルの違いを比較します。
+        それぞれ測定対象・活用場面が異なります。
+      </p>
+      <div class="bp-compare-table-wrap">
+        <table class="bp-compare-table">
+          <caption class="bp-table-caption">主要な性格・行動モデルの比較（2026-06-10時点）</caption>
+          <thead>
+            <tr>
+              <th scope="col">モデル</th>
+              <th scope="col">起源</th>
+              <th scope="col">測定対象</th>
+              <th scope="col">主な活用場面</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">DiSC</th>
+              <td>Marston (1928)</td>
+              <td>職場での行動スタイル（4タイプ）</td>
+              <td>ビジネスコミュニケーション・チームビルディング・リーダーシップ</td>
+            </tr>
+            <tr>
+              <th scope="row">MBTI</th>
+              <td>Jung (1921) + Myers (1962)</td>
+              <td>性格の認知スタイル（16タイプ）</td>
+              <td>自己理解・人間関係・キャリア探索</td>
+            </tr>
+            <tr>
+              <th scope="row">ビッグファイブ（五因子モデル）</th>
+              <td>多数の研究者（1980年代〜）</td>
+              <td>性格5次元（開放性・誠実性・外向性・協調性・神経症傾向）</td>
+              <td>学術研究・臨床心理・採用研究（最も科学的検証が進んでいるモデル）</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="bp-lead" style="margin-top: 1.25rem;">
+        DiSCは「職場での行動」、MBTIは「性格の根本傾向」、ビッグファイブは「学術的な性格研究」という使い分けが適切です。
+        自己理解を深めるには、DiSCで職場コミュニケーションを整理し、MBTIで性格全体の傾向を把握することで相乗効果が得られます。
+      </p>
+    </section>
+
+    <section class="bp-section" aria-labelledby="bp-faq-h2">
+      <h2 id="bp-faq-h2" class="bp-h2">よくある質問（FAQ）</h2>
+      <dl class="bp-faq-list">
+        {faqs.map(({ question, answer }) => (
+          <div class="bp-faq-item">
+            <dt class="bp-faq-q">{question}</dt>
+            <dd class="bp-faq-a">{answer}</dd>
+          </div>
+        ))}
+      </dl>
+    </section>
+
+    <ScienceNote
+      basisText="William Moulton Marston (1928) 「Emotions of Normal People」（Routledge）+ Walter Clarke (1956) Activity Vector Analysis + John Geier (1970年代) Personal Profile System。現代版はWiley社が「Everything DiSC®」として整備（世界75か国・年間100万人以上の組織研修で活用）。"
+      basisUrl="https://www.discprofile.com/what-is-disc/history-of-disc"
+      basisLabel="Wiley DiSC公式・DiSCの歴史"
+      notMedical={true}
+      updatedAt={UPDATED_AT}
+      additionalNote="DiSC® はJohn Wiley & Sons, Inc. の登録商標です。本ページはDiSC理論の学術的背景を解説する自己理解コンテンツです。臨床診断・採用評価への使用は推奨しません。"
+    />
+
+    <section class="bp-section" aria-labelledby="bp-related-h2">
+      <h2 id="bp-related-h2" class="bp-h2">関連ページ</h2>
+      <ul class="bp-related-list">
+        <li>
+          <a href="/diagnosis/disc/" class="bp-related-link">
+            <span class="bp-related-icon" aria-hidden="true">🎯</span>
+            <span class="bp-related-body">
+              <span class="bp-related-title">DiSC診断【無料・28問・登録不要】</span>
+              <span class="bp-related-desc">Marston理論に基づく無料診断。今すぐあなたのタイプを判定</span>
+            </span>
+          </a>
+        </li>
+        <li>
+          <a href="/diagnosis/disc/types-summary/" class="bp-related-link">
+            <span class="bp-related-icon" aria-hidden="true">📊</span>
+            <span class="bp-related-body">
+              <span class="bp-related-title">DiSC 4タイプ完全まとめ</span>
+              <span class="bp-related-desc">D/i/S/C の特徴・強み・相性を一覧解説</span>
+            </span>
+          </a>
+        </li>
+        <li>
+          <a href="/diagnosis/columns/disc-analysis-free/" class="bp-related-link">
+            <span class="bp-related-icon" aria-hidden="true">🔍</span>
+            <span class="bp-related-body">
+              <span class="bp-related-title">DiSC分析を無料で受けられるツール比較</span>
+              <span class="bp-related-desc">無料vs有料ツールの違いと選び方</span>
+            </span>
+          </a>
+        </li>
+        <li>
+          <a href="/diagnosis/mbti/" class="bp-related-link">
+            <span class="bp-related-icon" aria-hidden="true">🧠</span>
+            <span class="bp-related-body">
+              <span class="bp-related-title">MBTI（16タイプ）診断【無料】</span>
+              <span class="bp-related-desc">DiSCと組み合わせると自己理解が格段に深まる</span>
+            </span>
+          </a>
+        </li>
+        <li>
+          <a href="/diagnosis/" class="bp-related-link">
+            <span class="bp-related-icon" aria-hidden="true">📋</span>
+            <span class="bp-related-body">
+              <span class="bp-related-title">全診断一覧</span>
+              <span class="bp-related-desc">8種類の診断で多角的な自己理解を</span>
+            </span>
+          </a>
+        </li>
+      </ul>
+    </section>
+
+    <ReferenceList
+      references={[
+        {
+          title: 'Emotions of Normal People',
+          author: 'Marston WM',
+          year: 1928,
+          publisher: 'Routledge',
+          url: 'https://archive.org/details/emotionsofnormal00mars',
+        },
+        {
+          title: 'History of DiSC – From Marston to Everything DiSC',
+          author: 'Wiley',
+          year: 2024,
+          publisher: 'DiSC Profile',
+          url: 'https://www.discprofile.com/what-is-disc/history-of-disc',
+        },
+        {
+          title: 'DiSC Reliability and Validity',
+          author: 'Wiley',
+          year: 2024,
+          publisher: 'DiSC Profile',
+          url: 'https://www.discprofile.com/what-is-disc/reliability-and-validity',
+        },
+        {
+          title: 'Everything DiSC – Official Site',
+          author: 'Wiley',
+          year: 2024,
+          publisher: 'Wiley',
+          url: 'https://www.everythingdisc.com/',
+        },
+      ]}
+      confirmedAt={UPDATED_AT}
+    />
+
+    <p class="bp-trademark-note">
+      DiSC&#174; / Everything DiSC&#174; はJohn Wiley &amp; Sons, Inc. の登録商標です。
+      本ページはDiSC理論の学術的背景を解説するコンテンツであり、Wiley社の公式アセスメントとは独立しています。
+    </p>
+  </Container>
+</BaseLayout>
+
+<style>
+.bp-hero {
+  background: linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 50%, #3b82f6 100%);
+  color: #fff;
+  padding-block: 2.5rem 3rem;
+  text-align: center;
+}
+.bp-hero-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.875rem;
+}
+.bp-hero-badge {
+  display: inline-block;
+  background: rgba(255 255 255 / 0.15);
+  border: 1px solid rgba(255 255 255 / 0.3);
+  border-radius: 2rem;
+  padding: 0.25rem 1rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.03em;
+}
+.bp-h1 {
+  font-size: clamp(1.4rem, 4vw, 2rem);
+  font-family: var(--sn-font-rounded, sans-serif);
+  font-weight: 700;
+  margin: 0;
+  line-height: 1.3;
+}
+.bp-hero-sub {
+  font-size: clamp(0.83rem, 2.2vw, 0.95rem);
+  opacity: 0.9;
+  margin: 0;
+  line-height: 1.6;
+  max-width: 600px;
+}
+.bp-hero-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+}
+.bp-tag {
+  background: rgba(255 255 255 / 0.2);
+  border: 1px solid rgba(255 255 255 / 0.35);
+  border-radius: 1rem;
+  padding: 0.2rem 0.75rem;
+  font-size: 0.75rem;
+}
+.bp-section { margin-block: 3rem; }
+.bp-h2 {
+  font-size: clamp(1.1rem, 3vw, 1.5rem);
+  font-family: var(--sn-font-rounded, sans-serif);
+  font-weight: 700;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #1d4ed8;
+}
+.bp-lead {
+  font-size: 1rem;
+  line-height: 1.8;
+  margin-bottom: 1.25rem;
+  color: #374151;
+}
+.bp-note {
+  font-size: 0.8rem;
+  color: #6b7280;
+  margin-top: 0.75rem;
+  line-height: 1.6;
+}
+.bp-table-caption {
+  font-size: 0.78rem;
+  color: #6b7280;
+  text-align: left;
+  padding: 0.25rem 0 0.5rem;
+}
+.bp-person-card {
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  margin-top: 1.25rem;
+}
+.bp-person-name {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1e40af;
+  margin: 0 0 0.875rem;
+}
+.bp-person-dl {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.bp-person-row {
+  display: grid;
+  grid-template-columns: 7rem 1fr;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+}
+.bp-person-row dt { font-weight: 700; color: #1e40af; }
+.bp-person-row dd { margin: 0; color: #374151; line-height: 1.6; }
+.bp-axes-wrap {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+@media (max-width: 640px) {
+  .bp-axes-wrap { grid-template-columns: 1fr; }
+  .bp-person-row { grid-template-columns: 1fr; gap: 0.2rem; }
+}
+.bp-axis-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  background: #f9fafb;
+}
+.bp-axis-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0 0 0.875rem;
+}
+.bp-axis-scale {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  margin-bottom: 0.75rem;
+}
+.bp-axis-bar {
+  width: 2px;
+  height: 40px;
+  background: linear-gradient(#1d4ed8, #93c5fd);
+  border-radius: 1px;
+}
+.bp-axis-row-scale {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+.bp-axis-row-bar {
+  flex: 1;
+  height: 2px;
+  background: linear-gradient(to right, #1d4ed8, #93c5fd);
+  border-radius: 1px;
+}
+.bp-axis-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #1d4ed8;
+}
+.bp-axis-desc {
+  font-size: 0.85rem;
+  line-height: 1.65;
+  color: #4b5563;
+  margin: 0;
+}
+.bp-matrix-wrap { overflow-x: auto; margin-top: 1.5rem; }
+.bp-matrix-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+.bp-matrix-table th,
+.bp-matrix-table td {
+  padding: 0.75rem 1rem;
+  border: 1px solid #e5e7eb;
+  text-align: left;
+  vertical-align: top;
+  line-height: 1.6;
+}
+.bp-matrix-table thead th {
+  background: #1d4ed8;
+  color: #fff;
+  font-weight: 600;
+}
+.bp-cell-d { background: #fef2f2; }
+.bp-cell-i { background: #fffbeb; }
+.bp-cell-s { background: #f0fdf4; }
+.bp-cell-c { background: #eff6ff; }
+.bp-timeline {
+  list-style: none;
+  padding: 0;
+  margin: 1.25rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  position: relative;
+}
+.bp-timeline::before {
+  content: '';
+  position: absolute;
+  left: 5.5rem;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: #bfdbfe;
+}
+.bp-timeline-item {
+  display: grid;
+  grid-template-columns: 6rem 1fr;
+  gap: 1.5rem;
+  position: relative;
+  padding-bottom: 1.5rem;
+}
+.bp-timeline-item:last-child { padding-bottom: 0; }
+.bp-timeline-year {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #1d4ed8;
+  text-align: right;
+  padding-top: 0.25rem;
+}
+.bp-timeline-body {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 1rem 1.25rem;
+  position: relative;
+}
+.bp-timeline-body::before {
+  content: '';
+  position: absolute;
+  left: -1.25rem;
+  top: 0.875rem;
+  width: 0.875rem;
+  height: 0.875rem;
+  background: #1d4ed8;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 2px #bfdbfe;
+}
+.bp-timeline-person {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #1e40af;
+  margin: 0 0 0.3rem;
+}
+.bp-timeline-event {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0 0 0.4rem;
+}
+.bp-timeline-detail {
+  font-size: 0.83rem;
+  line-height: 1.65;
+  color: #4b5563;
+  margin: 0 0 0.5rem;
+}
+.bp-timeline-link {
+  font-size: 0.8rem;
+  color: #1d4ed8;
+  text-decoration: underline;
+}
+@media (max-width: 640px) {
+  .bp-timeline::before { left: 4.5rem; }
+  .bp-timeline-item { grid-template-columns: 5rem 1fr; gap: 1rem; }
+}
+.bp-eval-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+@media (max-width: 640px) { .bp-eval-grid { grid-template-columns: 1fr; } }
+.bp-eval-card {
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+}
+.bp-eval-card--positive {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+}
+.bp-eval-card--caution {
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+}
+.bp-eval-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin: 0 0 0.75rem;
+  color: #1f2937;
+}
+.bp-eval-list {
+  margin: 0;
+  padding-left: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  font-size: 0.875rem;
+  line-height: 1.65;
+  color: #374151;
+}
+.bp-compare-table-wrap { overflow-x: auto; margin-top: 1.25rem; }
+.bp-compare-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  min-width: 500px;
+}
+.bp-compare-table th,
+.bp-compare-table td {
+  padding: 0.6rem 0.875rem;
+  border: 1px solid #e5e7eb;
+  text-align: left;
+  vertical-align: top;
+  line-height: 1.5;
+}
+.bp-compare-table thead th {
+  background: #1d4ed8;
+  color: #fff;
+  font-weight: 600;
+}
+.bp-compare-table tbody tr:nth-child(even) { background: #f9fafb; }
+.bp-faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+.bp-faq-item {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+.bp-faq-q {
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 0.875rem 1.25rem;
+  background: #f9fafb;
+  margin: 0;
+  display: block;
+}
+.bp-faq-q::before { content: 'Q. '; color: #1d4ed8; }
+.bp-faq-a {
+  font-size: 0.875rem;
+  line-height: 1.75;
+  padding: 0.875rem 1.25rem;
+  margin: 0;
+  color: #4b5563;
+}
+.bp-faq-a::before {
+  content: 'A. ';
+  font-weight: 700;
+  color: #16a34a;
+}
+.bp-related-list {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.bp-related-link {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.15s;
+}
+.bp-related-link:hover { border-color: #1d4ed8; }
+.bp-related-icon { font-size: 1.75rem; flex-shrink: 0; }
+.bp-related-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+.bp-related-title { font-weight: 700; font-size: 0.95rem; }
+.bp-related-desc { font-size: 0.8rem; color: var(--sn-muted, #6b7280); }
+.bp-trademark-note {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  border-top: 1px solid #e5e7eb;
+  padding-top: 1.5rem;
+  margin-top: 2rem;
+  line-height: 1.6;
+}
+</style>
