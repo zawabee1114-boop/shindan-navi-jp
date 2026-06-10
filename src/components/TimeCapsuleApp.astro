@@ -1,0 +1,1282 @@
+---
+/**
+ * TimeCapsuleApp.astro - タイムカプセル本実装
+ *
+ * 機能:
+ * - 未来の自分への手紙入力フォーム（max 2000字）
+ * - 開封期間選択: 1ヶ月後 / 3ヶ月後 / 6ヶ月後 / 1年後
+ * - LocalStorage保存（sn_time_capsule）
+ * - 一覧表示: 開封日到来 → 開封ボタン / 未来日 → 「あと◯日」
+ * - 開封済みフラグ管理
+ * - PRO制限: 無料=月1通まで / PRO=無制限
+ *
+ * ページURL: /time-capsule/#write で入力フォームへアンカー
+ * 個別閲覧: /time-capsule/letter/?id=xxx は静的ページ。
+ *           このコンポーネントで開封モーダルとして処理する。
+ *
+ * LocalStorageキー:
+ *   sn_time_capsule: CapsuleEntry[] (JSON配列)
+ *   sn_is_pro: 'true'/'false' (簡易PRO判定)
+ */
+---
+
+<div id="tc-app" class="tca-root">
+
+  <!-- タブナビ -->
+  <nav class="tca-tabs" role="tablist" aria-label="タイムカプセルメニュー">
+    <button
+      id="tca-tab-write"
+      class="tca-tab tca-tab--active"
+      role="tab"
+      aria-selected="true"
+      aria-controls="tca-panel-write"
+      type="button"
+    >
+      <span aria-hidden="true">✉️</span> 手紙を書く
+    </button>
+    <button
+      id="tca-tab-list"
+      class="tca-tab"
+      role="tab"
+      aria-selected="false"
+      aria-controls="tca-panel-list"
+      type="button"
+    >
+      <span aria-hidden="true">📬</span> カプセル一覧
+      <span id="tca-capsule-count" class="tca-tab-badge" style="display:none"></span>
+    </button>
+  </nav>
+
+  <!-- 書くパネル -->
+  <div id="tca-panel-write" class="tca-panel" role="tabpanel" aria-labelledby="tca-tab-write">
+    <div id="tca-write-pro-gate" class="tca-pro-gate" hidden>
+      <span class="tca-pro-gate-badge">PRO限定</span>
+      <p class="tca-pro-gate-text">
+        今月の無料枠（1通）を使用済みです。<br />
+        PRO会員になると、何通でもタイムカプセルを作れます。
+      </p>
+      <a href="/pro/" class="tca-pro-gate-btn">PRO ¥590/月 で制限解除</a>
+    </div>
+
+    <form id="tca-form" class="tca-form" novalidate>
+      <div class="tca-form-group">
+        <label class="tca-label" for="tca-content">
+          未来の自分への手紙
+          <span class="tca-label-hint">（最大2,000字）</span>
+        </label>
+        <textarea
+          id="tca-content"
+          name="content"
+          class="tca-textarea"
+          placeholder="今の気持ち・悩み・目標を自由に書いてください。未来のあなたにだけ届きます。"
+          maxlength="2000"
+          rows="10"
+          aria-describedby="tca-content-count tca-content-hint"
+          required
+        ></textarea>
+        <div class="tca-textarea-footer">
+          <p id="tca-content-hint" class="tca-hint">
+            ヒント: 「今悩んでいること」「◯ヶ月後に確認したいこと」を正直に書くのがおすすめです
+          </p>
+          <span id="tca-content-count" class="tca-char-count" aria-live="polite">0 / 2,000</span>
+        </div>
+      </div>
+
+      <div class="tca-form-group">
+        <fieldset class="tca-fieldset">
+          <legend class="tca-label">開封する時期</legend>
+          <div class="tca-period-grid" role="group" aria-label="開封時期を選択">
+            <label class="tca-period-label">
+              <input type="radio" name="period" value="1m" class="tca-period-radio" />
+              <span class="tca-period-card">
+                <span class="tca-period-icon" aria-hidden="true">📅</span>
+                <span class="tca-period-text">1ヶ月後</span>
+              </span>
+            </label>
+            <label class="tca-period-label">
+              <input type="radio" name="period" value="3m" class="tca-period-radio" checked />
+              <span class="tca-period-card tca-period-card--checked">
+                <span class="tca-period-icon" aria-hidden="true">🌱</span>
+                <span class="tca-period-text">3ヶ月後</span>
+                <span class="tca-period-rec">おすすめ</span>
+              </span>
+            </label>
+            <label class="tca-period-label">
+              <input type="radio" name="period" value="6m" class="tca-period-radio" />
+              <span class="tca-period-card">
+                <span class="tca-period-icon" aria-hidden="true">🌿</span>
+                <span class="tca-period-text">6ヶ月後</span>
+              </span>
+            </label>
+            <label class="tca-period-label">
+              <input type="radio" name="period" value="1y" class="tca-period-radio" />
+              <span class="tca-period-card">
+                <span class="tca-period-icon" aria-hidden="true">🌳</span>
+                <span class="tca-period-text">1年後</span>
+              </span>
+            </label>
+          </div>
+        </fieldset>
+      </div>
+
+      <!-- 送信エラー -->
+      <p id="tca-form-error" class="tca-error" role="alert" hidden></p>
+
+      <div class="tca-form-actions">
+        <button type="submit" id="tca-submit-btn" class="tca-submit-btn">
+          <span aria-hidden="true">🔒</span>
+          タイムカプセルを封印する
+        </button>
+        <p class="tca-submit-note">データはあなたのブラウザ内にのみ保存されます</p>
+      </div>
+    </form>
+
+    <!-- 成功メッセージ -->
+    <div id="tca-success" class="tca-success" hidden role="alert">
+      <div class="tca-success-icon" aria-hidden="true">🎉</div>
+      <h3 class="tca-success-title">カプセルを封印しました</h3>
+      <p class="tca-success-text" id="tca-success-text"></p>
+      <div class="tca-success-actions">
+        <button id="tca-write-another" class="tca-write-another-btn" type="button">
+          もう一通書く
+        </button>
+        <button id="tca-go-list" class="tca-go-list-btn" type="button">
+          一覧を見る
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 一覧パネル -->
+  <div id="tca-panel-list" class="tca-panel" role="tabpanel" aria-labelledby="tca-tab-list" hidden>
+    <div id="tca-list-empty" class="tca-list-empty" hidden>
+      <div class="tca-list-empty-icon" aria-hidden="true">📭</div>
+      <p class="tca-list-empty-text">まだタイムカプセルがありません。<br />最初の手紙を書いてみましょう。</p>
+    </div>
+
+    <div id="tca-list-items" class="tca-list-items" aria-live="polite"></div>
+  </div>
+
+  <!-- 開封モーダル -->
+  <div
+    id="tca-modal"
+    class="tca-modal-overlay"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="tca-modal-title"
+    hidden
+  >
+    <div class="tca-modal-box">
+      <button id="tca-modal-close" class="tca-modal-close" type="button" aria-label="閉じる">
+        <span aria-hidden="true">×</span>
+      </button>
+      <div class="tca-modal-envelope" aria-hidden="true">💌</div>
+      <h3 id="tca-modal-title" class="tca-modal-title">タイムカプセルを開封しました</h3>
+      <p id="tca-modal-date" class="tca-modal-meta"></p>
+      <div id="tca-modal-content" class="tca-modal-content"></div>
+      <div class="tca-modal-actions">
+        <button id="tca-modal-delete" class="tca-modal-delete-btn" type="button">
+          このカプセルを削除する
+        </button>
+        <button id="tca-modal-close2" class="tca-modal-ok-btn" type="button">
+          閉じる
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+/* ===== ルート ===== */
+.tca-root {
+  background: var(--sn-bg-white, #fff);
+  border-radius: var(--sn-radius-xl, 20px);
+  border: 1px solid var(--sn-border, #e5e7eb);
+  overflow: hidden;
+}
+
+/* ===== タブ ===== */
+.tca-tabs {
+  display: flex;
+  border-bottom: 2px solid var(--sn-border, #e5e7eb);
+  background: var(--sn-bg-soft, #f9fafb);
+}
+
+.tca-tab {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
+  padding: 0.875rem 1rem;
+  background: none;
+  border: none;
+  font-size: var(--sn-text-sm, 0.875rem);
+  font-weight: 600;
+  color: var(--sn-text-soft, #6b7280);
+  cursor: pointer;
+  min-height: 44px;
+  position: relative;
+  transition: color 0.15s, background 0.15s;
+}
+
+.tca-tab--active,
+.tca-tab[aria-selected="true"] {
+  color: #4f46e5;
+  background: #fff;
+  border-bottom: 2px solid #4f46e5;
+  margin-bottom: -2px;
+}
+
+.tca-tab:focus-visible {
+  outline: 2px solid #4f46e5;
+  outline-offset: -2px;
+}
+
+.tca-tab-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.25rem;
+  height: 1.25rem;
+  background: #ef4444;
+  color: #fff;
+  border-radius: 999px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 0 4px;
+}
+
+/* ===== パネル ===== */
+.tca-panel {
+  padding: var(--sn-space-6, 1.5rem);
+}
+
+/* ===== PRO制限ゲート ===== */
+.tca-pro-gate {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.875rem;
+  padding: 2rem 1rem;
+  text-align: center;
+  background: #fffbeb;
+  border-radius: 0.875rem;
+  border: 1px solid #fde68a;
+  margin-bottom: 1.5rem;
+}
+
+.tca-pro-gate-badge {
+  display: inline-block;
+  background: #f59e0b;
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 900;
+  padding: 0.2rem 0.75rem;
+  border-radius: 999px;
+}
+
+.tca-pro-gate-text {
+  font-size: 0.9rem;
+  color: #92400e;
+  line-height: 1.7;
+  margin: 0;
+}
+
+.tca-pro-gate-btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.625rem 1.5rem;
+  background: #f59e0b;
+  color: #fff;
+  border-radius: 999px;
+  font-size: 0.875rem;
+  font-weight: 700;
+  text-decoration: none;
+  min-height: 44px;
+  transition: opacity 0.15s;
+}
+
+.tca-pro-gate-btn:hover {
+  opacity: 0.85;
+  text-decoration: none;
+}
+
+/* ===== フォーム ===== */
+.tca-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sn-space-5, 1.25rem);
+}
+
+.tca-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sn-space-2, 0.5rem);
+}
+
+.tca-label {
+  font-size: var(--sn-text-sm, 0.875rem);
+  font-weight: 700;
+  color: var(--sn-text, #111827);
+}
+
+.tca-label-hint {
+  font-weight: 400;
+  color: var(--sn-muted, #9ca3af);
+  margin-left: 0.25rem;
+}
+
+.tca-textarea {
+  width: 100%;
+  padding: var(--sn-space-3, 0.75rem) var(--sn-space-4, 1rem);
+  border: 1px solid var(--sn-border, #e5e7eb);
+  border-radius: var(--sn-radius-md, 12px);
+  font-size: var(--sn-text-base, 1rem);
+  color: var(--sn-text, #111827);
+  line-height: 1.7;
+  resize: vertical;
+  min-height: 200px;
+  font-family: inherit;
+  transition: border-color 0.15s;
+  box-sizing: border-box;
+}
+
+.tca-textarea:focus {
+  outline: none;
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+.tca-textarea-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.tca-hint {
+  font-size: 0.75rem;
+  color: var(--sn-muted, #9ca3af);
+  margin: 0;
+  flex: 1;
+  min-width: 12rem;
+}
+
+.tca-char-count {
+  font-size: 0.75rem;
+  color: var(--sn-muted, #9ca3af);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* ===== 期間選択 ===== */
+.tca-fieldset {
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+
+.tca-period-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.625rem;
+  margin-top: 0.5rem;
+}
+
+.tca-period-label {
+  cursor: pointer;
+}
+
+.tca-period-radio {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.tca-period-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.75rem 0.5rem;
+  border: 2px solid var(--sn-border, #e5e7eb);
+  border-radius: var(--sn-radius-md, 12px);
+  background: var(--sn-bg-soft, #f9fafb);
+  text-align: center;
+  transition: border-color 0.15s, background 0.15s;
+  min-height: 80px;
+  justify-content: center;
+}
+
+.tca-period-radio:checked + .tca-period-card {
+  border-color: #4f46e5;
+  background: #eef2ff;
+}
+
+.tca-period-radio:focus-visible + .tca-period-card {
+  outline: 2px solid #4f46e5;
+  outline-offset: 2px;
+}
+
+.tca-period-label:hover .tca-period-card {
+  border-color: #a5b4fc;
+}
+
+.tca-period-icon {
+  font-size: 1.5rem;
+}
+
+.tca-period-text {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--sn-text, #111827);
+}
+
+.tca-period-rec {
+  font-size: 0.65rem;
+  background: #4f46e5;
+  color: #fff;
+  padding: 1px 6px;
+  border-radius: 999px;
+  font-weight: 700;
+}
+
+/* ===== エラー ===== */
+.tca-error {
+  font-size: 0.875rem;
+  color: #dc2626;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+  margin: 0;
+}
+
+/* ===== 送信ボタン ===== */
+.tca-form-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.tca-submit-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 1rem;
+  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 900;
+  cursor: pointer;
+  min-height: 52px;
+  transition: opacity 0.15s, transform 0.15s;
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+}
+
+.tca-submit-btn:hover:not([disabled]) {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.tca-submit-btn:focus-visible {
+  outline: 3px solid #4f46e5;
+  outline-offset: 3px;
+}
+
+.tca-submit-btn[disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.tca-submit-note {
+  font-size: 0.75rem;
+  color: var(--sn-muted, #9ca3af);
+  margin: 0;
+  text-align: center;
+}
+
+/* ===== 成功メッセージ ===== */
+.tca-success {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.875rem;
+  padding: 2.5rem 1rem;
+  text-align: center;
+}
+
+.tca-success-icon {
+  font-size: 3rem;
+}
+
+.tca-success-title {
+  font-family: var(--sn-font-rounded, sans-serif);
+  font-size: 1.25rem;
+  font-weight: 900;
+  color: #1e1b4b;
+  margin: 0;
+}
+
+.tca-success-text {
+  font-size: 0.9rem;
+  color: var(--sn-text-soft, #6b7280);
+  line-height: 1.7;
+  margin: 0;
+  max-width: 28rem;
+}
+
+.tca-success-actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.tca-write-another-btn {
+  padding: 0.625rem 1.5rem;
+  background: var(--sn-bg-soft, #f9fafb);
+  color: var(--sn-text, #111827);
+  border: 1px solid var(--sn-border, #e5e7eb);
+  border-radius: 999px;
+  font-size: 0.875rem;
+  font-weight: 700;
+  cursor: pointer;
+  min-height: 44px;
+  font-family: inherit;
+  transition: background 0.15s;
+}
+
+.tca-write-another-btn:hover {
+  background: #f3f4f6;
+}
+
+.tca-go-list-btn {
+  padding: 0.625rem 1.5rem;
+  background: #4f46e5;
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  font-size: 0.875rem;
+  font-weight: 700;
+  cursor: pointer;
+  min-height: 44px;
+  font-family: inherit;
+  transition: opacity 0.15s;
+}
+
+.tca-go-list-btn:hover {
+  opacity: 0.85;
+}
+
+/* ===== 一覧 ===== */
+.tca-list-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.875rem;
+  padding: 3rem 1rem;
+  text-align: center;
+}
+
+.tca-list-empty-icon {
+  font-size: 3rem;
+}
+
+.tca-list-empty-text {
+  font-size: 0.9rem;
+  color: var(--sn-text-soft, #6b7280);
+  line-height: 1.7;
+  margin: 0;
+}
+
+.tca-list-items {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* カプセルカードはJSで生成 */
+
+/* ===== モーダル ===== */
+.tca-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9000;
+  padding: 1rem;
+}
+
+.tca-modal-box {
+  background: #fff;
+  border-radius: 1.25rem;
+  padding: 2rem 1.5rem 1.5rem;
+  max-width: 36rem;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+  box-shadow: 0 24px 48px rgba(0,0,0,0.25);
+}
+
+.tca-modal-close {
+  position: absolute;
+  top: 0.875rem;
+  right: 1rem;
+  width: 2rem;
+  height: 2rem;
+  background: var(--sn-bg-soft, #f9fafb);
+  border: 1px solid var(--sn-border, #e5e7eb);
+  border-radius: 50%;
+  font-size: 1.125rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--sn-text-soft, #6b7280);
+  transition: background 0.15s;
+  line-height: 1;
+}
+
+.tca-modal-close:hover {
+  background: #f3f4f6;
+}
+
+.tca-modal-close:focus-visible {
+  outline: 2px solid #4f46e5;
+  outline-offset: 2px;
+}
+
+.tca-modal-envelope {
+  font-size: 3rem;
+  text-align: center;
+}
+
+.tca-modal-title {
+  font-family: var(--sn-font-rounded, sans-serif);
+  font-size: 1.125rem;
+  font-weight: 900;
+  color: #1e1b4b;
+  margin: 0;
+  text-align: center;
+}
+
+.tca-modal-meta {
+  font-size: 0.78rem;
+  color: var(--sn-muted, #9ca3af);
+  margin: 0;
+  text-align: center;
+}
+
+.tca-modal-content {
+  background: var(--sn-bg-soft, #f9fafb);
+  border-radius: 0.75rem;
+  border: 1px solid var(--sn-border, #e5e7eb);
+  padding: 1.25rem;
+  font-size: 0.9rem;
+  line-height: 1.85;
+  color: var(--sn-text, #111827);
+  white-space: pre-wrap;
+  word-break: break-word;
+  max-height: 40vh;
+  overflow-y: auto;
+}
+
+.tca-modal-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--sn-border, #e5e7eb);
+}
+
+.tca-modal-delete-btn {
+  padding: 0.5rem 1rem;
+  background: none;
+  border: 1px solid #fecaca;
+  color: #dc2626;
+  border-radius: 0.5rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  min-height: 44px;
+  font-family: inherit;
+  transition: background 0.15s;
+}
+
+.tca-modal-delete-btn:hover {
+  background: #fef2f2;
+}
+
+.tca-modal-ok-btn {
+  padding: 0.625rem 1.5rem;
+  background: #4f46e5;
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  font-size: 0.875rem;
+  font-weight: 700;
+  cursor: pointer;
+  min-height: 44px;
+  font-family: inherit;
+  transition: opacity 0.15s;
+}
+
+.tca-modal-ok-btn:hover {
+  opacity: 0.85;
+}
+
+@media (max-width: 480px) {
+  .tca-period-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .tca-panel {
+    padding: var(--sn-space-4, 1rem);
+  }
+  .tca-modal-box {
+    padding: 1.5rem 1rem 1rem;
+  }
+}
+</style>
+
+<script>
+(function () {
+  'use strict';
+
+  var LS_KEY = 'sn_time_capsule';
+  var LS_PRO = 'sn_is_pro';
+
+  /* ---- PRO判定 ---- */
+  function isPro() {
+    try { return localStorage.getItem(LS_PRO) === 'true'; } catch (_) { return false; }
+  }
+
+  /* ---- データロード/保存 ---- */
+  function loadCapsules() {
+    try {
+      var raw = localStorage.getItem(LS_KEY);
+      if (!raw) return [];
+      var arr = JSON.parse(raw);
+      return Array.isArray(arr) ? arr : [];
+    } catch (_) { return []; }
+  }
+
+  function saveCapsules(list) {
+    try { localStorage.setItem(LS_KEY, JSON.stringify(list)); } catch (_) {}
+  }
+
+  /* ---- 日時計算 ---- */
+  function addMonths(date, months) {
+    var d = new Date(date);
+    d.setMonth(d.getMonth() + months);
+    return d;
+  }
+
+  function periodToDate(period) {
+    var now = new Date();
+    if (period === '1m') return addMonths(now, 1);
+    if (period === '3m') return addMonths(now, 3);
+    if (period === '6m') return addMonths(now, 6);
+    if (period === '1y') return addMonths(now, 12);
+    return addMonths(now, 3);
+  }
+
+  function periodLabel(period) {
+    if (period === '1m') return '1ヶ月後';
+    if (period === '3m') return '3ヶ月後';
+    if (period === '6m') return '6ヶ月後';
+    if (period === '1y') return '1年後';
+    return '';
+  }
+
+  function diffDays(targetIso) {
+    var target = new Date(targetIso);
+    var now = new Date();
+    var diff = target.getTime() - now.getTime();
+    return Math.ceil(diff / (1000 * 60 * 60 * 24));
+  }
+
+  function formatIso(d) { return d.toISOString(); }
+
+  function formatDisplay(isoStr) {
+    var d = new Date(isoStr);
+    var jst = new Date(d.getTime() + 9 * 60 * 60 * 1000);
+    var y = jst.getUTCFullYear();
+    var m = String(jst.getUTCMonth() + 1).padStart(2, '0');
+    var dy = String(jst.getUTCDate()).padStart(2, '0');
+    return y + '/' + m + '/' + dy;
+  }
+
+  function generateId() {
+    if (typeof crypto !== 'undefined' && crypto.randomUUID) return crypto.randomUUID();
+    return Date.now() + '-' + Math.random().toString(36).slice(2);
+  }
+
+  /* ---- 無料枠チェック ---- */
+  function usedThisMonth() {
+    var list = loadCapsules();
+    var now = new Date();
+    var y = now.getFullYear();
+    var m = now.getMonth();
+    return list.filter(function (c) {
+      var d = new Date(c.createdAt);
+      return d.getFullYear() === y && d.getMonth() === m;
+    }).length;
+  }
+
+  /* ---- カプセルカードDOM生成 ---- */
+  function buildCapsuleCard(capsule) {
+    var card = document.createElement('div');
+    var days = diffDays(capsule.plannedOpenAt);
+    var canOpen = days <= 0;
+    var isOpened = Boolean(capsule.openedAt);
+
+    card.className = 'tca-card' + (isOpened ? ' tca-card--opened' : (canOpen ? ' tca-card--ready' : ''));
+    card.setAttribute('data-id', capsule.id);
+
+    var statusHtml = '';
+    if (isOpened) {
+      statusHtml = '<span class="tca-card-status tca-card-status--opened">開封済み</span>';
+    } else if (canOpen) {
+      statusHtml = '<span class="tca-card-status tca-card-status--ready">開封できます</span>';
+    } else {
+      statusHtml = '<span class="tca-card-status tca-card-status--waiting">あと' + days + '日</span>';
+    }
+
+    var btnHtml = '';
+    if (!isOpened && canOpen) {
+      btnHtml = '<button class="tca-card-open-btn" data-id="' + capsule.id + '" type="button">開封する</button>';
+    } else if (isOpened) {
+      btnHtml = '<button class="tca-card-read-btn" data-id="' + capsule.id + '" type="button">読み返す</button>';
+    }
+
+    var preview = capsule.content.length > 60 ? capsule.content.slice(0, 60) + '...' : capsule.content;
+
+    card.innerHTML =
+      '<div class="tca-card-header">' +
+        '<div class="tca-card-icon" aria-hidden="true">' + (isOpened ? '📬' : (canOpen ? '📩' : '📦')) + '</div>' +
+        '<div class="tca-card-meta">' +
+          '<p class="tca-card-date">作成: ' + formatDisplay(capsule.createdAt) + ' &rarr; 開封予定: ' + formatDisplay(capsule.plannedOpenAt) + '</p>' +
+          statusHtml +
+        '</div>' +
+        btnHtml +
+      '</div>' +
+      '<p class="tca-card-preview">' + escapeHtml(preview) + '</p>';
+
+    // インラインスタイル（CSSクラスは <style> 内で定義済み）
+    return card;
+  }
+
+  function escapeHtml(str) {
+    return str
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
+  /* ---- 一覧レンダリング ---- */
+  function renderList() {
+    var listEl = document.getElementById('tca-list-items');
+    var emptyEl = document.getElementById('tca-list-empty');
+    var countBadge = document.getElementById('tca-capsule-count');
+    if (!listEl || !emptyEl) return;
+
+    var list = loadCapsules();
+    // 降順
+    list.sort(function (a, b) { return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(); });
+
+    listEl.innerHTML = '';
+    if (list.length === 0) {
+      emptyEl.hidden = false;
+      if (countBadge) countBadge.style.display = 'none';
+      return;
+    }
+
+    emptyEl.hidden = true;
+    var readyCnt = list.filter(function (c) { return !c.openedAt && diffDays(c.plannedOpenAt) <= 0; }).length;
+    if (countBadge && readyCnt > 0) {
+      countBadge.style.display = '';
+      countBadge.textContent = String(readyCnt);
+    } else if (countBadge) {
+      countBadge.style.display = 'none';
+    }
+
+    list.forEach(function (capsule) {
+      var card = buildCapsuleCard(capsule);
+      listEl.appendChild(card);
+    });
+
+    // 開封ボタン
+    listEl.querySelectorAll('.tca-card-open-btn, .tca-card-read-btn').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var id = btn.getAttribute('data-id');
+        openCapsule(id);
+      });
+    });
+  }
+
+  /* ---- 開封モーダル ---- */
+  function openCapsule(id) {
+    var list = loadCapsules();
+    var capsule = list.find(function (c) { return c.id === id; });
+    if (!capsule) return;
+
+    // 開封フラグ
+    if (!capsule.openedAt) {
+      capsule.openedAt = new Date().toISOString();
+      saveCapsules(list);
+    }
+
+    var modal = document.getElementById('tca-modal');
+    var titleEl = document.getElementById('tca-modal-title');
+    var metaEl = document.getElementById('tca-modal-date');
+    var contentEl = document.getElementById('tca-modal-content');
+    var deleteBtn = document.getElementById('tca-modal-delete');
+    if (!modal || !contentEl || !metaEl) return;
+
+    if (titleEl) titleEl.textContent = '過去の自分からの手紙';
+    metaEl.textContent = '作成: ' + formatDisplay(capsule.createdAt) + '　開封: ' + formatDisplay(capsule.openedAt);
+    contentEl.textContent = capsule.content;
+
+    modal.hidden = false;
+    document.body.style.overflow = 'hidden';
+
+    // フォーカス管理
+    var closeBtn = document.getElementById('tca-modal-close');
+    if (closeBtn) closeBtn.focus();
+
+    if (deleteBtn) {
+      deleteBtn.onclick = function () {
+        if (!confirm('このカプセルを削除してもよいですか？削除後は元に戻せません。')) return;
+        var updated = loadCapsules().filter(function (c) { return c.id !== id; });
+        saveCapsules(updated);
+        closeModal();
+        renderList();
+      };
+    }
+
+    renderList();
+  }
+
+  function closeModal() {
+    var modal = document.getElementById('tca-modal');
+    if (modal) modal.hidden = true;
+    document.body.style.overflow = '';
+  }
+
+  /* ---- フォーム処理 ---- */
+  function initForm() {
+    var form = document.getElementById('tca-form');
+    var textarea = document.getElementById('tca-content');
+    var charCount = document.getElementById('tca-content-count');
+    var errorEl = document.getElementById('tca-form-error');
+    var successEl = document.getElementById('tca-success');
+    var successText = document.getElementById('tca-success-text');
+    var proGate = document.getElementById('tca-write-pro-gate');
+    var submitBtn = document.getElementById('tca-submit-btn');
+
+    if (!form || !textarea) return;
+
+    // 無料枠チェック
+    function checkProGate() {
+      if (!isPro() && usedThisMonth() >= 1) {
+        if (proGate) proGate.hidden = false;
+        if (submitBtn) submitBtn.disabled = true;
+      } else {
+        if (proGate) proGate.hidden = true;
+        if (submitBtn) submitBtn.disabled = false;
+      }
+    }
+    checkProGate();
+
+    // 文字数カウント
+    textarea.addEventListener('input', function () {
+      var len = textarea.value.length;
+      if (charCount) charCount.textContent = len.toLocaleString() + ' / 2,000';
+      if (len > 1800) {
+        charCount.style.color = '#dc2626';
+      } else {
+        charCount.style.color = '';
+      }
+    });
+
+    // 期間選択のビジュアル更新
+    form.querySelectorAll('input[name="period"]').forEach(function (radio) {
+      radio.addEventListener('change', function () {
+        form.querySelectorAll('.tca-period-card').forEach(function (card) {
+          card.classList.remove('tca-period-card--checked');
+        });
+        if (radio.checked) {
+          var card = radio.nextElementSibling;
+          if (card) card.classList.add('tca-period-card--checked');
+        }
+      });
+    });
+
+    // フォーム送信
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      if (errorEl) errorEl.hidden = true;
+
+      var content = textarea.value.trim();
+      if (!content) {
+        if (errorEl) {
+          errorEl.textContent = '手紙の内容を入力してください。';
+          errorEl.hidden = false;
+        }
+        textarea.focus();
+        return;
+      }
+      if (content.length > 2000) {
+        if (errorEl) {
+          errorEl.textContent = '2,000字以内で入力してください。';
+          errorEl.hidden = false;
+        }
+        return;
+      }
+
+      var periodRadio = form.querySelector('input[name="period"]:checked');
+      var period = periodRadio ? periodRadio.value : '3m';
+      var openDate = periodToDate(period);
+      var now = new Date();
+
+      var capsule = {
+        id: generateId(),
+        content: content,
+        createdAt: formatIso(now),
+        plannedOpenAt: formatIso(openDate),
+        openedAt: null,
+        period: period,
+      };
+
+      var list = loadCapsules();
+      list.push(capsule);
+      saveCapsules(list);
+
+      // UI更新
+      form.style.display = 'none';
+      if (successEl) {
+        successEl.hidden = false;
+        if (successText) {
+          successText.textContent =
+            formatDisplay(openDate) + '（' + periodLabel(period) + '後）に通知します。一覧からカプセルを確認できます。';
+        }
+      }
+
+      renderList();
+    });
+
+    // 成功後のボタン
+    var writeAnotherBtn = document.getElementById('tca-write-another');
+    var goListBtn = document.getElementById('tca-go-list');
+
+    if (writeAnotherBtn) {
+      writeAnotherBtn.addEventListener('click', function () {
+        form.style.display = '';
+        if (successEl) successEl.hidden = true;
+        form.reset();
+        if (charCount) charCount.textContent = '0 / 2,000';
+        textarea.focus();
+        checkProGate();
+      });
+    }
+
+    if (goListBtn) {
+      goListBtn.addEventListener('click', function () {
+        switchTab('list');
+      });
+    }
+  }
+
+  /* ---- タブ切り替え ---- */
+  function switchTab(tabId) {
+    var tabs = document.querySelectorAll('.tca-tab');
+    var panels = document.querySelectorAll('.tca-panel');
+
+    tabs.forEach(function (tab) {
+      var isActive = tab.id === 'tca-tab-' + tabId;
+      tab.setAttribute('aria-selected', isActive ? 'true' : 'false');
+      tab.classList.toggle('tca-tab--active', isActive);
+    });
+
+    panels.forEach(function (panel) {
+      panel.hidden = panel.id !== 'tca-panel-' + tabId;
+    });
+  }
+
+  function initTabs() {
+    document.querySelectorAll('.tca-tab').forEach(function (tab) {
+      tab.addEventListener('click', function () {
+        var id = tab.id.replace('tca-tab-', '');
+        switchTab(id);
+      });
+    });
+  }
+
+  /* ---- モーダルクローズ ---- */
+  function initModal() {
+    document.getElementById('tca-modal-close')?.addEventListener('click', closeModal);
+    document.getElementById('tca-modal-close2')?.addEventListener('click', closeModal);
+    document.getElementById('tca-modal')?.addEventListener('click', function (e) {
+      if (e.target === document.getElementById('tca-modal')) closeModal();
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') closeModal();
+    });
+  }
+
+  /* ---- URLパラメータ対応（/time-capsule/letter/?id=xxx） ---- */
+  function checkUrlParam() {
+    var params = new URLSearchParams(window.location.search);
+    var id = params.get('id');
+    if (id) {
+      openCapsule(id);
+    }
+  }
+
+  /* ---- 初期化 ---- */
+  function init() {
+    initTabs();
+    initForm();
+    initModal();
+    renderList();
+    checkUrlParam();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
+</script>
+
+<style>
+/* カプセルカード（JSで生成される要素のスタイル） */
+:global(.tca-card) {
+  border: 1px solid var(--sn-border, #e5e7eb);
+  border-radius: 0.875rem;
+  overflow: hidden;
+  background: #fff;
+  transition: border-color 0.15s;
+}
+:global(.tca-card--ready) {
+  border-color: #4f46e5;
+  box-shadow: 0 2px 8px rgba(79,70,229,0.12);
+}
+:global(.tca-card--opened) {
+  opacity: 0.75;
+}
+:global(.tca-card-header) {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.875rem 1rem;
+  background: var(--sn-bg-soft, #f9fafb);
+  border-bottom: 1px solid var(--sn-border, #e5e7eb);
+  flex-wrap: wrap;
+}
+:global(.tca-card-icon) {
+  font-size: 1.75rem;
+  flex-shrink: 0;
+}
+:global(.tca-card-meta) {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 10rem;
+}
+:global(.tca-card-date) {
+  font-size: 0.75rem;
+  color: var(--sn-muted, #9ca3af);
+  margin: 0;
+}
+:global(.tca-card-status) {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+}
+:global(.tca-card-status--ready) {
+  background: #eef2ff;
+  color: #4f46e5;
+  border: 1px solid #c7d2fe;
+}
+:global(.tca-card-status--waiting) {
+  background: #f3f4f6;
+  color: #6b7280;
+}
+:global(.tca-card-status--opened) {
+  background: #ecfdf5;
+  color: #059669;
+  border: 1px solid #a7f3d0;
+}
+:global(.tca-card-open-btn) {
+  padding: 0.5rem 1rem;
+  background: #4f46e5;
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  min-height: 40px;
+  font-family: inherit;
+  transition: opacity 0.15s;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+:global(.tca-card-open-btn:hover) {
+  opacity: 0.85;
+}
+:global(.tca-card-read-btn) {
+  padding: 0.5rem 1rem;
+  background: none;
+  border: 1px solid var(--sn-border, #e5e7eb);
+  color: var(--sn-text-soft, #6b7280);
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  min-height: 40px;
+  font-family: inherit;
+  transition: background 0.15s;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+:global(.tca-card-read-btn:hover) {
+  background: #f3f4f6;
+}
+:global(.tca-card-preview) {
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  color: var(--sn-text-soft, #6b7280);
+  line-height: 1.6;
+  margin: 0;
+  font-style: italic;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+</style>

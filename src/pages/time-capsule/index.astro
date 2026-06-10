@@ -26,6 +26,7 @@ import Container from '../../components/Container.astro';
 import TldrBlock from '../../components/TldrBlock.astro';
 import ReferenceList from '../../components/ReferenceList.astro';
 import ScienceNote from '../../components/ScienceNote.astro';
+import TimeCapsuleApp from '../../components/TimeCapsuleApp.astro';
 
 const SITE_URL = 'https://shindan-navi.jp';
 const PAGE_URL = `${SITE_URL}/time-capsule/`;
@@ -580,6 +581,16 @@ const jsonLdAll = [jsonLdWebPage, jsonLdArticle, jsonLdFAQ, jsonLdBreadcrumb];
           <p class="tc-pro-cta-note">現在はプレビュー中。Stripe決済連携後に申込可能になります。</p>
         </div>
       </div>
+    </section>
+
+    {/* ========== タイムカプセルUI実装 ========== */}
+    <section id="write" class="tc-section" aria-labelledby="tc-app-h2">
+      <h2 id="tc-app-h2" class="tc-h2">タイムカプセルを作る</h2>
+      <p class="tc-lead">
+        今すぐ手紙を書いて、未来の自分に届けましょう。<br />
+        データはブラウザ内のみに保存されます。サーバー送信なし。
+      </p>
+      <TimeCapsuleApp />
     </section>
 
     {/* ========== H2-6: 活用シーン5パターン ========== */}

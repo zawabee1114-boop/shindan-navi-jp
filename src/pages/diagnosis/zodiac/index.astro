@@ -26,6 +26,7 @@ import { elementsData, modalitiesData } from '../../../data/diagnoses/zodiac/ele
 import TldrBlock from '../../../components/TldrBlock.astro';
 import ReferenceList from '../../../components/ReferenceList.astro';
 import ScienceNote from '../../../components/ScienceNote.astro';
+import IntegratedProgressBar from '../../../components/IntegratedProgressBar.astro';
 
 const SITE_URL = 'https://shindan-navi.jp';
 const PAGE_URL = `${SITE_URL}/diagnosis/zodiac/`;
@@ -248,6 +249,9 @@ const ELEMENT_COLORS: Record<string, { bg: string; border: string; text: string;
       <a href="#zodiac-tool" class="zd-cta-btn">誕生日から星座を調べる →</a>
     </div>
   </section>
+
+  <!-- フルプロファイル達成バー -->
+  <IntegratedProgressBar currentDiagnosisId="zodiac" />
 
   <Container>
     <!-- パンくず -->

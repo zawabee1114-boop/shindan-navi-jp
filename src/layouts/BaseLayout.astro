@@ -11,6 +11,9 @@
  *   - body の padding-bottom は MobileTabBar CSS で制御
  * フェーズ6: WebSite SearchAction 実装（2026-05-23 更新）
  *   - /search/?q= ページ追加・SiteLinksSearchBox リッチリザルト対応
+ * フェーズ7: Organization.sameAs 権威ページ登録（2026-06-10 更新）
+ *   - SNS未取得の間はサイト内権威ページで暫定登録（IMP-1 2026-05-29監査 暫定解消）
+ *   - GSC_VERIFICATION コメント強化（CEOアクション明記）
  * 準拠基準書: zawa-empire/docs/seo-aio/01-foundations.md / 02-structured-data.md
  *
  * テーマ変更ガイド:
@@ -171,7 +174,17 @@ const organizationSchema = {
     { '@type': 'Thing', name: '血液型性格診断（日本独自モデル）' },
   ],
   areaServed: { '@type': 'Country', name: '日本' },
-  sameAs: [],
+  // CEOアクション: X(Twitter)/Instagram等のSNS公式アカウントを取得後、ここにURLを追加する
+  // 例: 'https://x.com/shindan_navi', 'https://www.instagram.com/shindannavi/'
+  // 現在はSNS公式アカウント未取得のため、サイト内権威ページで暫定登録
+  // （IMP-1 2026-05-29監査 暫定解消・SNS取得後に差し替え）
+  sameAs: [
+    'https://shindan-navi.jp/about/',
+    'https://shindan-navi.jp/editorial-policy/',
+    'https://shindan-navi.jp/authors/',
+    'https://shindan-navi.jp/privacy/',
+    'https://shindan-navi.jp/terms/',
+  ],
 };
 
 // WebSite JSON-LD（SiteLinksSearchBox + SearchAction + @id連結）
@@ -264,6 +277,10 @@ const speakableSchema = {
 // ============================================================
 const GA4_ID = 'G-S4WP0YRDWW';
 const ADSENSE_PUB = 'ca-pub-3827953973757487';
+// CEOアクション: Google Search Console で「HTMLタグ」確認コードを取得し、
+// この変数にトークン文字列（例: 'abcdef1234567890'）を設定する。
+// Cloudflare Pages の環境変数 PUBLIC_GSC_VERIFICATION でも注入可能。
+// 空文字列のままでもビルドエラーにはならない（下記の && 条件分岐でメタ出力をスキップ）。
 const GSC_VERIFICATION = '';
 ---
 
@@ -312,7 +329,7 @@ const GSC_VERIFICATION = '';
   <link rel="alternate" hreflang="ja" href={pageUrl} />
   <link rel="alternate" hreflang="x-default" href={pageUrl} />
 
-  <!-- Google Search Console 確認（CEO設定後に有効化）-->
+  <!-- Google Search Console 確認（CEOアクション: GSC > 設定 > HTMLタグ確認コードを取得 → src/layouts/BaseLayout.astro の GSC_VERIFICATION 変数に設定）-->
   {GSC_VERIFICATION && (
     <meta name="google-site-verification" content={GSC_VERIFICATION} />
   )}

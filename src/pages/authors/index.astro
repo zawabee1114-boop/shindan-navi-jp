@@ -15,7 +15,9 @@
  * - src/components/SiteFooter.astro（/authors/ リンク追加）
  * のみ。BaseLayout.astro・各診断 index.astro は触らない
  *
- * 確認日: 2026-05-29
+ * 更新履歴:
+ * - 2026-05-29: 初版公開
+ * - 2026-06-10: blood-subtype（12タイプ）を血液型診断 desc に追記・FAQ更新
  */
 
 import BaseLayout from '../../layouts/BaseLayout.astro';
@@ -80,7 +82,7 @@ const author = {
     { name: '恋愛スタイル診断', href: '/diagnosis/love-style/', desc: 'J.A.Lee（1973）の6スタイル分類。Hendrick & Hendrick（1986）の実証研究に基づく' },
     { name: '金銭感覚診断', href: '/diagnosis/money-style/', desc: 'Klontz et al.（2011）マネースクリプト理論。行動経済学の知見を応用' },
     { name: '星座性格診断', href: '/diagnosis/zodiac/', desc: '西洋占星術の文化的性格分類フレームワーク（エンタメ用途・科学的根拠なし表記あり）' },
-    { name: '血液型性格診断', href: '/diagnosis/blood-type/', desc: '日本文化的性格分類（文化的背景として紹介。科学的根拠限定的の表記あり）' },
+    { name: '血液型性格診断', href: '/diagnosis/blood-type/', desc: '日本文化的性格分類（文化的背景として紹介。科学的根拠限定的の表記あり）。古川竹二（1927）・能見正比古（1971）の傾向区分を参照したサブタイプ診断（12タイプ）も実装済み' },
   ],
   references: [
     { name: 'American Psychological Association（APA）', url: 'https://www.apa.org/' },
@@ -103,11 +105,11 @@ const faqItems = [
   },
   {
     q: '担当している診断コンテンツは何ですか？',
-    a: '会澤勇気は診断ナビの全8診断（多重知能テスト・MBTI診断・DiSC診断・完璧主義診断・恋愛スタイル診断・金銭感覚診断・星座診断・血液型診断）のコンテンツを担当しています。各診断の参照学術理論・公式機関への直接リンクを明示しています。',
+    a: '会澤勇気は診断ナビの全8診断（多重知能テスト・MBTI診断・DiSC診断・完璧主義診断・恋愛スタイル診断・金銭感覚診断・星座診断・血液型診断）のコンテンツを担当しています。加えて、血液型を古川竹二（1927）・能見正比古（1971）の傾向区分とBig5の外向性・情緒安定性軸で12サブタイプに細分化した「血液型サブタイプ診断」（2026-06-07実装）のデータ設計も担当しています。各診断の参照学術理論・公式機関への直接リンクを明示しています。',
   },
   {
     q: '参照している学術理論・機関はどこですか？',
-    a: 'Howard Gardner（Harvard大・多重知能理論）、Myers & Briggs Foundation（MBTI）、DiSC公式（Wiley社）、American Psychological Association（APA・Big Five）、Hendrick & Hendrick（恋愛スタイル）、Klontz et al.（2011、金銭感覚）などの研究・機関を参照しています。計30本以上の学術論文・公式資料に基づいています（2026-05-29確認）。',
+    a: 'Howard Gardner（Harvard大・多重知能理論）、Myers & Briggs Foundation（MBTI）、DiSC公式（Wiley社）、American Psychological Association（APA・Big Five）、Hendrick & Hendrick（恋愛スタイル）、Klontz et al.（2011、金銭感覚）、古川竹二（1927、血液型気質）、能見正比古（1971、血液型傾向区分）などの研究・機関を参照しています。計35本以上の学術論文・公式資料に基づいています（2026-06-10確認）。',
   },
   {
     q: 'コンテンツの誤りを見つけたらどうすればいいですか？',
@@ -161,7 +163,7 @@ const jsonLdProfilePage = {
   url: PAGE_URL,
   name: title,
   description,
-  dateModified: '2026-05-29',
+  dateModified: '2026-06-10',
   about: {
     '@id': `${PAGE_URL}#person-aizawa`,
   },
@@ -204,7 +206,7 @@ const pageJsonLd = [jsonLdPerson, jsonLdProfilePage, jsonLdFAQ, jsonLdBreadcrumb
   canonical={PAGE_URL}
   jsonLd={pageJsonLd}
   ogImage="/ogp-default.png"
-  lastUpdated="2026-05-29"
+  lastUpdated="2026-06-10"
   breadcrumbs={[{ name: '著者プロフィール', url: '/authors/' }]}
 >
   <nav class="breadcrumb" aria-label="パンくずリスト">
@@ -235,12 +237,12 @@ const pageJsonLd = [jsonLdPerson, jsonLdProfilePage, jsonLdFAQ, jsonLdBreadcrumb
       <p class="tldr-block__title">このページでわかること</p>
       <ul class="tldr-block__list">
         <li class="tldr-block__item">会澤勇気の専門領域（性格心理学・行動経済学・データサイエンス）と診断ナビ立ち上げの経緯</li>
-        <li class="tldr-block__item">担当する8診断コンテンツと各診断の参照学術理論（計30本以上の論文・公式資料）</li>
+        <li class="tldr-block__item">担当する8診断コンテンツと各診断の参照学術理論（計35本以上の論文・公式資料）</li>
         <li class="tldr-block__item">編集方針（一次情報主義・架空監修者禁止・YMYL非扱い・誤情報7営業日以内訂正）</li>
         <li class="tldr-block__item">外部監修者を設けていないことの正直な開示と代替品質担保の仕組み</li>
       </ul>
       <p class="tldr-block__meta">
-        <time datetime="2026-05-29">2026-05-29</time> 時点の情報。
+        <time datetime="2026-06-10">2026-06-10</time> 時点の情報。
         著者情報の更新は <a href="/changelog/">changelog</a> に記録します。
       </p>
     </div>
@@ -300,7 +302,7 @@ const pageJsonLd = [jsonLdPerson, jsonLdProfilePage, jsonLdFAQ, jsonLdBreadcrumb
     <section class="content-section" id="specialties" aria-labelledby="specialties-heading">
       <h2 class="section-heading" id="specialties-heading">会澤勇気の専門領域と参照学術理論</h2>
       <p class="section-lead">
-        診断ナビの8診断は、以下の学術理論・公式機関を参照して設計されています（2026-05-29確認・計30本以上の研究論文・公式資料）。
+        診断ナビの8診断は、以下の学術理論・公式機関を参照して設計されています（2026-06-10確認・計35本以上の研究論文・公式資料）。
       </p>
       <ul class="specialty-list">
         {author.specialties.map((s) => (
@@ -379,7 +381,7 @@ const pageJsonLd = [jsonLdPerson, jsonLdProfilePage, jsonLdFAQ, jsonLdBreadcrumb
           <div class="eeat-stat-label">担当診断数</div>
         </div>
         <div class="eeat-stat-card">
-          <div class="eeat-stat-num">30<span class="eeat-stat-unit">本以上</span></div>
+          <div class="eeat-stat-num">35<span class="eeat-stat-unit">本以上</span></div>
           <div class="eeat-stat-label">参照学術論文・公式資料数</div>
         </div>
         <div class="eeat-stat-card">
@@ -394,7 +396,7 @@ const pageJsonLd = [jsonLdPerson, jsonLdProfilePage, jsonLdFAQ, jsonLdBreadcrumb
       <div class="eeat-trust-note">
         <p>
           <strong>信頼性の根拠：</strong>
-          外部監修者を設けていないことを正直に開示しています。その代わり、各診断ページでAPA Dictionary・Harvard Project Zero・Myers & Briggs Foundation等の一次機関に直接参照し、DOI付き学術論文を引用することで品質を担保しています。誤情報のご報告は原則7営業日以内に対応します（2026-05-29時点）。
+          外部監修者を設けていないことを正直に開示しています。その代わり、各診断ページでAPA Dictionary・Harvard Project Zero・Myers & Briggs Foundation等の一次機関に直接参照し、DOI付き学術論文を引用することで品質を担保しています。誤情報のご報告は原則7営業日以内に対応します（2026-06-10時点）。
         </p>
       </div>
     </section>

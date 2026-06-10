@@ -1,0 +1,597 @@
+---
+/**
+ * PersonalityTimeline.astro - あなたの特性推移グラフ
+ *
+ * - LocalStorage（sn_timeline_snapshots）から時系列データを読み取りSVGでグラフ描画
+ * - Chart.js等外部ライブラリ不使用（CWV優先）
+ * - Big5用語はユーザー非表示。「行動／対人／責任／情緒／好奇心」表記
+ * - 1回受診のみ: 再受診促進メッセージ
+ * - 2回以上: 折れ線グラフ表示
+ * - PRO制限: 過去90日まで無料。超過分はPRO訴求
+ *
+ * 使用: profile/index.astro 内に埋め込む
+ * Props: なし（LocalStorageから自律取得）
+ */
+---
+
+<section
+  id="personality-timeline-section"
+  class="timeline-section"
+  aria-labelledby="timeline-heading"
+>
+  <div class="timeline-header">
+    <h2 id="timeline-heading" class="timeline-title">
+      <span aria-hidden="true">📈</span>
+      あなたの特性傾向の推移
+    </h2>
+    <p class="timeline-desc">
+      受診するたびに記録が積み重なり、自分の変化が見えてきます。
+    </p>
+  </div>
+
+  <!-- ローディング -->
+  <div id="timeline-loading" class="timeline-loading" aria-live="polite" aria-label="読み込み中">
+    <div class="timeline-spinner" aria-hidden="true"></div>
+    <p class="timeline-loading-text">履歴を読み込み中...</p>
+  </div>
+
+  <!-- 0件: 受診促進 -->
+  <div id="timeline-empty" class="timeline-empty" hidden aria-live="polite">
+    <div class="timeline-empty-icon" aria-hidden="true">🧩</div>
+    <p class="timeline-empty-text">診断を受けると、ここに特性変化グラフが表示されます。</p>
+    <a href="/diagnosis/" class="timeline-cta-btn">診断を受けてみる</a>
+  </div>
+
+  <!-- 1件: 再受診促進 -->
+  <div id="timeline-single" class="timeline-single" hidden aria-live="polite">
+    <div class="timeline-single-badge" aria-hidden="true">✅ 1回受診済み</div>
+    <p class="timeline-single-text">
+      もう一度診断を受けると、特性の変化グラフが表示されます。<br />
+      1週間後・1ヶ月後に再受診するのがおすすめです。
+    </p>
+    <a href="/diagnosis/" class="timeline-cta-btn">再受診してグラフを見る</a>
+  </div>
+
+  <!-- 2件以上: グラフ表示 -->
+  <div id="timeline-graph" class="timeline-graph-wrap" hidden aria-live="polite">
+    <!-- 凡例 -->
+    <div id="timeline-legend" class="timeline-legend" role="list" aria-label="特性凡例"></div>
+
+    <!-- SVGグラフ -->
+    <div class="timeline-svg-wrap" role="img" aria-labelledby="timeline-svg-caption">
+      <svg
+        id="timeline-svg"
+        class="timeline-svg"
+        viewBox="0 0 500 220"
+        xmlns="http://www.w3.org/2000/svg"
+        aria-hidden="true"
+      >
+        <!-- グリッド線 -->
+        <g class="tl-grid" stroke="#e5e7eb" stroke-width="1">
+          <line x1="40" y1="10" x2="490" y2="10" />
+          <line x1="40" y1="62" x2="490" y2="62" />
+          <line x1="40" y1="115" x2="490" y2="115" />
+          <line x1="40" y1="167" x2="490" y2="167" />
+          <line x1="40" y1="210" x2="490" y2="210" />
+        </g>
+        <!-- Y軸ラベル -->
+        <g class="tl-ylabel" font-size="9" fill="#9ca3af" text-anchor="end">
+          <text x="36" y="13">100</text>
+          <text x="36" y="65">75</text>
+          <text x="36" y="118">50</text>
+          <text x="36" y="170">25</text>
+          <text x="36" y="213">0</text>
+        </g>
+        <!-- 折れ線グループ（JSで注入） -->
+        <g id="timeline-lines"></g>
+        <!-- データ点グループ（JSで注入） -->
+        <g id="timeline-dots"></g>
+        <!-- X軸ラベルグループ（JSで注入） -->
+        <g id="timeline-xlabels" font-size="8" fill="#9ca3af" text-anchor="middle"></g>
+        <!-- ツールチップ -->
+        <g id="timeline-tooltip" style="display:none">
+          <rect id="tl-tip-bg" rx="4" fill="#1e1b4b" opacity="0.9"></rect>
+          <text id="tl-tip-text" font-size="9" fill="#fff"></text>
+        </g>
+      </svg>
+      <p id="timeline-svg-caption" class="sr-only">特性傾向の時系列折れ線グラフ</p>
+    </div>
+
+    <!-- X軸日付（複数点の場合） -->
+    <div id="timeline-dates" class="timeline-dates"></div>
+
+    <!-- PRO訴求（隠れているデータがある場合） -->
+    <div id="timeline-pro-hint" class="timeline-pro-hint" hidden>
+      <span class="tl-pro-badge">PRO</span>
+      <span class="tl-pro-text">90日より前のデータはPRO会員で閲覧できます</span>
+      <a href="/pro/" class="tl-pro-link">PRO ¥590/月 →</a>
+    </div>
+  </div>
+</section>
+
+<style>
+.timeline-section {
+  background: var(--sn-bg-white, #fff);
+  border-radius: var(--sn-radius-xl, 20px);
+  border: 1px solid var(--sn-border, #e5e7eb);
+  padding: var(--sn-space-6, 1.5rem);
+  margin-block: var(--sn-space-8, 2rem);
+}
+
+.timeline-header {
+  margin-bottom: var(--sn-space-5, 1.25rem);
+}
+
+.timeline-title {
+  display: flex;
+  align-items: center;
+  gap: var(--sn-space-2, 0.5rem);
+  font-family: var(--sn-font-rounded, sans-serif);
+  font-size: var(--sn-text-xl, 1.25rem);
+  font-weight: 900;
+  color: var(--sn-text, #111827);
+  margin: 0 0 var(--sn-space-2, 0.5rem);
+}
+
+.timeline-desc {
+  font-size: var(--sn-text-sm, 0.875rem);
+  color: var(--sn-text-soft, #6b7280);
+  margin: 0;
+  line-height: 1.6;
+}
+
+/* ローディング */
+.timeline-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 2.5rem 1rem;
+  color: var(--sn-muted, #9ca3af);
+}
+
+.timeline-spinner {
+  width: 2rem;
+  height: 2rem;
+  border: 3px solid #e5e7eb;
+  border-top-color: #4f46e5;
+  border-radius: 50%;
+  animation: tl-spin 0.7s linear infinite;
+}
+
+@keyframes tl-spin {
+  to { transform: rotate(360deg); }
+}
+
+.timeline-loading-text {
+  font-size: 0.875rem;
+  margin: 0;
+}
+
+/* 空・単件メッセージ */
+.timeline-empty,
+.timeline-single {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.875rem;
+  padding: 2.5rem 1rem;
+  text-align: center;
+}
+
+.timeline-empty-icon {
+  font-size: 2.5rem;
+}
+
+.timeline-empty-text,
+.timeline-single-text {
+  font-size: 0.9rem;
+  color: var(--sn-text-soft, #6b7280);
+  line-height: 1.7;
+  margin: 0;
+  max-width: 28rem;
+}
+
+.timeline-single-badge {
+  display: inline-block;
+  background: #ecfdf5;
+  color: #059669;
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  border: 1px solid #a7f3d0;
+}
+
+.timeline-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.625rem 1.5rem;
+  background: #4f46e5;
+  color: #fff;
+  border-radius: 999px;
+  font-size: 0.875rem;
+  font-weight: 700;
+  text-decoration: none;
+  min-height: 44px;
+  transition: opacity 0.15s, transform 0.15s;
+}
+
+.timeline-cta-btn:hover {
+  opacity: 0.85;
+  transform: translateY(-1px);
+  text-decoration: none;
+}
+
+/* グラフエリア */
+.timeline-graph-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* 凡例 */
+.timeline-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+}
+
+/* SVGラッパー */
+.timeline-svg-wrap {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  background: #fafafa;
+  border-radius: 0.75rem;
+  border: 1px solid #f3f4f6;
+}
+
+.timeline-svg {
+  width: 100%;
+  min-width: 320px;
+  height: auto;
+  display: block;
+}
+
+/* 日付行 */
+.timeline-dates {
+  display: flex;
+  justify-content: space-between;
+  padding-inline: 2.5rem 0;
+  font-size: 0.7rem;
+  color: var(--sn-muted, #9ca3af);
+  overflow: hidden;
+}
+
+/* PRO訴求バナー */
+.timeline-pro-hint {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  padding: 0.75rem 1rem;
+  background: #fef3c7;
+  border-radius: 0.5rem;
+  border: 1px solid #fde68a;
+  font-size: 0.8125rem;
+  flex-wrap: wrap;
+}
+
+.tl-pro-badge {
+  display: inline-block;
+  background: #f59e0b;
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 900;
+  padding: 2px 6px;
+  border-radius: 999px;
+  flex-shrink: 0;
+}
+
+.tl-pro-text {
+  color: #92400e;
+  flex: 1;
+  min-width: 8rem;
+}
+
+.tl-pro-link {
+  color: #d97706;
+  font-weight: 700;
+  text-decoration: underline;
+  white-space: nowrap;
+}
+
+/* スクリーンリーダー専用 */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (max-width: 480px) {
+  .timeline-section {
+    padding: var(--sn-space-4, 1rem);
+  }
+  .timeline-legend {
+    gap: 0.375rem 0.75rem;
+  }
+}
+</style>
+
+<script>
+(function () {
+  'use strict';
+
+  /** LocalStorageキー */
+  const LS_TIMELINE = 'sn_timeline_snapshots';
+  const LS_PRO = 'sn_is_pro';  // 簡易PRO判定
+  const FREE_DAYS = 90;
+
+  /** Big5 → 表示ラベル */
+  const LABELS = { E: '行動傾向', A: '対人傾向', C: '責任傾向', N: '情緒傾向', O: '好奇心傾向' };
+  const COLORS = { E: '#4f46e5', A: '#059669', C: '#d97706', N: '#dc2626', O: '#7c3aed' };
+  const KEYS = ['E', 'A', 'C', 'N', 'O'];
+
+  /** SVG座標 */
+  const SVG_W = 500;
+  const SVG_PLOT_X_START = 40;
+  const SVG_PLOT_X_END = 490;
+  const SVG_PLOT_Y_TOP = 10;
+  const SVG_PLOT_Y_BOTTOM = 210;
+  const SVG_PLOT_W = SVG_PLOT_X_END - SVG_PLOT_X_START;
+  const SVG_PLOT_H = SVG_PLOT_Y_BOTTOM - SVG_PLOT_Y_TOP;
+
+  function svgX(xPct) {
+    return SVG_PLOT_X_START + (xPct / 100) * SVG_PLOT_W;
+  }
+
+  function svgY(score) {
+    // score 0-100 → y: 100=top(10), 0=bottom(210)
+    return SVG_PLOT_Y_TOP + ((100 - score) / 100) * SVG_PLOT_H;
+  }
+
+  function loadSnapshots() {
+    try {
+      var raw = localStorage.getItem(LS_TIMELINE);
+      if (!raw) return [];
+      var arr = JSON.parse(raw);
+      if (!Array.isArray(arr)) return [];
+      return arr;
+    } catch (_) {
+      return [];
+    }
+  }
+
+  function isPro() {
+    try {
+      return localStorage.getItem(LS_PRO) === 'true';
+    } catch (_) {
+      return false;
+    }
+  }
+
+  function formatDate(isoStr) {
+    var d = new Date(isoStr);
+    var jst = new Date(d.getTime() + 9 * 60 * 60 * 1000);
+    var y = jst.getUTCFullYear();
+    var m = String(jst.getUTCMonth() + 1).padStart(2, '0');
+    var dy = String(jst.getUTCDate()).padStart(2, '0');
+    return y + '/' + m + '/' + dy;
+  }
+
+  function createSvgEl(tag) {
+    return document.createElementNS('http://www.w3.org/2000/svg', tag);
+  }
+
+  function buildLegend(container) {
+    container.innerHTML = '';
+    KEYS.forEach(function (k) {
+      var item = document.createElement('div');
+      item.setAttribute('role', 'listitem');
+      item.style.cssText = 'display:flex;align-items:center;gap:4px;font-size:0.75rem;color:#374151;';
+      var dot = document.createElement('span');
+      dot.setAttribute('aria-hidden', 'true');
+      dot.style.cssText = 'display:inline-block;width:10px;height:10px;border-radius:50%;background:' + COLORS[k] + ';flex-shrink:0;';
+      var label = document.createTextNode(LABELS[k]);
+      item.appendChild(dot);
+      item.appendChild(label);
+      container.appendChild(item);
+    });
+  }
+
+  function buildGraph(snapshots) {
+    var linesG = document.getElementById('timeline-lines');
+    var dotsG = document.getElementById('timeline-dots');
+    var xlabelsG = document.getElementById('timeline-xlabels');
+
+    if (!linesG || !dotsG || !xlabelsG) return;
+
+    // 時刻ベースで正規化
+    var times = snapshots.map(function (s) { return new Date(s.capturedAt).getTime(); });
+    var tMin = times[0];
+    var tMax = times[times.length - 1];
+    var tRange = tMax - tMin || 1;
+
+    var xPcts = times.map(function (t) { return ((t - tMin) / tRange) * 100; });
+
+    // 折れ線 + ドット
+    KEYS.forEach(function (k) {
+      var color = COLORS[k];
+
+      // polyline
+      var poly = createSvgEl('polyline');
+      var pts = snapshots.map(function (s, i) {
+        var x = svgX(xPcts[i]);
+        var y = svgY(s.big5[k]);
+        return x.toFixed(1) + ',' + y.toFixed(1);
+      }).join(' ');
+      poly.setAttribute('points', pts);
+      poly.setAttribute('fill', 'none');
+      poly.setAttribute('stroke', color);
+      poly.setAttribute('stroke-width', '2');
+      poly.setAttribute('stroke-linejoin', 'round');
+      poly.setAttribute('stroke-linecap', 'round');
+      linesG.appendChild(poly);
+
+      // dots
+      snapshots.forEach(function (s, i) {
+        var cx = svgX(xPcts[i]);
+        var cy = svgY(s.big5[k]);
+        var circle = createSvgEl('circle');
+        circle.setAttribute('cx', cx.toFixed(1));
+        circle.setAttribute('cy', cy.toFixed(1));
+        circle.setAttribute('r', '4');
+        circle.setAttribute('fill', color);
+        circle.setAttribute('stroke', '#fff');
+        circle.setAttribute('stroke-width', '1.5');
+        circle.dataset.score = s.big5[k];
+        circle.dataset.trait = LABELS[k];
+        circle.dataset.date = formatDate(s.capturedAt);
+        circle.setAttribute('tabindex', '0');
+        circle.setAttribute('aria-label', formatDate(s.capturedAt) + ' ' + LABELS[k] + ': ' + s.big5[k]);
+        circle.addEventListener('mouseenter', onDotHover);
+        circle.addEventListener('focus', onDotHover);
+        circle.addEventListener('mouseleave', hideTooltip);
+        circle.addEventListener('blur', hideTooltip);
+        dotsG.appendChild(circle);
+      });
+    });
+
+    // X軸ラベル（最大5点）
+    var step = Math.max(1, Math.floor(snapshots.length / 5));
+    var shown = [];
+    for (var i = 0; i < snapshots.length; i += step) {
+      shown.push(i);
+    }
+    if (shown[shown.length - 1] !== snapshots.length - 1) {
+      shown.push(snapshots.length - 1);
+    }
+
+    shown.forEach(function (idx) {
+      var x = svgX(xPcts[idx]);
+      var t = createSvgEl('text');
+      t.setAttribute('x', x.toFixed(1));
+      t.setAttribute('y', '220');
+      t.textContent = formatDate(snapshots[idx].capturedAt).slice(5); // MM/DD
+      xlabelsG.appendChild(t);
+    });
+  }
+
+  function onDotHover(e) {
+    var el = e.currentTarget;
+    var score = el.dataset.score;
+    var trait = el.dataset.trait;
+    var date = el.dataset.date;
+    if (!score || !trait || !date) return;
+
+    var tip = document.getElementById('timeline-tooltip');
+    var tipBg = document.getElementById('tl-tip-bg');
+    var tipText = document.getElementById('tl-tip-text');
+    if (!tip || !tipBg || !tipText) return;
+
+    var cx = parseFloat(el.getAttribute('cx') || '0');
+    var cy = parseFloat(el.getAttribute('cy') || '0');
+
+    var label = date + '\n' + trait + ': ' + score;
+
+    // テキストを設定（tspan2行）
+    tipText.innerHTML = '';
+    var tspan1 = createSvgEl('tspan');
+    tspan1.setAttribute('x', String(cx + 8));
+    tspan1.setAttribute('dy', '0');
+    tspan1.textContent = date;
+    var tspan2 = createSvgEl('tspan');
+    tspan2.setAttribute('x', String(cx + 8));
+    tspan2.setAttribute('dy', '12');
+    tspan2.textContent = trait + ': ' + score;
+    tipText.appendChild(tspan1);
+    tipText.appendChild(tspan2);
+
+    var textW = Math.max(date.length, (trait + ': ' + score).length) * 5.5 + 8;
+    var tipX = cx + 8;
+    var tipY = cy - 30;
+
+    // 右端クリッピング防止
+    if (tipX + textW > SVG_W - 10) {
+      tipX = cx - textW - 10;
+    }
+
+    tipBg.setAttribute('x', String(tipX - 4));
+    tipBg.setAttribute('y', String(tipY - 11));
+    tipBg.setAttribute('width', String(textW));
+    tipBg.setAttribute('height', '28');
+    tipText.setAttribute('x', String(tipX));
+    tipText.setAttribute('y', String(tipY));
+
+    tip.style.display = '';
+  }
+
+  function hideTooltip() {
+    var tip = document.getElementById('timeline-tooltip');
+    if (tip) tip.style.display = 'none';
+  }
+
+  function init() {
+    var loadingEl = document.getElementById('timeline-loading');
+    var emptyEl = document.getElementById('timeline-empty');
+    var singleEl = document.getElementById('timeline-single');
+    var graphEl = document.getElementById('timeline-graph');
+    var legendEl = document.getElementById('timeline-legend');
+    var proHintEl = document.getElementById('timeline-pro-hint');
+
+    if (!loadingEl || !emptyEl || !singleEl || !graphEl) return;
+
+    var all = loadSnapshots();
+    // 昇順ソート
+    all.sort(function (a, b) { return new Date(a.capturedAt).getTime() - new Date(b.capturedAt).getTime(); });
+
+    loadingEl.hidden = true;
+
+    if (all.length === 0) {
+      emptyEl.hidden = false;
+      return;
+    }
+
+    if (all.length === 1) {
+      singleEl.hidden = false;
+      return;
+    }
+
+    // PRO制限適用
+    var proUser = isPro();
+    var limitDate = new Date();
+    limitDate.setDate(limitDate.getDate() - 90);
+
+    var visible = all;
+    var hasHidden = false;
+
+    if (!proUser) {
+      var filtered = all.filter(function (s) { return new Date(s.capturedAt) >= limitDate; });
+      hasHidden = filtered.length < all.length;
+      visible = filtered.length >= 2 ? filtered : all.slice(-Math.max(2, filtered.length));
+    }
+
+    graphEl.hidden = false;
+
+    if (legendEl) buildLegend(legendEl);
+    buildGraph(visible);
+
+    if (hasHidden && proHintEl) {
+      proHintEl.hidden = false;
+    }
+  }
+
+  // DOM準備完了後に実行
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
+</script>
