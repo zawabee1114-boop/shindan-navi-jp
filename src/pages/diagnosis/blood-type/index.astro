@@ -29,6 +29,7 @@ import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Container from '../../../components/Container.astro';
 import { typesDetail } from '../../../data/diagnoses/blood-compat/types-detail';
 import { BLOOD_TYPES } from '../../../data/diagnoses/blood-compat/meta';
+import IntegratedProgressBar from '../../../components/IntegratedProgressBar.astro';
 
 const SITE_URL = 'https://shindan-navi.jp';
 const PAGE_URL = `${SITE_URL}/diagnosis/blood-type/`;
@@ -156,9 +157,10 @@ const jsonLdAll = [jsonLdWebPage, jsonLdBreadcrumb];
     </Container>
   </section>
 
-  <Container>
+  <!-- フルプロファイル達成バー -->
+  <IntegratedProgressBar currentDiagnosisId="blood-type" />
 
-    {/* ========== このページでわかること ========== */}
+  <Container> ========== */}
     <div class="bt-hub-aio" role="note" aria-label="このページでわかること">
       <p class="bt-hub-aio-title">このページでわかること</p>
       <ul class="bt-hub-aio-list">

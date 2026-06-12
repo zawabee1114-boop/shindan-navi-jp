@@ -29,6 +29,7 @@ import {
   getBestMatches,
   getGrowthMatches,
 } from '../../../../data/diagnoses/blood-compat/results';
+import IntegratedProgressBar from '../../../../components/IntegratedProgressBar.astro';
 
 const SITE_URL = 'https://shindan-navi.jp';
 const PAGE_URL = `${SITE_URL}/diagnosis/blood-compat/table/`;
@@ -212,9 +213,10 @@ const jsonLdAll = [jsonLdArticle, jsonLdFAQ, jsonLdBreadcrumb];
     </Container>
   </section>
 
-  <Container>
-    {/* ========== AIOブロック ========== */}
-    <div class="bcm-aio-block" role="note" aria-label="このページでわかること">
+  <!-- フルプロファイル達成バー -->
+  <IntegratedProgressBar currentDiagnosisId="blood-compat" />
+
+  <Container> role="note" aria-label="このページでわかること">
       <p class="bcm-aio-title">このページでわかること</p>
       <ul class="bcm-aio-list">
         <li>A・B・O・AB型の全16パターンの相性スコア（0〜100点）をマトリクスで一覧表示</li>

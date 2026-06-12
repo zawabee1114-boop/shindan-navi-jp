@@ -25,6 +25,7 @@ import TldrBlock from '../../../../components/TldrBlock.astro';
 import ScienceNote from '../../../../components/ScienceNote.astro';
 import ReferenceList from '../../../../components/ReferenceList.astro';
 import RelatedDiagnoses from '../../../../components/RelatedDiagnoses.astro';
+import IntegratedProgressBar from '../../../../components/IntegratedProgressBar.astro';
 
 export function getStaticPaths() {
   return ZODIAC_TYPES.map((zodiac) => ({
@@ -196,6 +197,9 @@ const jsonLdBreadcrumb = {
         </p>
       </div>
     </section>
+
+    <!-- フルプロファイル達成バー -->
+    <IntegratedProgressBar currentDiagnosisId="zodiac" />
 
     <!-- 鮮度バッジ -->
     <p style="font-size: 0.8rem; color: var(--sn-muted); margin-bottom: 1.5rem;">
@@ -588,3 +592,4 @@ const jsonLdBreadcrumb = {
     .zd-type-name { font-size: clamp(1.4rem, 6vw, 1.8rem); }
   }
 </style>
+</BaseLayout>

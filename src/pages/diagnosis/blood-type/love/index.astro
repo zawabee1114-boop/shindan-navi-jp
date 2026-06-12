@@ -28,6 +28,7 @@ import { getCompatibility, getCategoryLabel, getBestMatches } from '../../../../
 import TldrBlock from '../../../../components/TldrBlock.astro';
 import ReferenceList from '../../../../components/ReferenceList.astro';
 import ScienceNote from '../../../../components/ScienceNote.astro';
+import IntegratedProgressBar from '../../../../components/IntegratedProgressBar.astro';
 
 const SITE_URL = 'https://shindan-navi.jp';
 const PAGE_URL = `${SITE_URL}/diagnosis/blood-type/love/`;
@@ -285,8 +286,10 @@ const typeLabels: Record<string, string> = { A: 'A型', B: 'B型', O: 'O型', AB
     </Container>
   </section>
 
-  <Container>
-    {/* ========== このページでわかること ========== */}
+  <!-- フルプロファイル達成バー -->
+  <IntegratedProgressBar currentDiagnosisId="blood-type" />
+
+  <Container> ========== */}
     <div class="bl-aio-block" role="note" aria-label="このページでわかること">
       <p class="bl-aio-title">このページでわかること</p>
       <ul class="bl-aio-list">

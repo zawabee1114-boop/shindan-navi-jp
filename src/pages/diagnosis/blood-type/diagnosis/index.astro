@@ -28,6 +28,7 @@ import { questions } from '../../../../data/diagnoses/blood-subtype/questions';
 import TldrBlock from '../../../../components/TldrBlock.astro';
 import ScienceNote from '../../../../components/ScienceNote.astro';
 import ReferenceList from '../../../../components/ReferenceList.astro';
+import IntegratedProgressBar from '../../../../components/IntegratedProgressBar.astro';
 
 const SITE_URL = 'https://shindan-navi.jp';
 const PAGE_URL = `${SITE_URL}/diagnosis/blood-type/diagnosis/`;
@@ -186,6 +187,9 @@ const subtypeOverview = [
       </div>
     </Container>
   </section>
+
+  <!-- フルプロファイル達成バー -->
+  <IntegratedProgressBar currentDiagnosisId="blood-subtype" />
 
   <Container>
     {/* ========== TL;DRブロック ========== */}

@@ -23,6 +23,7 @@ import Container from '../../../../components/Container.astro';
 import TldrBlock from '../../../../components/TldrBlock.astro';
 import ScienceNote from '../../../../components/ScienceNote.astro';
 import ReferenceList from '../../../../components/ReferenceList.astro';
+import IntegratedProgressBar from '../../../../components/IntegratedProgressBar.astro';
 import { typesDetail } from '../../../../data/diagnoses/blood-compat/types-detail';
 
 const SITE_URL = 'https://shindan-navi.jp';
@@ -217,9 +218,10 @@ const jsonLdAll = [jsonLdArticle, jsonLdFAQ, jsonLdBreadcrumb];
     </Container>
   </section>
 
-  <Container>
-    {/* ========== AIOブロック ========== */}
-    <div class="bt-aio-block" role="note" aria-label="このページでわかること">
+  <!-- フルプロファイル達成バー -->
+  <IntegratedProgressBar currentDiagnosisId="blood-type" />
+
+  <Container> role="note" aria-label="このページでわかること">
       <p class="bt-aio-title">このページでわかること</p>
       <ul class="bt-aio-list">
         <li>O型の性格傾向（社交的・おおらか・リーダーシップ・現実的）の文化的・歴史的背景</li>

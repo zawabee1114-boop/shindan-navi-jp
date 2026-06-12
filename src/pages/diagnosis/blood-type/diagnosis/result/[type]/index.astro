@@ -33,6 +33,7 @@ import { meta } from '../../../../../../data/diagnoses/blood-subtype/meta';
 import type { BloodSubtypeId } from '../../../../../../data/diagnoses/blood-subtype/meta';
 import TldrBlock from '../../../../../../components/TldrBlock.astro';
 import ReferenceList from '../../../../../../components/ReferenceList.astro';
+import IntegratedProgressBar from '../../../../../../components/IntegratedProgressBar.astro';
 
 export function getStaticPaths() {
   return Object.keys(types).map((typeId) => ({
@@ -237,8 +238,10 @@ const pageDescription = `${typeData.catchphrase}。血液型サブタイプ診�
     </Container>
   </section>
 
-  <Container>
-    {/* ========== TL;DRブロック ========== */}
+  <!-- フルプロファイル達成バー -->
+  <IntegratedProgressBar currentDiagnosisId="blood-subtype" />
+
+  <Container> ========== */}
     <TldrBlock
       title={`${typeData.name}の3行まとめ`}
       points={[

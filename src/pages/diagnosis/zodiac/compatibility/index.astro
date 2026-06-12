@@ -16,6 +16,7 @@ import {
   getCategoryLabel,
 } from '../../../../data/diagnoses/zodiac/results';
 import { elementsData } from '../../../../data/diagnoses/zodiac/elements-modality';
+import IntegratedProgressBar from '../../../../components/IntegratedProgressBar.astro';
 
 const SITE_URL = 'https://shindan-navi.jp';
 const PAGE_URL = `${SITE_URL}/diagnosis/zodiac/compatibility/`;
@@ -141,6 +142,9 @@ const jsonLdBreadcrumb = {
       </div>
     </Container>
   </section>
+
+  <!-- フルプロファイル達成バー -->
+  <IntegratedProgressBar currentDiagnosisId="zodiac" />
 
   <Container>
     <!-- 鮮度バッジ -->

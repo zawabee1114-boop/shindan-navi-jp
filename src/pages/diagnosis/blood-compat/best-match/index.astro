@@ -28,6 +28,7 @@ import {
 import TldrBlock from '../../../../components/TldrBlock.astro';
 import ReferenceList from '../../../../components/ReferenceList.astro';
 import ScienceNote from '../../../../components/ScienceNote.astro';
+import IntegratedProgressBar from '../../../../components/IntegratedProgressBar.astro';
 
 const SITE_URL = 'https://shindan-navi.jp';
 const PAGE_URL = `${SITE_URL}/diagnosis/blood-compat/best-match/`;
@@ -248,9 +249,10 @@ const typeLabels: Record<string, string> = { A: 'A型', B: 'B型', O: 'O型', AB
     </Container>
   </section>
 
-  <Container>
-    {/* ========== このページでわかること ========== */}
-    <div class="bm-aio-block" role="note" aria-label="このページでわかること">
+  <!-- フルプロファイル達成バー -->
+  <IntegratedProgressBar currentDiagnosisId="blood-compat" />
+
+  <Container> role="note" aria-label="このページでわかること">
       <p class="bm-aio-title">このページでわかること</p>
       <ul class="bm-aio-list">
         <li>全10ペアの相性スコアTOP5（最高相性）とWORST5（最大の学び合いペア）</li>
