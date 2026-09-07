@@ -12,7 +12,7 @@
  * - TldrBlock / ScienceNote / ReferenceList
  * - YMYL回避: 「対処スタイル」表現。医学的診断表記ゼロ
  *
- * 確認日: 2026-05-22
+ * 確認日: 2026-09-06
  */
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Container from '../../../components/Container.astro';
@@ -76,7 +76,7 @@ const faqs = [
   {
     question: '月1限定診断はどんな学術根拠に基づいていますか？',
     answer:
-      '各月の診断は異なる心理学・行動科学の理論に基づいて設計されます。6月（初回）はLazarus & Folkman（1984）のコーピング理論とCarver（1997）のBrief COPEに基づくストレス対処タイプ診断です。すべての診断で学術根拠・参考文献を明示しています。',
+      '各月の診断は異なる心理学・行動科学の理論に基づいて設計されます。6月（初回）はLazarus & Folkman（1984）のコーピング理論とCarver（1997）のBrief COPEに基づくストレス対処タイプ診断、9月はElliot & McGregor（2001）の達成目標理論に基づく目標達成タイプ診断です。すべての診断で学術根拠・参考文献を明示しています。',
   },
   {
     question: 'コア8診断との違いは何ですか？',
@@ -201,7 +201,7 @@ const jsonLdAll = [jsonLdWebApp, jsonLdFAQ, jsonLdBreadcrumb, jsonLdHowTo];
         '無料・PASS会員は今月のテーマプレビューのみ表示。フルアクセスにはPROへのアップグレードが必要です',
         '過去の限定診断はPRO会員が遡って受診できます。Lazarus & Folkman（1984）など各月の診断は学術根拠に基づいて設計されています',
       ]}
-      updatedAt="2026-05-22"
+      updatedAt="2026-09-06"
       sourceLabel="Lazarus & Folkman (1984) Stress, Appraisal, and Coping"
       sourceUrl="https://link.springer.com/book/9780826141910"
     />
@@ -273,7 +273,7 @@ const jsonLdAll = [jsonLdWebApp, jsonLdFAQ, jsonLdBreadcrumb, jsonLdHowTo];
       ) : (
         <div class="limited-no-current">
           <p class="limited-no-current-text">
-            今月の限定診断は6月1日から公開予定です。
+            今月の限定診断は準備中です。毎月1日に新しいテーマを公開しています。
           </p>
           <p class="limited-no-current-sub">
             PRO会員になると、公開初日からすぐに受診できます。
@@ -331,7 +331,7 @@ const jsonLdAll = [jsonLdWebApp, jsonLdFAQ, jsonLdBreadcrumb, jsonLdHowTo];
 
       <div class="limited-info-table-wrap">
         <table class="limited-info-table">
-          <caption class="limited-table-caption">月1限定診断の概要（2026-05-22時点）</caption>
+          <caption class="limited-table-caption">月1限定診断の概要（2026-09-06時点）</caption>
           <tbody>
             <tr>
               <th scope="row">公開頻度</th>

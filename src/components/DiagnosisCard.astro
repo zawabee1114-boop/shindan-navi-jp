@@ -18,7 +18,7 @@ interface Props {
   badge?: string;
   /** バッジ色クラス（badge-primary / badge-new / badge-free 等）*/
   badgeClass?: string;
-  /** 所要時間 */
+  /** 所要時間（未指定の場合は表示しない。設問がない/受けられない診断で使用）*/
   duration?: string;
   /** 質問数 */
   questionCount?: number;
@@ -39,7 +39,7 @@ const {
   href,
   badge,
   badgeClass = 'badge-free',
-  duration = '約3分',
+  duration,
   questionCount,
   categoryKey,
   ctaLabel = '診断を始める',
@@ -73,18 +73,22 @@ const accentVar = categoryKey ? `var(--sn-diag-${categoryKey})` : `var(--sn-prim
   <p class="card-description">{description}</p>
 
   <!-- メタ情報 -->
-  <div class="card-meta">
-    <span class="meta-item">
-      <span aria-hidden="true">⏱</span>
-      {duration}
-    </span>
-    {questionCount && (
-      <span class="meta-item">
-        <span aria-hidden="true">📝</span>
-        {questionCount}問
-      </span>
-    )}
-  </div>
+  {(duration || questionCount) && (
+    <div class="card-meta">
+      {duration && (
+        <span class="meta-item">
+          <span aria-hidden="true">⏱</span>
+          {duration}
+        </span>
+      )}
+      {questionCount && (
+        <span class="meta-item">
+          <span aria-hidden="true">📝</span>
+          {questionCount}問
+        </span>
+      )}
+    </div>
+  )}
 
   <!-- CTAリンク -->
   {!disabled ? (

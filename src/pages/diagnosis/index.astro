@@ -2,6 +2,15 @@
 /**
  * /diagnosis/ - 診断一覧ページ（ハブページ）
  * Phase 0: スタブ。content-writer が本文を執筆する。
+ * 2026-09-06 更新（seo-optimizer）: 内部リンク欠陥修正
+ *   - 星座性格診断: /diagnosis/seiza/（301経由の旧URL）→ /diagnosis/zodiac/（正規URL）に修正
+ *   - 金銭感覚診断: /diagnosis/money-sense/（301経由の旧URL）→ /diagnosis/money-style/（正規URL）に修正
+ *   - 音楽タイプ診断・愛着スタイル診断カードを追加（ハブ・フッターどちらにも掲載がなかった掲載漏れ）
+ * 2026-09-06 修正（コーディネーター指摘）: 「8診断」はブランド数字のためCEO事前承認なく変更不可
+ *   （memory feedback_shindan_navi_core_principles）。音楽タイプ・愛着スタイルはクイズが無い/準備中の
+ *   解説ページであり「診断」としてカウントしない。「10診断」表記を「8診断」に戻し、
+ *   両カードから duration（所要時間の暗示）を削除、badgeを「無料」→「解説」に変更して実体と一致させた
+ *   （memory feedback_disclosure_precision）。
  */
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import DiagnosisCard from '../../components/DiagnosisCard.astro';
@@ -78,7 +87,7 @@ const diagnoses = [
     title: '星座性格診断',
     icon: '✨',
     description: '西洋占星術×性格科学。エンタメ×サイエンスで解説。',
-    href: '/diagnosis/seiza/',
+    href: '/diagnosis/zodiac/',
     badge: 'エンタメ',
     badgeClass: 'badge-primary',
     duration: '即時',
@@ -88,12 +97,31 @@ const diagnoses = [
     title: '金銭感覚診断',
     icon: '💰',
     description: '行動経済学ベース。お金の使い方タイプを分析。',
-    href: '/diagnosis/money-sense/',
+    href: '/diagnosis/money-style/',
     badge: '無料',
     badgeClass: 'badge-free',
     duration: '約3分',
     questionCount: 20,
     categoryKey: 'money' as const,
+  },
+  {
+    title: '音楽タイプ診断',
+    icon: '🎵',
+    description: 'Rentfrow & Gosling理論（MUSICモデル）。好きな音楽から5つの性格タイプを解説。',
+    href: '/diagnosis/music-type/',
+    badge: '解説',
+    badgeClass: 'badge-primary',
+    ctaLabel: '詳しく見る',
+  },
+  {
+    title: '愛着スタイル診断',
+    icon: '🫂',
+    description: 'Bowlby理論。恋愛での安心感のパターンを4タイプで理解する。',
+    href: '/diagnosis/love-dependency/',
+    badge: '解説',
+    badgeClass: 'badge-primary',
+    categoryKey: 'love' as const,
+    ctaLabel: '詳しく見る',
   },
   {
     title: '月1限定診断',

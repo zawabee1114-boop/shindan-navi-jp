@@ -9,6 +9,8 @@
  *
  * 利用箇所: RelatedDiagnoses.astro
  * 確認日: 2026-05-23
+ * 2026-09-06 更新: 音楽タイプ診断（music-type）を ALL_DIAGNOSES / CROSS_RECOMMEND に追加（内部リンク孤立の解消）
+ * 2026-09-06 修正: music-type→love-style の description が出典のない相関主張だったため機能的な説明に修正
  */
 
 // ====================================================
@@ -63,6 +65,12 @@ export const ALL_DIAGNOSES: RelatedLink[] = [
     icon: '🦉',
     diagClass: 'diag-multi',
     description: '8つの知能領域から才能の軸を発見',
+  },
+  {
+    title: '音楽タイプ診断',
+    href: '/diagnosis/music-type/',
+    icon: '🎵',
+    description: '好きな音楽ジャンルからMUSICモデルの5タイプで性格傾向を読み解く',
   },
   {
     title: '完璧主義診断',
@@ -360,6 +368,31 @@ export const CROSS_RECOMMEND: Record<string, RelatedLink[]> = {
       icon: '🤝',
       diagClass: 'diag-love',
       description: '愛着スタイルは友情パターンにも現れる',
+    },
+  ],
+  'music-type': [
+    {
+      title: '多重知能テスト',
+      href: '/diagnosis/multi-int/',
+      icon: '🦉',
+      diagClass: 'diag-multi',
+      badge: '関連深い',
+      description: '音楽的知能（Musical Intelligence）の観点から才能の軸を診断',
+    },
+    {
+      title: 'MBTI診断',
+      href: '/diagnosis/mbti/',
+      icon: '🧠',
+      diagClass: 'diag-mbti',
+      badge: 'おすすめ',
+      description: '性格タイプ別の音楽傾向をMBTIの視点から確認できる',
+    },
+    {
+      title: '恋愛スタイル診断',
+      href: '/diagnosis/love-style/',
+      icon: '💕',
+      diagClass: 'diag-love',
+      description: '音楽の好みと同じように、感情の表れ方の傾向を知る診断。あわせて受けてみるのもおすすめ',
     },
   ],
 };

@@ -9,7 +9,7 @@
  * - 現在月（JST基準）から getCurrentLimited() で今月の診断を取得
  * - publishedAt <= 今日 の診断のみ公開
  *
- * 確認日: 2026-05-22
+ * 確認日: 2026-09-06
  */
 
 export interface LimitedDiagnosisEntry {
@@ -56,6 +56,21 @@ export const limitedDiagnosesRegistry: LimitedDiagnosisEntry[] = [
     resultTypeCount: 4,
     scientificBasisShort:
       'Lazarus & Folkman (1984) + Carver et al. (1997) Brief COPE理論',
+  },
+  {
+    slug: 'limited-2026-09',
+    year: 2026,
+    month: 9,
+    title: '目標達成タイプ診断【9月限定 · PRO限定】',
+    theme: '目標達成タイプ',
+    themeDescription:
+      '新学期・下半期のスタートに。あなたが目標にどう向き合うか、達成目標理論に基づいて分析します。',
+    publishedAt: '2026-09-06',
+    questionCount: 20,
+    estimatedMinutes: 3,
+    resultTypeCount: 4,
+    scientificBasisShort:
+      'Elliot & McGregor (2001) 2×2 達成目標フレームワーク + Dweck & Leggett (1988)',
   },
 ];
 
